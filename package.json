@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dealer-finals": "node dist/use-cases/dealer-finals.js"
+    "dealer-finals": "node dist/use-cases/dealer-finals.js",
+    "dealer-finals-by-card": "node dist/use-cases/dealer-finals-by-card.js"
   },
   "keywords": [],
   "author": "Carles Capellas <capellas.carles@gmail.com>",
