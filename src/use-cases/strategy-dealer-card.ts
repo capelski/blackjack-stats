@@ -1,6 +1,6 @@
 import { sortByCard } from '../logic/cards';
 import { getDealerFinalsByCard } from '../logic/dealer-finals';
-import { blackjackLabel, bustLabel, softScoresSeparator } from '../logic/labels';
+import { getSortedApplicableLabels } from '../logic/labels';
 import { getDealerCardStrategy } from '../logic/strategy';
 
 /**
@@ -35,28 +35,17 @@ import { getDealerCardStrategy } from '../logic/strategy';
  * 20,P,P,P,P,P,P,P,P,P,P,P,P,P
  */
 
-const dealerCardBasedFinals = getDealerFinalsByCard();
+const dealerFinalsByCard = getDealerFinalsByCard();
 
-const dealerCardStrategy = getDealerCardStrategy(dealerCardBasedFinals);
+const dealerCardStrategy = getDealerCardStrategy(dealerFinalsByCard);
 
-const dealerSortedKeys = Object.keys(dealerCardBasedFinals).sort(sortByCard);
+const dealerSortedKeys = Object.keys(dealerFinalsByCard).sort(sortByCard);
 const csv = [['', ...dealerSortedKeys].join(',')];
-Object.keys(dealerCardStrategy)
-  .filter((key) => key !== bustLabel && key !== blackjackLabel && !String(key).includes('21'))
-  .sort((a, b) => {
-    const aIsSoft = a.includes(softScoresSeparator);
-    const bIsSoft = b.includes(softScoresSeparator);
-    const aParts = a.split(softScoresSeparator);
-    const bParts = b.split(softScoresSeparator);
-    const aValue = parseInt(aParts[aParts.length - 1]);
-    const bValue = parseInt(bParts[bParts.length - 1]);
-    return aIsSoft && !bIsSoft ? -1 : !aIsSoft && bIsSoft ? 1 : aValue - bValue;
-  })
-  .forEach((playerScoreLabel) => {
-    const decisions = dealerSortedKeys.map((dealerCardKey) => {
-      return dealerCardStrategy[playerScoreLabel][dealerCardKey].decision === 'stand' ? 'P' : 'D';
-    });
-    csv.push([playerScoreLabel, decisions].join(','));
+getSortedApplicableLabels(Object.keys(dealerCardStrategy)).forEach((playerScoreLabel) => {
+  const decisions = dealerSortedKeys.map((dealerCardKey) => {
+    return dealerCardStrategy[playerScoreLabel][dealerCardKey].decision === 'stand' ? 'P' : 'D';
   });
+  csv.push([playerScoreLabel, decisions].join(','));
+});
 
 console.log(csv.join('\n'));
