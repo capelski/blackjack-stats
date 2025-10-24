@@ -1,0 +1,16 @@
+{
+  "name": "blackjack-stats",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dealer-finals": "node dist/use-cases/dealer-finals.js"
+  },
+  "keywords": [],
+  "author": "Carles Capellas <capellas.carles@gmail.com>",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
