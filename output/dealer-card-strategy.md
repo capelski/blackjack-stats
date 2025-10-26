@@ -8,8 +8,8 @@
 | 9     | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
 | 10    | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
 | 11    | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
-| 12    | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
-| 13    | H   | H   | H   | S   | S   | S   | H   | H   | H   | H   | H   | H   | H   |
+| 12    | H   | H   | H   | S   | S   | S   | H   | H   | H   | H   | H   | H   | H   |
+| 13    | H   | S   | S   | S   | S   | S   | H   | H   | H   | H   | H   | H   | H   |
 | 14    | H   | S   | S   | S   | S   | S   | H   | H   | H   | H   | H   | H   | H   |
 | 15    | H   | S   | S   | S   | S   | S   | H   | H   | H   | H   | H   | H   | H   |
 | 16    | H   | S   | S   | S   | S   | S   | H   | H   | H   | H   | H   | H   | H   |
@@ -22,7 +22,7 @@
 | 4/14  | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
 | 5/15  | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
 | 6/16  | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
-| 7/17  | H   | H   | H   | H   | H   | H   | S   | H   | H   | H   | H   | H   | H   |
-| 8/18  | S   | S   | S   | S   | S   | S   | S   | S   | H   | H   | H   | H   | H   |
+| 7/17  | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   | H   |
+| 8/18  | H   | S   | S   | S   | S   | S   | S   | S   | H   | H   | H   | H   | H   |
 | 9/19  | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   |
 | 10/20 | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   | S   |

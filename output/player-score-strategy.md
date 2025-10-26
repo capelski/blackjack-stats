@@ -11,7 +11,7 @@
 | 12    | hit      |
 | 13    | hit      |
 | 14    | hit      |
-| 15    | hit      |
+| 15    | stand    |
 | 16    | stand    |
 | 17    | stand    |
 | 18    | stand    |

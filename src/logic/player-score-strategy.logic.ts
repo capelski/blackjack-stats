@@ -1,8 +1,7 @@
-import { Action } from '../enums/action.enum';
 import { DealerFinals } from '../types/dealer-finals.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { PlayerScoreStrategy } from '../types/player-score-strategy.type';
-import { getStandDecision } from './decisions.logic';
+import { getDecision, getStandDecision } from './decisions.logic';
 import { blackjackLabel, bustLabel, getScoresLabel } from './labels.logic';
 import { getHitOutcomes, getStandOutcomes } from './outcomes.logic';
 import { blackjackScore, bustScore, getHighestScore, playerActionableScores } from './scores';
@@ -26,7 +25,7 @@ export const getPlayerScoreStrategy = (dealerFinals: DealerFinals) => {
     const playerDecision: PlayerDecision = {
       stand,
       hit,
-      decision: stand.lose < hit.lose ? Action.stand : Action.hit,
+      decision: getDecision(stand, hit),
     };
 
     playerScoreStrategy[scoresLabel] = playerScoreStrategy[scoresLabel] || {};
