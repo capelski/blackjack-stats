@@ -1,9 +1,9 @@
-import { DealerFinals } from '../types/dealer-finals';
-import { Outcomes } from '../types/outcomes';
-import { PlayerDecision } from '../types/player-decision';
-import { cardsNumber, cardValues } from './cards';
-import { getScoresLabel } from './labels';
-import { toPercentage } from './percentages';
+import { DealerFinals } from '../types/dealer-finals.type';
+import { Outcomes } from '../types/outcomes.type';
+import { PlayerDecision } from '../types/player-decision.type';
+import { cardsNumber, cardValues } from './cards.logic';
+import { getScoresLabel } from './labels.logic';
+import { toPercentage } from './percentages.logic';
 import { blackjackScore, bustScore, dealerFinalScores, getScores } from './scores';
 
 export const computeEdge = (win: number, lose: number, playerScore?: number) => {
@@ -61,7 +61,7 @@ export const getHitOutcomes = (
 ) => {
   const outcomes = createOutcomes();
 
-  for (const nextCardValues of Object.values(cardValues)) {
+  for (const nextCardValues of cardValues) {
     const nextScores = getScores(playerScores, nextCardValues);
     const nextScoresLabel = getScoresLabel(nextScores);
 
