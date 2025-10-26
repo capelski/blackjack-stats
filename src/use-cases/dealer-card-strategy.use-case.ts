@@ -8,7 +8,7 @@ const dealerCardStrategy = getDealerCardStrategy();
 const strategyHeaders = ['', ...cards];
 const strategyRows = actionableLabels.map((playerScoreLabel) => {
   const decisions = cards.map((dealerCard) => {
-    return getAbbreviatedAction(dealerCardStrategy[playerScoreLabel][dealerCard].decision);
+    return getAbbreviatedAction(dealerCardStrategy[playerScoreLabel][dealerCard].action);
   });
   return [playerScoreLabel, ...decisions];
 });

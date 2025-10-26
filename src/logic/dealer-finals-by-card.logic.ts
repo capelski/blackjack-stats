@@ -43,19 +43,19 @@ export const getDealerFinalsByCard = () => {
         }
       } else {
         const effectiveFinalScore = getEffectiveScore(nextScore);
-        const dealerCardFacts = dealerFinalsByCard[nextCards[0]];
+        const dealerFinals = dealerFinalsByCard[nextCards[0]];
 
-        if (!dealerCardFacts.combinations[effectiveFinalScore]) {
-          dealerCardFacts.combinations[effectiveFinalScore] = [];
+        if (!dealerFinals.combinations[effectiveFinalScore]) {
+          dealerFinals.combinations[effectiveFinalScore] = [];
         }
-        dealerCardFacts.combinations[effectiveFinalScore].push(nextKey);
+        dealerFinals.combinations[effectiveFinalScore].push(nextKey);
 
-        if (!dealerCardFacts.probabilities[effectiveFinalScore]) {
-          dealerCardFacts.probabilities[effectiveFinalScore] = 0;
+        if (!dealerFinals.probabilities[effectiveFinalScore]) {
+          dealerFinals.probabilities[effectiveFinalScore] = 0;
         }
 
         const handProbability = 1 / Math.pow(cardsNumber, nextHand.cards.length - 1);
-        dealerCardFacts.probabilities[effectiveFinalScore] += handProbability;
+        dealerFinals.probabilities[effectiveFinalScore] += handProbability;
       }
     });
   }

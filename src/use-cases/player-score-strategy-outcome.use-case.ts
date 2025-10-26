@@ -10,11 +10,11 @@ const playerScoreStrategy = getPlayerScoreStrategy(dealerFinals);
 const initialPairs = getInitialPairs();
 
 const allScoresHeaders = ['Score', 'Edge', 'Win', 'Lose', 'Push'];
-const allScoresRows = initialPairLabels.map((playerKey) => {
-  const { decision } = playerScoreStrategy[playerKey];
-  const outcomes = playerScoreStrategy[playerKey][decision];
+const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
+  const decision = playerScoreStrategy[playerScoresLabel];
+  const outcomes = decision.outcomes[decision.action];
 
-  return [playerKey, ...outcomesToValues(outcomes)];
+  return [playerScoresLabel, ...outcomesToValues(outcomes)];
 });
 const allScoresTable = getMarkdownTable(allScoresHeaders, allScoresRows);
 
@@ -22,10 +22,10 @@ console.log(allScoresTable);
 
 const overallHeaders = ['Edge', 'Win', 'Lose', 'Push'];
 const overallOutcomes = mergeOutcomes(
-  initialPairLabels.map((playerKey) => {
-    const { decision } = playerScoreStrategy[playerKey];
-    const outcomes = playerScoreStrategy[playerKey][decision];
-    const initialProbability = initialPairs[playerKey];
+  initialPairLabels.map((playerScoresLabel) => {
+    const decision = playerScoreStrategy[playerScoresLabel];
+    const outcomes = decision.outcomes[decision.action];
+    const initialProbability = initialPairs[playerScoresLabel];
 
     return multiplyOutcomes(outcomes, initialProbability);
   }),

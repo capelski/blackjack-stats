@@ -1,8 +1,10 @@
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
+import { ActionsOutcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
+import { getAction } from './actions.logic';
 import { cards } from './cards.logic';
 import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
-import { getDecision, getStandDecision } from './decisions.logic';
+import { getStandDecision } from './decisions.logic';
 import { blackjackLabel, bustLabel, getScoresLabel } from './labels.logic';
 import { getHitOutcomes, getStandOutcomes } from './outcomes.logic';
 import { blackjackScore, bustScore, getHighestScore, playerActionableScores } from './scores';
@@ -30,15 +32,17 @@ export const getDealerCardStrategy = () => {
     playerActionableScores.forEach((playerScores) => {
       const scoresLabel = getScoresLabel(playerScores);
 
-      const stand = getStandOutcomes(dealerProbabilities, getHighestScore(playerScores));
-      const hit = getHitOutcomes(
-        playerScores,
-        (nextScoresLabel) => dealerCardStrategy[nextScoresLabel][dealerCard],
-      );
+      const outcomes: ActionsOutcomes = {
+        hit: getHitOutcomes(
+          playerScores,
+          (nextScoresLabel) => dealerCardStrategy[nextScoresLabel][dealerCard],
+        ),
+        stand: getStandOutcomes(dealerProbabilities, getHighestScore(playerScores)),
+      };
+
       const playerDecision: PlayerDecision = {
-        stand,
-        hit,
-        decision: getDecision(stand, hit),
+        action: getAction(outcomes),
+        outcomes,
       };
 
       dealerCardStrategy[scoresLabel] = dealerCardStrategy[scoresLabel] || {};

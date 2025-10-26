@@ -65,13 +65,13 @@ export const getHitOutcomes = (
     const nextScores = getScores(playerScores, nextCardValues);
     const nextScoresLabel = getScoresLabel(nextScores);
 
-    const futureFact = getNextScoreDecision(nextScoresLabel);
-    const futureDecision = futureFact.decision;
-    const futureOutcomes = futureFact[futureDecision];
+    const nextDecision = getNextScoreDecision(nextScoresLabel);
+    const nextAction = nextDecision.action;
+    const nextOutcomes = nextDecision.outcomes[nextAction];
 
-    outcomes.lose += futureOutcomes.lose / cardsNumber;
-    outcomes.push += futureOutcomes.push / cardsNumber;
-    outcomes.win += futureOutcomes.win / cardsNumber;
+    outcomes.lose += nextOutcomes.lose / cardsNumber;
+    outcomes.push += nextOutcomes.push / cardsNumber;
+    outcomes.win += nextOutcomes.win / cardsNumber;
   }
 
   outcomes.edge = computeEdge(outcomes.win, outcomes.lose);

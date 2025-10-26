@@ -8,7 +8,7 @@ const playerScoreStrategy = getPlayerScoreStrategy(dealerFinals);
 
 const strategyHeaders = ['Score', 'Decision'];
 const strategyRows = actionableLabels.map((playerScoreLabel) => {
-  return [playerScoreLabel, playerScoreStrategy[playerScoreLabel].decision];
+  return [playerScoreLabel, playerScoreStrategy[playerScoreLabel].action];
 });
 const strategyTable = getMarkdownTable(strategyHeaders, strategyRows);
 

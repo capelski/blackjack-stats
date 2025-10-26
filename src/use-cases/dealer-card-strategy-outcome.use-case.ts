@@ -10,13 +10,13 @@ const dealerCardStrategy = getDealerCardStrategy();
 const initialPairs = getInitialPairs();
 
 const allScoresHeaders = ['', ...cards];
-const allScoresRows = initialPairLabels.map((playerScoreLabel) => {
+const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
   const allEdges = cards.map((dealerCard) => {
-    const { decision } = dealerCardStrategy[playerScoreLabel][dealerCard];
-    return toPercentage(dealerCardStrategy[playerScoreLabel][dealerCard][decision].edge);
+    const decision = dealerCardStrategy[playerScoresLabel][dealerCard];
+    return toPercentage(decision.outcomes[decision.action].edge);
   });
 
-  return [playerScoreLabel, ...allEdges];
+  return [playerScoresLabel, ...allEdges];
 });
 const allScoresTable = getMarkdownTable(allScoresHeaders, allScoresRows);
 
@@ -24,14 +24,14 @@ console.log(allScoresTable);
 
 const overallHeaders = ['Edge', 'Win', 'Lose', 'Push'];
 const overallOutcomes = mergeOutcomes(
-  initialPairLabels.map((playerKey) => {
-    const allOutcomes = cards.map((dealerKey) => {
-      const { decision } = dealerCardStrategy[playerKey][dealerKey];
-      return dealerCardStrategy[playerKey][dealerKey][decision];
+  initialPairLabels.map((playerScoresLabel) => {
+    const allOutcomes = cards.map((dealerCard) => {
+      const decision = dealerCardStrategy[playerScoresLabel][dealerCard];
+      return decision.outcomes[decision.action];
     });
     const aggregatedOutcomes = mergeOutcomes(allOutcomes);
 
-    const initialProbability = initialPairs[playerKey];
+    const initialProbability = initialPairs[playerScoresLabel];
     const averageOutcomes = multiplyOutcomes(aggregatedOutcomes, 1 / allOutcomes.length);
     return multiplyOutcomes(averageOutcomes, initialProbability);
   }),
