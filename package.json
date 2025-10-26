@@ -9,7 +9,8 @@
     "strategy-player-score": "node dist/use-cases/strategy-player-score.js",
     "strategy-player-score-outcome": "node dist/use-cases/strategy-player-score-outcome.js",
     "dealer-finals-by-card": "node dist/use-cases/dealer-finals-by-card.js",
-    "strategy-dealer-card": "node dist/use-cases/strategy-dealer-card.js"
+    "strategy-dealer-card": "node dist/use-cases/strategy-dealer-card.js",
+    "strategy-dealer-card-outcome": "node dist/use-cases/strategy-dealer-card-outcome.js"
   },
   "keywords": [],
   "author": "Carles Capellas <capellas.carles@gmail.com>",
