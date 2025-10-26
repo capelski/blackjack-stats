@@ -1,70 +1,46 @@
 import { DealerFinals, DealerFinalsByCard } from '../types/dealer-finals';
+import { PlayerDecision } from '../types/player-decision';
 import { StrategyDealerCard } from '../types/strategy-dealer-card';
 import { StrategyPlayerScore } from '../types/strategy-player-score';
-import { cardValues, cardsNumber } from './cards';
 import { blackjackLabel, bustLabel, getScoresLabel } from './labels';
-import { getStandOutcomes } from './outcomes';
-import {
-  blackjackScore,
-  bustScore,
-  dealerFinalScores,
-  getHighestScore,
-  getScores,
-  playerActionableScores,
-} from './scores';
+import { getHitOutcomes, getStandOutcomes } from './outcomes';
+import { blackjackScore, bustScore, getHighestScore, playerActionableScores } from './scores';
+
+const getFixedDecision = (
+  playerScore: number,
+  dealerProbabilities: DealerFinals['probabilities'],
+): PlayerDecision => {
+  return {
+    stand: getStandOutcomes(dealerProbabilities, playerScore),
+    hit: undefined!,
+    decision: 'stand',
+  };
+};
 
 export const getPlayerScoreStrategy = (dealerFinals: DealerFinals) => {
   const playerScoreStrategy: StrategyPlayerScore = {
-    [bustLabel]: {
-      stand: getStandOutcomes(dealerFinals.probabilities, bustScore),
-      hit: undefined!,
-      decision: 'stand',
-    },
-    [blackjackLabel]: {
-      stand: getStandOutcomes(dealerFinals.probabilities, blackjackScore),
-      hit: undefined!,
-      decision: 'stand',
-    },
-    21: {
-      stand: getStandOutcomes(dealerFinals.probabilities, 21),
-      hit: undefined!,
-      decision: 'stand',
-    },
-    '11/21': {
-      stand: getStandOutcomes(dealerFinals.probabilities, 21),
-      hit: undefined!,
-      decision: 'stand',
-    },
+    [bustLabel]: getFixedDecision(bustScore, dealerFinals.probabilities),
+    [blackjackLabel]: getFixedDecision(blackjackScore, dealerFinals.probabilities),
+    21: getFixedDecision(21, dealerFinals.probabilities),
+    '11/21': getFixedDecision(21, dealerFinals.probabilities),
   };
 
   playerActionableScores.forEach((playerScores) => {
     const scoresLabel = getScoresLabel(playerScores);
 
+    const stand = getStandOutcomes(dealerFinals.probabilities, getHighestScore(playerScores));
+    const hit = getHitOutcomes(
+      playerScores,
+      (nextScoresLabel) => playerScoreStrategy[nextScoresLabel],
+    );
+    const playerDecision: PlayerDecision = {
+      stand,
+      hit,
+      decision: stand.lose < hit.lose ? 'stand' : 'hit',
+    };
+
     playerScoreStrategy[scoresLabel] = playerScoreStrategy[scoresLabel] || {};
-    const currentFact = (playerScoreStrategy[scoresLabel] = {
-      stand: getStandOutcomes(dealerFinals.probabilities, getHighestScore(playerScores)),
-      hit: {
-        lose: 0,
-        push: 0,
-        win: 0,
-      },
-      decision: undefined! as 'hit' | 'stand',
-    });
-
-    for (const nextCardValues of Object.values(cardValues)) {
-      const nextScores = getScores(playerScores, nextCardValues);
-      const nextScoresLabel = getScoresLabel(nextScores);
-
-      const futureFact = playerScoreStrategy[nextScoresLabel];
-      const futureDecision = futureFact.decision;
-      const futureProbabilities = futureFact[futureDecision];
-
-      currentFact.hit.lose += futureProbabilities.lose / cardsNumber;
-      currentFact.hit.push += futureProbabilities.push / cardsNumber;
-      currentFact.hit.win += futureProbabilities.win / cardsNumber;
-    }
-
-    currentFact.decision = currentFact.stand.lose < currentFact.hit.lose ? 'stand' : 'hit';
+    playerScoreStrategy[scoresLabel] = playerDecision;
   });
 
   return playerScoreStrategy;
@@ -79,65 +55,32 @@ export const getDealerCardStrategy = (dealerFinalsByCard: DealerFinalsByCard) =>
   };
 
   Object.keys(dealerFinalsByCard).forEach((dealerCardKey) => {
-    const { probabilities: finalProbabilities } = dealerFinalsByCard[dealerCardKey];
-    const dealerProbabilities = dealerFinalScores
-      .filter((key) => finalProbabilities[key])
-      .reduce((reduced, key) => {
-        return {
-          ...reduced,
-          [key]: finalProbabilities[key],
-        };
-      }, {});
+    const dealerProbabilities = dealerFinalsByCard[dealerCardKey].probabilities;
 
-    dealerCardStrategy[bustLabel][dealerCardKey] = {
-      stand: getStandOutcomes(dealerProbabilities, bustScore),
-      hit: undefined!,
-      decision: 'stand',
-    };
-    dealerCardStrategy[blackjackLabel][dealerCardKey] = {
-      stand: getStandOutcomes(dealerProbabilities, blackjackScore),
-      hit: undefined!,
-      decision: 'stand',
-    };
-    dealerCardStrategy[21][dealerCardKey] = {
-      stand: getStandOutcomes(dealerProbabilities, 21),
-      hit: undefined!,
-      decision: 'stand',
-    };
-    dealerCardStrategy['11/21'][dealerCardKey] = {
-      stand: getStandOutcomes(dealerProbabilities, 21),
-      hit: undefined!,
-      decision: 'stand',
-    };
+    dealerCardStrategy[bustLabel][dealerCardKey] = getFixedDecision(bustScore, dealerProbabilities);
+    dealerCardStrategy[blackjackLabel][dealerCardKey] = getFixedDecision(
+      blackjackScore,
+      dealerProbabilities,
+    );
+    dealerCardStrategy[21][dealerCardKey] = getFixedDecision(21, dealerProbabilities);
+    dealerCardStrategy['11/21'][dealerCardKey] = getFixedDecision(21, dealerProbabilities);
 
     playerActionableScores.forEach((playerScores) => {
       const scoresLabel = getScoresLabel(playerScores);
 
+      const stand = getStandOutcomes(dealerProbabilities, getHighestScore(playerScores));
+      const hit = getHitOutcomes(
+        playerScores,
+        (nextScoresLabel) => dealerCardStrategy[nextScoresLabel][dealerCardKey],
+      );
+      const playerDecision: PlayerDecision = {
+        stand,
+        hit,
+        decision: stand.lose < hit.lose ? 'stand' : 'hit',
+      };
+
       dealerCardStrategy[scoresLabel] = dealerCardStrategy[scoresLabel] || {};
-      const currentFact = (dealerCardStrategy[scoresLabel][dealerCardKey] = {
-        stand: getStandOutcomes(dealerProbabilities, getHighestScore(playerScores)),
-        hit: {
-          lose: 0,
-          push: 0,
-          win: 0,
-        },
-        decision: undefined! as 'hit' | 'stand',
-      });
-
-      for (const nextCardValues of Object.values(cardValues)) {
-        const nextScores = getScores(playerScores, nextCardValues);
-        const nextScoresLabel = getScoresLabel(nextScores);
-
-        const futureFact = dealerCardStrategy[nextScoresLabel][dealerCardKey];
-        const futureDecision = futureFact.decision;
-        const futureProbabilities = futureFact[futureDecision];
-
-        currentFact.hit.lose += futureProbabilities.lose / cardsNumber;
-        currentFact.hit.push += futureProbabilities.push / cardsNumber;
-        currentFact.hit.win += futureProbabilities.win / cardsNumber;
-      }
-
-      currentFact.decision = currentFact.stand.lose < currentFact.hit.lose ? 'stand' : 'hit';
+      dealerCardStrategy[scoresLabel][dealerCardKey] = playerDecision;
     });
   });
 

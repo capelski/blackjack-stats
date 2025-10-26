@@ -1,8 +1,25 @@
 import { DealerFinals } from '../types/dealer-finals';
-import { StrategyDealerCard } from '../types/strategy-dealer-card';
+import { Outcomes } from '../types/outcomes';
+import { PlayerDecision } from '../types/player-decision';
 import { cardsNumber, cardValues } from './cards';
 import { getScoresLabel } from './labels';
-import { bustScore, dealerFinalScores, getScores } from './scores';
+import { toPercentage } from './percentages';
+import { blackjackScore, bustScore, dealerFinalScores, getScores } from './scores';
+
+export const computeEdge = (win: number, lose: number, playerScore?: number) => {
+  const effectiveWin = win * (playerScore === blackjackScore ? 1.5 : 1);
+  const edge = effectiveWin - lose;
+  return edge;
+};
+
+export const createOutcomes = (): Outcomes => {
+  return {
+    edge: 0,
+    lose: 0,
+    push: 0,
+    win: 0,
+  };
+};
 
 export const getLoseProbability = (
   dealerProbabilities: DealerFinals['probabilities'],
@@ -39,37 +56,70 @@ export const getWinProbability = (
 };
 
 export const getHitOutcomes = (
-  dealerCardStrategy: StrategyDealerCard,
-  dealerCardKey: string,
   playerScores: number[],
+  getNextScoreDecision: (nextScoresLabel: string) => PlayerDecision,
 ) => {
-  const outcomes = {
-    lose: 0,
-    push: 0,
-    win: 0,
-  };
+  const outcomes = createOutcomes();
 
   for (const nextCardValues of Object.values(cardValues)) {
     const nextScores = getScores(playerScores, nextCardValues);
     const nextScoresLabel = getScoresLabel(nextScores);
 
-    const futureFact = dealerCardStrategy[nextScoresLabel][dealerCardKey];
+    const futureFact = getNextScoreDecision(nextScoresLabel);
     const futureDecision = futureFact.decision;
-    const futureProbabilities = futureFact[futureDecision];
+    const futureOutcomes = futureFact[futureDecision];
 
-    outcomes.lose += futureProbabilities.lose / cardsNumber;
-    outcomes.push += futureProbabilities.push / cardsNumber;
-    outcomes.win += futureProbabilities.win / cardsNumber;
+    outcomes.lose += futureOutcomes.lose / cardsNumber;
+    outcomes.push += futureOutcomes.push / cardsNumber;
+    outcomes.win += futureOutcomes.win / cardsNumber;
   }
+
+  outcomes.edge = computeEdge(outcomes.win, outcomes.lose);
+
+  return outcomes;
 };
 
 export const getStandOutcomes = (
   dealerProbabilities: DealerFinals['probabilities'],
   playerScore: number,
-) => {
+): Outcomes => {
+  const lose = getLoseProbability(dealerProbabilities, playerScore);
+  const push = getPushProbability(dealerProbabilities, playerScore);
+  const win = getWinProbability(dealerProbabilities, playerScore);
+
   return {
-    lose: getLoseProbability(dealerProbabilities, playerScore),
-    push: getPushProbability(dealerProbabilities, playerScore),
-    win: getWinProbability(dealerProbabilities, playerScore),
+    edge: computeEdge(win, lose, playerScore),
+    lose,
+    push,
+    win,
   };
+};
+
+export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
+  return outcomesList.reduce<Outcomes>((reduced, outcomes) => {
+    return {
+      edge: reduced.edge + outcomes.edge,
+      lose: reduced.lose + outcomes.lose,
+      push: reduced.push + outcomes.push,
+      win: reduced.win + outcomes.win,
+    };
+  }, createOutcomes());
+};
+
+export const multiplyOutcomes = (outcomes: Outcomes, factor: number): Outcomes => {
+  return {
+    edge: outcomes.edge * factor,
+    lose: outcomes.lose * factor,
+    push: outcomes.push * factor,
+    win: outcomes.win * factor,
+  };
+};
+
+export const outcomesToValues = (outcomes: Outcomes) => {
+  return [
+    toPercentage(outcomes.edge),
+    toPercentage(outcomes.win),
+    toPercentage(outcomes.lose),
+    toPercentage(outcomes.push),
+  ];
 };
