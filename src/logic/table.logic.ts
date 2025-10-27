@@ -1,4 +1,4 @@
-export const getMarkdownTable = (headers: (string | number)[], rows: (string | number)[][]) => {
+export const getTable = (headers: (string | number)[], rows: (string | number)[][]) => {
   return [headersToMarkdown(headers), ...rows.map((row) => rowToMarkdown(row))].join('\n');
 };
 

@@ -1,8 +1,8 @@
 import { getDealerFinals } from '../logic/dealer-finals.logic';
 import { getScoresLabel } from '../logic/labels.logic';
-import { getMarkdownTable } from '../logic/markdown.logic';
 import { toPercentage } from '../logic/percentages.logic';
 import { dealerFinalScores } from '../logic/scores';
+import { getTable } from '../logic/table.logic';
 
 const dealerFinals = getDealerFinals();
 
@@ -16,7 +16,7 @@ const combinationsRows = dealerFinalScores.map((key) => {
     `${examples.join(' / ')}${drawEllipsis ? ' ...' : ''}`,
   ];
 });
-const scoresTable = getMarkdownTable(combinationsHeaders, combinationsRows);
+const scoresTable = getTable(combinationsHeaders, combinationsRows);
 
 console.log(scoresTable);
 
@@ -25,7 +25,7 @@ const probabilitiesRows = dealerFinalScores.map((key) => {
   return [getScoresLabel([key]), toPercentage(dealerFinals.probabilities[key])];
 });
 
-const probabilitiesTable = getMarkdownTable(probabilitiesHeaders, probabilitiesRows);
+const probabilitiesTable = getTable(probabilitiesHeaders, probabilitiesRows);
 
 console.log('\n');
 console.log(probabilitiesTable);

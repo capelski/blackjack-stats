@@ -1,7 +1,7 @@
 import { getInitialPairs } from '../logic/initial-pairs.logic';
 import { initialPairLabels } from '../logic/labels.logic';
-import { getMarkdownTable } from '../logic/markdown.logic';
 import { toPercentage } from '../logic/percentages.logic';
+import { getTable } from '../logic/table.logic';
 
 const initialPairs = getInitialPairs();
 
@@ -15,7 +15,7 @@ const combinationsRows = initialPairLabels.map((key) => {
     `${examples.join(' / ')}${drawEllipsis ? ' ...' : ''}`,
   ];
 });
-const combinationsTable = getMarkdownTable(combinationsHeaders, combinationsRows);
+const combinationsTable = getTable(combinationsHeaders, combinationsRows);
 
 console.log(combinationsTable);
 
@@ -24,7 +24,7 @@ const probabilitiesRows = initialPairLabels.map((key) => {
   return [key, toPercentage(initialPairs.probabilities[key])];
 });
 
-const probabilitiesTable = getMarkdownTable(probabilitiesHeaders, probabilitiesRows);
+const probabilitiesTable = getTable(probabilitiesHeaders, probabilitiesRows);
 
 console.log('\n');
 console.log(probabilitiesTable);

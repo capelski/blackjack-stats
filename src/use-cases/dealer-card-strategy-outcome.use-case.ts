@@ -2,9 +2,9 @@ import { cards } from '../logic/cards.logic';
 import { getDealerCardStrategy } from '../logic/dealer-card-strategy.logic';
 import { getInitialPairs } from '../logic/initial-pairs.logic';
 import { initialPairLabels } from '../logic/labels.logic';
-import { getMarkdownTable } from '../logic/markdown.logic';
 import { mergeOutcomes, multiplyOutcomes, outcomesToValues } from '../logic/outcomes.logic';
 import { toPercentage } from '../logic/percentages.logic';
+import { getTable } from '../logic/table.logic';
 
 const dealerCardStrategy = getDealerCardStrategy();
 const initialPairs = getInitialPairs();
@@ -18,7 +18,7 @@ const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
 
   return [playerScoresLabel, ...allEdges];
 });
-const allScoresTable = getMarkdownTable(allScoresHeaders, allScoresRows);
+const allScoresTable = getTable(allScoresHeaders, allScoresRows);
 
 console.log(allScoresTable);
 
@@ -37,7 +37,7 @@ const overallOutcomes = mergeOutcomes(
   }),
 );
 const overallRows = [outcomesToValues(overallOutcomes)];
-const overallTable = getMarkdownTable(overallHeaders, overallRows);
+const overallTable = getTable(overallHeaders, overallRows);
 
 console.log('\n');
 console.log(overallTable);

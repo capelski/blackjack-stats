@@ -1,7 +1,7 @@
 import { cards } from '../logic/cards.logic';
 import { getDealerCardStrategy } from '../logic/dealer-card-strategy.logic';
 import { actionableLabels, getAbbreviatedAction } from '../logic/labels.logic';
-import { getMarkdownTable } from '../logic/markdown.logic';
+import { getTable } from '../logic/table.logic';
 
 const dealerCardStrategy = getDealerCardStrategy();
 
@@ -12,6 +12,6 @@ const strategyRows = actionableLabels.map((playerScoreLabel) => {
   });
   return [playerScoreLabel, ...decisions];
 });
-const strategyTable = getMarkdownTable(strategyHeaders, strategyRows);
+const strategyTable = getTable(strategyHeaders, strategyRows);
 
 console.log(strategyTable);
