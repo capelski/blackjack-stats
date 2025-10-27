@@ -6,12 +6,16 @@ import { dealerFinalScores } from '../logic/scores';
 
 const dealerFinals = getDealerFinals();
 
-const combinationsHeaders = ['Score', 'Count', 'Examples'];
-const combinationsRows = dealerFinalScores.map((key) => [
-  getScoresLabel([key]),
-  dealerFinals.combinations[key].length,
-  `"${dealerFinals.combinations[key].slice(0, 10).join(' / ')}"`,
-]);
+const combinationsHeaders = ['Score', 'Combinations', 'Examples'];
+const combinationsRows = dealerFinalScores.map((key) => {
+  const examples = dealerFinals.combinations[key].slice(0, 10);
+  const drawEllipsis = examples.length < dealerFinals.combinations[key].length;
+  return [
+    getScoresLabel([key]),
+    dealerFinals.combinations[key].length,
+    `${examples.join(' / ')}${drawEllipsis ? ' ...' : ''}`,
+  ];
+});
 const scoresTable = getMarkdownTable(combinationsHeaders, combinationsRows);
 
 console.log(scoresTable);

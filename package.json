@@ -4,13 +4,14 @@
   "description": "",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "initial-pairs-probabilities": "node dist/use-cases/initial-pairs-probabilities.use-case.js",
-    "dealer-finals": "node dist/use-cases/dealer-finals.use-case.js",
-    "player-score-strategy": "node dist/use-cases/player-score-strategy.use-case.js",
-    "player-score-strategy-outcome": "node dist/use-cases/player-score-strategy-outcome.use-case.js",
-    "dealer-finals-by-card": "node dist/use-cases/dealer-finals-by-card.use-case.js",
-    "dealer-card-strategy": "node dist/use-cases/dealer-card-strategy.use-case.js",
-    "dealer-card-strategy-outcome": "node dist/use-cases/dealer-card-strategy-outcome.use-case.js"
+    "all": "npm run initial-pairs && npm run dealer-finals && npm run player-score-strategy && npm run player-score-strategy-outcome && npm run dealer-finals-by-card && npm run dealer-card-strategy && npm run dealer-card-strategy-outcome",
+    "initial-pairs": "node dist/use-cases/initial-pairs.use-case.js > output/initial-pairs.md",
+    "dealer-finals": "node dist/use-cases/dealer-finals.use-case.js > output/dealer-finals.md",
+    "player-score-strategy": "node dist/use-cases/player-score-strategy.use-case.js > output/player-score-strategy.md",
+    "player-score-strategy-outcome": "node dist/use-cases/player-score-strategy-outcome.use-case.js > output/player-score-strategy-outcome.md",
+    "dealer-finals-by-card": "node dist/use-cases/dealer-finals-by-card.use-case.js > output/dealer-finals-by-card.md",
+    "dealer-card-strategy": "node dist/use-cases/dealer-card-strategy.use-case.js > output/dealer-card-strategy.md",
+    "dealer-card-strategy-outcome": "node dist/use-cases/dealer-card-strategy-outcome.use-case.js > output/dealer-card-strategy-outcome.md"
   },
   "keywords": [],
   "author": "Carles Capellas <capellas.carles@gmail.com>",

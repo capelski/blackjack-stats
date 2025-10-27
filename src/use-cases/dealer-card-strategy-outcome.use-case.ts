@@ -31,7 +31,7 @@ const overallOutcomes = mergeOutcomes(
     });
     const aggregatedOutcomes = mergeOutcomes(allOutcomes);
 
-    const initialProbability = initialPairs[playerScoresLabel];
+    const initialProbability = initialPairs.probabilities[playerScoresLabel];
     const averageOutcomes = multiplyOutcomes(aggregatedOutcomes, 1 / allOutcomes.length);
     return multiplyOutcomes(averageOutcomes, initialProbability);
   }),

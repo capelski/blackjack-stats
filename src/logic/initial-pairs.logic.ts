@@ -1,20 +1,27 @@
-import { InitialPairs } from '../types/initial-pairs.type';
-import { cardsNumber, cardValues } from './cards.logic';
+import { Finals } from '../types/finals.type';
+import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getScoresLabel } from './labels.logic';
 import { getScores } from './scores';
 
 export const getInitialPairs = () => {
-  const initialPairs: InitialPairs = {};
+  const initialPairs: Finals = {
+    combinations: {},
+    probabilities: {},
+  };
 
-  for (const values1 of cardValues) {
-    for (const values2 of cardValues) {
-      const scores = getScores(values1, values2);
+  for (const card1 of cards) {
+    for (const card2 of cards) {
+      const scores = getScores(cardValuesDictionary[card1], cardValuesDictionary[card2]);
       const label = getScoresLabel(scores, 2);
-      if (!initialPairs[label]) {
-        initialPairs[label] = 0;
+      if (!initialPairs.combinations[label]) {
+        initialPairs.combinations[label] = [];
       }
+      initialPairs.combinations[label].push(getCardsCombinations([card1, card2]));
 
-      initialPairs[label] += (1 / cardsNumber) * (1 / cardsNumber);
+      if (!initialPairs.probabilities[label]) {
+        initialPairs.probabilities[label] = 0;
+      }
+      initialPairs.probabilities[label] += (1 / cardsNumber) * (1 / cardsNumber);
     }
   }
 

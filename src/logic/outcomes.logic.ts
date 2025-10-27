@@ -1,4 +1,4 @@
-import { DealerFinals } from '../types/dealer-finals.type';
+import { Finals } from '../types/finals.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { cardsNumber, cardValues } from './cards.logic';
@@ -6,9 +6,15 @@ import { getScoresLabel } from './labels.logic';
 import { toPercentage } from './percentages.logic';
 import { blackjackScore, bustScore, dealerFinalScores, getScores } from './scores';
 
-export const computeEdge = (win: number, lose: number, playerScore?: number) => {
-  const effectiveWin = win * (playerScore === blackjackScore ? 1.5 : 1);
-  const edge = effectiveWin - lose;
+export type ComputeEdgeOptions = {
+  isDoubling?: boolean;
+  isBlackjack?: boolean;
+};
+
+export const computeEdge = (win: number, lose: number, options: ComputeEdgeOptions = {}) => {
+  const effectiveWin = win * (options.isBlackjack ? 1.5 : options.isDoubling ? 2 : 1);
+  const effectiveLose = lose * (options.isDoubling ? 2 : 1);
+  const edge = effectiveWin - effectiveLose;
   return edge;
 };
 
@@ -22,7 +28,7 @@ export const createOutcomes = (): Outcomes => {
 };
 
 export const getLoseProbability = (
-  dealerProbabilities: DealerFinals['probabilities'],
+  dealerProbabilities: Finals['probabilities'],
   playerScore: number,
 ) => {
   return playerScore === bustScore
@@ -35,14 +41,14 @@ export const getLoseProbability = (
 };
 
 export const getPushProbability = (
-  dealerProbabilities: DealerFinals['probabilities'],
+  dealerProbabilities: Finals['probabilities'],
   playerScore: number,
 ) => {
   return playerScore === bustScore ? 0 : dealerProbabilities[playerScore] || 0;
 };
 
 export const getWinProbability = (
-  dealerProbabilities: DealerFinals['probabilities'],
+  dealerProbabilities: Finals['probabilities'],
   playerScore: number,
 ) => {
   const bustProbability = dealerProbabilities[bustScore] || 0;
@@ -53,6 +59,28 @@ export const getWinProbability = (
         .reduce((reduced, dealerScore) => {
           return reduced + (dealerScore < playerScore ? dealerProbabilities[dealerScore] : 0);
         }, 0) + bustProbability;
+};
+
+export const getDoubleOutcomes = (
+  playerScores: number[],
+  getNextScoreOutcomes: (nextScoresLabel: string) => Outcomes,
+) => {
+  const outcomes = createOutcomes();
+
+  for (const nextCardValues of cardValues) {
+    const nextScores = getScores(playerScores, nextCardValues);
+    const nextScoresLabel = getScoresLabel(nextScores);
+
+    const nextOutcomes = getNextScoreOutcomes(nextScoresLabel);
+
+    outcomes.lose += nextOutcomes.lose / cardsNumber;
+    outcomes.push += nextOutcomes.push / cardsNumber;
+    outcomes.win += nextOutcomes.win / cardsNumber;
+  }
+
+  outcomes.edge = computeEdge(outcomes.win, outcomes.lose, { isDoubling: true });
+
+  return outcomes;
 };
 
 export const getHitOutcomes = (
@@ -80,7 +108,7 @@ export const getHitOutcomes = (
 };
 
 export const getStandOutcomes = (
-  dealerProbabilities: DealerFinals['probabilities'],
+  dealerProbabilities: Finals['probabilities'],
   playerScore: number,
 ): Outcomes => {
   const lose = getLoseProbability(dealerProbabilities, playerScore);
@@ -88,7 +116,7 @@ export const getStandOutcomes = (
   const win = getWinProbability(dealerProbabilities, playerScore);
 
   return {
-    edge: computeEdge(win, lose, playerScore),
+    edge: computeEdge(win, lose, { isBlackjack: playerScore === blackjackScore }),
     lose,
     push,
     win,

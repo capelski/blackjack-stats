@@ -37,8 +37,14 @@ export const initialPairLabels = [
 
 export const actionableLabels = initialPairLabels.filter((label) => label !== blackjackLabel);
 
+const abbreviatedActions: { [action in Action]: string } = {
+  double: 'D',
+  hit: 'H',
+  stand: 'S',
+};
+
 export const getAbbreviatedAction = (action: Action) => {
-  return action === Action.hit ? 'H' : 'S';
+  return abbreviatedActions[action];
 };
 
 export const getScoresLabel = (scores: number[], cardsNumber?: number) => {

@@ -3,13 +3,13 @@ import { getDealerFinalsByCard } from '../logic/dealer-finals-by-card.logic';
 import { getScoresLabel } from '../logic/labels.logic';
 import { getMarkdownTable } from '../logic/markdown.logic';
 import { dealerFinalScores } from '../logic/scores';
-import { DealerFinals, DealerFinalsByCard } from '../types/dealer-finals.type';
+import { Finals, FinalsByDealerCard } from '../types/finals.type';
 
 const headers = ['Dealer card', ...dealerFinalScores.map((score) => getScoresLabel([score]))];
 
 const getRows = (
-  dealerFinalsByCard: DealerFinalsByCard,
-  formatter: (dealerFinals: DealerFinals, dealerFinalScore: number) => number | string,
+  dealerFinalsByCard: FinalsByDealerCard,
+  formatter: (dealerFinals: Finals, dealerFinalScore: number) => number | string,
 ) => {
   return cards.map((dealerCard) => {
     const dealerFinals = dealerFinalsByCard[dealerCard];

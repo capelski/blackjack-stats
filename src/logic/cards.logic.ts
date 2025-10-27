@@ -19,3 +19,8 @@ export const cardValuesDictionary = {
   [cards[11]]: cardValues[11],
   [cards[12]]: cardValues[12],
 };
+
+export const cardCombinationSeparator = ',';
+export const getCardsCombinations = (_cards: typeof cards) => {
+  return _cards.join(cardCombinationSeparator);
+};

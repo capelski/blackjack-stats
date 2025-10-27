@@ -1,5 +1,5 @@
-import { DealerFinals, DealerFinalsByCard } from '../types/dealer-finals.type';
-import { cards, cardsNumber, cardValuesDictionary } from './cards.logic';
+import { Finals, FinalsByDealerCard } from '../types/finals.type';
+import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getEffectiveScore, getHighestScore, getScores } from './scores';
 
 export const getDealerFinalsByCard = () => {
@@ -14,10 +14,10 @@ export const getDealerFinalsByCard = () => {
     return { ...reduced, [key]: true };
   }, {});
 
-  const dealerFinalsByCard = cards.reduce<DealerFinalsByCard>((reduced, key) => {
+  const dealerFinalsByCard = cards.reduce<FinalsByDealerCard>((reduced, key) => {
     return {
       ...reduced,
-      [key]: <DealerFinals>{
+      [key]: <Finals>{
         combinations: {},
         probabilities: {},
       },
@@ -29,7 +29,7 @@ export const getDealerFinalsByCard = () => {
 
     cards.map((key) => {
       const nextCards = [...hand.cards, key];
-      const nextKey = nextCards.join(',');
+      const nextKey = getCardsCombinations(nextCards);
       const nextHand = {
         cards: nextCards,
         values: getScores(hand.values, cardValuesDictionary[key]),
