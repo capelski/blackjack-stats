@@ -13,12 +13,12 @@ export const getAction = (actionsOutcomes: ActionsOutcomes, options: ActionOptio
     .filter((action) => action !== Action.double || options.canDouble)
     .reduce<ReducedActionsOutcomes>(
       (reduced, action) => {
-        const { edge } = actionsOutcomes[action];
-        return reduced.maximum < edge ? { action, maximum: edge } : reduced;
+        const { returns } = actionsOutcomes[action];
+        return reduced.maximum < returns ? { action, maximum: returns } : reduced;
       },
       {
         action: undefined!,
-        maximum: -2,
+        maximum: -10,
       },
     );
 

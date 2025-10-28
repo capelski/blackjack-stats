@@ -1,9 +1,9 @@
 import { Action } from '../enums/action.enum';
 
 export type Outcomes = {
-  edge: number;
   lose: number;
   push: number;
+  returns: number;
   win: number;
 };
 

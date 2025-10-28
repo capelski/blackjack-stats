@@ -6,23 +6,22 @@ import { getScoresLabel } from './labels.logic';
 import { toPercentage } from './percentages.logic';
 import { blackjackScore, bustScore, dealerFinalScores, getScores } from './scores';
 
-export type ComputeEdgeOptions = {
+export type ComputeReturnsOptions = {
   isDoubling?: boolean;
   isBlackjack?: boolean;
 };
 
-export const computeEdge = (win: number, lose: number, options: ComputeEdgeOptions = {}) => {
+export const computeReturns = (win: number, lose: number, options: ComputeReturnsOptions = {}) => {
   const effectiveWin = win * (options.isBlackjack ? 1.5 : options.isDoubling ? 2 : 1);
   const effectiveLose = lose * (options.isDoubling ? 2 : 1);
-  const edge = effectiveWin - effectiveLose;
-  return edge;
+  return effectiveWin - effectiveLose;
 };
 
 export const createOutcomes = (): Outcomes => {
   return {
-    edge: 0,
     lose: 0,
     push: 0,
+    returns: 0,
     win: 0,
   };
 };
@@ -78,7 +77,7 @@ export const getDoubleOutcomes = (
     outcomes.win += nextOutcomes.win / cardsNumber;
   }
 
-  outcomes.edge = computeEdge(outcomes.win, outcomes.lose, { isDoubling: true });
+  outcomes.returns = computeReturns(outcomes.win, outcomes.lose, { isDoubling: true });
 
   return outcomes;
 };
@@ -102,7 +101,7 @@ export const getHitOutcomes = (
     outcomes.win += nextOutcomes.win / cardsNumber;
   }
 
-  outcomes.edge = computeEdge(outcomes.win, outcomes.lose);
+  outcomes.returns = computeReturns(outcomes.win, outcomes.lose);
 
   return outcomes;
 };
@@ -116,9 +115,9 @@ export const getStandOutcomes = (
   const win = getWinProbability(dealerProbabilities, playerScore);
 
   return {
-    edge: computeEdge(win, lose, { isBlackjack: playerScore === blackjackScore }),
     lose,
     push,
+    returns: computeReturns(win, lose, { isBlackjack: playerScore === blackjackScore }),
     win,
   };
 };
@@ -126,9 +125,9 @@ export const getStandOutcomes = (
 export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
   return outcomesList.reduce<Outcomes>((reduced, outcomes) => {
     return {
-      edge: reduced.edge + outcomes.edge,
       lose: reduced.lose + outcomes.lose,
       push: reduced.push + outcomes.push,
+      returns: reduced.returns + outcomes.returns,
       win: reduced.win + outcomes.win,
     };
   }, createOutcomes());
@@ -136,16 +135,16 @@ export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
 
 export const multiplyOutcomes = (outcomes: Outcomes, factor: number): Outcomes => {
   return {
-    edge: outcomes.edge * factor,
     lose: outcomes.lose * factor,
     push: outcomes.push * factor,
+    returns: outcomes.returns * factor,
     win: outcomes.win * factor,
   };
 };
 
 export const outcomesToValues = (outcomes: Outcomes) => {
   return [
-    toPercentage(outcomes.edge),
+    toPercentage(outcomes.returns),
     toPercentage(outcomes.win),
     toPercentage(outcomes.lose),
     toPercentage(outcomes.push),

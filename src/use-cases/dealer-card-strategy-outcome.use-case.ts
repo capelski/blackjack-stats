@@ -13,7 +13,7 @@ const allScoresHeaders = ['', ...cards];
 const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
   const allEdges = cards.map((dealerCard) => {
     const decision = dealerCardStrategy[playerScoresLabel][dealerCard];
-    return toPercentage(decision.outcomes[decision.action].edge);
+    return toPercentage(decision.outcomes[decision.action].returns);
   });
 
   return [playerScoresLabel, ...allEdges];

@@ -1,6 +1,6 @@
 Probability and statistics about Blackjack
 
-- [Initial pairs probabilities](./output/initial-pairs-probabilities)
+- [Initial pairs](./output/initial-pairs)
 
 ## Overall dealer stats
 
