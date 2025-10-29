@@ -6,9 +6,24 @@ import { getAction } from './actions.logic';
 import { getDealerFinals } from './dealer-finals.logic';
 import { getStandDecision } from './decisions.logic';
 import { canDouble } from './doubling.logic';
-import { blackjackLabel, bustLabel, getScoresLabel } from './labels.logic';
-import { getDoubleOutcomes, getHitOutcomes, getStandOutcomes } from './outcomes.logic';
+import { getInitialPairs } from './initial-pairs.logic';
+import {
+  actionableLabels,
+  blackjackLabel,
+  bustLabel,
+  getScoresLabel,
+  initialPairLabels,
+} from './labels.logic';
+import {
+  getDoubleOutcomes,
+  getHitOutcomes,
+  getStandOutcomes,
+  mergeOutcomes,
+  multiplyOutcomes,
+  outcomesToValues,
+} from './outcomes.logic';
 import { blackjackScore, bustScore, getHighestScore, playerActionableScores } from './scores';
+import { getTable } from './table.logic';
 
 export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
   const dealerFinals = getDealerFinals();
@@ -42,4 +57,44 @@ export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
   });
 
   return playerScoreStrategy;
+};
+
+export const printPlayerScoreStrategy = (strategy: PlayerScoreStrategy) => {
+  const strategyHeaders = ['Score', 'Decision'];
+  const strategyRows = actionableLabels.map((playerScoreLabel) => {
+    return [playerScoreLabel, strategy[playerScoreLabel].action];
+  });
+  const strategyTable = getTable(strategyHeaders, strategyRows);
+
+  console.log(strategyTable);
+
+  const initialPairs = getInitialPairs();
+
+  const allScoresHeaders = ['Score', 'Returns', 'Win', 'Lose', 'Push'];
+  const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
+    const decision = strategy[playerScoresLabel];
+    const outcomes = decision.outcomes[decision.action];
+
+    return [playerScoresLabel, ...outcomesToValues(outcomes)];
+  });
+  const allScoresTable = getTable(allScoresHeaders, allScoresRows);
+
+  console.log('\n');
+  console.log(allScoresTable);
+
+  const overallHeaders = ['Returns', 'Win', 'Lose', 'Push'];
+  const overallOutcomes = mergeOutcomes(
+    initialPairLabels.map((playerScoresLabel) => {
+      const decision = strategy[playerScoresLabel];
+      const outcomes = decision.outcomes[decision.action];
+      const initialProbability = initialPairs.probabilities[playerScoresLabel];
+
+      return multiplyOutcomes(outcomes, initialProbability);
+    }),
+  );
+  const overallRows = [outcomesToValues(overallOutcomes)];
+  const overallTable = getTable(overallHeaders, overallRows);
+
+  console.log('\n');
+  console.log(overallTable);
 };

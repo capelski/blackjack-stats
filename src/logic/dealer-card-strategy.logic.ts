@@ -7,9 +7,26 @@ import { cards } from './cards.logic';
 import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
 import { getStandDecision } from './decisions.logic';
 import { canDouble } from './doubling.logic';
-import { blackjackLabel, bustLabel, getScoresLabel } from './labels.logic';
-import { getDoubleOutcomes, getHitOutcomes, getStandOutcomes } from './outcomes.logic';
+import { getInitialPairs } from './initial-pairs.logic';
+import {
+  actionableLabels,
+  blackjackLabel,
+  bustLabel,
+  getAbbreviatedAction,
+  getScoresLabel,
+  initialPairLabels,
+} from './labels.logic';
+import {
+  getDoubleOutcomes,
+  getHitOutcomes,
+  getStandOutcomes,
+  mergeOutcomes,
+  multiplyOutcomes,
+  outcomesToValues,
+} from './outcomes.logic';
+import { toPercentage } from './percentages.logic';
 import { blackjackScore, bustScore, getHighestScore, playerActionableScores } from './scores';
+import { getTable } from './table.logic';
 
 export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   const dealerFinalsByCard = getDealerFinalsByCard();
@@ -57,4 +74,53 @@ export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   });
 
   return dealerCardStrategy;
+};
+
+export const printDealerCardStrategy = (strategy: DealerCardStrategy) => {
+  const strategyHeaders = ['', ...cards];
+  const strategyRows = actionableLabels.map((playerScoreLabel) => {
+    const decisions = cards.map((dealerCard) => {
+      return getAbbreviatedAction(strategy[playerScoreLabel][dealerCard].action);
+    });
+    return [playerScoreLabel, ...decisions];
+  });
+  const strategyTable = getTable(strategyHeaders, strategyRows);
+
+  console.log(strategyTable);
+
+  const initialPairs = getInitialPairs();
+
+  const allScoresHeaders = ['', ...cards];
+  const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
+    const allReturns = cards.map((dealerCard) => {
+      const decision = strategy[playerScoresLabel][dealerCard];
+      return toPercentage(decision.outcomes[decision.action].returns);
+    });
+
+    return [playerScoresLabel, ...allReturns];
+  });
+  const allScoresTable = getTable(allScoresHeaders, allScoresRows);
+
+  console.log('\n');
+  console.log(allScoresTable);
+
+  const overallHeaders = ['Returns', 'Win', 'Lose', 'Push'];
+  const overallOutcomes = mergeOutcomes(
+    initialPairLabels.map((playerScoresLabel) => {
+      const allOutcomes = cards.map((dealerCard) => {
+        const decision = strategy[playerScoresLabel][dealerCard];
+        return decision.outcomes[decision.action];
+      });
+      const aggregatedOutcomes = mergeOutcomes(allOutcomes);
+
+      const initialProbability = initialPairs.probabilities[playerScoresLabel];
+      const averageOutcomes = multiplyOutcomes(aggregatedOutcomes, 1 / allOutcomes.length);
+      return multiplyOutcomes(averageOutcomes, initialProbability);
+    }),
+  );
+  const overallRows = [outcomesToValues(overallOutcomes)];
+  const overallTable = getTable(overallHeaders, overallRows);
+
+  console.log('\n');
+  console.log(overallTable);
 };
