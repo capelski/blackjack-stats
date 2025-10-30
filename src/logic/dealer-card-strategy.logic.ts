@@ -9,12 +9,12 @@ import { getStandDecision } from './decisions.logic';
 import { canDouble } from './doubling.logic';
 import { getInitialPairs } from './initial-pairs.logic';
 import {
-  actionableLabels,
   blackjackLabel,
   bustLabel,
   getAbbreviatedAction,
+  getActionableLabels,
+  getInitialPairLabels,
   getScoresLabel,
-  initialPairLabels,
 } from './labels.logic';
 import {
   getDoubleOutcomes,
@@ -78,7 +78,7 @@ export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
 
 export const printDealerCardStrategy = (strategy: DealerCardStrategy) => {
   const strategyHeaders = ['', ...cards];
-  const strategyRows = actionableLabels.map((playerScoreLabel) => {
+  const strategyRows = getActionableLabels().map((playerScoreLabel) => {
     const decisions = cards.map((dealerCard) => {
       return getAbbreviatedAction(strategy[playerScoreLabel][dealerCard].action);
     });
@@ -89,6 +89,7 @@ export const printDealerCardStrategy = (strategy: DealerCardStrategy) => {
   console.log(strategyTable);
 
   const initialPairs = getInitialPairs();
+  const initialPairLabels = getInitialPairLabels();
 
   const allScoresHeaders = ['', ...cards];
   const allScoresRows = initialPairLabels.map((playerScoresLabel) => {

@@ -1,9 +1,10 @@
 import { getInitialPairs } from '../logic/initial-pairs.logic';
-import { initialPairLabels } from '../logic/labels.logic';
+import { getInitialPairLabels } from '../logic/labels.logic';
 import { toPercentage } from '../logic/percentages.logic';
 import { getTable } from '../logic/table.logic';
 
 const initialPairs = getInitialPairs();
+const initialPairLabels = getInitialPairLabels();
 
 const combinationsHeaders = ['Score', 'Combinations', 'Examples'];
 const combinationsRows = initialPairLabels.map((key) => {
