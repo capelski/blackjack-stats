@@ -22,6 +22,7 @@ import {
   multiplyOutcomes,
   outcomesToValues,
 } from './outcomes.logic';
+import { toPercentage } from './percentages.logic';
 import { blackjackScore, bustScore, getHighestScore, playerActionableScores } from './scores';
 import { getTable } from './table.logic';
 
@@ -70,12 +71,12 @@ export const printPlayerScoreStrategy = (strategy: PlayerScoreStrategy) => {
 
   const initialPairs = getInitialPairs();
 
-  const allScoresHeaders = ['Score', 'Returns', 'Win', 'Lose', 'Push'];
+  const allScoresHeaders = ['Score', 'Returns'];
   const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
     const decision = strategy[playerScoresLabel];
     const outcomes = decision.outcomes[decision.action];
 
-    return [playerScoresLabel, ...outcomesToValues(outcomes)];
+    return [playerScoresLabel, toPercentage(outcomes.returns)];
   });
   const allScoresTable = getTable(allScoresHeaders, allScoresRows);
 
