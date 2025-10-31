@@ -7,15 +7,9 @@ import { cards } from './cards.logic';
 import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
 import { getStandDecision } from './decisions.logic';
 import { canDouble } from './doubling.logic';
+import { getPlayerHands } from './hands.logic';
 import { getInitialPairs } from './initial-pairs.logic';
-import {
-  blackjackLabel,
-  bustLabel,
-  getAbbreviatedAction,
-  getActionableLabels,
-  getInitialPairLabels,
-  getScoresLabel,
-} from './labels.logic';
+import { getAbbreviatedAction, getActionableLabels, getInitialPairLabels } from './labels.logic';
 import {
   getDoubleOutcomes,
   getHitOutcomes,
@@ -25,52 +19,46 @@ import {
   outcomesToValues,
 } from './outcomes.logic';
 import { toPercentage } from './percentages.logic';
-import { blackjackScore, bustScore, getHighestScore, playerActionableScores } from './scores';
 import { getTable } from './table.logic';
 
 export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   const dealerFinalsByCard = getDealerFinalsByCard();
-  const dealerCardStrategy: DealerCardStrategy = {
-    [bustLabel]: {},
-    [blackjackLabel]: {},
-    21: {},
-    '11/21': {},
-  };
+  const dealerCardStrategy: DealerCardStrategy = {};
 
   cards.forEach((dealerCard) => {
     const dealerProbabilities = dealerFinalsByCard[dealerCard].probabilities;
 
-    dealerCardStrategy[bustLabel][dealerCard] = getStandDecision(bustScore, dealerProbabilities);
-    dealerCardStrategy[blackjackLabel][dealerCard] = getStandDecision(
-      blackjackScore,
-      dealerProbabilities,
-    );
-    dealerCardStrategy[21][dealerCard] = getStandDecision(21, dealerProbabilities);
-    dealerCardStrategy['11/21'][dealerCard] = getStandDecision(21, dealerProbabilities);
+    for (const playerHand of getPlayerHands()) {
+      dealerCardStrategy[playerHand.label] = dealerCardStrategy[playerHand.label] || {};
 
-    playerActionableScores.forEach((playerScores) => {
-      const scoresLabel = getScoresLabel(playerScores);
+      if (playerHand.isFinal) {
+        dealerCardStrategy[playerHand.label][dealerCard] = getStandDecision(
+          playerHand.effectiveScore,
+          dealerProbabilities,
+        );
+        continue;
+      }
 
       const outcomes: ActionsOutcomes = {
         double: getDoubleOutcomes(
-          playerScores,
+          playerHand.scores,
           (nextScoresLabel) => dealerCardStrategy[nextScoresLabel][dealerCard].outcomes.stand,
         ),
         hit: getHitOutcomes(
-          playerScores,
+          playerHand.scores,
           (nextScoresLabel) => dealerCardStrategy[nextScoresLabel][dealerCard],
         ),
-        stand: getStandOutcomes(dealerProbabilities, getHighestScore(playerScores)),
+        stand: getStandOutcomes(dealerProbabilities, playerHand.effectiveScore),
       };
 
       const playerDecision: PlayerDecision = {
-        action: getAction(outcomes, { canDouble: canDouble(playerScores, options.doubling) }),
+        action: getAction(outcomes, { canDouble: canDouble(playerHand.scores, options.doubling) }),
         outcomes,
       };
 
-      dealerCardStrategy[scoresLabel] = dealerCardStrategy[scoresLabel] || {};
-      dealerCardStrategy[scoresLabel][dealerCard] = playerDecision;
-    });
+      dealerCardStrategy[playerHand.label] = dealerCardStrategy[playerHand.label] || {};
+      dealerCardStrategy[playerHand.label][dealerCard] = playerDecision;
+    }
   });
 
   return dealerCardStrategy;

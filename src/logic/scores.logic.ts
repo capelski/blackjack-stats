@@ -1,36 +1,6 @@
 export const blackjackScore = 21.5;
 export const bustScore = 22;
 
-export const dealerFinalScores = [17, 18, 19, 20, 21, blackjackScore, bustScore];
-export const playerActionableScores = [
-  [20],
-  [19],
-  [18],
-  [17],
-  [16],
-  [15],
-  [14],
-  [13],
-  [12],
-  [11],
-  [10],
-  [10, 20],
-  [9],
-  [9, 19],
-  [8],
-  [8, 18],
-  [7],
-  [7, 17],
-  [6],
-  [6, 16],
-  [5],
-  [5, 15],
-  [4],
-  [4, 14],
-  [3, 13],
-  [2, 12],
-];
-
 export const getEffectiveScore = (score: number) => {
   return score > blackjackScore ? bustScore : score;
 };

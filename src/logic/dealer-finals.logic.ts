@@ -1,16 +1,16 @@
 import { Finals } from '../types/finals.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
-import { getEffectiveScore, getHighestScore, getScores } from './scores';
+import { getEffectiveScore, getHighestScore, getScores } from './scores.logic';
 
 export const getDealerFinals = () => {
-  const handsQueue = cards.map((key) => {
+  const handsQueue = cards.map((card) => {
     return {
-      cards: [key],
-      values: cardValuesDictionary[key],
+      cards: [card],
+      values: cardValuesDictionary[card],
     };
   });
-  const handKeys = cards.reduce<Record<string, boolean>>((reduced, key) => {
-    return { ...reduced, [key]: true };
+  const handCombinations = cards.reduce<Record<string, boolean>>((reduced, card) => {
+    return { ...reduced, [card]: true };
   }, {});
 
   const dealerFinals: Finals = {
@@ -21,18 +21,18 @@ export const getDealerFinals = () => {
   while (handsQueue.length > 0) {
     const hand = handsQueue.shift()!;
 
-    cards.map((key) => {
-      const nextCards = [...hand.cards, key];
-      const nextKey = getCardsCombinations(nextCards);
+    cards.map((card) => {
+      const nextCards = [...hand.cards, card];
+      const nextCombination = getCardsCombinations(nextCards);
       const nextHand = {
         cards: nextCards,
-        values: getScores(hand.values, cardValuesDictionary[key]),
+        values: getScores(hand.values, cardValuesDictionary[card]),
       };
       const nextScore = getHighestScore(nextHand.values, nextCards.length);
 
       if (nextScore < 17) {
-        if (!handKeys[nextKey]) {
-          handKeys[nextKey] = true;
+        if (!handCombinations[nextCombination]) {
+          handCombinations[nextCombination] = true;
           handsQueue.push(nextHand);
         }
       } else {
@@ -40,7 +40,7 @@ export const getDealerFinals = () => {
         if (!dealerFinals.combinations[effectiveFinalScore]) {
           dealerFinals.combinations[effectiveFinalScore] = [];
         }
-        dealerFinals.combinations[effectiveFinalScore].push(nextKey);
+        dealerFinals.combinations[effectiveFinalScore].push(nextCombination);
 
         if (!dealerFinals.probabilities[effectiveFinalScore]) {
           dealerFinals.probabilities[effectiveFinalScore] = 0;

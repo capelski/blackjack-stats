@@ -1,7 +1,7 @@
 import { Finals } from '../types/finals.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getScoresLabel } from './labels.logic';
-import { getScores } from './scores';
+import { getScores } from './scores.logic';
 
 export const getInitialPairs = () => {
   const initialPairs: Finals = {

@@ -1,23 +1,23 @@
 import { Finals, FinalsByDealerCard } from '../types/finals.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
-import { getEffectiveScore, getHighestScore, getScores } from './scores';
+import { getEffectiveScore, getHighestScore, getScores } from './scores.logic';
 
 export const getDealerFinalsByCard = () => {
-  const handsQueueByCard = cards.map((key) => {
+  const handsQueueByCard = cards.map((card) => {
     return {
-      cards: [key],
-      values: cardValuesDictionary[key],
+      cards: [card],
+      values: cardValuesDictionary[card],
     };
   });
 
-  const handKeysByCard = cards.reduce<Record<string, boolean>>((reduced, key) => {
-    return { ...reduced, [key]: true };
+  const handCombinationsByCard = cards.reduce<Record<string, boolean>>((reduced, card) => {
+    return { ...reduced, [card]: true };
   }, {});
 
-  const dealerFinalsByCard = cards.reduce<FinalsByDealerCard>((reduced, key) => {
+  const dealerFinalsByCard = cards.reduce<FinalsByDealerCard>((reduced, card) => {
     return {
       ...reduced,
-      [key]: <Finals>{
+      [card]: <Finals>{
         combinations: {},
         probabilities: {},
       },
@@ -27,18 +27,18 @@ export const getDealerFinalsByCard = () => {
   while (handsQueueByCard.length > 0) {
     const hand = handsQueueByCard.shift()!;
 
-    cards.map((key) => {
-      const nextCards = [...hand.cards, key];
-      const nextKey = getCardsCombinations(nextCards);
+    cards.map((card) => {
+      const nextCards = [...hand.cards, card];
+      const nextCombination = getCardsCombinations(nextCards);
       const nextHand = {
         cards: nextCards,
-        values: getScores(hand.values, cardValuesDictionary[key]),
+        values: getScores(hand.values, cardValuesDictionary[card]),
       };
       const nextScore = getHighestScore(nextHand.values, nextCards.length);
 
       if (nextScore < 17) {
-        if (!handKeysByCard[nextKey]) {
-          handKeysByCard[nextKey] = true;
+        if (!handCombinationsByCard[nextCombination]) {
+          handCombinationsByCard[nextCombination] = true;
           handsQueueByCard.push(nextHand);
         }
       } else {
@@ -48,7 +48,7 @@ export const getDealerFinalsByCard = () => {
         if (!dealerFinals.combinations[effectiveFinalScore]) {
           dealerFinals.combinations[effectiveFinalScore] = [];
         }
-        dealerFinals.combinations[effectiveFinalScore].push(nextKey);
+        dealerFinals.combinations[effectiveFinalScore].push(nextCombination);
 
         if (!dealerFinals.probabilities[effectiveFinalScore]) {
           dealerFinals.probabilities[effectiveFinalScore] = 0;

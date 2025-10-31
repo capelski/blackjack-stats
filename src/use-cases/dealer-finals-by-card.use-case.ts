@@ -1,11 +1,10 @@
 import { cards, cardsNumber } from '../logic/cards.logic';
 import { getDealerFinalsByCard } from '../logic/dealer-finals-by-card.logic';
-import { getScoresLabel } from '../logic/labels.logic';
-import { dealerFinalScores } from '../logic/scores';
+import { dealerFinalHands } from '../logic/hands.logic';
 import { getTable } from '../logic/table.logic';
 import { Finals, FinalsByDealerCard } from '../types/finals.type';
 
-const headers = ['Dealer card', ...dealerFinalScores.map((score) => getScoresLabel([score]))];
+const headers = ['Dealer card', ...dealerFinalHands.map(({ label }) => label)];
 
 const getRows = (
   dealerFinalsByCard: FinalsByDealerCard,
@@ -16,8 +15,8 @@ const getRows = (
 
     return [
       dealerCard,
-      ...dealerFinalScores.map((dealerFinalScore) => {
-        return formatter(dealerFinals, dealerFinalScore);
+      ...dealerFinalHands.map(({ effectiveScore }) => {
+        return formatter(dealerFinals, effectiveScore);
       }),
     ];
   });

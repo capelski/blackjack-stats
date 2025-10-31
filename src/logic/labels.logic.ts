@@ -1,5 +1,5 @@
 import { Action } from '../enums/action.enum';
-import { blackjackScore, getHighestScore } from './scores';
+import { blackjackScore, getHighestScore } from './scores.logic';
 
 export const blackjackLabel = 'BJ';
 export const bustLabel = '22+';
