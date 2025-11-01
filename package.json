@@ -6,13 +6,17 @@
     "build": "tsc -p tsconfig.json",
     "all": "./run-all.sh",
     "initial-pairs": "node dist/use-cases/initial-pairs.use-case.js > output/initial-pairs.md",
+    "initial-pairs-splitting": "node dist/use-cases/initial-pairs-splitting.use-case.js > output/initial-pairs-splitting.md",
     "dealer-finals": "node dist/use-cases/dealer-finals.use-case.js > output/dealer-finals.md",
     "dealer-finals-by-card": "node dist/use-cases/dealer-finals-by-card.use-case.js > output/dealer-finals-by-card.md",
     "player-score-base": "node dist/use-cases/strategies/player-score.base.js > output/strategies/player-score.base.md",
     "player-score-double-all": "node dist/use-cases/strategies/player-score.double-all.js > output/strategies/player-score.double-all.md",
+    "player-score-double-nine": "node dist/use-cases/strategies/player-score.double-nine.js > output/strategies/player-score.double-nine.md",
+    "player-score-split": "node dist/use-cases/strategies/player-score.split.js > output/strategies/player-score.split.md",
     "dealer-card-base": "node dist/use-cases/strategies/dealer-card.base.js > output/strategies/dealer-card.base.md",
     "dealer-card-double-all": "node dist/use-cases/strategies/dealer-card.double-all.js > output/strategies/dealer-card.double-all.md",
-    "dealer-card-double-nine": "node dist/use-cases/strategies/dealer-card.double-nine.js > output/strategies/dealer-card.double-nine.md"
+    "dealer-card-double-nine": "node dist/use-cases/strategies/dealer-card.double-nine.js > output/strategies/dealer-card.double-nine.md",
+    "dealer-card-split": "node dist/use-cases/strategies/dealer-card.split.js > output/strategies/dealer-card.split.md"
   },
   "keywords": [],
   "author": "Carles Capellas <capellas.carles@gmail.com>",

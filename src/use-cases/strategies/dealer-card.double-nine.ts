@@ -1,9 +1,4 @@
 import { Doubling } from '../../enums/doubling.enum';
-import {
-  getDealerCardStrategy,
-  printDealerCardStrategy,
-} from '../../logic/dealer-card-strategy.logic';
+import { printDealerCardStrategy } from '../../logic/dealer-card-strategy.logic';
 
-const dealerCardStrategy = getDealerCardStrategy({ doubling: Doubling.nine_to_eleven });
-
-printDealerCardStrategy(dealerCardStrategy);
+printDealerCardStrategy({ doubling: Doubling.nine_to_eleven });

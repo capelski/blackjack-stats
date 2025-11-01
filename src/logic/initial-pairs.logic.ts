@@ -1,9 +1,12 @@
 import { Finals } from '../types/finals.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
-import { getScoresLabel } from './labels.logic';
+import { getInitialPairLabels, getScoresLabel } from './labels.logic';
+import { toPercentage } from './percentages.logic';
 import { getScores } from './scores.logic';
+import { canSplit } from './splitting.logic';
+import { getTable } from './table.logic';
 
-export const getInitialPairs = () => {
+export const getInitialPairs = (splitting?: boolean) => {
   const initialPairs: Finals = {
     combinations: {},
     probabilities: {},
@@ -17,7 +20,9 @@ export const getInitialPairs = () => {
         cardValuesDictionary[card2],
         cards.length,
       );
-      const label = getScoresLabel(scores);
+      const label = getScoresLabel(scores, {
+        splitCard: canSplit(cards, splitting) ? card1 : undefined,
+      });
       if (!initialPairs.combinations[label]) {
         initialPairs.combinations[label] = [];
       }
@@ -31,4 +36,33 @@ export const getInitialPairs = () => {
   }
 
   return initialPairs;
+};
+
+export const printInitialPairs = (splitting?: boolean) => {
+  const initialPairs = getInitialPairs(splitting);
+  const initialPairLabels = getInitialPairLabels(splitting);
+
+  const combinationsHeaders = ['Score', 'Combinations', 'Examples'];
+  const combinationsRows = initialPairLabels.map((label) => {
+    const examples = initialPairs.combinations[label].slice(0, 10);
+    const drawEllipsis = examples.length < initialPairs.combinations[label].length;
+    return [
+      label,
+      initialPairs.combinations[label].length,
+      `${examples.join(' / ')}${drawEllipsis ? ' ...' : ''}`,
+    ];
+  });
+  const combinationsTable = getTable(combinationsHeaders, combinationsRows);
+
+  console.log(combinationsTable);
+
+  const probabilitiesHeaders = ['Score', 'Probability'];
+  const probabilitiesRows = initialPairLabels.map((label) => {
+    return [label, toPercentage(initialPairs.probabilities[label])];
+  });
+
+  const probabilitiesTable = getTable(probabilitiesHeaders, probabilitiesRows);
+
+  console.log('\n');
+  console.log(probabilitiesTable);
 };

@@ -1,4 +1,5 @@
-import { ActionsOutcomes } from '../types/outcomes.type';
+import { Action } from '../enums/action.enum';
+import { ActionOutcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { PlayerScoreStrategy } from '../types/player-score-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
@@ -12,6 +13,7 @@ import { getActionableLabels, getInitialPairLabels } from './labels.logic';
 import {
   getDoubleOutcomes,
   getHitOutcomes,
+  getSplitOutcomes,
   getStandOutcomes,
   mergeOutcomes,
   multiplyOutcomes,
@@ -24,7 +26,7 @@ export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
   const dealerFinals = getDealerFinals();
   const playerScoreStrategy: PlayerScoreStrategy = {};
 
-  for (const playerHand of getPlayerHands()) {
+  for (const playerHand of getPlayerHands(options.splitting)) {
     playerScoreStrategy[playerHand.label] = playerScoreStrategy[playerHand.label] || {};
 
     if (playerHand.isFinal) {
@@ -35,21 +37,44 @@ export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
       continue;
     }
 
-    const outcomes: ActionsOutcomes = {
-      double: getDoubleOutcomes(
-        playerHand.scores,
-        (nextScoresLabel) => playerScoreStrategy[nextScoresLabel].outcomes.stand,
-      ),
-      hit: getHitOutcomes(
-        playerHand.scores,
-        (nextScoresLabel) => playerScoreStrategy[nextScoresLabel],
-      ),
-      stand: getStandOutcomes(dealerFinals.probabilities, playerHand.effectiveScore),
-    };
+    const standOutcomes = getStandOutcomes(playerHand.effectiveScore, dealerFinals.probabilities);
+    const additionalOutcomes: ActionOutcomes[] = [
+      {
+        action: Action.hit,
+        outcomes: getHitOutcomes(
+          playerHand.scores,
+          (nextScoresLabel) => playerScoreStrategy[nextScoresLabel],
+        ),
+      },
+      {
+        action: Action.stand,
+        outcomes: standOutcomes,
+      },
+    ];
 
+    if (canDouble(playerHand.scores, options.doubling)) {
+      additionalOutcomes.push({
+        action: Action.double,
+        outcomes: getDoubleOutcomes(
+          playerHand.scores,
+          (nextScoresLabel) => playerScoreStrategy[nextScoresLabel].standOutcomes,
+        ),
+      });
+    }
+
+    if (playerHand.splitLabel) {
+      additionalOutcomes.push({
+        action: Action.split,
+        outcomes: getSplitOutcomes(playerScoreStrategy[playerHand.splitLabel]),
+      });
+    }
+
+    const { action, outcomes } = getAction(standOutcomes, additionalOutcomes);
     const playerDecision: PlayerDecision = {
-      action: getAction(outcomes, { canDouble: canDouble(playerHand.scores, options.doubling) }),
+      action,
+      additionalOutcomes,
       outcomes,
+      standOutcomes,
     };
 
     playerScoreStrategy[playerHand.label] = playerScoreStrategy[playerHand.label] || {};
@@ -59,24 +84,25 @@ export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
   return playerScoreStrategy;
 };
 
-export const printPlayerScoreStrategy = (strategy: PlayerScoreStrategy) => {
+export const printPlayerScoreStrategy = (strategyOptions: StrategyOptions = {}) => {
+  const strategy = getPlayerScoreStrategy(strategyOptions);
+
   const strategyHeaders = ['Score', 'Decision'];
-  const strategyRows = getActionableLabels().map((playerScoreLabel) => {
+  const strategyRows = getActionableLabels(strategyOptions.splitting).map((playerScoreLabel) => {
     return [playerScoreLabel, strategy[playerScoreLabel].action];
   });
   const strategyTable = getTable(strategyHeaders, strategyRows);
 
   console.log(strategyTable);
 
-  const initialPairs = getInitialPairs();
-  const initialPairLabels = getInitialPairLabels();
+  const initialPairs = getInitialPairs(strategyOptions.splitting);
+  const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
 
   const allScoresHeaders = ['Score', 'Returns'];
   const allScoresRows = initialPairLabels.map((playerScoresLabel) => {
     const decision = strategy[playerScoresLabel];
-    const outcomes = decision.outcomes[decision.action];
 
-    return [playerScoresLabel, toPercentage(outcomes.returns)];
+    return [playerScoresLabel, toPercentage(decision.outcomes.returns)];
   });
   const allScoresTable = getTable(allScoresHeaders, allScoresRows);
 
@@ -87,10 +113,9 @@ export const printPlayerScoreStrategy = (strategy: PlayerScoreStrategy) => {
   const overallOutcomes = mergeOutcomes(
     initialPairLabels.map((playerScoresLabel) => {
       const decision = strategy[playerScoresLabel];
-      const outcomes = decision.outcomes[decision.action];
       const initialProbability = initialPairs.probabilities[playerScoresLabel];
 
-      return multiplyOutcomes(outcomes, initialProbability);
+      return multiplyOutcomes(decision.outcomes, initialProbability);
     }),
   );
   const overallRows = [outcomesToValues(overallOutcomes)];

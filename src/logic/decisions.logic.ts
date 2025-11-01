@@ -7,12 +7,11 @@ export const getStandDecision = (
   playerScore: number,
   dealerProbabilities: Finals['probabilities'],
 ): PlayerDecision => {
+  const outcomes = getStandOutcomes(playerScore, dealerProbabilities);
   return {
     action: Action.stand,
-    outcomes: {
-      double: undefined!,
-      hit: undefined!,
-      stand: getStandOutcomes(dealerProbabilities, playerScore),
-    },
+    additionalOutcomes: [],
+    outcomes,
+    standOutcomes: outcomes,
   };
 };

@@ -8,13 +8,13 @@ import { toPercentage } from './percentages.logic';
 import { blackjackScore, bustScore, getScores } from './scores.logic';
 
 export type ComputeReturnsOptions = {
-  isDoubling?: boolean;
+  isDoubleBet?: boolean;
   isBlackjack?: boolean;
 };
 
 export const computeReturns = (win: number, lose: number, options: ComputeReturnsOptions = {}) => {
-  const effectiveWin = win * (options.isBlackjack ? 1.5 : options.isDoubling ? 2 : 1);
-  const effectiveLose = lose * (options.isDoubling ? 2 : 1);
+  const effectiveWin = win * (options.isBlackjack ? 1.5 : options.isDoubleBet ? 2 : 1);
+  const effectiveLose = lose * (options.isDoubleBet ? 2 : 1);
   return effectiveWin - effectiveLose;
 };
 
@@ -84,7 +84,7 @@ export const getDoubleOutcomes = (
     outcomes.win += nextOutcomes.win / cardsNumber;
   }
 
-  outcomes.returns = computeReturns(outcomes.win, outcomes.lose, { isDoubling: true });
+  outcomes.returns = computeReturns(outcomes.win, outcomes.lose, { isDoubleBet: true });
 
   return outcomes;
 };
@@ -100,12 +100,10 @@ export const getHitOutcomes = (
     const nextScoresLabel = getScoresLabel(nextScores);
 
     const nextDecision = getNextScoreDecision(nextScoresLabel);
-    const nextAction = nextDecision.action;
-    const nextOutcomes = nextDecision.outcomes[nextAction];
 
-    outcomes.lose += nextOutcomes.lose / cardsNumber;
-    outcomes.push += nextOutcomes.push / cardsNumber;
-    outcomes.win += nextOutcomes.win / cardsNumber;
+    outcomes.lose += nextDecision.outcomes.lose / cardsNumber;
+    outcomes.push += nextDecision.outcomes.push / cardsNumber;
+    outcomes.win += nextDecision.outcomes.win / cardsNumber;
   }
 
   outcomes.returns = computeReturns(outcomes.win, outcomes.lose);
@@ -113,9 +111,20 @@ export const getHitOutcomes = (
   return outcomes;
 };
 
+export const getSplitOutcomes = (playerDecision: PlayerDecision) => {
+  const outcomes: Outcomes = {
+    ...playerDecision.outcomes,
+    returns: computeReturns(playerDecision.outcomes.win, playerDecision.outcomes.lose, {
+      isDoubleBet: true,
+    }),
+  };
+
+  return outcomes;
+};
+
 export const getStandOutcomes = (
-  dealerProbabilities: Finals['probabilities'],
   playerScore: number,
+  dealerProbabilities: Finals['probabilities'],
 ): Outcomes => {
   const lose = getLoseProbability(dealerProbabilities, playerScore);
   const push = getPushProbability(dealerProbabilities, playerScore);

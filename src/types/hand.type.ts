@@ -13,4 +13,5 @@ export type DealerHand = {
 export type PlayerHand = DealerHand & {
   isFinal?: boolean;
   scores: number[];
+  splitLabel?: string;
 };

@@ -1,7 +1,9 @@
 import { Action } from '../enums/action.enum';
-import { ActionsOutcomes } from './outcomes.type';
+import { ActionOutcomes, Outcomes } from './outcomes.type';
 
 export type PlayerDecision = {
   action: Action;
-  outcomes: ActionsOutcomes;
+  additionalOutcomes: ActionOutcomes[];
+  outcomes: Outcomes;
+  standOutcomes: Outcomes;
 };

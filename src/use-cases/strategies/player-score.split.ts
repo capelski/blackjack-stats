@@ -1,3 +1,3 @@
 import { printPlayerScoreStrategy } from '../../logic/player-score-strategy.logic';
 
-printPlayerScoreStrategy();
+printPlayerScoreStrategy({ splitting: true });

@@ -1,26 +1,18 @@
 import { Action } from '../enums/action.enum';
-import { ActionsOutcomes } from '../types/outcomes.type';
+import { ActionOutcomes, Outcomes } from '../types/outcomes.type';
 
-export type ReducedActionsOutcomes = { action: Action; maximum: number };
+export type ReducedActionsOutcomes = { action: Action; outcomes: Outcomes };
 
-export type ActionOptions = {
-  canDouble: boolean;
-};
+export const getAction = (standOutcomes: Outcomes, actionOutcomes: ActionOutcomes[]) => {
+  const { action, outcomes } = actionOutcomes.reduce<ReducedActionsOutcomes>(
+    (reduced, { action, outcomes }) => {
+      return outcomes.returns > reduced.outcomes.returns ? { action, outcomes } : reduced;
+    },
+    {
+      action: Action.stand,
+      outcomes: standOutcomes,
+    },
+  );
 
-export const getAction = (actionsOutcomes: ActionsOutcomes, options: ActionOptions) => {
-  const allActions = Object.keys(Action) as Action[];
-  const { action } = allActions
-    .filter((action) => action !== Action.double || options.canDouble)
-    .reduce<ReducedActionsOutcomes>(
-      (reduced, action) => {
-        const { returns } = actionsOutcomes[action];
-        return reduced.maximum < returns ? { action, maximum: returns } : reduced;
-      },
-      {
-        action: undefined!,
-        maximum: -10,
-      },
-    );
-
-  return action;
+  return { action, outcomes };
 };

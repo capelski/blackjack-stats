@@ -7,4 +7,7 @@ export type Outcomes = {
   win: number;
 };
 
-export type ActionsOutcomes = { [key in Action]: Outcomes };
+export type ActionOutcomes = {
+  action: Action;
+  outcomes: Outcomes;
+};
