@@ -13,10 +13,12 @@
     "player-score-double-all": "node dist/use-cases/strategies/player-score.double-all.js > output/strategies/player-score.double-all.md",
     "player-score-double-nine": "node dist/use-cases/strategies/player-score.double-nine.js > output/strategies/player-score.double-nine.md",
     "player-score-split": "node dist/use-cases/strategies/player-score.split.js > output/strategies/player-score.split.md",
+    "player-score-optimal": "node dist/use-cases/strategies/player-score.optimal.js > output/strategies/player-score.optimal.md",
     "dealer-card-base": "node dist/use-cases/strategies/dealer-card.base.js > output/strategies/dealer-card.base.md",
     "dealer-card-double-all": "node dist/use-cases/strategies/dealer-card.double-all.js > output/strategies/dealer-card.double-all.md",
     "dealer-card-double-nine": "node dist/use-cases/strategies/dealer-card.double-nine.js > output/strategies/dealer-card.double-nine.md",
-    "dealer-card-split": "node dist/use-cases/strategies/dealer-card.split.js > output/strategies/dealer-card.split.md"
+    "dealer-card-split": "node dist/use-cases/strategies/dealer-card.split.js > output/strategies/dealer-card.split.md",
+    "dealer-card-optimal": "node dist/use-cases/strategies/dealer-card.optimal.js > output/strategies/dealer-card.optimal.md"
   },
   "keywords": [],
   "author": "Carles Capellas <capellas.carles@gmail.com>",

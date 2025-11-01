@@ -16,9 +16,12 @@ Probability and statistics about Blackjack
 - [Double all](./output/strategies/player-score.double-all.md)
 - [Double 9/10/11](./output/strategies/player-score.double-nine.md)
 - [Split](./output/strategies/player-score.split.md)
+- [Optimal](./output/strategies/player-score.optimal.md)
 
 ## Dealer card strategies
 
 - [Base](./output/strategies/dealer-card.base.md)
 - [Double all](./output/strategies/dealer-card.double-all.md)
+- [Double 9/10/11](./output/strategies/dealer-card.double-nine.md)
 - [Split](./output/strategies/dealer-card.split.md)
+- [Optimal](./output/strategies/dealer-card.optimal.md)
