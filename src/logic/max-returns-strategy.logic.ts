@@ -1,7 +1,6 @@
 import { Action } from '../enums/action.enum';
 import { ActionOutcomes } from '../types/outcomes.type';
-import { PlayerDecision } from '../types/player-decision.type';
-import { PlayerScoreStrategy } from '../types/player-score-strategy.type';
+import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { getAction } from './actions.logic';
 import { getDealerFinals } from './dealer-finals.logic';
@@ -22,15 +21,13 @@ import {
 import { toPercentage } from './percentages.logic';
 import { getTable } from './table.logic';
 
-export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
+export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
   const dealerFinals = getDealerFinals();
-  const playerScoreStrategy: PlayerScoreStrategy = {};
+  const maxReturnsStrategy: PlayerDecisionStrategy = {};
 
   for (const playerHand of getPlayerHands(options.splitting)) {
-    playerScoreStrategy[playerHand.label] = playerScoreStrategy[playerHand.label] || {};
-
     if (playerHand.isFinal) {
-      playerScoreStrategy[playerHand.label] = getStandDecision(
+      maxReturnsStrategy[playerHand.label] = getStandDecision(
         playerHand.effectiveScore,
         dealerFinals.probabilities,
       );
@@ -43,12 +40,8 @@ export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
         action: Action.hit,
         outcomes: getHitOutcomes(
           playerHand.scores,
-          (nextScoresLabel) => playerScoreStrategy[nextScoresLabel],
+          (nextScoresLabel) => maxReturnsStrategy[nextScoresLabel],
         ),
-      },
-      {
-        action: Action.stand,
-        outcomes: standOutcomes,
       },
     ];
 
@@ -57,7 +50,7 @@ export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
         action: Action.double,
         outcomes: getDoubleOutcomes(
           playerHand.scores,
-          (nextScoresLabel) => playerScoreStrategy[nextScoresLabel].standOutcomes,
+          (nextScoresLabel) => maxReturnsStrategy[nextScoresLabel].standOutcomes,
         ),
       });
     }
@@ -65,27 +58,25 @@ export const getPlayerScoreStrategy = (options: StrategyOptions = {}) => {
     if (playerHand.splitLabel) {
       additionalOutcomes.push({
         action: Action.split,
-        outcomes: getSplitOutcomes(playerScoreStrategy[playerHand.splitLabel]),
+        outcomes: getSplitOutcomes(maxReturnsStrategy[playerHand.splitLabel]),
       });
     }
 
     const { action, outcomes } = getAction(standOutcomes, additionalOutcomes);
-    const playerDecision: PlayerDecision = {
+
+    maxReturnsStrategy[playerHand.label] = {
       action,
       additionalOutcomes,
       outcomes,
       standOutcomes,
     };
-
-    playerScoreStrategy[playerHand.label] = playerScoreStrategy[playerHand.label] || {};
-    playerScoreStrategy[playerHand.label] = playerDecision;
   }
 
-  return playerScoreStrategy;
+  return maxReturnsStrategy;
 };
 
-export const printPlayerScoreStrategy = (strategyOptions: StrategyOptions = {}) => {
-  const strategy = getPlayerScoreStrategy(strategyOptions);
+export const printMaxReturnsStrategy = (strategyOptions: StrategyOptions = {}) => {
+  const strategy = getMaxReturnsStrategy(strategyOptions);
 
   const strategyHeaders = ['Score', 'Decision'];
   const strategyRows = getActionableLabels(strategyOptions.splitting).map((playerScoreLabel) => {

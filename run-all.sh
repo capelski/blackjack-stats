@@ -6,12 +6,16 @@ npm run initial-pairs-splitting;
 npm run dealer-finals;
 npm run dealer-finals-by-card;
 
+# Naive strategies
+npm run always-stand;
+npm run zero-risk;
+
 # Player score strategies
-npm run player-score-base;
-npm run player-score-double-all;
-npm run player-score-double-nine;
-npm run player-score-split;
-npm run player-score-optimal;
+npm run max-returns-base;
+npm run max-returns-double-all;
+npm run max-returns-double-nine;
+npm run max-returns-split;
+npm run max-returns-optimal;
 
 # Dealer card strategies
 npm run dealer-card-base;

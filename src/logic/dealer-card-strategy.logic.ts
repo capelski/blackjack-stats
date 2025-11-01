@@ -1,7 +1,6 @@
 import { Action } from '../enums/action.enum';
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
 import { ActionOutcomes } from '../types/outcomes.type';
-import { PlayerDecision } from '../types/player-decision.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { getAction } from './actions.logic';
 import { cards } from './cards.logic';
@@ -70,15 +69,13 @@ export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
       }
 
       const { action, outcomes } = getAction(standOutcomes, additionalOutcomes);
-      const playerDecision: PlayerDecision = {
+
+      dealerCardStrategy[playerHand.label][dealerCard] = {
         action,
         additionalOutcomes,
         outcomes,
         standOutcomes,
       };
-
-      dealerCardStrategy[playerHand.label] = dealerCardStrategy[playerHand.label] || {};
-      dealerCardStrategy[playerHand.label][dealerCard] = playerDecision;
     }
   });
 

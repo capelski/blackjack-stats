@@ -10,13 +10,18 @@ Probability and statistics about Blackjack
 - [Dealer finals](./output/dealer-finals.md)
 - [Dealer finals by card](./output/dealer-finals-by-card.md)
 
-## Player score strategies
+## Naive strategies
 
-- [Base](./output/strategies/player-score.base.md)
-- [Double all](./output/strategies/player-score.double-all.md)
-- [Double 9/10/11](./output/strategies/player-score.double-nine.md)
-- [Split](./output/strategies/player-score.split.md)
-- [Optimal](./output/strategies/player-score.optimal.md)
+- [Always stand](./output/strategies/always-stand.md)
+- [Zero risk](./output/strategies/zero-risk.md)
+
+## Maximum returns strategies
+
+- [Base](./output/strategies/max-returns.base.md)
+- [Double all](./output/strategies/max-returns.double-all.md)
+- [Double 9/10/11](./output/strategies/max-returns.double-nine.md)
+- [Split](./output/strategies/max-returns.split.md)
+- [Optimal](./output/strategies/max-returns.optimal.md)
 
 ## Dealer card strategies
 
