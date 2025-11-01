@@ -13,6 +13,7 @@ Probability and statistics about Blackjack
 ## Naive strategies
 
 - [Always stand](./output/strategies/always-stand.md)
+- [Copycat](./output/strategies/copycat.md)
 - [Zero risk](./output/strategies/zero-risk.md)
 
 ## Maximum returns strategies

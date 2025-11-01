@@ -8,6 +8,7 @@ npm run dealer-finals-by-card;
 
 # Naive strategies
 npm run always-stand;
+npm run copycat;
 npm run zero-risk;
 
 # Player score strategies
