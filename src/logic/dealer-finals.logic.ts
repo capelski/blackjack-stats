@@ -1,12 +1,13 @@
 import { Finals } from '../types/finals.type';
+import { HandWithCards } from '../types/hand.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
-import { getEffectiveScore, getHighestScore, getScores } from './scores.logic';
+import { getEffectiveScore, getScores } from './scores.logic';
 
 export const getDealerFinals = () => {
-  const handsQueue = cards.map((card) => {
+  const handsQueue = cards.map<HandWithCards>((card) => {
     return {
       cards: [card],
-      values: cardValuesDictionary[card],
+      scores: cardValuesDictionary[card],
     };
   });
   const handCombinations = cards.reduce<Record<string, boolean>>((reduced, card) => {
@@ -24,28 +25,29 @@ export const getDealerFinals = () => {
     cards.map((card) => {
       const nextCards = [...hand.cards, card];
       const nextCombination = getCardsCombinations(nextCards);
-      const nextHand = {
-        cards: nextCards,
-        values: getScores(hand.values, cardValuesDictionary[card]),
-      };
-      const nextScore = getHighestScore(nextHand.values, nextCards.length);
+      const nextScores = getScores(hand.scores, cardValuesDictionary[card], nextCards.length);
+      const nextEffectiveScore = getEffectiveScore(nextScores);
 
-      if (nextScore < 17) {
+      const nextHand: HandWithCards = {
+        cards: nextCards,
+        scores: nextScores,
+      };
+
+      if (nextEffectiveScore < 17) {
         if (!handCombinations[nextCombination]) {
           handCombinations[nextCombination] = true;
           handsQueue.push(nextHand);
         }
       } else {
-        const effectiveFinalScore = getEffectiveScore(nextScore);
-        if (!dealerFinals.combinations[effectiveFinalScore]) {
-          dealerFinals.combinations[effectiveFinalScore] = [];
+        if (!dealerFinals.combinations[nextEffectiveScore]) {
+          dealerFinals.combinations[nextEffectiveScore] = [];
         }
-        dealerFinals.combinations[effectiveFinalScore].push(nextCombination);
+        dealerFinals.combinations[nextEffectiveScore].push(nextCombination);
 
-        if (!dealerFinals.probabilities[effectiveFinalScore]) {
-          dealerFinals.probabilities[effectiveFinalScore] = 0;
+        if (!dealerFinals.probabilities[nextEffectiveScore]) {
+          dealerFinals.probabilities[nextEffectiveScore] = 0;
         }
-        dealerFinals.probabilities[effectiveFinalScore] +=
+        dealerFinals.probabilities[nextEffectiveScore] +=
           1 / Math.pow(cardsNumber, nextHand.cards.length);
       }
     });

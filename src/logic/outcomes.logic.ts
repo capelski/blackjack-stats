@@ -74,7 +74,7 @@ export const getDoubleOutcomes = (
   const outcomes = createOutcomes();
 
   for (const nextCardValues of cardValues) {
-    const nextScores = getScores(playerScores, nextCardValues);
+    const nextScores = getScores(playerScores, nextCardValues, undefined);
     const nextScoresLabel = getScoresLabel(nextScores);
 
     const nextOutcomes = getNextScoreOutcomes(nextScoresLabel);
@@ -96,7 +96,7 @@ export const getHitOutcomes = (
   const outcomes = createOutcomes();
 
   for (const nextCardValues of cardValues) {
-    const nextScores = getScores(playerScores, nextCardValues);
+    const nextScores = getScores(playerScores, nextCardValues, undefined);
     const nextScoresLabel = getScoresLabel(nextScores);
 
     const nextDecision = getNextScoreDecision(nextScoresLabel);

@@ -11,12 +11,17 @@ export const getInitialPairs = () => {
 
   for (const card1 of cards) {
     for (const card2 of cards) {
-      const scores = getScores(cardValuesDictionary[card1], cardValuesDictionary[card2]);
-      const label = getScoresLabel(scores, 2);
+      const cards = [card1, card2];
+      const scores = getScores(
+        cardValuesDictionary[card1],
+        cardValuesDictionary[card2],
+        cards.length,
+      );
+      const label = getScoresLabel(scores);
       if (!initialPairs.combinations[label]) {
         initialPairs.combinations[label] = [];
       }
-      initialPairs.combinations[label].push(getCardsCombinations([card1, card2]));
+      initialPairs.combinations[label].push(getCardsCombinations(cards));
 
       if (!initialPairs.probabilities[label]) {
         initialPairs.probabilities[label] = 0;

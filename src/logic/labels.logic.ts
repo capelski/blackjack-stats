@@ -1,5 +1,5 @@
 import { Action } from '../enums/action.enum';
-import { blackjackScore, getHighestScore } from './scores.logic';
+import { blackjackScore, getEffectiveScore } from './scores.logic';
 
 export const blackjackLabel = 'BJ';
 export const bustLabel = '22+';
@@ -51,8 +51,8 @@ export const getAbbreviatedAction = (action: Action) => {
   return abbreviatedActions[action];
 };
 
-export const getScoresLabel = (scores: number[], cardsNumber?: number) => {
-  const score = getHighestScore(scores, cardsNumber);
+export const getScoresLabel = (scores: number[]) => {
+  const score = getEffectiveScore(scores);
   return score > blackjackScore
     ? bustLabel
     : score === blackjackScore
