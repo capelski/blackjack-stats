@@ -7,6 +7,7 @@
     "all": "./run-all.sh",
     "initial-pairs": "./run-one.sh initial-pairs.use-case initial-pairs",
     "initial-pairs-splitting": "./run-one.sh initial-pairs-splitting.use-case initial-pairs-splitting",
+    "score-dependencies": "./run-one.sh score-dependencies.use-case score-dependencies",
     "dealer-finals": "./run-one.sh dealer-finals.use-case dealer-finals",
     "always-stand": "./run-one.sh strategies/always-stand strategies/always-stand",
     "copycat": "./run-one.sh strategies/copycat strategies/copycat",

@@ -1,6 +1,7 @@
 # Initial pairs
 npm run initial-pairs;
 npm run initial-pairs-splitting;
+npm run score-dependencies;
 
 # Dealer final scores
 npm run dealer-finals;

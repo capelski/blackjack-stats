@@ -4,6 +4,7 @@ Probability and statistics about Blackjack
 
 - [Initial pairs](./output/initial-pairs.md)
 - [Initial pairs splitting](./output/initial-pairs-splitting.md)
+- [Score dependencies](./output/score-dependencies.md)
 
 ## Dealer final scores
 
