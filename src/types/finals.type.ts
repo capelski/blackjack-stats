@@ -1,6 +1,8 @@
+export type FinalProbabilities = Record<string, number>;
+
 export type Finals = {
   combinations: Record<string, string[]>;
-  probabilities: Record<string, number>;
+  probabilities: FinalProbabilities;
 };
 
 export type FinalsByDealerCard = Record<string, Finals>;

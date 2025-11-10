@@ -8,22 +8,22 @@ export const softScoresSeparator = '/';
 
 export const getInitialPairLabels = (splitting?: boolean) => {
   const commonHardScores = [
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '20',
     blackjackLabel,
   ];
 
@@ -56,11 +56,11 @@ export const getInitialPairLabels = (splitting?: boolean) => {
         'Q,Q',
         'K,K',
       ]
-    : [4, ...commonHardScores, `2${softScoresSeparator}12`, ...commonSoftScores];
+    : ['4', ...commonHardScores, `2${softScoresSeparator}12`, ...commonSoftScores];
 };
 
 export const getActionableLabels = (splitting?: boolean) => {
-  return getInitialPairLabels(splitting).filter((label) => label !== blackjackLabel);
+  return getInitialPairLabels(splitting).filter(label => label !== blackjackLabel);
 };
 
 const abbreviatedActions: { [action in Action]: string } = {

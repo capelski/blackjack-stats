@@ -1,18 +1,20 @@
 import { Action } from '../enums/action.enum';
 import { ActionOutcomes, Outcomes } from '../types/outcomes.type';
 
-export type ReducedActionsOutcomes = { action: Action; outcomes: Outcomes };
+export type ReducedActionsOutcomes = { action: Action; selectedOutcomes: Outcomes };
 
 export const getAction = (standOutcomes: Outcomes, actionOutcomes: ActionOutcomes[]) => {
-  const { action, outcomes } = actionOutcomes.reduce<ReducedActionsOutcomes>(
+  const { action, selectedOutcomes } = actionOutcomes.reduce<ReducedActionsOutcomes>(
     (reduced, { action, outcomes }) => {
-      return outcomes.returns > reduced.outcomes.returns ? { action, outcomes } : reduced;
+      return outcomes.returns > reduced.selectedOutcomes.returns
+        ? { action, selectedOutcomes: outcomes }
+        : reduced;
     },
     {
       action: Action.stand,
-      outcomes: standOutcomes,
+      selectedOutcomes: standOutcomes,
     },
   );
 
-  return { action, outcomes };
+  return { action, selectedOutcomes };
 };

@@ -5,6 +5,7 @@ import { cardsNumber, cardValues } from './cards.logic';
 import { dealerFinalHands } from './hands.logic';
 import { getScoresLabel } from './labels.logic';
 import { toPercentage } from './percentages.logic';
+import { mergeFinalProbabilities, multiplyFinalProbabilities } from './player-finals.logic';
 import { blackjackScore, bustScore, getScores } from './scores.logic';
 
 export type ComputeReturnsOptions = {
@@ -20,10 +21,13 @@ export const computeReturns = (win: number, lose: number, options: ComputeReturn
 
 export const createOutcomes = (): Outcomes => {
   return {
+    finalProbabilities: {},
+
     lose: 0,
     push: 0,
-    returns: 0,
     win: 0,
+
+    returns: 0,
   };
 };
 
@@ -76,8 +80,17 @@ export const getDoubleOutcomes = (
   for (const nextCardValues of cardValues) {
     const nextScores = getScores(playerScores, nextCardValues, undefined);
     const nextScoresLabel = getScoresLabel(nextScores);
-
     const nextOutcomes = getNextScoreOutcomes(nextScoresLabel);
+
+    const weightedProbabilities = multiplyFinalProbabilities(
+      nextOutcomes.finalProbabilities,
+      1 / cardsNumber,
+    );
+
+    outcomes.finalProbabilities = mergeFinalProbabilities(
+      outcomes.finalProbabilities,
+      weightedProbabilities,
+    );
 
     outcomes.lose += nextOutcomes.lose / cardsNumber;
     outcomes.push += nextOutcomes.push / cardsNumber;
@@ -98,12 +111,21 @@ export const getHitOutcomes = (
   for (const nextCardValues of cardValues) {
     const nextScores = getScores(playerScores, nextCardValues, undefined);
     const nextScoresLabel = getScoresLabel(nextScores);
-
     const nextDecision = getNextScoreDecision(nextScoresLabel);
 
-    outcomes.lose += nextDecision.outcomes.lose / cardsNumber;
-    outcomes.push += nextDecision.outcomes.push / cardsNumber;
-    outcomes.win += nextDecision.outcomes.win / cardsNumber;
+    const weightedProbabilities = multiplyFinalProbabilities(
+      nextDecision.selectedOutcomes.finalProbabilities,
+      1 / cardsNumber,
+    );
+
+    outcomes.finalProbabilities = mergeFinalProbabilities(
+      outcomes.finalProbabilities,
+      weightedProbabilities,
+    );
+
+    outcomes.lose += nextDecision.selectedOutcomes.lose / cardsNumber;
+    outcomes.push += nextDecision.selectedOutcomes.push / cardsNumber;
+    outcomes.win += nextDecision.selectedOutcomes.win / cardsNumber;
   }
 
   outcomes.returns = computeReturns(outcomes.win, outcomes.lose);
@@ -113,10 +135,14 @@ export const getHitOutcomes = (
 
 export const getSplitOutcomes = (playerDecision: PlayerDecision) => {
   const outcomes: Outcomes = {
-    ...playerDecision.outcomes,
-    returns: computeReturns(playerDecision.outcomes.win, playerDecision.outcomes.lose, {
-      isDoubleBet: true,
-    }),
+    ...playerDecision.selectedOutcomes,
+    returns: computeReturns(
+      playerDecision.selectedOutcomes.win,
+      playerDecision.selectedOutcomes.lose,
+      {
+        isDoubleBet: true,
+      },
+    ),
   };
 
   return outcomes;
@@ -131,30 +157,42 @@ export const getStandOutcomes = (
   const win = getWinProbability(dealerProbabilities, playerScore);
 
   return {
+    finalProbabilities: { [getScoresLabel([playerScore])]: 1 },
+
     lose,
     push,
-    returns: computeReturns(win, lose, { isBlackjack: playerScore === blackjackScore }),
     win,
+
+    returns: computeReturns(win, lose, { isBlackjack: playerScore === blackjackScore }),
   };
 };
 
 export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
   return outcomesList.reduce<Outcomes>((reduced, outcomes) => {
     return {
+      finalProbabilities: mergeFinalProbabilities(
+        reduced.finalProbabilities,
+        outcomes.finalProbabilities,
+      ),
+
       lose: reduced.lose + outcomes.lose,
       push: reduced.push + outcomes.push,
-      returns: reduced.returns + outcomes.returns,
       win: reduced.win + outcomes.win,
+
+      returns: reduced.returns + outcomes.returns,
     };
   }, createOutcomes());
 };
 
 export const multiplyOutcomes = (outcomes: Outcomes, factor: number): Outcomes => {
   return {
+    finalProbabilities: multiplyFinalProbabilities(outcomes.finalProbabilities, factor),
+
     lose: outcomes.lose * factor,
     push: outcomes.push * factor,
-    returns: outcomes.returns * factor,
     win: outcomes.win * factor,
+
+    returns: outcomes.returns * factor,
   };
 };
 
