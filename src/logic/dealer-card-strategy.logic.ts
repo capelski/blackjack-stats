@@ -1,5 +1,6 @@
 import { Action } from '../enums/action.enum';
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
+import { FinalProbabilities } from '../types/finals.type';
 import { ActionOutcomes } from '../types/outcomes.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { getAction } from './actions.logic';
@@ -18,7 +19,12 @@ import {
   multiplyOutcomes,
 } from './outcomes.logic';
 import { toPercentage } from './percentages.logic';
-import { getTable, printOverallReturnsTable } from './table.logic';
+import { mergeFinalProbabilities, multiplyFinalProbabilities } from './player-finals.logic';
+import {
+  getTable,
+  printOverallFinalProbabilitiesTable,
+  printOverallReturnsTable,
+} from './table.logic';
 
 export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   const dealerFinalsByCard = getDealerFinalsByCard();
@@ -115,6 +121,19 @@ export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) =
   console.log(finalsTable);
 
   const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
+
+  console.log('\n');
+
+  printOverallFinalProbabilitiesTable(playerScoresLabel => {
+    const allProbabilities = cards.map(dealerCard => {
+      const decision = strategy[playerScoresLabel][dealerCard];
+      return multiplyFinalProbabilities(
+        decision.selectedOutcomes.finalProbabilities,
+        1 / cards.length,
+      );
+    });
+    return allProbabilities.reduce<FinalProbabilities>(mergeFinalProbabilities, {});
+  }, strategyOptions);
 
   const allScoresHeaders = ['', ...cards];
   const allScoresRows = initialPairLabels.map(playerScoresLabel => {

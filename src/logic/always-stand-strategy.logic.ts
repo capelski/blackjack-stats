@@ -2,7 +2,11 @@ import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { getDealerFinals } from './dealer-finals.logic';
 import { getStandDecision } from './decisions.logic';
 import { getPlayerHands } from './hands.logic';
-import { printOverallReturnsTable, printReturnsTable } from './table.logic';
+import {
+  printOverallFinalProbabilitiesTable,
+  printOverallReturnsTable,
+  printReturnsTable,
+} from './table.logic';
 
 export const getAlwaysStandStrategy = () => {
   const dealerFinals = getDealerFinals();
@@ -20,6 +24,12 @@ export const getAlwaysStandStrategy = () => {
 
 export const printAlwaysStandStrategy = () => {
   const strategy = getAlwaysStandStrategy();
+
+  printOverallFinalProbabilitiesTable(
+    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
+  );
+
+  console.log('\n');
 
   printReturnsTable(playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.returns);
 

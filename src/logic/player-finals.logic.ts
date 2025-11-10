@@ -1,6 +1,7 @@
 import { FinalProbabilities } from '../types/finals.type';
 import { cardsNumber, cardValues } from './cards.logic';
 import { getScoresLabel } from './labels.logic';
+import { toPercentage } from './percentages.logic';
 import { getEffectiveScore, getScores } from './scores.logic';
 
 export const getHitFinalProbabilities = (
@@ -50,4 +51,10 @@ export const multiplyFinalProbabilities = (
       [key]: finalProbabilities[key] * factor,
     };
   }, {});
+};
+
+export const stringifyFinalProbabilities = (finalProbabilities: FinalProbabilities): string[] => {
+  return Object.keys(finalProbabilities).map(finalScoreLabel => {
+    return `${finalScoreLabel}: ${toPercentage(finalProbabilities[finalScoreLabel])}`;
+  });
 };

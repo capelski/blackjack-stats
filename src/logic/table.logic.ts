@@ -7,6 +7,11 @@ import { getInitialPairs } from './initial-pairs.logic';
 import { getActionableLabels, getInitialPairLabels } from './labels.logic';
 import { mergeOutcomes, multiplyOutcomes, outcomesToValues } from './outcomes.logic';
 import { toPercentage } from './percentages.logic';
+import {
+  mergeFinalProbabilities,
+  multiplyFinalProbabilities,
+  stringifyFinalProbabilities,
+} from './player-finals.logic';
 
 export const tableFormat: 'csv' | 'markdown' = 'markdown';
 
@@ -57,18 +62,38 @@ export const printFinalProbabilitiesTable = (
   const finalsHeaders = ['Score', 'Final Probabilities'];
   const finalsRows = getActionableLabels(strategyOptions.splitting).map(playerScoresLabel => {
     const finalProbabilities = getFinalProbabilities(playerScoresLabel);
-    return [
-      playerScoresLabel,
-      Object.keys(finalProbabilities)
-        .map(finalScoreLabel => {
-          return `${finalScoreLabel}: ${toPercentage(finalProbabilities[finalScoreLabel])}`;
-        })
-        .join(' / '),
-    ];
+    return [playerScoresLabel, stringifyFinalProbabilities(finalProbabilities).join(' / ')];
   });
   const finalsTable = getTable(finalsHeaders, finalsRows);
 
   console.log(finalsTable);
+};
+
+export const printOverallFinalProbabilitiesTable = (
+  getFinalProbabilities: (playerScoresLabel: string) => FinalProbabilities,
+  strategyOptions: StrategyOptions = {},
+) => {
+  const initialPairs = getInitialPairs(strategyOptions.splitting);
+  const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
+
+  const overallHeaders = ['Final Probabilities'];
+  const overallFinalProbabilities = initialPairLabels.reduce<FinalProbabilities>(
+    (reduced, playerScoresLabel) => {
+      const initialProbability = initialPairs.probabilities[playerScoresLabel];
+      const finalProbabilities = getFinalProbabilities(playerScoresLabel);
+      const weightedProbabilities = multiplyFinalProbabilities(
+        finalProbabilities,
+        initialProbability,
+      );
+
+      return mergeFinalProbabilities(weightedProbabilities, reduced);
+    },
+    {},
+  );
+  const overallRows = stringifyFinalProbabilities(overallFinalProbabilities).map(value => [value]);
+  const overallTable = getTable(overallHeaders, overallRows);
+
+  console.log(overallTable);
 };
 
 export const printReturnsTable = (
@@ -117,6 +142,13 @@ export const printPlayerDecisionStrategyTables = (
   console.log('\n');
 
   printFinalProbabilitiesTable(
+    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
+    strategyOptions,
+  );
+
+  console.log('\n');
+
+  printOverallFinalProbabilitiesTable(
     playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
     strategyOptions,
   );
