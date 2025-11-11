@@ -17,11 +17,13 @@ npm run max-returns-base;
 npm run max-returns-double-all;
 npm run max-returns-double-nine;
 npm run max-returns-split;
-npm run max-returns-optimal;
+npm run max-returns-split-double-all;
+npm run max-returns-split-double-nine;
 
 # Dealer card strategies
 npm run dealer-card-base;
 npm run dealer-card-double-all;
 npm run dealer-card-double-nine;
 npm run dealer-card-split;
-npm run dealer-card-optimal;
+npm run dealer-card-split-double-all;
+npm run dealer-card-split-double-nine;

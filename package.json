@@ -17,12 +17,14 @@
     "max-returns-double-all": "./run-one.sh strategies/max-returns.double-all strategies/max-returns.double-all",
     "max-returns-double-nine": "./run-one.sh strategies/max-returns.double-nine strategies/max-returns.double-nine",
     "max-returns-split": "./run-one.sh strategies/max-returns.split strategies/max-returns.split",
-    "max-returns-optimal": "./run-one.sh strategies/max-returns.optimal strategies/max-returns.optimal",
+    "max-returns-split-double-all": "./run-one.sh strategies/max-returns.split-double-all strategies/max-returns.split-double-all",
+    "max-returns-split-double-nine": "./run-one.sh strategies/max-returns.split-double-nine strategies/max-returns.split-double-nine",
     "dealer-card-base": "./run-one.sh strategies/dealer-card.base strategies/dealer-card.base",
     "dealer-card-double-all": "./run-one.sh strategies/dealer-card.double-all strategies/dealer-card.double-all",
     "dealer-card-double-nine": "./run-one.sh strategies/dealer-card.double-nine strategies/dealer-card.double-nine",
     "dealer-card-split": "./run-one.sh strategies/dealer-card.split strategies/dealer-card.split",
-    "dealer-card-optimal": "./run-one.sh strategies/dealer-card.optimal strategies/dealer-card.optimal"
+    "dealer-card-split-double-all": "./run-one.sh strategies/dealer-card.split-double-all strategies/dealer-card.split-double-all",
+    "dealer-card-split-double-nine": "./run-one.sh strategies/dealer-card.split-double-nine strategies/dealer-card.split-double-nine"
   },
   "keywords": [],
   "author": "Carles Capellas <capellas.carles@gmail.com>",
