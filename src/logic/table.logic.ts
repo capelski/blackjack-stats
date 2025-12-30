@@ -3,7 +3,7 @@ import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { getInitialPairs } from './initial-pairs.logic';
-import { getActionableLabels, getInitialPairLabels } from './labels.logic';
+import { getInitialPairLabels } from './labels.logic';
 import {
   getOutcomesLabels,
   mergeOutcomes,
@@ -51,9 +51,11 @@ export const getActionsTable = (
   getRow: (playerScoresLabel: string) => string[],
   strategyOptions: StrategyOptions = {},
 ) => {
-  const actionsRows = getActionableLabels(strategyOptions.splitting).map(playerScoresLabel => {
-    return getRow(playerScoresLabel);
-  });
+  const actionsRows = getInitialPairLabels({ excludeFinalHands: true, ...strategyOptions }).map(
+    playerScoresLabel => {
+      return getRow(playerScoresLabel);
+    },
+  );
 
   return getTable(headers, actionsRows);
 };
@@ -63,7 +65,10 @@ export const getIndividualFinalProbabilitiesTable = (
   getRow: (playerScoresLabel: string) => string[],
   strategyOptions: StrategyOptions = {},
 ) => {
-  const finalsRows = getActionableLabels(strategyOptions.splitting).map(playerScoresLabel => {
+  const finalsRows = getInitialPairLabels({
+    includeNonInitialHands: true,
+    ...strategyOptions,
+  }).map(playerScoresLabel => {
     return getRow(playerScoresLabel);
   });
 
@@ -75,7 +80,7 @@ export const getOverallFinalProbabilitiesTable = (
   strategyOptions: StrategyOptions = {},
 ) => {
   const initialPairs = getInitialPairs(strategyOptions.splitting);
-  const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
+  const initialPairLabels = getInitialPairLabels(strategyOptions);
 
   const overallHeaders = ['Final Probabilities'];
   const overallFinalProbabilities = initialPairLabels.reduce<FinalProbabilities>(
@@ -101,7 +106,10 @@ export const getIndividualOutcomesTable = (
   getRow: (playerScoresLabel: string) => string[],
   strategyOptions: StrategyOptions = {},
 ) => {
-  const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
+  const initialPairLabels = getInitialPairLabels({
+    includeNonInitialHands: true,
+    ...strategyOptions,
+  });
 
   const allScoresRows = initialPairLabels.map(playerScoresLabel => {
     return getRow(playerScoresLabel);
@@ -115,7 +123,7 @@ export const getOverallOutcomesTable = (
   strategyOptions: StrategyOptions = {},
 ) => {
   const initialPairs = getInitialPairs(strategyOptions.splitting);
-  const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
+  const initialPairLabels = getInitialPairLabels(strategyOptions);
 
   const overallHeaders = getOutcomesLabels();
   const overallOutcomes = mergeOutcomes(

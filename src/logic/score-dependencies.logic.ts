@@ -1,6 +1,6 @@
 import { cardValues } from './cards.logic';
 import { getPlayerHands } from './hands.logic';
-import { blackjackLabel, getActionableLabels, getScoresLabel } from './labels.logic';
+import { blackjackLabel, getInitialPairLabels, getScoresLabel } from './labels.logic';
 import { getScores } from './scores.logic';
 import { getTable } from './table.logic';
 
@@ -35,7 +35,7 @@ export const getScoreDependencies = () => {
 };
 
 export const printScoreDependencies = () => {
-  const actionableLabels = getActionableLabels();
+  const actionableLabels = getInitialPairLabels({ excludeFinalHands: true });
   const { forwardDependencies } = getScoreDependencies();
 
   const forwardHeaders = ['Score', 'Next Scores'];

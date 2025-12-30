@@ -40,10 +40,10 @@ export const getInitialPairs = (splitting?: boolean) => {
 
 export const printInitialPairs = (splitting?: boolean) => {
   const initialPairs = getInitialPairs(splitting);
-  const initialPairLabels = getInitialPairLabels(splitting);
+  const initialPairLabels = getInitialPairLabels({ splitting });
 
   const combinationsHeaders = ['Score', 'Combinations', 'Examples'];
-  const combinationsRows = initialPairLabels.map((label) => {
+  const combinationsRows = initialPairLabels.map(label => {
     const examples = initialPairs.combinations[label].slice(0, 10);
     const drawEllipsis = examples.length < initialPairs.combinations[label].length;
     return [
@@ -57,7 +57,7 @@ export const printInitialPairs = (splitting?: boolean) => {
   console.log(combinationsTable);
 
   const probabilitiesHeaders = ['Score', 'Probability'];
-  const probabilitiesRows = initialPairLabels.map((label) => {
+  const probabilitiesRows = initialPairLabels.map(label => {
     return [label, toPercentage(initialPairs.probabilities[label])];
   });
 
