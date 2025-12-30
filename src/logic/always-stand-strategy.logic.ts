@@ -2,10 +2,11 @@ import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { getDealerFinals } from './dealer-finals.logic';
 import { getStandDecision } from './decisions.logic';
 import { getPlayerHands } from './hands.logic';
+import { getOutcomesLabels, outcomesToValues } from './outcomes.logic';
 import {
-  printOverallFinalProbabilitiesTable,
-  printOverallReturnsTable,
-  printReturnsTable,
+  getIndividualOutcomesTable,
+  getOverallFinalProbabilitiesTable,
+  getOverallOutcomesTable,
 } from './table.logic';
 
 export const getAlwaysStandStrategy = () => {
@@ -25,15 +26,25 @@ export const getAlwaysStandStrategy = () => {
 export const printAlwaysStandStrategy = () => {
   const strategy = getAlwaysStandStrategy();
 
-  printOverallFinalProbabilitiesTable(
+  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(
     playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
   );
 
-  console.log('\n');
+  const individualOutcomesTable = getIndividualOutcomesTable(
+    ['Score', ...getOutcomesLabels()],
+    playerScoresLabel => {
+      const outcomes = strategy[playerScoresLabel].selectedOutcomes;
+      return [playerScoresLabel, ...outcomesToValues(outcomes)];
+    },
+  );
 
-  printReturnsTable(playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.returns);
+  const overallOutcomesTable = getOverallOutcomesTable(
+    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes,
+  );
 
-  console.log('\n');
-
-  printOverallReturnsTable(playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes);
+  console.log(
+    `${overallFinalProbabilitiesTable}\n
+${individualOutcomesTable}\n
+${overallOutcomesTable}`,
+  );
 };

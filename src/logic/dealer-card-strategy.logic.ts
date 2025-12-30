@@ -9,21 +9,25 @@ import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
 import { getStandDecision } from './decisions.logic';
 import { canDouble } from './doubling.logic';
 import { getPlayerHands } from './hands.logic';
-import { getAbbreviatedAction, getActionableLabels, getInitialPairLabels } from './labels.logic';
+import { getAbbreviatedAction } from './labels.logic';
 import {
   getDoubleOutcomes,
   getHitOutcomes,
+  getOutcomesLabels,
   getSplitOutcomes,
   getStandOutcomes,
   mergeOutcomes,
   multiplyOutcomes,
+  outcomesToValues,
 } from './outcomes.logic';
 import { toPercentage } from './percentages.logic';
 import { mergeFinalProbabilities, multiplyFinalProbabilities } from './player-finals.logic';
 import {
-  getTable,
-  printOverallFinalProbabilitiesTable,
-  printOverallReturnsTable,
+  getActionsTable,
+  getIndividualFinalProbabilitiesTable,
+  getIndividualOutcomesTable,
+  getOverallFinalProbabilitiesTable,
+  getOverallOutcomesTable,
 } from './table.logic';
 
 export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
@@ -89,42 +93,36 @@ export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
 export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) => {
   const strategy = getDealerCardStrategy(strategyOptions);
 
-  const strategyHeaders = ['', ...cards];
-  const strategyRows = getActionableLabels(strategyOptions.splitting).map(playerScoresLabel => {
-    const decisions = cards.map(dealerCard => {
-      return getAbbreviatedAction(strategy[playerScoresLabel][dealerCard].action);
-    });
-    return [playerScoresLabel, ...decisions];
-  });
-  const strategyTable = getTable(strategyHeaders, strategyRows);
+  const actionsTable = getActionsTable(
+    ['', ...cards],
+    playerScoresLabel => {
+      const actions = cards.map(dealerCard => {
+        return getAbbreviatedAction(strategy[playerScoresLabel][dealerCard].action);
+      });
+      return [playerScoresLabel, ...actions];
+    },
+    strategyOptions,
+  );
 
-  console.log(strategyTable);
+  const individualFinalProbabilitiesTable = getIndividualFinalProbabilitiesTable(
+    ['', ...cards],
+    playerScoresLabel => {
+      const allFinalProbabilities = cards.map(dealerCard => {
+        const finalProbabilities =
+          strategy[playerScoresLabel][dealerCard].selectedOutcomes.finalProbabilities;
+        return Object.keys(finalProbabilities)
+          .map(finalScoreLabel => {
+            return `${finalScoreLabel}: ${toPercentage(finalProbabilities[finalScoreLabel])}`;
+          })
+          .join(' / ');
+      });
 
-  const finalsHeaders = ['', ...cards];
-  const finalsRows = getActionableLabels(strategyOptions.splitting).map(playerScoresLabel => {
-    const allFinalProbabilities = cards.map(dealerCard => {
-      const decision = strategy[playerScoresLabel][dealerCard];
-      return Object.keys(decision.selectedOutcomes.finalProbabilities)
-        .map(finalScoreLabel => {
-          return `${finalScoreLabel}: ${toPercentage(
-            decision.selectedOutcomes.finalProbabilities[finalScoreLabel],
-          )}`;
-        })
-        .join(' / ');
-    });
+      return [playerScoresLabel, ...allFinalProbabilities];
+    },
+    strategyOptions,
+  );
 
-    return [playerScoresLabel, ...allFinalProbabilities];
-  });
-  const finalsTable = getTable(finalsHeaders, finalsRows);
-
-  console.log('\n');
-  console.log(finalsTable);
-
-  const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
-
-  console.log('\n');
-
-  printOverallFinalProbabilitiesTable(playerScoresLabel => {
+  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(playerScoresLabel => {
     const allProbabilities = cards.map(dealerCard => {
       const decision = strategy[playerScoresLabel][dealerCard];
       return multiplyFinalProbabilities(
@@ -135,23 +133,22 @@ export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) =
     return allProbabilities.reduce<FinalProbabilities>(mergeFinalProbabilities, {});
   }, strategyOptions);
 
-  const allScoresHeaders = ['', ...cards];
-  const allScoresRows = initialPairLabels.map(playerScoresLabel => {
-    const allReturns = cards.map(dealerCard => {
-      const decision = strategy[playerScoresLabel][dealerCard];
-      return toPercentage(decision.selectedOutcomes.returns);
-    });
+  const individualOutcomesTable = getIndividualOutcomesTable(
+    ['', ...cards],
+    playerScoresLabel => {
+      const outcomesLabels = getOutcomesLabels();
+      const allReturns = cards.map(dealerCard => {
+        const decision = strategy[playerScoresLabel][dealerCard];
+        const outcomes = outcomesToValues(decision.selectedOutcomes);
+        return outcomesLabels.map((label, index) => `${label}: ${outcomes[index]}`).join(' / ');
+      });
 
-    return [playerScoresLabel, ...allReturns];
-  });
-  const allScoresTable = getTable(allScoresHeaders, allScoresRows);
+      return [playerScoresLabel, ...allReturns];
+    },
+    strategyOptions,
+  );
 
-  console.log('\n');
-  console.log(allScoresTable);
-
-  console.log('\n');
-
-  printOverallReturnsTable(playerScoresLabel => {
+  const overallOutcomesTable = getOverallOutcomesTable(playerScoresLabel => {
     const allOutcomes = cards.map(dealerCard => {
       const decision = strategy[playerScoresLabel][dealerCard];
       return decision.selectedOutcomes;
@@ -159,4 +156,12 @@ export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) =
     const aggregatedOutcomes = mergeOutcomes(allOutcomes);
     return multiplyOutcomes(aggregatedOutcomes, 1 / allOutcomes.length);
   }, strategyOptions);
+
+  console.log(
+    `${actionsTable}\n
+${individualFinalProbabilitiesTable}\n
+${overallFinalProbabilitiesTable}\n
+${individualOutcomesTable}\n
+${overallOutcomesTable}`,
+  );
 };

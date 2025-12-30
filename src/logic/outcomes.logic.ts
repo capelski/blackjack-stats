@@ -167,6 +167,10 @@ export const getStandOutcomes = (
   };
 };
 
+export const getOutcomesLabels = () => {
+  return ['Win', 'Push', 'Lose', 'Returns'];
+};
+
 export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
   return outcomesList.reduce<Outcomes>((reduced, outcomes) => {
     return {
@@ -198,9 +202,9 @@ export const multiplyOutcomes = (outcomes: Outcomes, factor: number): Outcomes =
 
 export const outcomesToValues = (outcomes: Outcomes) => {
   return [
-    toPercentage(outcomes.returns),
     toPercentage(outcomes.win),
-    toPercentage(outcomes.lose),
     toPercentage(outcomes.push),
+    toPercentage(outcomes.lose),
+    toPercentage(outcomes.returns),
   ];
 };

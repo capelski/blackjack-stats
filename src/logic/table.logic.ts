@@ -1,12 +1,15 @@
-import { Action } from '../enums/action.enum';
 import { FinalProbabilities } from '../types/finals.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { getInitialPairs } from './initial-pairs.logic';
 import { getActionableLabels, getInitialPairLabels } from './labels.logic';
-import { mergeOutcomes, multiplyOutcomes, outcomesToValues } from './outcomes.logic';
-import { toPercentage } from './percentages.logic';
+import {
+  getOutcomesLabels,
+  mergeOutcomes,
+  multiplyOutcomes,
+  outcomesToValues,
+} from './outcomes.logic';
 import {
   mergeFinalProbabilities,
   multiplyFinalProbabilities,
@@ -43,33 +46,31 @@ const rowToMarkdown = (columns: (string | number)[]) => {
   return columns.map(column => `| ${column} `).join('') + '|';
 };
 
-export const printActionsTable = (
-  getAction: (playerScoresLabel: string) => Action,
+export const getActionsTable = (
+  headers: (string | number)[],
+  getRow: (playerScoresLabel: string) => string[],
   strategyOptions: StrategyOptions = {},
 ) => {
-  const actionsHeaders = ['Score', 'Action'];
   const actionsRows = getActionableLabels(strategyOptions.splitting).map(playerScoresLabel => {
-    return [playerScoresLabel, getAction(playerScoresLabel)];
+    return getRow(playerScoresLabel);
   });
-  const actionsTable = getTable(actionsHeaders, actionsRows);
-  console.log(actionsTable);
+
+  return getTable(headers, actionsRows);
 };
 
-export const printFinalProbabilitiesTable = (
-  getFinalProbabilities: (playerScoresLabel: string) => FinalProbabilities,
+export const getIndividualFinalProbabilitiesTable = (
+  headers: (string | number)[],
+  getRow: (playerScoresLabel: string) => string[],
   strategyOptions: StrategyOptions = {},
 ) => {
-  const finalsHeaders = ['Score', 'Final Probabilities'];
   const finalsRows = getActionableLabels(strategyOptions.splitting).map(playerScoresLabel => {
-    const finalProbabilities = getFinalProbabilities(playerScoresLabel);
-    return [playerScoresLabel, stringifyFinalProbabilities(finalProbabilities).join(' / ')];
+    return getRow(playerScoresLabel);
   });
-  const finalsTable = getTable(finalsHeaders, finalsRows);
 
-  console.log(finalsTable);
+  return getTable(headers, finalsRows);
 };
 
-export const printOverallFinalProbabilitiesTable = (
+export const getOverallFinalProbabilitiesTable = (
   getFinalProbabilities: (playerScoresLabel: string) => FinalProbabilities,
   strategyOptions: StrategyOptions = {},
 ) => {
@@ -91,35 +92,32 @@ export const printOverallFinalProbabilitiesTable = (
     {},
   );
   const overallRows = stringifyFinalProbabilities(overallFinalProbabilities).map(value => [value]);
-  const overallTable = getTable(overallHeaders, overallRows);
 
-  console.log(overallTable);
+  return getTable(overallHeaders, overallRows);
 };
 
-export const printReturnsTable = (
-  getReturns: (playerScoresLabel: string) => number,
+export const getIndividualOutcomesTable = (
+  headers: (string | number)[],
+  getRow: (playerScoresLabel: string) => string[],
   strategyOptions: StrategyOptions = {},
 ) => {
   const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
 
-  const allScoresHeaders = ['Score', 'Returns'];
   const allScoresRows = initialPairLabels.map(playerScoresLabel => {
-    const returns = getReturns(playerScoresLabel);
-    return [playerScoresLabel, toPercentage(returns)];
+    return getRow(playerScoresLabel);
   });
-  const allScoresTable = getTable(allScoresHeaders, allScoresRows);
 
-  console.log(allScoresTable);
+  return getTable(headers, allScoresRows);
 };
 
-export const printOverallReturnsTable = (
+export const getOverallOutcomesTable = (
   getOutcomes: (playerScoresLabel: string) => Outcomes,
   strategyOptions: StrategyOptions = {},
 ) => {
   const initialPairs = getInitialPairs(strategyOptions.splitting);
   const initialPairLabels = getInitialPairLabels(strategyOptions.splitting);
 
-  const overallHeaders = ['Returns', 'Win', 'Lose', 'Push'];
+  const overallHeaders = getOutcomesLabels();
   const overallOutcomes = mergeOutcomes(
     initialPairLabels.map(playerScoresLabel => {
       const initialProbability = initialPairs.probabilities[playerScoresLabel];
@@ -128,42 +126,53 @@ export const printOverallReturnsTable = (
     }),
   );
   const overallRows = [outcomesToValues(overallOutcomes)];
-  const overallTable = getTable(overallHeaders, overallRows);
 
-  console.log(overallTable);
+  return getTable(overallHeaders, overallRows);
 };
 
 export const printPlayerDecisionStrategyTables = (
   strategy: PlayerDecisionStrategy,
   strategyOptions: StrategyOptions = {},
 ) => {
-  printActionsTable(playerScoresLabel => strategy[playerScoresLabel].action, strategyOptions);
+  const actionsTable = getActionsTable(
+    ['Score', 'Action'],
+    playerScoresLabel => [playerScoresLabel, strategy[playerScoresLabel].action],
+    strategyOptions,
+  );
 
-  console.log('\n');
+  const individualFinalProbabilitiesTable = getIndividualFinalProbabilitiesTable(
+    ['Score', 'Final Probabilities'],
+    playerScoresLabel => {
+      const finalProbabilities = strategy[playerScoresLabel].selectedOutcomes.finalProbabilities;
+      return [playerScoresLabel, stringifyFinalProbabilities(finalProbabilities).join(' / ')];
+    },
+    strategyOptions,
+  );
 
-  printFinalProbabilitiesTable(
+  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(
     playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
     strategyOptions,
   );
 
-  console.log('\n');
-
-  printOverallFinalProbabilitiesTable(
-    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
+  const individualOutcomesTable = getIndividualOutcomesTable(
+    ['Score', ...getOutcomesLabels()],
+    playerScoresLabel => {
+      const outcomes = strategy[playerScoresLabel].selectedOutcomes;
+      return [playerScoresLabel, ...outcomesToValues(outcomes)];
+    },
     strategyOptions,
   );
 
-  console.log('\n');
-
-  printReturnsTable(
-    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.returns,
-    strategyOptions,
-  );
-
-  console.log('\n');
-
-  printOverallReturnsTable(
+  const overallOutcomesTable = getOverallOutcomesTable(
     playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes,
     strategyOptions,
+  );
+
+  console.log(
+    `${actionsTable}\n
+${individualFinalProbabilitiesTable}\n
+${overallFinalProbabilitiesTable}\n
+${individualOutcomesTable}\n
+${overallOutcomesTable}`,
   );
 };
