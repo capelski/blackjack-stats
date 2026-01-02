@@ -39,17 +39,19 @@ export const getInitialPairs = (splitting?: boolean) => {
   return initialPairs;
 };
 
-const getInitialHandsGrid = (mode: 'cards' | 'score', splitting?: boolean) => {
-  const cardsHeaders = ['', ...cards];
+const getInitialHandsGrid = (
+  mode: 'cards' | 'score',
+  { limit, offset }: { limit?: number; offset?: number } = {},
+) => {
+  const limitedCards = limit || offset ? cards.slice(offset || 0, limit) : cards;
+  const cardsHeaders = ['', ...limitedCards];
   const cardsRows: Card[][] = cards.map(card1 => {
     const values =
       mode === 'cards'
-        ? cards.map(card2 => [card1, card2].join(','))
-        : cards.map(card2 => {
+        ? limitedCards.map(card2 => [card1, card2].join(','))
+        : limitedCards.map(card2 => {
             const scores = getScores(cardValuesDictionary[card1], cardValuesDictionary[card2], 2);
-            return getScoresLabel(scores, {
-              splitCard: canSplit(cards, splitting) ? card1 : undefined,
-            });
+            return getScoresLabel(scores, { splitCard: undefined });
           });
     return [card1, ...values];
   });
@@ -57,8 +59,8 @@ const getInitialHandsGrid = (mode: 'cards' | 'score', splitting?: boolean) => {
 };
 
 export const printInitialPairs = (splitting?: boolean) => {
-  const initialHandsGrid = getInitialHandsGrid('cards', splitting);
-  const initialScoresGrid = getInitialHandsGrid('score', splitting);
+  const initialHandsGrid = getInitialHandsGrid('cards');
+  const initialScoresGrid = getInitialHandsGrid('score');
 
   const initialPairs = getInitialPairs(splitting);
   const initialPairLabels = getInitialPairLabels({ splitting });
