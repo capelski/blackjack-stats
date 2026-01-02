@@ -1,3 +1,4 @@
+import { Card } from '../types/card.type';
 import { Finals } from '../types/finals.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getInitialPairLabels, getScoresLabel } from './labels.logic';
@@ -38,7 +39,27 @@ export const getInitialPairs = (splitting?: boolean) => {
   return initialPairs;
 };
 
+const getInitialHandsGrid = (mode: 'cards' | 'score', splitting?: boolean) => {
+  const cardsHeaders = ['', ...cards];
+  const cardsRows: Card[][] = cards.map(card1 => {
+    const values =
+      mode === 'cards'
+        ? cards.map(card2 => [card1, card2].join(','))
+        : cards.map(card2 => {
+            const scores = getScores(cardValuesDictionary[card1], cardValuesDictionary[card2], 2);
+            return getScoresLabel(scores, {
+              splitCard: canSplit(cards, splitting) ? card1 : undefined,
+            });
+          });
+    return [card1, ...values];
+  });
+  return getTable(cardsHeaders, cardsRows);
+};
+
 export const printInitialPairs = (splitting?: boolean) => {
+  const initialHandsGrid = getInitialHandsGrid('cards', splitting);
+  const initialScoresGrid = getInitialHandsGrid('score', splitting);
+
   const initialPairs = getInitialPairs(splitting);
   const initialPairLabels = getInitialPairLabels({ splitting });
 
@@ -54,8 +75,6 @@ export const printInitialPairs = (splitting?: boolean) => {
   });
   const combinationsTable = getTable(combinationsHeaders, combinationsRows);
 
-  console.log(combinationsTable);
-
   const probabilitiesHeaders = ['Score', 'Probability'];
   const probabilitiesRows = initialPairLabels.map(label => {
     return [label, toPercentage(initialPairs.probabilities[label])];
@@ -63,6 +82,10 @@ export const printInitialPairs = (splitting?: boolean) => {
 
   const probabilitiesTable = getTable(probabilitiesHeaders, probabilitiesRows);
 
-  console.log('\n');
-  console.log(probabilitiesTable);
+  console.log(
+    `${initialHandsGrid}\n
+${initialScoresGrid}\n
+${combinationsTable}\n
+${probabilitiesTable}`,
+  );
 };
