@@ -67,12 +67,10 @@ export const printInitialPairs = (splitting?: boolean) => {
 
   const combinationsHeaders = ['Score', 'Combinations', 'Examples'];
   const combinationsRows = initialPairLabels.map(label => {
-    const examples = initialPairs.combinations[label].slice(0, 10);
-    const drawEllipsis = examples.length < initialPairs.combinations[label].length;
     return [
       label,
       initialPairs.combinations[label].length,
-      `${examples.join(' / ')}${drawEllipsis ? ' ...' : ''}`,
+      initialPairs.combinations[label].join(' / '),
     ];
   });
   const combinationsTable = getTable(combinationsHeaders, combinationsRows);
