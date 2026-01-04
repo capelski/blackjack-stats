@@ -4,15 +4,12 @@ import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from '
 import { getEffectiveScore, getScores } from './scores.logic';
 
 export const getDealerFinals = () => {
-  const handsQueue = cards.map<HandWithCards>((card) => {
+  const handsQueue = cards.map<HandWithCards>(card => {
     return {
       cards: [card],
       scores: cardValuesDictionary[card],
     };
   });
-  const handCombinations = cards.reduce<Record<string, boolean>>((reduced, card) => {
-    return { ...reduced, [card]: true };
-  }, {});
 
   const dealerFinals: Finals = {
     combinations: {},
@@ -22,7 +19,7 @@ export const getDealerFinals = () => {
   while (handsQueue.length > 0) {
     const hand = handsQueue.shift()!;
 
-    cards.map((card) => {
+    cards.map(card => {
       const nextCards = [...hand.cards, card];
       const nextCombination = getCardsCombinations(nextCards);
       const nextScores = getScores(hand.scores, cardValuesDictionary[card], nextCards.length);
@@ -34,10 +31,7 @@ export const getDealerFinals = () => {
       };
 
       if (nextEffectiveScore < 17) {
-        if (!handCombinations[nextCombination]) {
-          handCombinations[nextCombination] = true;
-          handsQueue.push(nextHand);
-        }
+        handsQueue.push(nextHand);
       } else {
         if (!dealerFinals.combinations[nextEffectiveScore]) {
           dealerFinals.combinations[nextEffectiveScore] = [];
