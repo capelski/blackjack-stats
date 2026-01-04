@@ -4,6 +4,7 @@ npm run initial-pairs-splitting;
 npm run score-dependencies;
 
 # Dealer final scores
+npm run dealer-combinations;
 npm run dealer-finals;
 npm run dealer-finals-by-card;
 

@@ -8,6 +8,7 @@ Probability and statistics about Blackjack
 
 ## Dealer final scores
 
+- [Dealer combinations](./output/dealer-combinations.md)
 - [Dealer finals](./output/dealer-finals.md)
 - [Dealer finals by card](./output/dealer-finals-by-card.md)
 
