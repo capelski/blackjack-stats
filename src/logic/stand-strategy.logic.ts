@@ -4,7 +4,7 @@ import { getHitDecision, getStandDecision } from './decisions.logic';
 import { getPlayerHands } from './hands.logic';
 import { printPlayerDecisionStrategyTables } from './table.logic';
 
-export const getCopycatStrategy = () => {
+export const getStandStrategy = (threshold: number) => {
   const dealerFinals = getDealerFinals();
   const copycatStrategy: PlayerDecisionStrategy = {};
 
@@ -14,7 +14,7 @@ export const getCopycatStrategy = () => {
       dealerFinals.probabilities,
     );
 
-    if (!playerHand.isFinal && playerHand.effectiveScore < 17) {
+    if (!playerHand.isFinal && playerHand.effectiveScore < threshold) {
       copycatStrategy[playerHand.label] = getHitDecision(
         playerHand.scores,
         copycatStrategy[playerHand.label].standOutcomes,
@@ -26,7 +26,7 @@ export const getCopycatStrategy = () => {
   return copycatStrategy;
 };
 
-export const printCopycatStrategy = () => {
-  const strategy = getCopycatStrategy();
+export const printStandStrategy = (threshold: number) => {
+  const strategy = getStandStrategy(threshold);
   printPlayerDecisionStrategyTables(strategy);
 };

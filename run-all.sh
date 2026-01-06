@@ -9,8 +9,11 @@ npm run dealer-finals;
 npm run dealer-finals-by-card;
 
 # Naive strategies
-npm run always-stand;
-npm run copycat;
+npm run stand-17;
+npm run stand-16;
+npm run stand-15;
+npm run stand-14;
+npm run stand-always;
 npm run zero-risk;
 
 # Player score strategies
