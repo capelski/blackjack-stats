@@ -14,12 +14,12 @@ Probability and statistics about Blackjack
 
 ## Naive strategies
 
-- [Stand 17](./output/strategies/stand-17.md)
-- [Stand 16](./output/strategies/stand-16.md)
-- [Stand 15](./output/strategies/stand-15.md)
-- [Stand 14](./output/strategies/stand-14.md)
-- [Stand always](./output/strategies/always-stand.md)
-- [Zero risk](./output/strategies/zero-risk.md)
+- [Stand 17](./output/strategies/naive/stand-17.md)
+- [Stand 16](./output/strategies/naive/stand-16.md)
+- [Stand 15](./output/strategies/naive/stand-15.md)
+- [Stand 14](./output/strategies/naive/stand-14.md)
+- [Stand always](./output/strategies/naive/always-stand.md)
+- [Zero risk](./output/strategies/naive/zero-risk.md)
 
 ## Maximum returns strategies
 
