@@ -23,18 +23,18 @@ Probability and statistics about Blackjack
 
 ## Maximum returns strategies
 
-- [Base](./output/strategies/max-returns.base.md)
-- [Double all](./output/strategies/max-returns.double-all.md)
-- [Double 9/10/11](./output/strategies/max-returns.double-nine.md)
-- [Split](./output/strategies/max-returns.split.md)
-- [Split + Double all](./output/strategies/max-returns.split-dobule-all.md)
-- [Split + Double 9/10/11](./output/strategies/max-returns.split-dobule-nine.md)
+- [Base](./output/strategies/max-returns/base.md)
+- [Double all](./output/strategies/max-returns/double-all.md)
+- [Double 9/10/11](./output/strategies/max-returns/double-nine.md)
+- [Split](./output/strategies/max-returns/split.md)
+- [Split + Double all](./output/strategies/max-returns/split-dobule-all.md)
+- [Split + Double 9/10/11](./output/strategies/max-returns/split-dobule-nine.md)
 
 ## Dealer card strategies
 
-- [Base](./output/strategies/dealer-card.base.md)
-- [Double all](./output/strategies/dealer-card.double-all.md)
-- [Double 9/10/11](./output/strategies/dealer-card.double-nine.md)
-- [Split](./output/strategies/dealer-card.split.md)
-- [Split + Double all](./output/strategies/dealer-card.split-dobule-all.md)
-- [Split + Double 9/10/11](./output/strategies/dealer-card.split-dobule-nine.md)
+- [Base](./output/strategies/dealer-card/base.md)
+- [Double all](./output/strategies/dealer-card/double-all.md)
+- [Double 9/10/11](./output/strategies/dealer-card/double-nine.md)
+- [Split](./output/strategies/dealer-card/split.md)
+- [Split + Double all](./output/strategies/dealer-card/split-dobule-all.md)
+- [Split + Double 9/10/11](./output/strategies/dealer-card/split-dobule-nine.md)
