@@ -1,5 +1,5 @@
 import { Card } from '../types/card.type';
-import { Finals } from '../types/finals.type';
+import { InitialPairs } from '../types/initial-pairs.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getInitialPairLabels, getScoresLabel } from './labels.logic';
 import { toPercentage } from './percentages.logic';
@@ -8,10 +8,7 @@ import { canSplit } from './splitting.logic';
 import { getTable } from './table.logic';
 
 export const getInitialPairs = (splitting?: boolean) => {
-  const initialPairs: Finals = {
-    combinations: {},
-    probabilities: {},
-  };
+  const initialPairs: InitialPairs = {};
 
   for (const card1 of cards) {
     for (const card2 of cards) {
@@ -24,15 +21,15 @@ export const getInitialPairs = (splitting?: boolean) => {
       const label = getScoresLabel(scores, {
         splitCard: canSplit(cards, splitting) ? card1 : undefined,
       });
-      if (!initialPairs.combinations[label]) {
-        initialPairs.combinations[label] = [];
+      if (!initialPairs[label]) {
+        initialPairs[label] = {
+          combinations: [],
+          probability: 0,
+        };
       }
-      initialPairs.combinations[label].push(getCardsCombinations(cards));
 
-      if (!initialPairs.probabilities[label]) {
-        initialPairs.probabilities[label] = 0;
-      }
-      initialPairs.probabilities[label] += (1 / cardsNumber) * (1 / cardsNumber);
+      initialPairs[label].combinations.push(getCardsCombinations(cards));
+      initialPairs[label].probability += (1 / cardsNumber) * (1 / cardsNumber);
     }
   }
 
@@ -69,15 +66,15 @@ export const printInitialPairs = (splitting?: boolean) => {
   const combinationsRows = initialPairLabels.map(label => {
     return [
       label,
-      initialPairs.combinations[label].length,
-      initialPairs.combinations[label].join(' / '),
+      initialPairs[label].combinations.length,
+      initialPairs[label].combinations.join(' / '),
     ];
   });
   const combinationsTable = getTable(combinationsHeaders, combinationsRows);
 
   const probabilitiesHeaders = ['Score', 'Probability'];
   const probabilitiesRows = initialPairLabels.map(label => {
-    return [label, toPercentage(initialPairs.probabilities[label])];
+    return [label, toPercentage(initialPairs[label].probability)];
   });
 
   const probabilitiesTable = getTable(probabilitiesHeaders, probabilitiesRows);

@@ -78,7 +78,7 @@ export const getOverallFinalProbabilitiesTable = (
   const overallHeaders = ['Final Probabilities'];
   const overallFinalProbabilities = initialPairLabels.reduce<FinalProbabilities>(
     (reduced, playerScoresLabel) => {
-      const initialProbability = initialPairs.probabilities[playerScoresLabel];
+      const initialProbability = initialPairs[playerScoresLabel].probability;
       const finalProbabilities = getFinalProbabilities(playerScoresLabel);
       const weightedProbabilities = multiplyFinalProbabilities(
         finalProbabilities,
@@ -104,7 +104,7 @@ export const getOverallOutcomesTable = (
   const overallHeaders = getOutcomesLabels();
   const overallOutcomes = mergeOutcomes(
     initialPairLabels.map(playerScoresLabel => {
-      const initialProbability = initialPairs.probabilities[playerScoresLabel];
+      const initialProbability = initialPairs[playerScoresLabel].probability;
 
       return multiplyOutcomes(getOutcomes(playerScoresLabel), initialProbability);
     }),
