@@ -13,7 +13,6 @@ import {
   multiplyOutcomes,
   outcomesToValues,
 } from './outcomes.logic';
-import { toPercentage } from './percentages.logic';
 import {
   mergeFinalProbabilities,
   multiplyFinalProbabilities,
@@ -263,11 +262,7 @@ export const printDealerCardStrategyTables = (
         const allFinalProbabilities = cards.map(dealerCard => {
           const finalProbabilities =
             strategy[playerScoresLabel][dealerCard].selectedOutcomes.finalProbabilities;
-          return Object.keys(finalProbabilities)
-            .map(finalScoreLabel => {
-              return `${finalScoreLabel}: ${toPercentage(finalProbabilities[finalScoreLabel])}`;
-            })
-            .join(' / ');
+          return stringifyFinalProbabilities(finalProbabilities).join(' / ');
         });
 
         return [playerScoresLabel, ...allFinalProbabilities];

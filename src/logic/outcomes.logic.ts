@@ -154,7 +154,7 @@ export const getStandOutcomes = (
   const win = getWinProbability(dealerProbabilities, playerScore);
 
   return {
-    finalProbabilities: { [getScoresLabel([playerScore])]: 1 },
+    finalProbabilities: { [playerScore]: 1 },
 
     lose,
     push,

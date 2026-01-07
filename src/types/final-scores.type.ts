@@ -1,6 +1,8 @@
 import { Card } from './card.type';
 
-export type FinalProbabilities = Record<string, number>;
+export type FinalProbabilities = {
+  [score: number]: number;
+};
 
 export type FinalScores = {
   [score: number]: {
