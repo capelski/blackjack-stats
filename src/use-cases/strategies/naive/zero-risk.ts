@@ -1,3 +1,3 @@
-import { printZeroRiskStrategy } from '../../../logic/zero-risk-strategy.logic';
+import { printZeroRiskStrategy } from '../../../logic/strategies/zero-risk.logic';
 
 printZeroRiskStrategy();

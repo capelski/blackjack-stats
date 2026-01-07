@@ -1,8 +1,8 @@
-import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
-import { getDealerFinals } from './dealer-finals.logic';
-import { getHitDecision, getStandDecision } from './decisions.logic';
-import { getPlayerHands } from './hands.logic';
-import { printPlayerDecisionStrategyTables } from './table.logic';
+import { PlayerDecisionStrategy } from '../../types/player-decision-strategy.type';
+import { getDealerFinals } from '../dealer-finals.logic';
+import { getHitDecision, getStandDecision } from '../decisions.logic';
+import { getPlayerHands } from '../hands.logic';
+import { printPlayerDecisionStrategyTables } from '../table.logic';
 
 export const getZeroRiskStrategy = () => {
   const dealerFinals = getDealerFinals();

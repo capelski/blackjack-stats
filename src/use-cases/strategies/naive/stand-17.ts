@@ -1,3 +1,3 @@
-import { printStandStrategy } from '../../../logic/stand-strategy.logic';
+import { printStandStrategy } from '../../../logic/strategies/stand.logic';
 
 printStandStrategy(17);

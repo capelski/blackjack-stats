@@ -60,21 +60,6 @@ export const getActionsTable = (
   return getTable(headers, actionsRows);
 };
 
-export const getIndividualFinalProbabilitiesTable = (
-  headers: (string | number)[],
-  getRow: (playerScoresLabel: string) => string[],
-  strategyOptions: StrategyOptions = {},
-) => {
-  const finalsRows = getInitialPairLabels({
-    includeNonInitialHands: true,
-    ...strategyOptions,
-  }).map(playerScoresLabel => {
-    return getRow(playerScoresLabel);
-  });
-
-  return getTable(headers, finalsRows);
-};
-
 export const getOverallFinalProbabilitiesTable = (
   getFinalProbabilities: (playerScoresLabel: string) => FinalProbabilities,
   strategyOptions: StrategyOptions = {},
@@ -101,23 +86,6 @@ export const getOverallFinalProbabilitiesTable = (
   return getTable(overallHeaders, overallRows);
 };
 
-export const getIndividualOutcomesTable = (
-  headers: (string | number)[],
-  getRow: (playerScoresLabel: string) => string[],
-  strategyOptions: StrategyOptions = {},
-) => {
-  const initialPairLabels = getInitialPairLabels({
-    includeNonInitialHands: true,
-    ...strategyOptions,
-  });
-
-  const allScoresRows = initialPairLabels.map(playerScoresLabel => {
-    return getRow(playerScoresLabel);
-  });
-
-  return getTable(headers, allScoresRows);
-};
-
 export const getOverallOutcomesTable = (
   getOutcomes: (playerScoresLabel: string) => Outcomes,
   strategyOptions: StrategyOptions = {},
@@ -136,6 +104,38 @@ export const getOverallOutcomesTable = (
   const overallRows = [outcomesToValues(overallOutcomes)];
 
   return getTable(overallHeaders, overallRows);
+};
+
+export const getIndividualFinalProbabilitiesTable = (
+  headers: (string | number)[],
+  getRow: (playerScoresLabel: string) => string[],
+  strategyOptions: StrategyOptions = {},
+) => {
+  const finalsRows = getInitialPairLabels({
+    includeNonInitialHands: true,
+    ...strategyOptions,
+  }).map(playerScoresLabel => {
+    return getRow(playerScoresLabel);
+  });
+
+  return getTable(headers, finalsRows);
+};
+
+export const getIndividualOutcomesTable = (
+  headers: (string | number)[],
+  getRow: (playerScoresLabel: string) => string[],
+  strategyOptions: StrategyOptions = {},
+) => {
+  const initialPairLabels = getInitialPairLabels({
+    includeNonInitialHands: true,
+    ...strategyOptions,
+  });
+
+  const allScoresRows = initialPairLabels.map(playerScoresLabel => {
+    return getRow(playerScoresLabel);
+  });
+
+  return getTable(headers, allScoresRows);
 };
 
 export const printPlayerDecisionStrategyTables = (

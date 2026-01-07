@@ -1,15 +1,15 @@
-import { Action } from '../enums/action.enum';
-import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
-import { FinalProbabilities } from '../types/finals.type';
-import { ActionOutcomes } from '../types/outcomes.type';
-import { StrategyOptions } from '../types/strategy-options.type';
-import { getAction } from './actions.logic';
-import { cards } from './cards.logic';
-import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
-import { getStandDecision } from './decisions.logic';
-import { canDouble } from './doubling.logic';
-import { getPlayerHands } from './hands.logic';
-import { getAbbreviatedAction } from './labels.logic';
+import { Action } from '../../enums/action.enum';
+import { DealerCardStrategy } from '../../types/dealer-card-strategy.type';
+import { FinalProbabilities } from '../../types/finals.type';
+import { ActionOutcomes } from '../../types/outcomes.type';
+import { StrategyOptions } from '../../types/strategy-options.type';
+import { getAction } from '../actions.logic';
+import { cards } from '../cards.logic';
+import { getDealerFinalsByCard } from '../dealer-finals-by-card.logic';
+import { getStandDecision } from '../decisions.logic';
+import { canDouble } from '../doubling.logic';
+import { getPlayerHands } from '../hands.logic';
+import { getAbbreviatedAction } from '../labels.logic';
 import {
   getDoubleOutcomes,
   getHitOutcomes,
@@ -19,16 +19,16 @@ import {
   mergeOutcomes,
   multiplyOutcomes,
   outcomesToValues,
-} from './outcomes.logic';
-import { toPercentage } from './percentages.logic';
-import { mergeFinalProbabilities, multiplyFinalProbabilities } from './player-finals.logic';
+} from '../outcomes.logic';
+import { toPercentage } from '../percentages.logic';
+import { mergeFinalProbabilities, multiplyFinalProbabilities } from '../player-finals.logic';
 import {
   getActionsTable,
   getIndividualFinalProbabilitiesTable,
   getIndividualOutcomesTable,
   getOverallFinalProbabilitiesTable,
   getOverallOutcomesTable,
-} from './table.logic';
+} from '../table.logic';
 
 export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   const dealerFinalsByCard = getDealerFinalsByCard();

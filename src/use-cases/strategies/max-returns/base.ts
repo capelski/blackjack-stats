@@ -1,3 +1,3 @@
-import { printMaxReturnsStrategy } from '../../../logic/max-returns-strategy.logic';
+import { printMaxReturnsStrategy } from '../../../logic/strategies/max-returns.logic';
 
 printMaxReturnsStrategy();

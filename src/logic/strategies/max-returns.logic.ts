@@ -1,19 +1,19 @@
-import { Action } from '../enums/action.enum';
-import { ActionOutcomes } from '../types/outcomes.type';
-import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
-import { StrategyOptions } from '../types/strategy-options.type';
-import { getAction } from './actions.logic';
-import { getDealerFinals } from './dealer-finals.logic';
-import { getStandDecision } from './decisions.logic';
-import { canDouble } from './doubling.logic';
-import { getPlayerHands } from './hands.logic';
+import { Action } from '../../enums/action.enum';
+import { ActionOutcomes } from '../../types/outcomes.type';
+import { PlayerDecisionStrategy } from '../../types/player-decision-strategy.type';
+import { StrategyOptions } from '../../types/strategy-options.type';
+import { getAction } from '../actions.logic';
+import { getDealerFinals } from '../dealer-finals.logic';
+import { getStandDecision } from '../decisions.logic';
+import { canDouble } from '../doubling.logic';
+import { getPlayerHands } from '../hands.logic';
 import {
   getDoubleOutcomes,
   getHitOutcomes,
   getSplitOutcomes,
   getStandOutcomes,
-} from './outcomes.logic';
-import { printPlayerDecisionStrategyTables } from './table.logic';
+} from '../outcomes.logic';
+import { printPlayerDecisionStrategyTables } from '../table.logic';
 
 export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
   const dealerFinals = getDealerFinals();
