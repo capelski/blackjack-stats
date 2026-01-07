@@ -148,17 +148,22 @@ export const printPlayerDecisionStrategyTables = (
     strategyOptions,
   );
 
+  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(
+    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
+    strategyOptions,
+  );
+
+  const overallOutcomesTable = getOverallOutcomesTable(
+    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes,
+    strategyOptions,
+  );
+
   const individualFinalProbabilitiesTable = getIndividualFinalProbabilitiesTable(
     ['Score', 'Final Probabilities'],
     playerScoresLabel => {
       const finalProbabilities = strategy[playerScoresLabel].selectedOutcomes.finalProbabilities;
       return [playerScoresLabel, stringifyFinalProbabilities(finalProbabilities).join(' / ')];
     },
-    strategyOptions,
-  );
-
-  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(
-    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes.finalProbabilities,
     strategyOptions,
   );
 
@@ -171,16 +176,11 @@ export const printPlayerDecisionStrategyTables = (
     strategyOptions,
   );
 
-  const overallOutcomesTable = getOverallOutcomesTable(
-    playerScoresLabel => strategy[playerScoresLabel].selectedOutcomes,
-    strategyOptions,
-  );
-
   console.log(
     `${actionsTable}\n
-${individualFinalProbabilitiesTable}\n
 ${overallFinalProbabilitiesTable}\n
-${individualOutcomesTable}\n
-${overallOutcomesTable}`,
+${overallOutcomesTable}\n
+${individualFinalProbabilitiesTable}\n
+${individualOutcomesTable}`,
   );
 };

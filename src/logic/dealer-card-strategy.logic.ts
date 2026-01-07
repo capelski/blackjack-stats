@@ -104,6 +104,26 @@ export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) =
     strategyOptions,
   );
 
+  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(playerScoresLabel => {
+    const allProbabilities = cards.map(dealerCard => {
+      const decision = strategy[playerScoresLabel][dealerCard];
+      return multiplyFinalProbabilities(
+        decision.selectedOutcomes.finalProbabilities,
+        1 / cards.length,
+      );
+    });
+    return allProbabilities.reduce<FinalProbabilities>(mergeFinalProbabilities, {});
+  }, strategyOptions);
+
+  const overallOutcomesTable = getOverallOutcomesTable(playerScoresLabel => {
+    const allOutcomes = cards.map(dealerCard => {
+      const decision = strategy[playerScoresLabel][dealerCard];
+      return decision.selectedOutcomes;
+    });
+    const aggregatedOutcomes = mergeOutcomes(allOutcomes);
+    return multiplyOutcomes(aggregatedOutcomes, 1 / allOutcomes.length);
+  }, strategyOptions);
+
   const individualFinalProbabilitiesTable = getIndividualFinalProbabilitiesTable(
     ['', ...cards],
     playerScoresLabel => {
@@ -122,17 +142,6 @@ export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) =
     strategyOptions,
   );
 
-  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(playerScoresLabel => {
-    const allProbabilities = cards.map(dealerCard => {
-      const decision = strategy[playerScoresLabel][dealerCard];
-      return multiplyFinalProbabilities(
-        decision.selectedOutcomes.finalProbabilities,
-        1 / cards.length,
-      );
-    });
-    return allProbabilities.reduce<FinalProbabilities>(mergeFinalProbabilities, {});
-  }, strategyOptions);
-
   const individualOutcomesTable = getIndividualOutcomesTable(
     ['', ...cards],
     playerScoresLabel => {
@@ -148,20 +157,11 @@ export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) =
     strategyOptions,
   );
 
-  const overallOutcomesTable = getOverallOutcomesTable(playerScoresLabel => {
-    const allOutcomes = cards.map(dealerCard => {
-      const decision = strategy[playerScoresLabel][dealerCard];
-      return decision.selectedOutcomes;
-    });
-    const aggregatedOutcomes = mergeOutcomes(allOutcomes);
-    return multiplyOutcomes(aggregatedOutcomes, 1 / allOutcomes.length);
-  }, strategyOptions);
-
   console.log(
     `${actionsTable}\n
-${individualFinalProbabilitiesTable}\n
 ${overallFinalProbabilitiesTable}\n
-${individualOutcomesTable}\n
-${overallOutcomesTable}`,
+${overallOutcomesTable}\n
+${individualFinalProbabilitiesTable}\n
+${individualOutcomesTable}`,
   );
 };
