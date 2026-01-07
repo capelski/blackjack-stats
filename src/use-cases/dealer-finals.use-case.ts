@@ -6,8 +6,8 @@ import { getTable } from '../logic/table.logic';
 const dealerFinals = getDealerFinals();
 
 const combinationsHeaders = ['Score', 'Combinations', 'Examples'];
-const combinationsRows = dealerFinalHands.map((dealerHand) => {
-  const dealerCombinations = dealerFinals.combinations[dealerHand.effectiveScore];
+const combinationsRows = dealerFinalHands.map(dealerHand => {
+  const dealerCombinations = dealerFinals[dealerHand.effectiveScore].combinations;
   const examples = dealerCombinations.slice(0, 10);
   const drawEllipsis = examples.length < dealerCombinations.length;
   return [
@@ -21,8 +21,8 @@ const scoresTable = getTable(combinationsHeaders, combinationsRows);
 console.log(scoresTable);
 
 const probabilitiesHeaders = ['Score', 'Probability'];
-const probabilitiesRows = dealerFinalHands.map((dealerHand) => {
-  return [dealerHand.label, toPercentage(dealerFinals.probabilities[dealerHand.effectiveScore])];
+const probabilitiesRows = dealerFinalHands.map(dealerHand => {
+  return [dealerHand.label, toPercentage(dealerFinals[dealerHand.effectiveScore].probability)];
 });
 
 const probabilitiesTable = getTable(probabilitiesHeaders, probabilitiesRows);

@@ -6,6 +6,7 @@ import { getAction } from '../actions.logic';
 import { getDealerFinals } from '../dealer-finals.logic';
 import { getStandDecision } from '../decisions.logic';
 import { canDouble } from '../doubling.logic';
+import { getFinalProbabilities } from '../final-scores.logic';
 import { getPlayerHands } from '../hands.logic';
 import {
   getDoubleOutcomes,
@@ -23,12 +24,15 @@ export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
     if (playerHand.isFinal) {
       maxReturnsStrategy[playerHand.label] = getStandDecision(
         playerHand.effectiveScore,
-        dealerFinals.probabilities,
+        getFinalProbabilities(dealerFinals),
       );
       continue;
     }
 
-    const standOutcomes = getStandOutcomes(playerHand.effectiveScore, dealerFinals.probabilities);
+    const standOutcomes = getStandOutcomes(
+      playerHand.effectiveScore,
+      getFinalProbabilities(dealerFinals),
+    );
     const additionalOutcomes: ActionOutcomes[] = [
       {
         action: Action.hit,

@@ -1,10 +1,10 @@
-import { Finals, FinalsByDealerCard } from '../types/finals.type';
+import { FinalScores, FinalScoresByDealerCard } from '../types/final-scores.type';
 import { HandWithCards } from '../types/hand.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getEffectiveScore, getScores } from './scores.logic';
 
 export const getDealerFinalsByCard = () => {
-  const handsQueueByCard = cards.map<HandWithCards>((card) => {
+  const handsQueueByCard = cards.map<HandWithCards>(card => {
     return {
       cards: [card],
       scores: cardValuesDictionary[card],
@@ -15,20 +15,17 @@ export const getDealerFinalsByCard = () => {
     return { ...reduced, [card]: true };
   }, {});
 
-  const dealerFinalsByCard = cards.reduce<FinalsByDealerCard>((reduced, card) => {
+  const dealerFinalsByCard = cards.reduce<FinalScoresByDealerCard>((reduced, card) => {
     return {
       ...reduced,
-      [card]: <Finals>{
-        combinations: {},
-        probabilities: {},
-      },
+      [card]: <FinalScores>{},
     };
   }, {});
 
   while (handsQueueByCard.length > 0) {
     const hand = handsQueueByCard.shift()!;
 
-    cards.map((card) => {
+    cards.map(card => {
       const nextCards = [...hand.cards, card];
       const nextCombination = getCardsCombinations(nextCards);
       const nextScores = getScores(hand.scores, cardValuesDictionary[card], nextCards.length);
@@ -47,17 +44,17 @@ export const getDealerFinalsByCard = () => {
       } else {
         const dealerFinals = dealerFinalsByCard[nextCards[0]];
 
-        if (!dealerFinals.combinations[nextEffectiveScore]) {
-          dealerFinals.combinations[nextEffectiveScore] = [];
+        if (!dealerFinals[nextEffectiveScore]) {
+          dealerFinals[nextEffectiveScore] = {
+            combinations: [],
+            probability: 0,
+          };
         }
-        dealerFinals.combinations[nextEffectiveScore].push(nextCombination);
 
-        if (!dealerFinals.probabilities[nextEffectiveScore]) {
-          dealerFinals.probabilities[nextEffectiveScore] = 0;
-        }
+        dealerFinals[nextEffectiveScore].combinations.push(nextCombination);
 
         const handProbability = 1 / Math.pow(cardsNumber, nextHand.cards.length - 1);
-        dealerFinals.probabilities[nextEffectiveScore] += handProbability;
+        dealerFinals[nextEffectiveScore].probability += handProbability;
       }
     });
   }

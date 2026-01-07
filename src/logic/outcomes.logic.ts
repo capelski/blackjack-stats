@@ -1,4 +1,4 @@
-import { Finals } from '../types/finals.type';
+import { FinalProbabilities } from '../types/final-scores.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { cardsNumber, cardValues } from './cards.logic';
@@ -32,7 +32,7 @@ export const createOutcomes = (): Outcomes => {
 };
 
 export const getLoseProbability = (
-  dealerProbabilities: Finals['probabilities'],
+  dealerProbabilities: FinalProbabilities,
   playerScore: number,
 ) => {
   return playerScore === bustScore
@@ -48,16 +48,13 @@ export const getLoseProbability = (
 };
 
 export const getPushProbability = (
-  dealerProbabilities: Finals['probabilities'],
+  dealerProbabilities: FinalProbabilities,
   playerScore: number,
 ) => {
   return playerScore === bustScore ? 0 : dealerProbabilities[playerScore] || 0;
 };
 
-export const getWinProbability = (
-  dealerProbabilities: Finals['probabilities'],
-  playerScore: number,
-) => {
+export const getWinProbability = (dealerProbabilities: FinalProbabilities, playerScore: number) => {
   const bustProbability = dealerProbabilities[bustScore] || 0;
   return playerScore === bustScore
     ? 0
@@ -150,7 +147,7 @@ export const getSplitOutcomes = (playerDecision: PlayerDecision) => {
 
 export const getStandOutcomes = (
   playerScore: number,
-  dealerProbabilities: Finals['probabilities'],
+  dealerProbabilities: FinalProbabilities,
 ): Outcomes => {
   const lose = getLoseProbability(dealerProbabilities, playerScore);
   const push = getPushProbability(dealerProbabilities, playerScore);

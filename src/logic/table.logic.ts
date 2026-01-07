@@ -1,6 +1,6 @@
 import { Card } from '../types/card.type';
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
-import { FinalProbabilities } from '../types/finals.type';
+import { FinalProbabilities } from '../types/final-scores.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';

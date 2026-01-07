@@ -1,4 +1,4 @@
-import { FinalProbabilities } from '../types/finals.type';
+import { FinalProbabilities } from '../types/final-scores.type';
 import { cardsNumber, cardValues } from './cards.logic';
 import { getScoresLabel } from './labels.logic';
 import { toPercentage } from './percentages.logic';

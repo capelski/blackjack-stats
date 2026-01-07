@@ -1,5 +1,5 @@
 import { Action } from '../enums/action.enum';
-import { FinalProbabilities } from './finals.type';
+import { FinalProbabilities } from './final-scores.type';
 
 export type Outcomes = {
   finalProbabilities: FinalProbabilities;

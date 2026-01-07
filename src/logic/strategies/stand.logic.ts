@@ -1,6 +1,7 @@
 import { PlayerDecisionStrategy } from '../../types/player-decision-strategy.type';
 import { getDealerFinals } from '../dealer-finals.logic';
 import { getHitDecision, getStandDecision } from '../decisions.logic';
+import { getFinalProbabilities } from '../final-scores.logic';
 import { getPlayerHands } from '../hands.logic';
 import { printPlayerDecisionStrategyTables } from '../table.logic';
 
@@ -11,7 +12,7 @@ export const getStandStrategy = (threshold: number) => {
   for (const playerHand of getPlayerHands()) {
     copycatStrategy[playerHand.label] = getStandDecision(
       playerHand.effectiveScore,
-      dealerFinals.probabilities,
+      getFinalProbabilities(dealerFinals),
     );
 
     if (!playerHand.isFinal && playerHand.effectiveScore < threshold) {

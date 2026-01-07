@@ -1,4 +1,4 @@
-import { Finals } from '../types/finals.type';
+import { FinalScores } from '../types/final-scores.type';
 import { HandWithCards } from '../types/hand.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getEffectiveScore, getScores } from './scores.logic';
@@ -11,10 +11,7 @@ export const getDealerFinals = () => {
     };
   });
 
-  const dealerFinals: Finals = {
-    combinations: {},
-    probabilities: {},
-  };
+  const dealerFinals: FinalScores = {};
 
   while (handsQueue.length > 0) {
     const hand = handsQueue.shift()!;
@@ -33,15 +30,16 @@ export const getDealerFinals = () => {
       if (nextEffectiveScore < 17) {
         handsQueue.push(nextHand);
       } else {
-        if (!dealerFinals.combinations[nextEffectiveScore]) {
-          dealerFinals.combinations[nextEffectiveScore] = [];
+        if (!dealerFinals[nextEffectiveScore]) {
+          dealerFinals[nextEffectiveScore] = {
+            combinations: [],
+            probability: 0,
+          };
         }
-        dealerFinals.combinations[nextEffectiveScore].push(nextCombination);
 
-        if (!dealerFinals.probabilities[nextEffectiveScore]) {
-          dealerFinals.probabilities[nextEffectiveScore] = 0;
-        }
-        dealerFinals.probabilities[nextEffectiveScore] +=
+        dealerFinals[nextEffectiveScore].combinations.push(nextCombination);
+
+        dealerFinals[nextEffectiveScore].probability +=
           1 / Math.pow(cardsNumber, nextHand.cards.length);
       }
     });

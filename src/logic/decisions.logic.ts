@@ -1,5 +1,5 @@
 import { Action } from '../enums/action.enum';
-import { Finals } from '../types/finals.type';
+import { FinalProbabilities } from '../types/final-scores.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { getHitOutcomes, getStandOutcomes } from './outcomes.logic';
@@ -21,7 +21,7 @@ export const getHitDecision = (
 
 export const getStandDecision = (
   playerScore: number,
-  dealerProbabilities: Finals['probabilities'],
+  dealerProbabilities: FinalProbabilities,
 ): PlayerDecision => {
   const outcomes = getStandOutcomes(playerScore, dealerProbabilities);
   return {

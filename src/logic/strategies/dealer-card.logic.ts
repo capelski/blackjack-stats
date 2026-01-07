@@ -7,6 +7,7 @@ import { cards } from '../cards.logic';
 import { getDealerFinalsByCard } from '../dealer-finals-by-card.logic';
 import { getStandDecision } from '../decisions.logic';
 import { canDouble } from '../doubling.logic';
+import { getFinalProbabilities } from '../final-scores.logic';
 import { getPlayerHands } from '../hands.logic';
 import {
   getDoubleOutcomes,
@@ -21,7 +22,7 @@ export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   const dealerCardStrategy: DealerCardStrategy = {};
 
   cards.forEach(dealerCard => {
-    const dealerProbabilities = dealerFinalsByCard[dealerCard].probabilities;
+    const dealerProbabilities = getFinalProbabilities(dealerFinalsByCard[dealerCard]);
 
     for (const playerHand of getPlayerHands(options.splitting)) {
       dealerCardStrategy[playerHand.label] = dealerCardStrategy[playerHand.label] || {};
