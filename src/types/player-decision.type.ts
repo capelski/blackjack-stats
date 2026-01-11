@@ -1,9 +1,11 @@
 import { Action } from '../enums/action.enum';
-import { ActionOutcomes, Outcomes } from './outcomes.type';
+import { Consequence, ConsequenceByAction } from './consequence.type';
 
 export type PlayerDecision = {
+  standConsequence: Consequence;
+  additionalConsequences: ConsequenceByAction;
+
   action: Action;
-  additionalOutcomes: ActionOutcomes[];
-  selectedOutcomes: Outcomes;
-  standOutcomes: Outcomes;
+
+  selectedConsequence: Consequence;
 };

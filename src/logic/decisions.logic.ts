@@ -1,21 +1,21 @@
 import { Action } from '../enums/action.enum';
+import { Consequence } from '../types/consequence.type';
 import { FinalProbabilities } from '../types/final-scores.type';
-import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
-import { getHitOutcomes, getStandOutcomes } from './outcomes.logic';
+import { getHitConsequence, getStandConsequence } from './consequence.logic';
 
 export const getHitDecision = (
   playerScores: number[],
-  standOutcomes: Outcomes,
+  standConsequences: Consequence,
   getNextScoreDecision: (nextScoresLabel: string) => PlayerDecision,
 ): PlayerDecision => {
-  const outcomes = getHitOutcomes(playerScores, getNextScoreDecision);
+  const consequence = getHitConsequence(playerScores, getNextScoreDecision);
 
   return {
     action: Action.hit,
-    additionalOutcomes: [{ action: Action.hit, outcomes }],
-    selectedOutcomes: outcomes,
-    standOutcomes,
+    additionalConsequences: { [Action.hit]: consequence },
+    selectedConsequence: consequence,
+    standConsequence: standConsequences,
   };
 };
 
@@ -23,11 +23,11 @@ export const getStandDecision = (
   playerScore: number,
   dealerProbabilities: FinalProbabilities,
 ): PlayerDecision => {
-  const outcomes = getStandOutcomes(playerScore, dealerProbabilities);
+  const consequence = getStandConsequence(playerScore, dealerProbabilities);
   return {
     action: Action.stand,
-    additionalOutcomes: [],
-    selectedOutcomes: outcomes,
-    standOutcomes: outcomes,
+    additionalConsequences: {},
+    selectedConsequence: consequence,
+    standConsequence: consequence,
   };
 };

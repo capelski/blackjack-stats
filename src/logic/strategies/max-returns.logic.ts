@@ -1,76 +1,91 @@
 import { Action } from '../../enums/action.enum';
-import { ActionOutcomes } from '../../types/outcomes.type';
+import { Consequence, ConsequenceByAction } from '../../types/consequence.type';
+import { FinalProbabilities } from '../../types/final-scores.type';
 import { PlayerDecisionStrategy } from '../../types/player-decision-strategy.type';
+import { PlayerDecision } from '../../types/player-decision.type';
 import { StrategyOptions } from '../../types/strategy-options.type';
-import { getAction } from '../actions.logic';
+import {
+  getDoubleConsequence,
+  getHitConsequence,
+  getSplitConsequence,
+  getStandConsequence,
+} from '../consequence.logic';
 import { getDealerFinals } from '../dealer-finals.logic';
 import { getStandDecision } from '../decisions.logic';
 import { canDouble } from '../doubling.logic';
 import { getFinalProbabilities } from '../final-scores.logic';
 import { getPlayerHands } from '../hands.logic';
-import {
-  getDoubleOutcomes,
-  getHitOutcomes,
-  getSplitOutcomes,
-  getStandOutcomes,
-} from '../outcomes.logic';
 import { printPlayerDecisionStrategyTables } from '../table.logic';
 
-export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
-  const dealerFinals = getDealerFinals();
-  const maxReturnsStrategy: PlayerDecisionStrategy = {};
+export const selectConsequence = (
+  standConsequence: Consequence,
+  additionalConsequences: ConsequenceByAction,
+): PlayerDecision => {
+  const { action, selectedConsequence } = Object.keys(additionalConsequences).reduce<{
+    action: Action;
+    selectedConsequence: Consequence;
+  }>(
+    (reduced, actionStr) => {
+      const action = actionStr as Action;
+      const consequence = additionalConsequences[action]!;
+      return consequence.outcomes.returns > reduced.selectedConsequence.outcomes.returns
+        ? { action, selectedConsequence: consequence }
+        : reduced;
+    },
+    {
+      action: Action.stand,
+      selectedConsequence: standConsequence,
+    },
+  );
+
+  return {
+    action,
+    additionalConsequences,
+    selectedConsequence,
+    standConsequence,
+  };
+};
+
+export const maxReturnsCore = (
+  dealerFinals: FinalProbabilities,
+  options: StrategyOptions,
+): PlayerDecisionStrategy => {
+  const strategy: PlayerDecisionStrategy = {};
 
   for (const playerHand of getPlayerHands(options.splitting)) {
     if (playerHand.isFinal) {
-      maxReturnsStrategy[playerHand.label] = getStandDecision(
-        playerHand.effectiveScore,
-        getFinalProbabilities(dealerFinals),
-      );
+      strategy[playerHand.label] = getStandDecision(playerHand.effectiveScore, dealerFinals);
       continue;
     }
 
-    const standOutcomes = getStandOutcomes(
-      playerHand.effectiveScore,
-      getFinalProbabilities(dealerFinals),
-    );
-    const additionalOutcomes: ActionOutcomes[] = [
-      {
-        action: Action.hit,
-        outcomes: getHitOutcomes(
-          playerHand.scores,
-          nextScoresLabel => maxReturnsStrategy[nextScoresLabel],
-        ),
-      },
-    ];
+    const standConsequence = getStandConsequence(playerHand.effectiveScore, dealerFinals);
+    const additionalConsequences: ConsequenceByAction = {
+      [Action.hit]: getHitConsequence(
+        playerHand.scores,
+        nextScoresLabel => strategy[nextScoresLabel],
+      ),
+    };
 
     if (canDouble(playerHand.scores, options.doubling)) {
-      additionalOutcomes.push({
-        action: Action.double,
-        outcomes: getDoubleOutcomes(
-          playerHand.scores,
-          nextScoresLabel => maxReturnsStrategy[nextScoresLabel].standOutcomes,
-        ),
-      });
+      additionalConsequences[Action.double] = getDoubleConsequence(
+        playerHand.scores,
+        nextScoresLabel => strategy[nextScoresLabel].standConsequence,
+      );
     }
 
     if (playerHand.splitLabel) {
-      additionalOutcomes.push({
-        action: Action.split,
-        outcomes: getSplitOutcomes(maxReturnsStrategy[playerHand.splitLabel]),
-      });
+      additionalConsequences[Action.split] = getSplitConsequence(strategy[playerHand.splitLabel]);
     }
 
-    const { action, selectedOutcomes } = getAction(standOutcomes, additionalOutcomes);
-
-    maxReturnsStrategy[playerHand.label] = {
-      action,
-      additionalOutcomes,
-      selectedOutcomes,
-      standOutcomes,
-    };
+    strategy[playerHand.label] = selectConsequence(standConsequence, additionalConsequences);
   }
 
-  return maxReturnsStrategy;
+  return strategy;
+};
+
+export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
+  const dealerFinals = getDealerFinals();
+  return maxReturnsCore(getFinalProbabilities(dealerFinals), options);
 };
 
 export const printMaxReturnsStrategy = (strategyOptions: StrategyOptions = {}) => {

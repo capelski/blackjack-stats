@@ -7,24 +7,24 @@ import { printPlayerDecisionStrategyTables } from '../table.logic';
 
 export const getStandStrategy = (threshold: number) => {
   const dealerFinals = getDealerFinals();
-  const copycatStrategy: PlayerDecisionStrategy = {};
+  const strategy: PlayerDecisionStrategy = {};
 
   for (const playerHand of getPlayerHands()) {
-    copycatStrategy[playerHand.label] = getStandDecision(
+    strategy[playerHand.label] = getStandDecision(
       playerHand.effectiveScore,
       getFinalProbabilities(dealerFinals),
     );
 
     if (!playerHand.isFinal && playerHand.effectiveScore < threshold) {
-      copycatStrategy[playerHand.label] = getHitDecision(
+      strategy[playerHand.label] = getHitDecision(
         playerHand.scores,
-        copycatStrategy[playerHand.label].standOutcomes,
-        nextScoresLabel => copycatStrategy[nextScoresLabel],
+        strategy[playerHand.label].standConsequence,
+        nextScoresLabel => strategy[nextScoresLabel],
       );
     }
   }
 
-  return copycatStrategy;
+  return strategy;
 };
 
 export const printStandStrategy = (threshold: number) => {

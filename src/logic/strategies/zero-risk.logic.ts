@@ -7,24 +7,24 @@ import { printPlayerDecisionStrategyTables } from '../table.logic';
 
 export const getZeroRiskStrategy = () => {
   const dealerFinals = getDealerFinals();
-  const zeroRiskStrategy: PlayerDecisionStrategy = {};
+  const strategy: PlayerDecisionStrategy = {};
 
   for (const playerHand of getPlayerHands()) {
-    zeroRiskStrategy[playerHand.label] = getStandDecision(
+    strategy[playerHand.label] = getStandDecision(
       playerHand.effectiveScore,
       getFinalProbabilities(dealerFinals),
     );
 
     if (!playerHand.isFinal && (playerHand.effectiveScore < 12 || playerHand.scores.length > 1)) {
-      zeroRiskStrategy[playerHand.label] = getHitDecision(
+      strategy[playerHand.label] = getHitDecision(
         playerHand.scores,
-        zeroRiskStrategy[playerHand.label].standOutcomes,
-        nextScoresLabel => zeroRiskStrategy[nextScoresLabel],
+        strategy[playerHand.label].standConsequence,
+        nextScoresLabel => strategy[nextScoresLabel],
       );
     }
   }
 
-  return zeroRiskStrategy;
+  return strategy;
 };
 
 export const printZeroRiskStrategy = () => {
