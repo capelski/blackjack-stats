@@ -3,5 +3,5 @@ export type Outcomes = {
   push: number;
   win: number;
   betMultiplier: number;
-  returns: number;
+  betReturns: number;
 };

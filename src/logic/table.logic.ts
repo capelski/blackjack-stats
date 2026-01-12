@@ -5,6 +5,11 @@ import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { cards } from './cards.logic';
+import {
+  mergeFinalProbabilities,
+  multiplyFinalProbabilities,
+  stringifyFinalProbabilities,
+} from './final-probabilities.logic';
 import { getInitialPairs } from './initial-pairs.logic';
 import { getAbbreviatedAction, getInitialPairLabels } from './labels.logic';
 import {
@@ -13,11 +18,6 @@ import {
   multiplyOutcomes,
   outcomesToValues,
 } from './outcomes.logic';
-import {
-  mergeFinalProbabilities,
-  multiplyFinalProbabilities,
-  stringifyFinalProbabilities,
-} from './player-finals.logic';
 
 export const tableFormat: 'csv' | 'markdown' = 'markdown';
 

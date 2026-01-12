@@ -2,19 +2,22 @@ import { Consequence } from '../types/consequence.type';
 import { FinalProbabilities } from '../types/final-scores.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { cardsNumber, cardValues } from './cards.logic';
-import { getScoresLabel } from './labels.logic';
 import {
-  computeReturns,
-  createOutcomes,
-  getBetMultiplier,
   getLoseProbability,
   getPushProbability,
   getWinProbability,
+  mergeFinalProbabilities,
+  multiplyFinalProbabilities,
+} from './final-probabilities.logic';
+import { getScoresLabel } from './labels.logic';
+import {
+  createOutcomes,
+  getBetMultiplier,
+  getBetReturns,
   increaseOutcomes,
   multiplyOutcomes,
   reduceOutcomes,
 } from './outcomes.logic';
-import { mergeFinalProbabilities, multiplyFinalProbabilities } from './player-finals.logic';
 import { blackjackScore, getScores } from './scores.logic';
 
 export const createConsequence = (): Consequence => {
@@ -49,7 +52,7 @@ export const getDoubleConsequence = (
   }
 
   consequence.outcomes.betMultiplier = getBetMultiplier({ isDoubleBet: true });
-  consequence.outcomes.returns = computeReturns(
+  consequence.outcomes.betReturns = getBetReturns(
     consequence.outcomes.win,
     consequence.outcomes.lose,
     consequence.outcomes.betMultiplier,
@@ -86,10 +89,11 @@ export const getHitConsequence = (
     );
   }
 
-  consequence.outcomes.returns = computeReturns(
+  consequence.outcomes.betMultiplier = 1;
+  consequence.outcomes.betReturns = getBetReturns(
     consequence.outcomes.win,
     consequence.outcomes.lose,
-    1,
+    consequence.outcomes.betMultiplier,
   );
 
   return consequence;
@@ -102,7 +106,7 @@ export const getSplitConsequence = (playerDecision: PlayerDecision) => {
     outcomes: {
       ...playerDecision.selectedConsequence.outcomes,
       betMultiplier,
-      returns: computeReturns(
+      betReturns: getBetReturns(
         playerDecision.selectedConsequence.outcomes.win,
         playerDecision.selectedConsequence.outcomes.lose,
         betMultiplier,
@@ -129,7 +133,7 @@ export const getStandConsequence = (
       push,
       win,
       betMultiplier,
-      returns: computeReturns(win, lose, betMultiplier),
+      betReturns: getBetReturns(win, lose, betMultiplier),
     },
   };
 };

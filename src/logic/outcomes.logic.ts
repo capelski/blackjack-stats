@@ -1,16 +1,10 @@
-import { FinalProbabilities } from '../types/final-scores.type';
+import { Result } from '../enums/result.enum';
 import { Outcomes } from '../types/outcomes.type';
-import { dealerFinalHands } from './hands.logic';
 import { toPercentage } from './percentages.logic';
-import { bustScore } from './scores.logic';
 
 export type MultiplierOptions = {
   isDoubleBet?: boolean;
   isBlackjack?: boolean;
-};
-
-export const computeReturns = (win: number, lose: number, betMultiplier: number) => {
-  return (win - lose) * betMultiplier;
 };
 
 export const createOutcomes = (): Outcomes => {
@@ -19,7 +13,7 @@ export const createOutcomes = (): Outcomes => {
     push: 0,
     win: 0,
     betMultiplier: 1,
-    returns: 0,
+    betReturns: 0,
   };
 };
 
@@ -27,51 +21,19 @@ export const getBetMultiplier = (options: MultiplierOptions = {}): number => {
   return options.isBlackjack ? 1.5 : options.isDoubleBet ? 2 : 1;
 };
 
-export const getLoseProbability = (
-  dealerProbabilities: FinalProbabilities,
-  playerScore: number,
-) => {
-  return playerScore === bustScore
-    ? 1
-    : dealerFinalHands
-        .filter(
-          ({ effectiveScore }) =>
-            effectiveScore !== bustScore && dealerProbabilities[effectiveScore],
-        )
-        .reduce((reduced, { effectiveScore }) => {
-          return reduced + (effectiveScore > playerScore ? dealerProbabilities[effectiveScore] : 0);
-        }, 0);
-};
-
-export const getPushProbability = (
-  dealerProbabilities: FinalProbabilities,
-  playerScore: number,
-) => {
-  return playerScore === bustScore ? 0 : dealerProbabilities[playerScore] || 0;
-};
-
-export const getWinProbability = (dealerProbabilities: FinalProbabilities, playerScore: number) => {
-  const bustProbability = dealerProbabilities[bustScore] || 0;
-  return playerScore === bustScore
-    ? 0
-    : dealerFinalHands
-        .filter(
-          ({ effectiveScore }) =>
-            effectiveScore !== bustScore && dealerProbabilities[effectiveScore],
-        )
-        .reduce((reduced, { effectiveScore }) => {
-          return reduced + (effectiveScore < playerScore ? dealerProbabilities[effectiveScore] : 0);
-        }, 0) + bustProbability;
+export const getBetReturns = (win: number, lose: number, betMultiplier: number) => {
+  return 1 + (win - lose) * betMultiplier;
 };
 
 export const getOutcomesLabels = () => {
-  return ['Win', 'Push', 'Lose', 'Returns'];
+  return [Result.win, Result.push, Result.lose, 'Bet returns'];
 };
 
 export const increaseOutcomes = (target: Outcomes, addition: Outcomes, weight: number) => {
   target.lose += addition.lose * weight;
   target.push += addition.push * weight;
   target.win += addition.win * weight;
+  // Deliberately not increasing betMultiplier and betReturns
 };
 
 export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
@@ -81,7 +43,7 @@ export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
       push: reduced.push + outcomes.push,
       win: reduced.win + outcomes.win,
       betMultiplier: reduced.betMultiplier + outcomes.betMultiplier, // Correct ¿?
-      returns: reduced.returns + outcomes.returns,
+      betReturns: reduced.betReturns + outcomes.betReturns,
     };
   }, createOutcomes());
 };
@@ -92,7 +54,7 @@ export const reduceOutcomes = (a: Outcomes, b: Outcomes): Outcomes => {
     push: a.push + b.push,
     win: a.win + b.win,
     betMultiplier: a.betMultiplier + b.betMultiplier, // Correct ¿?
-    returns: a.returns + b.returns,
+    betReturns: a.betReturns + b.betReturns,
   };
 };
 
@@ -102,7 +64,7 @@ export const multiplyOutcomes = (outcomes: Outcomes, factor: number): Outcomes =
     push: outcomes.push * factor,
     win: outcomes.win * factor,
     betMultiplier: outcomes.betMultiplier * factor,
-    returns: outcomes.returns * factor,
+    betReturns: outcomes.betReturns * factor,
   };
 };
 
@@ -111,6 +73,6 @@ export const outcomesToValues = (outcomes: Outcomes) => {
     toPercentage(outcomes.win),
     toPercentage(outcomes.push),
     toPercentage(outcomes.lose),
-    toPercentage(outcomes.returns),
+    outcomes.betReturns.toFixed(3),
   ];
 };

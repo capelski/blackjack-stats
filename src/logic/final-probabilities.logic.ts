@@ -1,9 +1,47 @@
 import { FinalProbabilities } from '../types/final-scores.type';
-import { cardsNumber, cardValues } from './cards.logic';
+import { cardValues, cardsNumber } from './cards.logic';
 import { getFinalProbabilitiesKeys } from './final-scores.logic';
+import { dealerFinalHands } from './hands.logic';
 import { getScoresLabel } from './labels.logic';
 import { toPercentage } from './percentages.logic';
-import { getEffectiveScore, getScores } from './scores.logic';
+import { bustScore, getEffectiveScore, getScores } from './scores.logic';
+
+export const getLoseProbability = (
+  dealerProbabilities: FinalProbabilities,
+  playerScore: number,
+) => {
+  return playerScore === bustScore
+    ? 1
+    : dealerFinalHands
+        .filter(
+          ({ effectiveScore }) =>
+            effectiveScore !== bustScore && dealerProbabilities[effectiveScore],
+        )
+        .reduce((reduced, { effectiveScore }) => {
+          return reduced + (effectiveScore > playerScore ? dealerProbabilities[effectiveScore] : 0);
+        }, 0);
+};
+
+export const getPushProbability = (
+  dealerProbabilities: FinalProbabilities,
+  playerScore: number,
+) => {
+  return playerScore === bustScore ? 0 : dealerProbabilities[playerScore] || 0;
+};
+
+export const getWinProbability = (dealerProbabilities: FinalProbabilities, playerScore: number) => {
+  const bustProbability = dealerProbabilities[bustScore] || 0;
+  return playerScore === bustScore
+    ? 0
+    : dealerFinalHands
+        .filter(
+          ({ effectiveScore }) =>
+            effectiveScore !== bustScore && dealerProbabilities[effectiveScore],
+        )
+        .reduce((reduced, { effectiveScore }) => {
+          return reduced + (effectiveScore < playerScore ? dealerProbabilities[effectiveScore] : 0);
+        }, 0) + bustProbability;
+};
 
 export const getHitFinalProbabilities = (
   playerScores: number[],
@@ -17,13 +55,13 @@ export const getHitFinalProbabilities = (
     const nextLabel = getScoresLabel([nextEffectiveScore]);
     const nextFinalProbabilities = getNextFinalProbabilities(nextLabel);
 
-    getFinalProbabilitiesKeys(nextFinalProbabilities).forEach(finalScoreLabel => {
-      const weightedProbabilities = nextFinalProbabilities[finalScoreLabel] / cardsNumber;
+    getFinalProbabilitiesKeys(nextFinalProbabilities).forEach(finalScore => {
+      const weightedProbabilities = nextFinalProbabilities[finalScore] / cardsNumber;
 
-      if (finalProbabilities[finalScoreLabel] === undefined) {
-        finalProbabilities[finalScoreLabel] = 0;
+      if (finalProbabilities[finalScore] === undefined) {
+        finalProbabilities[finalScore] = 0;
       }
-      finalProbabilities[finalScoreLabel] += weightedProbabilities;
+      finalProbabilities[finalScore] += weightedProbabilities;
     });
   }
 

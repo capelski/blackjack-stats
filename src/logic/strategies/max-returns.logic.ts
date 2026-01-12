@@ -28,7 +28,7 @@ export const selectConsequence = (
     (reduced, actionStr) => {
       const action = actionStr as Action;
       const consequence = additionalConsequences[action]!;
-      return consequence.outcomes.returns > reduced.selectedConsequence.outcomes.returns
+      return consequence.outcomes.betReturns > reduced.selectedConsequence.outcomes.betReturns
         ? { action, selectedConsequence: consequence }
         : reduced;
     },
