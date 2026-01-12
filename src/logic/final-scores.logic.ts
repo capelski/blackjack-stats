@@ -1,6 +1,6 @@
 import { FinalProbabilities, FinalScores } from '../types/final-scores.type';
 
-export const getFinalProbabilitiesKeys = (finalProbabilities: FinalProbabilities | FinalScores) => {
+export const getFinalProbabilitiesKeys = (finalProbabilities: {}) => {
   return Object.keys(finalProbabilities)
     .map(parseFloat)
     .sort((a, b) => a - b);

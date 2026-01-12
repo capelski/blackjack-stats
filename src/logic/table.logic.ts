@@ -197,53 +197,49 @@ ${individualOutcomesTable}`,
   );
 };
 
-export const printPlayerDecisionStrategyTables = (
-  strategy: PlayerDecisionStrategy,
-  strategyOptions: StrategyOptions = {},
-) => {
+export const printPlayerDecisionStrategyTables = (strategy: PlayerDecisionStrategy) => {
   return printStrategyTable(
     {
       actionsHeaders: ['Score', 'Action'],
       actionsRowGetter: playerScoresLabel => [
         playerScoresLabel,
-        strategy[playerScoresLabel].action,
+        strategy.decisions[playerScoresLabel].action,
       ],
       overallFinalProbabilitiesRowGetter: playerScoresLabel =>
-        strategy[playerScoresLabel].selectedConsequence.finalProbabilities,
+        strategy.decisions[playerScoresLabel].selectedConsequence.finalProbabilities,
       overallOutcomesRowGetter: playerScoresLabel =>
-        strategy[playerScoresLabel].selectedConsequence.outcomes,
+        strategy.decisions[playerScoresLabel].selectedConsequence.outcomes,
       individualFinalProbabilitiesHeaders: ['Score', 'Final Probabilities'],
       individualFinalProbabilitiesRowGetter: playerScoresLabel => {
         const finalProbabilities =
-          strategy[playerScoresLabel].selectedConsequence.finalProbabilities;
+          strategy.decisions[playerScoresLabel].selectedConsequence.finalProbabilities;
         return [playerScoresLabel, stringifyFinalProbabilities(finalProbabilities).join(' / ')];
       },
       individualOutcomesHeaders: ['Score', ...getOutcomesLabels()],
       individualOutcomesRowGetter: playerScoresLabel => {
-        const outcomes = strategy[playerScoresLabel].selectedConsequence.outcomes;
+        const outcomes = strategy.decisions[playerScoresLabel].selectedConsequence.outcomes;
         return [playerScoresLabel, ...outcomesToValues(outcomes)];
       },
     },
-    strategyOptions,
+    strategy.options,
   );
 };
 
-export const printDealerCardStrategyTables = (
-  strategy: DealerCardStrategy,
-  strategyOptions: StrategyOptions = {},
-) => {
+export const printDealerCardStrategyTables = (strategy: DealerCardStrategy) => {
   return printStrategyTable(
     {
       actionsHeaders: ['', ...cards],
       actionsRowGetter: playerScoresLabel => {
         const actions = cards.map(dealerCard => {
-          return getAbbreviatedAction(strategy[dealerCard][playerScoresLabel].action);
+          return getAbbreviatedAction(
+            strategy.dealerCards[dealerCard].decisions[playerScoresLabel].action,
+          );
         });
         return [playerScoresLabel, ...actions];
       },
       overallFinalProbabilitiesRowGetter: playerScoresLabel => {
         const allProbabilities = cards.map(dealerCard => {
-          const decision = strategy[dealerCard][playerScoresLabel];
+          const decision = strategy.dealerCards[dealerCard].decisions[playerScoresLabel];
           return multiplyFinalProbabilities(
             decision.selectedConsequence.finalProbabilities,
             1 / cards.length,
@@ -253,7 +249,7 @@ export const printDealerCardStrategyTables = (
       },
       overallOutcomesRowGetter: playerScoresLabel => {
         const allOutcomes = cards.map(dealerCard => {
-          const decision = strategy[dealerCard][playerScoresLabel];
+          const decision = strategy.dealerCards[dealerCard].decisions[playerScoresLabel];
           return decision.selectedConsequence.outcomes;
         });
         const aggregatedOutcomes = mergeOutcomes(allOutcomes);
@@ -263,7 +259,8 @@ export const printDealerCardStrategyTables = (
       individualFinalProbabilitiesRowGetter: playerScoresLabel => {
         const allFinalProbabilities = cards.map(dealerCard => {
           const finalProbabilities =
-            strategy[dealerCard][playerScoresLabel].selectedConsequence.finalProbabilities;
+            strategy.dealerCards[dealerCard].decisions[playerScoresLabel].selectedConsequence
+              .finalProbabilities;
           return stringifyFinalProbabilities(finalProbabilities).join(' / ');
         });
 
@@ -273,7 +270,7 @@ export const printDealerCardStrategyTables = (
       individualOutcomesRowGetter: playerScoresLabel => {
         const outcomesLabels = getOutcomesLabels();
         const allReturns = cards.map(dealerCard => {
-          const decision = strategy[dealerCard][playerScoresLabel];
+          const decision = strategy.dealerCards[dealerCard].decisions[playerScoresLabel];
           const outcomes = outcomesToValues(decision.selectedConsequence.outcomes);
           return outcomesLabels.map((label, index) => `${label}: ${outcomes[index]}`).join(' / ');
         });
@@ -281,6 +278,6 @@ export const printDealerCardStrategyTables = (
         return [playerScoresLabel, ...allReturns];
       },
     },
-    strategyOptions,
+    strategy.options,
   );
 };
