@@ -1,3 +1,4 @@
+import { FinalScores } from '../types/final-scores.type';
 import { DecisionsByPlayerScore } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { StrategySummary } from '../types/strategy-summary.type';
@@ -12,6 +13,7 @@ export const createStrategySummary = (): StrategySummary => {
 
 export const getStrategySummary = (
   decisions: DecisionsByPlayerScore,
+  dealerFinalScores: FinalScores,
   options: StrategyOptions = {},
 ): StrategySummary => {
   return {

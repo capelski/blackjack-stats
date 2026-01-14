@@ -6,6 +6,7 @@ import {
 } from '../dealer-card-strategy.logic';
 import { getDealerFinalsByCard } from '../dealer-finals-by-card.logic';
 import { getFinalProbabilities } from '../final-scores.logic';
+import { getStrategySummary } from '../strategy-summary.logic';
 import { printDealerCardStrategyTables } from '../table.logic';
 import { maxReturnsCore } from './max-returns.logic';
 
@@ -14,10 +15,15 @@ export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   const strategy = createDealerCardStrategy(options);
 
   cards.forEach(dealerCard => {
-    const dealerFinals = getFinalProbabilities(dealerFinalsByCard[dealerCard]);
+    const dealerFinalProbabilities = getFinalProbabilities(dealerFinalsByCard[dealerCard]);
     const cardStrategy = strategy.dealerCards[dealerCard];
 
-    cardStrategy.decisions = maxReturnsCore(dealerFinals, options);
+    cardStrategy.decisions = maxReturnsCore(dealerFinalProbabilities, options);
+    strategy.summary = getStrategySummary(
+      cardStrategy.decisions,
+      dealerFinalsByCard[dealerCard],
+      strategy.options,
+    );
   });
 
   setDealerCardStrategyTotals(strategy);

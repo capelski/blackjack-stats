@@ -1,5 +1,6 @@
 import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
+import { getDealerFinals } from './dealer-finals.logic';
 import { createStrategySummary, getStrategySummary } from './strategy-summary.logic';
 
 export const createPlayerDecisionStrategy = (
@@ -14,5 +15,6 @@ export const createPlayerDecisionStrategy = (
 };
 
 export const setPlayerDecisionStrategyTotals = (strategy: PlayerDecisionStrategy) => {
-  strategy.summary = getStrategySummary(strategy.decisions, strategy.options);
+  const dealerFinals = getDealerFinals();
+  strategy.summary = getStrategySummary(strategy.decisions, dealerFinals, strategy.options);
 };
