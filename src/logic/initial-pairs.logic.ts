@@ -2,7 +2,7 @@ import { Card } from '../types/card.type';
 import { InitialPairs } from '../types/initial-pairs.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getInitialPairLabels, getScoresLabel } from './labels.logic';
-import { toPercentage } from './percentages.logic';
+import { toPercentage } from './numbers.logic';
 import { getScores } from './scores.logic';
 import { canSplit } from './splitting.logic';
 import { getTable } from './table.logic';

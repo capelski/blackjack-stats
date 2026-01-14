@@ -1,6 +1,7 @@
 import { cards, cardsNumber } from '../logic/cards.logic';
 import { getDealerFinalsByCard } from '../logic/dealer-finals-by-card.logic';
 import { dealerFinalHands } from '../logic/hands.logic';
+import { toPercentage } from '../logic/numbers.logic';
 import { getTable } from '../logic/table.logic';
 import { FinalScores, FinalScoresByDealerCard } from '../types/final-scores.type';
 
@@ -33,7 +34,7 @@ console.log(combinationsTable);
 
 const overallProbabilitiesRows = getRows(dealerFinalsByCard, (dealerFinals, dealerFinalScore) => {
   const probabilities = (dealerFinals[dealerFinalScore]?.probability || 0) / cardsNumber;
-  return `${(probabilities * 100).toFixed(2)}%`;
+  return toPercentage(probabilities);
 });
 const overallProbabilitiesTable = getTable(headers, overallProbabilitiesRows);
 
@@ -44,7 +45,7 @@ const individualProbabilitiesRows = getRows(
   dealerFinalsByCard,
   (dealerFinals, dealerFinalScore) => {
     const probabilities = dealerFinals[dealerFinalScore]?.probability || 0;
-    return `${(probabilities * 100).toFixed(2)}%`;
+    return toPercentage(probabilities);
   },
 );
 const individualProbabilitiesTable = getTable(headers, individualProbabilitiesRows);

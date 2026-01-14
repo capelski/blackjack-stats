@@ -3,7 +3,7 @@ import { cardValues, cardsNumber } from './cards.logic';
 import { getFinalProbabilitiesKeys } from './final-scores.logic';
 import { dealerFinalHands } from './hands.logic';
 import { getScoresLabel } from './labels.logic';
-import { toPercentage } from './percentages.logic';
+import { toPercentage } from './numbers.logic';
 import { bustScore, getEffectiveScore, getScores } from './scores.logic';
 
 export const getLoseProbability = (

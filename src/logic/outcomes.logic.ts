@@ -1,6 +1,6 @@
 import { Result } from '../enums/result.enum';
 import { Outcomes } from '../types/outcomes.type';
-import { toPercentage } from './percentages.logic';
+import { toDecimal, toPercentage } from './numbers.logic';
 
 export type MultiplierOptions = {
   isDoubleBet?: boolean;
@@ -12,7 +12,7 @@ export const createOutcomes = (): Outcomes => {
     lose: 0,
     push: 0,
     win: 0,
-    betMultiplier: 1,
+    betMultiplier: 0,
     betReturns: 0,
   };
 };
@@ -42,7 +42,7 @@ export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
       lose: reduced.lose + outcomes.lose,
       push: reduced.push + outcomes.push,
       win: reduced.win + outcomes.win,
-      betMultiplier: reduced.betMultiplier + outcomes.betMultiplier, // Correct ¿?
+      betMultiplier: reduced.betMultiplier + outcomes.betMultiplier,
       betReturns: reduced.betReturns + outcomes.betReturns,
     };
   }, createOutcomes());
@@ -73,6 +73,6 @@ export const outcomesToValues = (outcomes: Outcomes) => {
     toPercentage(outcomes.win),
     toPercentage(outcomes.push),
     toPercentage(outcomes.lose),
-    outcomes.betReturns.toFixed(3),
+    toDecimal(outcomes.betReturns, 3),
   ];
 };

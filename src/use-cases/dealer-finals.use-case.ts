@@ -1,6 +1,6 @@
 import { getDealerFinals } from '../logic/dealer-finals.logic';
 import { dealerFinalHands } from '../logic/hands.logic';
-import { toPercentage } from '../logic/percentages.logic';
+import { toPercentage } from '../logic/numbers.logic';
 import { getTable } from '../logic/table.logic';
 
 const dealerFinals = getDealerFinals();
