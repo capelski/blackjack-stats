@@ -1,7 +1,6 @@
 import { Card } from '../types/card.type';
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
 import { FinalProbabilities } from '../types/final-scores.type';
-import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { ConsequencesByInitialPairs, StrategySummary } from '../types/strategy-summary.type';
@@ -13,18 +12,12 @@ import {
 } from './final-probabilities.logic';
 import { getInitialPairs } from './initial-pairs.logic';
 import { getAbbreviatedAction, getInitialPairLabels } from './labels.logic';
-import {
-  getOutcomesLabels,
-  mergeOutcomes,
-  multiplyOutcomes,
-  outcomesToValues,
-} from './outcomes.logic';
+import { getOutcomesLabels, outcomesToValues } from './outcomes.logic';
 
 export const tableFormat: 'csv' | 'markdown' = 'markdown';
 
 export type PlayerScoresRowGetter = (playerScoresLabel: string) => string[];
 export type FinalProbabilitiesRowGetter = (playerScoresLabel: string) => FinalProbabilities;
-export type OutcomesRowGetter = (playerScoresLabel: string) => Outcomes;
 
 export const getTable = (headers: (string | number)[], rows: (string | number)[][]) => {
   const lines =
@@ -94,22 +87,9 @@ export const getOverallFinalProbabilitiesTable = (
   return getTable(overallHeaders, overallRows);
 };
 
-export const getOverallOutcomesTable = (
-  getOutcomes: OutcomesRowGetter,
-  strategyOptions: StrategyOptions = {},
-) => {
-  const initialPairs = getInitialPairs(strategyOptions.splitting);
-  const initialPairLabels = getInitialPairLabels(strategyOptions);
-
+export const getOverallOutcomesTable = (strategySummary: StrategySummary) => {
   const overallHeaders = getOutcomesLabels();
-  const overallOutcomes = mergeOutcomes(
-    initialPairLabels.map(playerScoresLabel => {
-      const initialProbability = initialPairs[playerScoresLabel].probability;
-
-      return multiplyOutcomes(getOutcomes(playerScoresLabel), initialProbability);
-    }),
-  );
-  const overallRows = [outcomesToValues(overallOutcomes)];
+  const overallRows = [outcomesToValues(strategySummary.outcomes)];
 
   return getTable(overallHeaders, overallRows);
 };
@@ -131,7 +111,6 @@ export type StrategyTableResolvers = {
   actionsHeaders: Card[];
   actionsRowGetter: PlayerScoresRowGetter;
   overallFinalProbabilitiesRowGetter: FinalProbabilitiesRowGetter;
-  overallOutcomesRowGetter: OutcomesRowGetter;
 };
 
 export const printStrategyTable = (
@@ -150,10 +129,7 @@ export const printStrategyTable = (
     strategyOptions,
   );
 
-  const overallOutcomesTable = getOverallOutcomesTable(
-    resolvers.overallOutcomesRowGetter,
-    strategyOptions,
-  );
+  const overallOutcomesTable = getOverallOutcomesTable(strategySummary);
 
   const breakdownByInitialPairsTable = getBreakdownByInitialPairsTable(
     strategySummary.consequencesByInitialPairs,
@@ -177,8 +153,6 @@ export const printPlayerDecisionStrategyTables = (strategy: PlayerDecisionStrate
       ],
       overallFinalProbabilitiesRowGetter: playerScoresLabel =>
         strategy.decisions[playerScoresLabel].selectedConsequence.finalProbabilities,
-      overallOutcomesRowGetter: playerScoresLabel =>
-        strategy.decisions[playerScoresLabel].selectedConsequence.outcomes,
     },
     strategy.options,
     strategy.summary,
@@ -206,14 +180,6 @@ export const printDealerCardStrategyTables = (strategy: DealerCardStrategy) => {
           );
         });
         return allProbabilities.reduce<FinalProbabilities>(mergeFinalProbabilities, {});
-      },
-      overallOutcomesRowGetter: playerScoresLabel => {
-        const allOutcomes = cards.map(dealerCard => {
-          const decision = strategy.dealerCards[dealerCard].decisions[playerScoresLabel];
-          return decision.selectedConsequence.outcomes;
-        });
-        const aggregatedOutcomes = mergeOutcomes(allOutcomes);
-        return multiplyOutcomes(aggregatedOutcomes, 1 / allOutcomes.length);
       },
     },
     strategy.options,

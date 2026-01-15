@@ -2,8 +2,9 @@ import { FinalScores } from '../types/final-scores.type';
 import { DecisionsSummaryByPlayerScore } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { ConsequencesByInitialPairs, StrategySummary } from '../types/strategy-summary.type';
+import { getInitialPairs } from './initial-pairs.logic';
 import { getInitialPairLabels } from './labels.logic';
-import { createOutcomes } from './outcomes.logic';
+import { createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logic';
 
 export const createStrategySummary = (): StrategySummary => {
   return {
@@ -31,6 +32,7 @@ export const getStrategySummary = (
   dealerFinalScores: FinalScores,
   options: StrategyOptions = {},
 ): StrategySummary => {
+  const initialPairs = getInitialPairs(options.splitting);
   const initialPairLabels = getInitialPairLabels({
     includeNonInitialHands: true,
     ...options,
@@ -38,9 +40,18 @@ export const getStrategySummary = (
 
   const consequencesByInitialPairs = decisionsToConsequences(decisions, initialPairLabels);
 
+  const weightedOutcomes = Object.keys(initialPairs).map(playerScoresLabel => {
+    const initialProbability = initialPairs[playerScoresLabel].probability;
+    return multiplyOutcomes(
+      decisions[playerScoresLabel].selectedConsequence.outcomes,
+      initialProbability,
+    );
+  });
+  const mergedOutcomes = mergeOutcomes(weightedOutcomes);
+
   return {
     breakdownByFinalScores: {},
     consequencesByInitialPairs,
-    outcomes: createOutcomes(),
+    outcomes: mergedOutcomes,
   };
 };
