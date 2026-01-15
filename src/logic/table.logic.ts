@@ -155,7 +155,7 @@ export const printStrategyTable = (
     strategyOptions,
   );
 
-  const individualFinalProbabilitiesTable = getBreakdownByInitialPairsTable(
+  const breakdownByInitialPairsTable = getBreakdownByInitialPairsTable(
     strategySummary.consequencesByInitialPairs,
   );
 
@@ -163,7 +163,7 @@ export const printStrategyTable = (
     `${actionsTable}\n
 ${overallFinalProbabilitiesTable}\n
 ${overallOutcomesTable}\n
-${individualFinalProbabilitiesTable}`,
+${breakdownByInitialPairsTable}`,
   );
 };
 
