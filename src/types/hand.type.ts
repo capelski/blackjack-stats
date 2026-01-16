@@ -11,7 +11,6 @@ export type DealerHand = {
 };
 
 export type PlayerHandSeed = Pick<DealerHand, 'label'> & {
-  canBeInitialHand: boolean;
   /** Indicates whether the hand is only used for internal calculations and should not be displayed */
   isVirtualHand?: boolean;
   scores: number[];
@@ -21,5 +20,6 @@ export type PlayerHandSeed = Pick<DealerHand, 'label'> & {
 
 export type PlayerHand = PlayerHandSeed &
   DealerHand & {
+    initialProbability: number;
     isFinal: boolean;
   };

@@ -20,7 +20,7 @@ export const getInitialPairLabels = (options: InitialPairsOptions = {}) => {
       return (
         !hand.isVirtualHand &&
         !(hand.isFinal && options.excludeFinalHands) &&
-        (hand.canBeInitialHand || options.includeNonInitialHands)
+        (hand.initialProbability || options.includeNonInitialHands)
       );
     })
     .sort((a, b) => a.sortIndex - b.sortIndex)
