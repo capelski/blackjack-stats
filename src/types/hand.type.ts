@@ -10,12 +10,16 @@ export type DealerHand = {
   label: string;
 };
 
-export type PlayerHand = DealerHand & {
+export type PlayerHandSeed = Pick<DealerHand, 'label'> & {
   canBeInitialHand: boolean;
-  isFinal?: boolean;
   /** Indicates whether the hand is only used for internal calculations and should not be displayed */
   isVirtualHand?: boolean;
   scores: number[];
   sortIndex: number;
   splitLabel?: string;
 };
+
+export type PlayerHand = PlayerHandSeed &
+  DealerHand & {
+    isFinal: boolean;
+  };

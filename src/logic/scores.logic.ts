@@ -1,3 +1,5 @@
+/** Score from which a player hand will be automatically finalized */
+export const playerScoreLimit = 21;
 export const blackjackScore = 21.5;
 export const bustScore = 22;
 
@@ -11,7 +13,7 @@ export const getScores = (
   cardsNumber: number | undefined,
 ) => {
   const allScores = getUniqueScores(values1, values2);
-  const validScores = allScores.filter((x) => x < bustScore);
+  const validScores = allScores.filter(x => x < bustScore);
   return validScores.length > 0
     ? cardsNumber && isBlackjack(validScores, cardsNumber)
       ? [blackjackScore]
@@ -21,7 +23,7 @@ export const getScores = (
 
 const getUniqueScores = (values1: number[], values2: number[]) => {
   const allValues = values1.reduce<number[]>(
-    (reduced, value1) => [...reduced, ...values2.map((value2) => value1 + value2)],
+    (reduced, value1) => [...reduced, ...values2.map(value2 => value1 + value2)],
     [],
   );
   return [...new Set(allValues)].sort((a, b) => a - b);
