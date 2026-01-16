@@ -6,6 +6,7 @@ import { blackjackScore, getEffectiveScore } from './scores.logic';
 export const blackjackLabel = 'BJ';
 export const bustLabel = '22+';
 export const softScoresSeparator = '/';
+export const splitScoresSeparator = ',';
 
 export type InitialPairsOptions = {
   excludeFinalHands?: boolean;
@@ -45,6 +46,6 @@ export const getScoresLabel = (scores: number[], options: LabelOptions = {}) => 
     : score === blackjackScore
     ? blackjackLabel
     : options.splitCard
-    ? `${options.splitCard},${options.splitCard}`
+    ? `${options.splitCard}${splitScoresSeparator}${options.splitCard}`
     : scores.join(softScoresSeparator);
 };
