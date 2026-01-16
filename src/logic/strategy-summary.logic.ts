@@ -1,9 +1,9 @@
 import { FinalScores } from '../types/final-scores.type';
+import { PlayerHand } from '../types/hand.type';
 import { DecisionsSummaryByPlayerScore } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { ConsequencesByInitialPairs, StrategySummary } from '../types/strategy-summary.type';
-import { getInitialPairs } from './initial-pairs.logic';
-import { getInitialPairLabels } from './labels.logic';
+import { getPlayerHandsSorted } from './hands.logic';
 import { createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logic';
 
 export const createStrategySummary = (): StrategySummary => {
@@ -16,13 +16,13 @@ export const createStrategySummary = (): StrategySummary => {
 
 export const decisionsToConsequences = (
   decisions: DecisionsSummaryByPlayerScore,
-  initialPairLabels: string[],
+  playerHands: PlayerHand[],
 ) => {
-  return initialPairLabels.reduce<ConsequencesByInitialPairs>((reduced, playerScoresLabel) => {
-    const consequence = decisions[playerScoresLabel].selectedConsequence;
+  return playerHands.reduce<ConsequencesByInitialPairs>((reduced, playerHand) => {
+    const consequence = decisions[playerHand.label].selectedConsequence;
     return {
       ...reduced,
-      [playerScoresLabel]: consequence,
+      [playerHand.label]: consequence,
     };
   }, {});
 };
@@ -32,20 +32,13 @@ export const getStrategySummary = (
   dealerFinalScores: FinalScores,
   options: StrategyOptions = {},
 ): StrategySummary => {
-  const initialPairs = getInitialPairs(options.splitting);
-  const initialPairLabels = getInitialPairLabels({
-    includeNonInitialHands: true,
-    ...options,
-  });
+  const playerHands = getPlayerHandsSorted(options.splitting);
 
-  const consequencesByInitialPairs = decisionsToConsequences(decisions, initialPairLabels);
+  const consequencesByInitialPairs = decisionsToConsequences(decisions, playerHands);
 
-  const weightedOutcomes = Object.keys(initialPairs).map(playerScoresLabel => {
-    const initialProbability = initialPairs[playerScoresLabel].probability;
-    return multiplyOutcomes(
-      decisions[playerScoresLabel].selectedConsequence.outcomes,
-      initialProbability,
-    );
+  const weightedOutcomes = playerHands.map(playerHand => {
+    const { outcomes } = decisions[playerHand.label].selectedConsequence;
+    return multiplyOutcomes(outcomes, playerHand.initialProbability);
   });
   const mergedOutcomes = mergeOutcomes(weightedOutcomes);
 

@@ -93,3 +93,9 @@ export const getPlayerHands = (splitting?: boolean): PlayerHand[] => {
     };
   });
 };
+
+export const getPlayerHandsSorted = (splitting?: boolean) => {
+  return getPlayerHands(splitting)
+    .filter(x => !x.isVirtualHand)
+    .sort((a, b) => a.sortIndex - b.sortIndex);
+};

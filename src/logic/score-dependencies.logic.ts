@@ -1,12 +1,14 @@
 import { cardValues } from './cards.logic';
-import { getPlayerHands } from './hands.logic';
-import { blackjackLabel, getInitialPairLabels, getScoresLabel } from './labels.logic';
+import { getPlayerHands, getPlayerHandsSorted } from './hands.logic';
+import { getScoresLabel } from './labels.logic';
 import { getScores } from './scores.logic';
 import { getTable } from './table.logic';
 
+type Dependencies = { [playerScoreLabel: string]: string[] };
+
 export const getScoreDependencies = () => {
-  const backwardDependencies: { [key: string]: string[] } = {};
-  const forwardDependencies: { [key: string]: string[] } = {};
+  const backwardDependencies: Dependencies = {};
+  const forwardDependencies: Dependencies = {};
 
   for (const playerHand of getPlayerHands()) {
     if (playerHand.isFinal) {
@@ -34,32 +36,37 @@ export const getScoreDependencies = () => {
   return { backwardDependencies, forwardDependencies };
 };
 
-export const printScoreDependencies = () => {
-  const actionableLabels = getInitialPairLabels({ excludeFinalHands: true });
-  const { forwardDependencies } = getScoreDependencies();
-
-  const forwardHeaders = ['Score', 'Next Scores'];
-  const forwardRows = actionableLabels.map(scoreLabel => {
-    return [scoreLabel, forwardDependencies[scoreLabel].join(', ')];
+const getForwardReferencesTable = (playerHandLabels: string[], dependencies: Dependencies) => {
+  const headers = ['Score', 'Next Scores'];
+  const rows = playerHandLabels.map(playerHandLabel => {
+    return [playerHandLabel, dependencies[playerHandLabel].join(', ')];
   });
-  const forwardTable = getTable(forwardHeaders, forwardRows);
+  const table = getTable(headers, rows);
+  return table;
+};
 
-  console.log(forwardTable);
-
-  const playerLabels = getPlayerHands()
-    .filter(hand => hand.label !== blackjackLabel)
-    .map(hand => hand.label);
-  const headers = ['Score', ...playerLabels];
-  const rows = actionableLabels.map(scoreLabel => {
+const getScoreDependenciesMatrix = (playerHandLabels: string[], dependencies: Dependencies) => {
+  const headers = ['Score', ...playerHandLabels];
+  const rows = playerHandLabels.map(scoreLabel => {
     return [
       scoreLabel,
-      ...playerLabels.map(
-        label => (forwardDependencies[scoreLabel]?.includes(String(label)) && 'x') || '',
+      ...playerHandLabels.map(
+        label => (dependencies[scoreLabel]?.includes(String(label)) && 'x') || '',
       ),
     ];
   });
-  const table = getTable(headers, rows);
+  return getTable(headers, rows);
+};
 
-  console.log('\n');
-  console.log(table);
+export const printScoreDependencies = () => {
+  const playerHandLabels = getPlayerHandsSorted()
+    .filter(hand => !hand.isFinal)
+    .map(hand => hand.label);
+  const { forwardDependencies } = getScoreDependencies();
+
+  const forwardReferencesTable = getForwardReferencesTable(playerHandLabels, forwardDependencies);
+  const scoreDependenciesMatrix = getScoreDependenciesMatrix(playerHandLabels, forwardDependencies);
+
+  console.log(`${forwardReferencesTable}\n
+${scoreDependenciesMatrix}`);
 };

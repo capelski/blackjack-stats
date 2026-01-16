@@ -10,8 +10,8 @@ import {
   multiplyFinalProbabilities,
   stringifyFinalProbabilities,
 } from './final-probabilities.logic';
-import { getInitialPairs } from './initial-pairs.logic';
-import { getAbbreviatedAction, getInitialPairLabels } from './labels.logic';
+import { getPlayerHandsSorted } from './hands.logic';
+import { getAbbreviatedAction } from './labels.logic';
 import { getOutcomesLabels, outcomesToValues } from './outcomes.logic';
 
 export const tableFormat: 'csv' | 'markdown' = 'markdown';
@@ -50,29 +50,30 @@ const rowToMarkdown = (columns: (string | number)[]) => {
 export const getActionsTable = (
   headers: (string | number)[],
   getRow: PlayerScoresRowGetter,
-  strategyOptions: StrategyOptions = {},
+  options: StrategyOptions = {},
 ) => {
-  const actionsRows = getInitialPairLabels({ excludeFinalHands: true, ...strategyOptions }).map(
-    playerScoresLabel => {
-      return getRow(playerScoresLabel);
-    },
-  );
+  const actionsRows = getPlayerHandsSorted(options.splitting)
+    .filter(hand => !hand.isFinal)
+    .map(playerHand => {
+      return getRow(playerHand.label);
+    });
 
   return getTable(headers, actionsRows);
 };
 
 export const getOverallFinalProbabilitiesTable = (
   getFinalProbabilities: FinalProbabilitiesRowGetter,
-  strategyOptions: StrategyOptions = {},
+  options: StrategyOptions = {},
 ) => {
-  const initialPairs = getInitialPairs(strategyOptions.splitting);
-  const initialPairLabels = getInitialPairLabels(strategyOptions);
+  const playerHands = getPlayerHandsSorted(options.splitting).filter(
+    hand => hand.initialProbability,
+  );
 
   const overallHeaders = ['Final Probabilities'];
-  const overallFinalProbabilities = initialPairLabels.reduce<FinalProbabilities>(
-    (reduced, playerScoresLabel) => {
-      const initialProbability = initialPairs[playerScoresLabel].probability;
-      const finalProbabilities = getFinalProbabilities(playerScoresLabel);
+  const overallFinalProbabilities = playerHands.reduce<FinalProbabilities>(
+    (reduced, playerHand) => {
+      const initialProbability = playerHand.initialProbability;
+      const finalProbabilities = getFinalProbabilities(playerHand.label);
       const weightedProbabilities = multiplyFinalProbabilities(
         finalProbabilities,
         initialProbability,

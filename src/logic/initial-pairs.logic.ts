@@ -1,7 +1,7 @@
 import { Card } from '../types/card.type';
 import { InitialPairs } from '../types/initial-pairs.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
-import { getInitialPairLabels, getScoresLabel } from './labels.logic';
+import { getScoresLabel, softScoresSeparator, splitScoresSeparator } from './labels.logic';
 import { toPercentage } from './numbers.logic';
 import { getScores } from './scores.logic';
 import { canSplit } from './splitting.logic';
@@ -60,21 +60,37 @@ export const printInitialPairs = (splitting?: boolean) => {
   const initialScoresGrid = getInitialHandsGrid('score');
 
   const initialPairs = getInitialPairs(splitting);
-  const initialPairLabels = getInitialPairLabels({ splitting });
+  const initialLabels = Object.keys(initialPairs).sort((a, b) => {
+    const isASoft = a.includes(softScoresSeparator);
+    const isBSoft = b.includes(softScoresSeparator);
+
+    const isASplit = a.includes(splitScoresSeparator);
+    const isBSplit = b.includes(splitScoresSeparator);
+
+    if (isASplit !== isBSplit) {
+      return isASplit ? 1 : -1;
+    }
+
+    if (isASoft !== isBSoft) {
+      return isASoft ? 1 : -1;
+    }
+
+    return 0;
+  });
 
   const combinationsHeaders = ['Score', 'Combinations', 'Examples'];
-  const combinationsRows = initialPairLabels.map(label => {
+  const combinationsRows = initialLabels.map(playerHandLabel => {
     return [
-      label,
-      initialPairs[label].combinations.length,
-      initialPairs[label].combinations.join(' / '),
+      playerHandLabel,
+      initialPairs[playerHandLabel].combinations.length,
+      initialPairs[playerHandLabel].combinations.join(' / '),
     ];
   });
   const combinationsTable = getTable(combinationsHeaders, combinationsRows);
 
   const probabilitiesHeaders = ['Score', 'Probability'];
-  const probabilitiesRows = initialPairLabels.map(label => {
-    return [label, toPercentage(initialPairs[label].probability)];
+  const probabilitiesRows = initialLabels.map(playerHandLabel => {
+    return [playerHandLabel, toPercentage(initialPairs[playerHandLabel].probability)];
   });
 
   const probabilitiesTable = getTable(probabilitiesHeaders, probabilitiesRows);
