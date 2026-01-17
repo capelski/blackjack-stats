@@ -7,33 +7,33 @@ export type MultiplierOptions = {
   isBlackjack?: boolean;
 };
 
+export const computeOutcomes = (outcomes: Outcomes, options: MultiplierOptions = {}) => {
+  outcomes.advantage = outcomes.win - outcomes.lose;
+  outcomes.betMultiplier = getBetMultiplier(options);
+  outcomes.betReturns = getBetReturns(outcomes.advantage, outcomes.betMultiplier);
+};
+
 export const createOutcomes = (): Outcomes => {
   return {
     lose: 0,
     push: 0,
     win: 0,
+    advantage: 0,
     betMultiplier: 0,
     betReturns: 0,
   };
 };
 
-export const getBetMultiplier = (options: MultiplierOptions = {}): number => {
+const getBetMultiplier = (options: MultiplierOptions = {}): number => {
   return options.isBlackjack ? 1.5 : options.isDoubleBet ? 2 : 1;
 };
 
-export const getBetReturns = (win: number, lose: number, betMultiplier: number) => {
-  return 1 + (win - lose) * betMultiplier;
+const getBetReturns = (advantage: number, betMultiplier: number) => {
+  return 1 + advantage * betMultiplier;
 };
 
 export const getOutcomesLabels = () => {
-  return [Result.win, Result.push, Result.lose, 'Bet returns'];
-};
-
-export const increaseOutcomes = (target: Outcomes, addition: Outcomes, weight: number) => {
-  target.lose += addition.lose * weight;
-  target.push += addition.push * weight;
-  target.win += addition.win * weight;
-  // Deliberately not increasing betMultiplier and betReturns
+  return [Result.win, Result.push, Result.lose, 'Advantage', 'Bet returns'];
 };
 
 export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
@@ -42,20 +42,11 @@ export const mergeOutcomes = (outcomesList: Outcomes[]): Outcomes => {
       lose: reduced.lose + outcomes.lose,
       push: reduced.push + outcomes.push,
       win: reduced.win + outcomes.win,
+      advantage: reduced.advantage + outcomes.advantage,
       betMultiplier: reduced.betMultiplier + outcomes.betMultiplier,
       betReturns: reduced.betReturns + outcomes.betReturns,
     };
   }, createOutcomes());
-};
-
-export const reduceOutcomes = (a: Outcomes, b: Outcomes): Outcomes => {
-  return {
-    lose: a.lose + b.lose,
-    push: a.push + b.push,
-    win: a.win + b.win,
-    betMultiplier: a.betMultiplier + b.betMultiplier, // Correct ¿?
-    betReturns: a.betReturns + b.betReturns,
-  };
 };
 
 export const multiplyOutcomes = (outcomes: Outcomes, factor: number): Outcomes => {
@@ -63,6 +54,7 @@ export const multiplyOutcomes = (outcomes: Outcomes, factor: number): Outcomes =
     lose: outcomes.lose * factor,
     push: outcomes.push * factor,
     win: outcomes.win * factor,
+    advantage: outcomes.advantage * factor,
     betMultiplier: outcomes.betMultiplier * factor,
     betReturns: outcomes.betReturns * factor,
   };
@@ -73,6 +65,18 @@ export const outcomesToValues = (outcomes: Outcomes) => {
     toPercentage(outcomes.win),
     toPercentage(outcomes.push),
     toPercentage(outcomes.lose),
+    toPercentage(outcomes.advantage),
     toDecimal(outcomes.betReturns, 3),
   ];
+};
+
+export const reduceOutcomes = (a: Outcomes, b: Outcomes): Outcomes => {
+  return {
+    lose: a.lose + b.lose,
+    push: a.push + b.push,
+    win: a.win + b.win,
+    advantage: a.advantage + b.advantage,
+    betMultiplier: a.betMultiplier + b.betMultiplier,
+    betReturns: a.betReturns + b.betReturns,
+  };
 };
