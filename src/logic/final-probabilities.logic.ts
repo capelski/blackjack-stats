@@ -1,9 +1,8 @@
 import { FinalProbabilities } from '../types/final-scores.type';
 import { cardValues, cardsNumber } from './cards.logic';
-import { getFinalProbabilitiesKeys } from './final-scores.logic';
 import { dealerFinalHands } from './hands.logic';
 import { getScoresLabel } from './labels.logic';
-import { toPercentage } from './numbers.logic';
+import { getNumericKeys, toPercentage } from './numbers.logic';
 import { bustScore, getEffectiveScore, getScores } from './scores.logic';
 
 export const getLoseProbability = (
@@ -55,7 +54,7 @@ export const getHitFinalProbabilities = (
     const nextLabel = getScoresLabel([nextEffectiveScore]);
     const nextFinalProbabilities = getNextFinalProbabilities(nextLabel);
 
-    getFinalProbabilitiesKeys(nextFinalProbabilities).forEach(finalScore => {
+    getNumericKeys(nextFinalProbabilities).forEach(finalScore => {
       const weightedProbabilities = nextFinalProbabilities[finalScore] / cardsNumber;
 
       if (finalProbabilities[finalScore] === undefined) {
@@ -72,7 +71,7 @@ export const mergeFinalProbabilities = (
   a: FinalProbabilities,
   b: FinalProbabilities,
 ): FinalProbabilities => {
-  return getFinalProbabilitiesKeys({ ...a, ...b }).reduce<FinalProbabilities>((reduced, key) => {
+  return getNumericKeys({ ...a, ...b }).reduce<FinalProbabilities>((reduced, key) => {
     return {
       ...reduced,
       [key]: (a[key] || 0) + (b[key] || 0),
@@ -84,19 +83,16 @@ export const multiplyFinalProbabilities = (
   finalProbabilities: FinalProbabilities,
   factor: number,
 ): FinalProbabilities => {
-  return getFinalProbabilitiesKeys(finalProbabilities).reduce<FinalProbabilities>(
-    (reduced, key) => {
-      return {
-        ...reduced,
-        [key]: finalProbabilities[key] * factor,
-      };
-    },
-    {},
-  );
+  return getNumericKeys(finalProbabilities).reduce<FinalProbabilities>((reduced, key) => {
+    return {
+      ...reduced,
+      [key]: finalProbabilities[key] * factor,
+    };
+  }, {});
 };
 
 export const stringifyFinalProbabilities = (finalProbabilities: FinalProbabilities): string[] => {
-  return getFinalProbabilitiesKeys(finalProbabilities).map(finalScore => {
+  return getNumericKeys(finalProbabilities).map(finalScore => {
     return `${getScoresLabel([finalScore])}: ${toPercentage(finalProbabilities[finalScore])}`;
   });
 };
