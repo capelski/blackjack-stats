@@ -1,13 +1,14 @@
-import { PlayerDecision, PlayerDecisionSummary } from './player-decision.type';
+import { Consequence } from './consequence.type';
+import { PlayerDecision } from './player-decision.type';
 import { StrategyOptions } from './strategy-options.type';
 import { StrategySummary } from './strategy-summary.type';
 
-export type DecisionsByPlayerScore = {
-  [playerScoreLabel: string]: PlayerDecision;
+export type ConsequencesByPlayerScore = {
+  [playerScoreLabel: string]: Consequence;
 };
 
-export type DecisionsSummaryByPlayerScore = {
-  [playerScoreLabel: string]: PlayerDecisionSummary;
+export type DecisionsByPlayerScore = {
+  [playerScoreLabel: string]: PlayerDecision;
 };
 
 export type PlayerDecisionStrategy = {

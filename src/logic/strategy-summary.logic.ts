@@ -1,6 +1,6 @@
 import { FinalScores } from '../types/final-scores.type';
 import { PlayerHand } from '../types/hand.type';
-import { DecisionsSummaryByPlayerScore } from '../types/player-decision-strategy.type';
+import { ConsequencesByPlayerScore } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { ConsequencesByInitialPairs, StrategySummary } from '../types/strategy-summary.type';
 import { getPlayerHandsSorted } from './hands.logic';
@@ -14,12 +14,12 @@ export const createStrategySummary = (): StrategySummary => {
   };
 };
 
-export const decisionsToConsequences = (
-  decisions: DecisionsSummaryByPlayerScore,
+export const getConsequencesByInitialPairs = (
+  decisions: ConsequencesByPlayerScore,
   playerHands: PlayerHand[],
 ) => {
   return playerHands.reduce<ConsequencesByInitialPairs>((reduced, playerHand) => {
-    const consequence = decisions[playerHand.label].selectedConsequence;
+    const consequence = decisions[playerHand.label];
     return {
       ...reduced,
       [playerHand.label]: consequence,
@@ -28,16 +28,16 @@ export const decisionsToConsequences = (
 };
 
 export const getStrategySummary = (
-  decisions: DecisionsSummaryByPlayerScore,
+  decisions: ConsequencesByPlayerScore,
   dealerFinalScores: FinalScores,
   options: StrategyOptions = {},
 ): StrategySummary => {
   const playerHands = getPlayerHandsSorted(options.splitting);
 
-  const consequencesByInitialPairs = decisionsToConsequences(decisions, playerHands);
+  const consequencesByInitialPairs = getConsequencesByInitialPairs(decisions, playerHands);
 
   const weightedOutcomes = playerHands.map(playerHand => {
-    const { outcomes } = decisions[playerHand.label].selectedConsequence;
+    const { outcomes } = decisions[playerHand.label];
     return multiplyOutcomes(outcomes, playerHand.initialProbability);
   });
   const mergedOutcomes = mergeOutcomes(weightedOutcomes);

@@ -10,7 +10,6 @@ export type DealerFinalScoreSummary = {
 };
 
 export type PlayerFinalScoreSummary = {
-  count: number;
   probability: number;
   dealerFinals: {
     [dealerFinalScore: number]: DealerFinalScoreSummary;

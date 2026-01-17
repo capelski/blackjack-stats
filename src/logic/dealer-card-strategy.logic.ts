@@ -3,7 +3,10 @@ import { StrategyOptions } from '../types/strategy-options.type';
 import { cards } from './cards.logic';
 import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
 import { getDealerFinals } from './dealer-finals.logic';
-import { aggregatePlayerDecisionStrategies } from './player-decision-strategy.logic';
+import {
+  decisionsToConsequences,
+  mergePlayerDecisionStrategies,
+} from './player-decision-strategy.logic';
 import { createStrategySummary, getStrategySummary } from './strategy-summary.logic';
 
 export const createDealerCardStrategy = (options: StrategyOptions = {}): DealerCardStrategy => {
@@ -33,15 +36,12 @@ export const setDealerCardStrategyTotals = (strategy: DealerCardStrategy) => {
 
     const dealerFinals = dealerFinalsByCard[dealerCard];
 
-    partialStrategy.summary = getStrategySummary(
-      partialStrategy.decisions,
-      dealerFinals,
-      strategy.options,
-    );
+    const consequences = decisionsToConsequences(partialStrategy.decisions);
+    partialStrategy.summary = getStrategySummary(consequences, dealerFinals, strategy.options);
   });
 
-  const mergedDecisions = aggregatePlayerDecisionStrategies(Object.values(strategy.dealerCards));
+  const mergedConsequences = mergePlayerDecisionStrategies(Object.values(strategy.dealerCards));
 
   const overallDealerFinals = getDealerFinals();
-  strategy.summary = getStrategySummary(mergedDecisions, overallDealerFinals, strategy.options);
+  strategy.summary = getStrategySummary(mergedConsequences, overallDealerFinals, strategy.options);
 };

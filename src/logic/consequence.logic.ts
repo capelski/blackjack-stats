@@ -14,6 +14,7 @@ import { getScoresLabel } from './labels.logic';
 import {
   computeOutcomes,
   createOutcomes,
+  getBetMultiplier,
   multiplyOutcomes,
   reduceOutcomes,
 } from './outcomes.logic';
@@ -57,7 +58,8 @@ export const getDoubleConsequence = (
     increaseOutcomes(consequence.outcomes, nextConsequence.outcomes, 1 / cardsNumber);
   }
 
-  computeOutcomes(consequence.outcomes, { isDoubleBet: true });
+  const betMultiplier = getBetMultiplier({ isDoubleBet: true });
+  computeOutcomes(consequence.outcomes, betMultiplier);
 
   return consequence;
 };
@@ -90,7 +92,8 @@ export const getHitConsequence = (
     );
   }
 
-  computeOutcomes(consequence.outcomes);
+  const betMultiplier = getBetMultiplier();
+  computeOutcomes(consequence.outcomes, betMultiplier);
 
   return consequence;
 };
@@ -99,7 +102,8 @@ export const getSplitConsequence = (playerDecision: PlayerDecision): Consequence
   const outcomes = {
     ...playerDecision.selectedConsequence.outcomes,
   };
-  computeOutcomes(outcomes, { isDoubleBet: true });
+  const betMultiplier = getBetMultiplier({ isDoubleBet: true });
+  computeOutcomes(outcomes, betMultiplier);
 
   const consequence: Consequence = {
     ...playerDecision.selectedConsequence,
@@ -121,7 +125,8 @@ export const getStandConsequence = (
   outcomes.lose = lose;
   outcomes.push = push;
   outcomes.win = win;
-  computeOutcomes(outcomes, { isBlackjack: playerScore === blackjackScore });
+  const betMultiplier = getBetMultiplier({ isBlackjack: playerScore === blackjackScore });
+  computeOutcomes(outcomes, betMultiplier);
 
   return {
     finalProbabilities: { [playerScore]: 1 },

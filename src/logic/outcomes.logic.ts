@@ -7,9 +7,9 @@ export type MultiplierOptions = {
   isBlackjack?: boolean;
 };
 
-export const computeOutcomes = (outcomes: Outcomes, options: MultiplierOptions = {}) => {
+export const computeOutcomes = (outcomes: Outcomes, betMultiplier: number) => {
   outcomes.advantage = outcomes.win - outcomes.lose;
-  outcomes.betMultiplier = getBetMultiplier(options);
+  outcomes.betMultiplier = betMultiplier;
   outcomes.betReturns = getBetReturns(outcomes.advantage, outcomes.betMultiplier);
 };
 
@@ -24,7 +24,7 @@ export const createOutcomes = (): Outcomes => {
   };
 };
 
-const getBetMultiplier = (options: MultiplierOptions = {}): number => {
+export const getBetMultiplier = (options: MultiplierOptions = {}): number => {
   return options.isBlackjack ? 1.5 : options.isDoubleBet ? 2 : 1;
 };
 

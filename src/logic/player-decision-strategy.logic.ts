@@ -1,9 +1,8 @@
 import {
+  ConsequencesByPlayerScore,
   DecisionsByPlayerScore,
-  DecisionsSummaryByPlayerScore,
   PlayerDecisionStrategy,
 } from '../types/player-decision-strategy.type';
-import { PlayerDecisionSummary } from '../types/player-decision.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { mergeConsequences, multiplyConsequence } from './consequence.logic';
 import { getDealerFinals } from './dealer-finals.logic';
@@ -20,59 +19,50 @@ export const createPlayerDecisionStrategy = (
   return strategy;
 };
 
-export const setPlayerDecisionStrategyTotals = (strategy: PlayerDecisionStrategy) => {
-  const dealerFinals = getDealerFinals();
-  strategy.summary = getStrategySummary(strategy.decisions, dealerFinals, strategy.options);
-};
+export const decisionsToConsequences = (decisions: DecisionsByPlayerScore, factor?: number) => {
+  return Object.keys(decisions).reduce<ConsequencesByPlayerScore>((reduced, playerScoresLabel) => {
+    const { selectedConsequence } = decisions[playerScoresLabel];
+    const weightedConsequence = factor
+      ? multiplyConsequence(selectedConsequence, factor)
+      : selectedConsequence;
 
-export const aggregatePlayerDecisionStrategies = (strategies: PlayerDecisionStrategy[]) => {
-  return strategies.reduce<DecisionsSummaryByPlayerScore>((reduced, partialStrategy) => {
-    const weightedDecisions = multiplyDecisionsByPlayerScore(
-      partialStrategy.decisions,
-      1 / strategies.length,
-    );
-    return mergeDecisionsByPlayerScore(reduced, weightedDecisions);
+    return { ...reduced, [playerScoresLabel]: weightedConsequence };
   }, {});
 };
 
-export const mergeDecisionsByPlayerScore = (
-  a: DecisionsSummaryByPlayerScore,
-  b: DecisionsSummaryByPlayerScore,
+export const mergeConsequencesByPlayerScore = (
+  a: ConsequencesByPlayerScore,
+  b: ConsequencesByPlayerScore,
 ) => {
-  return Object.keys({ ...a, ...b }).reduce<DecisionsSummaryByPlayerScore>(
+  return Object.keys({ ...a, ...b }).reduce<ConsequencesByPlayerScore>(
     (reduced, playerScoresLabel) => {
-      const decisionA = a[playerScoresLabel];
-      const decisionB = b[playerScoresLabel];
+      const consequenceA = a[playerScoresLabel];
+      const consequenceB = b[playerScoresLabel];
 
-      const mergedDecision = !decisionA
-        ? decisionB
-        : !decisionB
-        ? decisionA
-        : {
-            selectedConsequence: mergeConsequences([
-              decisionA.selectedConsequence,
-              decisionB.selectedConsequence,
-            ]),
-          };
+      const mergedConsequence = !consequenceA
+        ? consequenceB
+        : !consequenceB
+        ? consequenceA
+        : mergeConsequences([consequenceA, consequenceB]);
 
-      return { ...reduced, [playerScoresLabel]: mergedDecision };
+      return { ...reduced, [playerScoresLabel]: mergedConsequence };
     },
     {},
   );
 };
 
-export const multiplyDecisionsByPlayerScore = (
-  decisions: DecisionsByPlayerScore,
-  factor: number,
-): DecisionsSummaryByPlayerScore => {
-  return Object.keys(decisions).reduce<DecisionsSummaryByPlayerScore>(
-    (reduced, playerScoresLabel) => {
-      const playerDecision = decisions[playerScoresLabel];
-      const weightedDecision: PlayerDecisionSummary = {
-        selectedConsequence: multiplyConsequence(playerDecision.selectedConsequence, factor),
-      };
-      return { ...reduced, [playerScoresLabel]: weightedDecision };
-    },
-    {},
-  );
+export const mergePlayerDecisionStrategies = (strategies: PlayerDecisionStrategy[]) => {
+  return strategies.reduce<ConsequencesByPlayerScore>((reduced, partialStrategy) => {
+    const weightedConsequences = decisionsToConsequences(
+      partialStrategy.decisions,
+      1 / strategies.length,
+    );
+    return mergeConsequencesByPlayerScore(reduced, weightedConsequences);
+  }, {});
+};
+
+export const setPlayerDecisionStrategyTotals = (strategy: PlayerDecisionStrategy) => {
+  const dealerFinals = getDealerFinals();
+  const consequences = decisionsToConsequences(strategy.decisions);
+  strategy.summary = getStrategySummary(consequences, dealerFinals, strategy.options);
 };
