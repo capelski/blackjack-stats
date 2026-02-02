@@ -89,7 +89,7 @@ export const maxReturnsCore = (
 
 export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
   const dealerFinals = getDealerFinals();
-  const strategy = createPlayerDecisionStrategy(options);
+  const strategy = createPlayerDecisionStrategy(dealerFinals, options);
 
   strategy.decisions = maxReturnsCore(getFinalProbabilities(dealerFinals), options);
 

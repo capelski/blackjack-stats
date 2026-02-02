@@ -10,7 +10,7 @@ import { printPlayerDecisionStrategyTables } from '../table.logic';
 
 export const getStandStrategy = (threshold: number) => {
   const dealerFinals = getDealerFinals();
-  const strategy = createPlayerDecisionStrategy();
+  const strategy = createPlayerDecisionStrategy(dealerFinals);
 
   for (const playerHand of getPlayerHands()) {
     strategy.decisions[playerHand.label] = getStandDecision(

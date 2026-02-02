@@ -1,3 +1,4 @@
+import { FinalScoresMap } from '../types/final-scores.type';
 import {
   ConsequencesByPlayerScore,
   DecisionsByPlayerScore,
@@ -9,9 +10,11 @@ import { getDealerFinals } from './dealer-finals.logic';
 import { createStrategySummary, getStrategySummary } from './strategy-summary.logic';
 
 export const createPlayerDecisionStrategy = (
+  dealerFinalScores: FinalScoresMap,
   options: StrategyOptions = {},
 ): PlayerDecisionStrategy => {
   const strategy: PlayerDecisionStrategy = {
+    dealerFinalScores,
     decisions: {},
     options,
     summary: createStrategySummary(),

@@ -1,4 +1,5 @@
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
+import { FinalScoresByDealerCard } from '../types/final-scores.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { cards } from './cards.logic';
 import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
@@ -10,12 +11,16 @@ import {
 } from './player-decision-strategy.logic';
 import { createStrategySummary, getStrategySummary } from './strategy-summary.logic';
 
-export const createDealerCardStrategy = (options: StrategyOptions = {}): DealerCardStrategy => {
+export const createDealerCardStrategy = (
+  dealerFinalsByCard: FinalScoresByDealerCard,
+  options: StrategyOptions = {},
+): DealerCardStrategy => {
   const strategy: DealerCardStrategy = {
+    dealerFinalScores: getDealerFinals(),
     dealerCards: cards.reduce((reduced, card) => {
       return {
         ...reduced,
-        [card]: createPlayerDecisionStrategy(),
+        [card]: createPlayerDecisionStrategy(dealerFinalsByCard[card], options),
       };
     }, {}),
     options,

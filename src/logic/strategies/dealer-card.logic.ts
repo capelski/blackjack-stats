@@ -13,7 +13,7 @@ import { maxReturnsCore } from './max-returns.logic';
 
 export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
   const dealerFinalsByCard = getDealerFinalsByCard();
-  const strategy = createDealerCardStrategy(options);
+  const strategy = createDealerCardStrategy(dealerFinalsByCard, options);
 
   cards.forEach(dealerCard => {
     const dealerFinalProbabilities = getFinalProbabilities(dealerFinalsByCard[dealerCard]);
