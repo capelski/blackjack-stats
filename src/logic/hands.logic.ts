@@ -1,4 +1,4 @@
-import { DealerHand, PlayerHand, PlayerHandSeed } from '../types/hand.type';
+import { PlayerHand, PlayerHandSeed } from '../types/hand.type';
 import { getInitialPairs } from './initial-pairs.logic';
 import {
   blackjackLabel,
@@ -7,16 +7,6 @@ import {
   splitScoresSeparator,
 } from './labels.logic';
 import { blackjackScore, bustScore, getEffectiveScore, playerScoreLimit } from './scores.logic';
-
-export const dealerFinalHands: DealerHand[] = [
-  { effectiveScore: 17, label: '17' },
-  { effectiveScore: 18, label: '18' },
-  { effectiveScore: 19, label: '19' },
-  { effectiveScore: 20, label: '20' },
-  { effectiveScore: 21, label: '21' },
-  { effectiveScore: blackjackScore, label: blackjackLabel },
-  { effectiveScore: bustScore, label: bustLabel },
-];
 
 export const getPlayerHands = (splitting?: boolean): PlayerHand[] => {
   const initialPairs = getInitialPairs(splitting);

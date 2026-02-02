@@ -1,6 +1,5 @@
 import { FinalProbabilities } from '../types/final-scores.type';
 import { cardValues, cardsNumber } from './cards.logic';
-import { dealerFinalHands } from './hands.logic';
 import { getScoresLabel } from './labels.logic';
 import { getNumericKeys, toPercentage } from './numbers.logic';
 import { bustScore, getEffectiveScore, getScores } from './scores.logic';
@@ -11,13 +10,15 @@ export const getLoseProbability = (
 ) => {
   return playerScore === bustScore
     ? 1
-    : dealerFinalHands
+    : getNumericKeys(dealerProbabilities)
         .filter(
-          ({ effectiveScore }) =>
-            effectiveScore !== bustScore && dealerProbabilities[effectiveScore],
+          dealerFinalScore =>
+            dealerFinalScore !== bustScore && dealerProbabilities[dealerFinalScore],
         )
-        .reduce((reduced, { effectiveScore }) => {
-          return reduced + (effectiveScore > playerScore ? dealerProbabilities[effectiveScore] : 0);
+        .reduce((reduced, dealerFinalScore) => {
+          return (
+            reduced + (dealerFinalScore > playerScore ? dealerProbabilities[dealerFinalScore] : 0)
+          );
         }, 0);
 };
 
@@ -32,13 +33,15 @@ export const getWinProbability = (dealerProbabilities: FinalProbabilities, playe
   const bustProbability = dealerProbabilities[bustScore] || 0;
   return playerScore === bustScore
     ? 0
-    : dealerFinalHands
+    : getNumericKeys(dealerProbabilities)
         .filter(
-          ({ effectiveScore }) =>
-            effectiveScore !== bustScore && dealerProbabilities[effectiveScore],
+          dealerFinalScore =>
+            dealerFinalScore !== bustScore && dealerProbabilities[dealerFinalScore],
         )
-        .reduce((reduced, { effectiveScore }) => {
-          return reduced + (effectiveScore < playerScore ? dealerProbabilities[effectiveScore] : 0);
+        .reduce((reduced, dealerFinalScore) => {
+          return (
+            reduced + (dealerFinalScore < playerScore ? dealerProbabilities[dealerFinalScore] : 0)
+          );
         }, 0) + bustProbability;
 };
 
