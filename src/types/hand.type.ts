@@ -5,21 +5,17 @@ export type HandWithCards = {
   scores: number[];
 };
 
-export type DealerHand = {
-  effectiveScore: number;
-  label: string;
-};
-
-export type PlayerHandSeed = Pick<DealerHand, 'label'> & {
+export type PlayerHandSeed = {
   /** Indicates whether the hand is only used for internal calculations and should not be displayed */
   isVirtualHand?: boolean;
+  label: string;
   scores: number[];
   sortIndex: number;
   splitLabel?: string;
 };
 
-export type PlayerHand = PlayerHandSeed &
-  DealerHand & {
-    initialProbability: number;
-    isFinal: boolean;
-  };
+export type PlayerHand = PlayerHandSeed & {
+  effectiveScore: number;
+  initialProbability: number;
+  isFinal: boolean;
+};
