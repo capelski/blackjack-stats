@@ -1,14 +1,16 @@
 import { CardsCombination } from '../types/cards-combination.type';
-import { HandWithCards } from '../types/hand.type';
 import { cards, cardValuesDictionary } from './cards.logic';
 import { getScoresLabel } from './labels.logic';
 import { getEffectiveScore, getScores } from './scores.logic';
 
 export const getDealerCombinations = () => {
-  const handsStack = cards.map<HandWithCards>(card => {
+  const handsStack = cards.map<CardsCombination>(card => {
+    const scores = cardValuesDictionary[card];
     return {
       cards: [card],
-      scores: cardValuesDictionary[card],
+      effectiveScore: getEffectiveScore(scores),
+      label: getScoresLabel(scores),
+      scores,
     };
   });
 
@@ -23,6 +25,7 @@ export const getDealerCombinations = () => {
     allCombinations.push({
       cards: hand.cards,
       effectiveScore,
+      scores: hand.scores,
       label: getScoresLabel(hand.scores),
     });
 
@@ -31,8 +34,10 @@ export const getDealerCombinations = () => {
         const nextCards = [...hand.cards, card];
         const nextScores = getScores(hand.scores, cardValuesDictionary[card], nextCards.length);
 
-        const nextHand: HandWithCards = {
+        const nextHand: CardsCombination = {
           cards: nextCards,
+          effectiveScore: getEffectiveScore(nextScores),
+          label: getScoresLabel(nextScores),
           scores: nextScores,
         };
 
