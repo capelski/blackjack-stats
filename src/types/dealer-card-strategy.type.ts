@@ -1,12 +1,9 @@
 import { Card } from './card.type';
 import { PlayerDecisionStrategy } from './player-decision-strategy.type';
-import { StrategyOptions } from './strategy-options.type';
-import { StrategySummary } from './strategy-summary.type';
+import { StrategyBase } from './strategy-base.type';
 
-export type DealerCardStrategy = {
+export type DealerCardStrategy = StrategyBase & {
   dealerCards: {
     [dealerCard: Card]: PlayerDecisionStrategy;
   };
-  options: StrategyOptions;
-  summary: StrategySummary;
 };
