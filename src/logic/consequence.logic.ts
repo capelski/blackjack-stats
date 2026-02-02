@@ -24,7 +24,7 @@ const increaseOutcomes = (target: Outcomes, addition: Outcomes, weight: number) 
   target.lose += addition.lose * weight;
   target.push += addition.push * weight;
   target.win += addition.win * weight;
-  // Deliberately not increasing advantage, betMultiplier and betReturns
+  // Deliberately not increasing edge, betMultiplier and roi
 };
 
 export const createConsequence = (): Consequence => {

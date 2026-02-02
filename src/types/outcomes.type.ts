@@ -2,7 +2,7 @@ export type Outcomes = {
   lose: number;
   push: number;
   win: number;
-  advantage: number;
+  edge: number;
   betMultiplier: number;
-  betReturns: number;
+  roi: number;
 };
