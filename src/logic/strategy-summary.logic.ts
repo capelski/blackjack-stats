@@ -1,4 +1,4 @@
-import { FinalScores } from '../types/final-scores.type';
+import { FinalScoresMap } from '../types/final-scores.type';
 import { PlayerHand } from '../types/hand.type';
 import { ConsequencesByPlayerScore } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
@@ -29,7 +29,7 @@ export const getConsequencesByInitialPairs = (
 
 export const getStrategySummary = (
   decisions: ConsequencesByPlayerScore,
-  dealerFinalScores: FinalScores,
+  dealerFinalScores: FinalScoresMap,
   options: StrategyOptions = {},
 ): StrategySummary => {
   const playerHands = getPlayerHandsSorted(options.splitting);

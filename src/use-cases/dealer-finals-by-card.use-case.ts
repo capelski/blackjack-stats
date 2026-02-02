@@ -4,7 +4,7 @@ import { getDealerFinals } from '../logic/dealer-finals.logic';
 import { getScoresLabel } from '../logic/labels.logic';
 import { getNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { getTable } from '../logic/table.logic';
-import { FinalScores, FinalScoresByDealerCard } from '../types/final-scores.type';
+import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
 
 const overallDealerFinals = getDealerFinals();
 const dealerFinalScores = getNumericKeys(overallDealerFinals);
@@ -15,7 +15,7 @@ const headers = [
 
 const getRows = (
   dealerFinalsByCard: FinalScoresByDealerCard,
-  formatter: (dealerFinals: FinalScores, dealerFinalScore: number) => number | string,
+  formatter: (dealerFinals: FinalScoresMap, dealerFinalScore: number) => number | string,
 ) => {
   return cards.map(dealerCard => {
     const dealerFinals = dealerFinalsByCard[dealerCard];

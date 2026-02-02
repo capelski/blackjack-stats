@@ -1,4 +1,4 @@
-import { FinalScores, FinalScoresByDealerCard } from '../types/final-scores.type';
+import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
 import { HandWithCards } from '../types/hand.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getEffectiveScore, getScores } from './scores.logic';
@@ -18,7 +18,7 @@ export const getDealerFinalsByCard = () => {
   const dealerFinalsByCard = cards.reduce<FinalScoresByDealerCard>((reduced, card) => {
     return {
       ...reduced,
-      [card]: <FinalScores>{},
+      [card]: <FinalScoresMap>{},
     };
   }, {});
 

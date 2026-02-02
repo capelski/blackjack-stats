@@ -1,4 +1,4 @@
-import { FinalScores } from '../types/final-scores.type';
+import { FinalScoresMap } from '../types/final-scores.type';
 import { HandWithCards } from '../types/hand.type';
 import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { getEffectiveScore, getScores } from './scores.logic';
@@ -11,7 +11,7 @@ export const getDealerFinals = () => {
     };
   });
 
-  const dealerFinals: FinalScores = {};
+  const dealerFinals: FinalScoresMap = {};
 
   while (handsQueue.length > 0) {
     const hand = handsQueue.shift()!;
