@@ -1,9 +1,5 @@
 import { Card } from './card.type';
 
-export type FinalProbabilities = {
-  [score: number]: number;
-};
-
 export type FinalScores = {
   [score: number]: {
     combinations: string[];

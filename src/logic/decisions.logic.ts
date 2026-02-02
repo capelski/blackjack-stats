@@ -1,6 +1,6 @@
 import { Action } from '../enums/action.enum';
 import { Consequence } from '../types/consequence.type';
-import { FinalProbabilities } from '../types/final-scores.type';
+import { FinalProbabilities } from '../types/final-probabilities.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { getHitConsequence, getStandConsequence } from './consequence.logic';
 

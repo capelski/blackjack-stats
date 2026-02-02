@@ -1,5 +1,5 @@
 import { Consequence } from '../types/consequence.type';
-import { FinalProbabilities } from '../types/final-scores.type';
+import { FinalProbabilities } from '../types/final-probabilities.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { cardsNumber, cardValues } from './cards.logic';

@@ -1,6 +1,6 @@
 import { Action } from '../../enums/action.enum';
 import { Consequence, ConsequenceByAction } from '../../types/consequence.type';
-import { FinalProbabilities } from '../../types/final-scores.type';
+import { FinalProbabilities } from '../../types/final-probabilities.type';
 import { DecisionsByPlayerScore } from '../../types/player-decision-strategy.type';
 import { PlayerDecision } from '../../types/player-decision.type';
 import { StrategyOptions } from '../../types/strategy-options.type';
