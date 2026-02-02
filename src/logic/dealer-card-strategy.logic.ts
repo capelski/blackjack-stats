@@ -4,6 +4,7 @@ import { cards } from './cards.logic';
 import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
 import { getDealerFinals } from './dealer-finals.logic';
 import {
+  createPlayerDecisionStrategy,
   decisionsToConsequences,
   mergePlayerDecisionStrategies,
 } from './player-decision-strategy.logic';
@@ -14,11 +15,7 @@ export const createDealerCardStrategy = (options: StrategyOptions = {}): DealerC
     dealerCards: cards.reduce((reduced, card) => {
       return {
         ...reduced,
-        [card]: {
-          decisions: {},
-          options,
-          summary: createStrategySummary(),
-        },
+        [card]: createPlayerDecisionStrategy(),
       };
     }, {}),
     options,
