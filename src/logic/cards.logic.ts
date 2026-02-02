@@ -21,6 +21,7 @@ export const cardValuesDictionary = {
 };
 
 export const cardCombinationSeparator = ',';
+
 export const getCardsCombinations = (_cards: typeof cards) => {
   return _cards.join(cardCombinationSeparator);
 };
