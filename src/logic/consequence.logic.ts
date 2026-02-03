@@ -1,5 +1,6 @@
 import { Consequence } from '../types/consequence.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
+import { PlayerHand } from '../types/hand.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
 import { cardsNumber, cardValues } from './cards.logic';
@@ -27,7 +28,7 @@ const increaseOutcomes = (target: Outcomes, addition: Outcomes, weight: number) 
   // Deliberately not increasing edge, betMultiplier and roi
 };
 
-export const createConsequence = (): Consequence => {
+const createConsequence = (): Consequence => {
   return {
     finalProbabilities: {},
     outcomes: createOutcomes(),
@@ -35,13 +36,13 @@ export const createConsequence = (): Consequence => {
 };
 
 export const getDoubleConsequence = (
-  playerScores: number[],
+  playerHand: PlayerHand,
   getNextScoreConsequence: (nextScoresLabel: string) => Consequence,
 ): Consequence => {
   const consequence = createConsequence();
 
   for (const nextCardValues of cardValues) {
-    const nextScores = getScores(playerScores, nextCardValues, undefined);
+    const nextScores = getScores(playerHand.scores, nextCardValues, undefined);
     const nextScoresLabel = getScoresLabel(nextScores);
     const nextConsequence = getNextScoreConsequence(nextScoresLabel);
 
@@ -65,13 +66,13 @@ export const getDoubleConsequence = (
 };
 
 export const getHitConsequence = (
-  playerScores: number[],
+  playerHand: PlayerHand,
   getNextScoreDecision: (nextScoresLabel: string) => PlayerDecision,
 ): Consequence => {
   const consequence = createConsequence();
 
   for (const nextCardValues of cardValues) {
-    const nextScores = getScores(playerScores, nextCardValues, undefined);
+    const nextScores = getScores(playerHand.scores, nextCardValues, undefined);
     const nextScoresLabel = getScoresLabel(nextScores);
     const nextDecision = getNextScoreDecision(nextScoresLabel);
 
@@ -114,22 +115,24 @@ export const getSplitConsequence = (playerDecision: PlayerDecision): Consequence
 };
 
 export const getStandConsequence = (
-  playerScore: number,
+  playerHand: PlayerHand,
   dealerProbabilities: FinalProbabilities,
 ): Consequence => {
-  const lose = getLoseProbability(dealerProbabilities, playerScore);
-  const push = getPushProbability(dealerProbabilities, playerScore);
-  const win = getWinProbability(dealerProbabilities, playerScore);
+  const lose = getLoseProbability(dealerProbabilities, playerHand.effectiveScore);
+  const push = getPushProbability(dealerProbabilities, playerHand.effectiveScore);
+  const win = getWinProbability(dealerProbabilities, playerHand.effectiveScore);
 
   const outcomes = createOutcomes();
   outcomes.lose = lose;
   outcomes.push = push;
   outcomes.win = win;
-  const betMultiplier = getBetMultiplier({ isBlackjack: playerScore === blackjackScore });
+  const betMultiplier = getBetMultiplier({
+    isBlackjack: playerHand.effectiveScore === blackjackScore,
+  });
   computeOutcomes(outcomes, betMultiplier);
 
   return {
-    finalProbabilities: { [playerScore]: 1 },
+    finalProbabilities: { [playerHand.effectiveScore]: 1 },
     outcomes,
   };
 };

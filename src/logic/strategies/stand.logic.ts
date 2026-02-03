@@ -14,14 +14,11 @@ export const getStandStrategy = (threshold: number) => {
   const dealerProbabilities = getFinalProbabilities(dealerFinals);
 
   for (const playerHand of getPlayerHands()) {
-    strategy.decisions[playerHand.label] = getStandDecision(
-      playerHand.effectiveScore,
-      dealerProbabilities,
-    );
+    strategy.decisions[playerHand.label] = getStandDecision(playerHand, dealerProbabilities);
 
     if (!playerHand.isFinal && playerHand.effectiveScore < threshold) {
       strategy.decisions[playerHand.label] = getHitDecision(
-        playerHand.scores,
+        playerHand,
         strategy.decisions[playerHand.label].standConsequence,
         nextScoresLabel => strategy.decisions[nextScoresLabel],
       );

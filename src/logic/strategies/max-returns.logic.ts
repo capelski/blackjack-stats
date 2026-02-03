@@ -58,21 +58,18 @@ export const maxReturnsCore = (
 
   for (const playerHand of getPlayerHands(options.splitting)) {
     if (playerHand.isFinal) {
-      decisions[playerHand.label] = getStandDecision(playerHand.effectiveScore, dealerFinals);
+      decisions[playerHand.label] = getStandDecision(playerHand, dealerFinals);
       continue;
     }
 
-    const standConsequence = getStandConsequence(playerHand.effectiveScore, dealerFinals);
+    const standConsequence = getStandConsequence(playerHand, dealerFinals);
     const additionalConsequences: ConsequenceByAction = {
-      [Action.hit]: getHitConsequence(
-        playerHand.scores,
-        nextScoresLabel => decisions[nextScoresLabel],
-      ),
+      [Action.hit]: getHitConsequence(playerHand, nextScoresLabel => decisions[nextScoresLabel]),
     };
 
     if (canDouble(playerHand.scores, options.doubling)) {
       additionalConsequences[Action.double] = getDoubleConsequence(
-        playerHand.scores,
+        playerHand,
         nextScoresLabel => decisions[nextScoresLabel].standConsequence,
       );
     }
