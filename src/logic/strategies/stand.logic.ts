@@ -11,11 +11,12 @@ import { printPlayerDecisionStrategyTables } from '../table.logic';
 export const getStandStrategy = (threshold: number) => {
   const dealerFinals = getDealerFinals();
   const strategy = createPlayerDecisionStrategy(dealerFinals);
+  const dealerProbabilities = getFinalProbabilities(dealerFinals);
 
   for (const playerHand of getPlayerHands()) {
     strategy.decisions[playerHand.label] = getStandDecision(
       playerHand.effectiveScore,
-      getFinalProbabilities(dealerFinals),
+      dealerProbabilities,
     );
 
     if (!playerHand.isFinal && playerHand.effectiveScore < threshold) {

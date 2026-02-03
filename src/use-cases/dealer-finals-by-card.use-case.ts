@@ -37,7 +37,7 @@ const combinationsRows = getRows(dealerFinalsByCard, (dealerFinals, dealerFinalS
 const combinationsTable = getTable(headers, combinationsRows);
 
 const overallProbabilitiesRows = getRows(dealerFinalsByCard, (dealerFinals, dealerFinalScore) => {
-  const probabilities = (dealerFinals[dealerFinalScore]?.probability || 0) / cardsNumber;
+  const probabilities = dealerFinals[dealerFinalScore]?.probability || 0;
   return toPercentage(probabilities);
 });
 const overallProbabilitiesTable = getTable(headers, overallProbabilitiesRows);
@@ -45,7 +45,7 @@ const overallProbabilitiesTable = getTable(headers, overallProbabilitiesRows);
 const individualProbabilitiesRows = getRows(
   dealerFinalsByCard,
   (dealerFinals, dealerFinalScore) => {
-    const probabilities = dealerFinals[dealerFinalScore]?.probability || 0;
+    const probabilities = (dealerFinals[dealerFinalScore]?.probability || 0) * cardsNumber;
     return toPercentage(probabilities);
   },
 );

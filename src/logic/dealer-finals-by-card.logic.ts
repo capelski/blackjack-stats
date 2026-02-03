@@ -1,69 +1,44 @@
-import { CardsCombination } from '../types/cards-combination.type';
 import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
-import { cards, cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
-import { getScoresLabel } from './labels.logic';
-import { getEffectiveScore, getScores } from './scores.logic';
+import { cardsNumber } from './cards.logic';
+import { dealerHandResolver } from './dealer-finals.logic';
+import { getFinalScores } from './final-scores.logic';
+import { getNumericKeys } from './numbers.logic';
 
-export const getDealerFinalsByCard = () => {
-  const handsQueueByCard = cards.map<CardsCombination>(card => {
-    const scores = cardValuesDictionary[card];
-    return {
-      cards: [card],
-      effectiveScore: getEffectiveScore(scores),
-      label: getScoresLabel(scores),
-      scores,
-    };
-  });
+export type DealerFinalsByCardOptions = {
+  useCardLevelProbabilities?: boolean;
+};
 
-  const handCombinationsByCard = cards.reduce<Record<string, boolean>>((reduced, card) => {
-    return { ...reduced, [card]: true };
-  }, {});
+export const getDealerFinalsByCard = (options: DealerFinalsByCardOptions = {}) => {
+  const { finalScores: finalScoresByDealerCard } = getFinalScores<FinalScoresByDealerCard>(
+    dealerHandResolver,
+    {
+      groupByFirstCard: true,
+    },
+  );
 
-  const dealerFinalsByCard = cards.reduce<FinalScoresByDealerCard>((reduced, card) => {
-    return {
-      ...reduced,
-      [card]: <FinalScoresMap>{},
-    };
-  }, {});
-
-  while (handsQueueByCard.length > 0) {
-    const hand = handsQueueByCard.shift()!;
-
-    cards.map(card => {
-      const nextCards = [...hand.cards, card];
-      const nextCombination = getCardsCombinations(nextCards);
-      const nextScores = getScores(hand.scores, cardValuesDictionary[card], nextCards.length);
-      const nextEffectiveScore = getEffectiveScore(nextScores);
-
-      const nextHand: CardsCombination = {
-        cards: nextCards,
-        effectiveScore: nextEffectiveScore,
-        label: getScoresLabel(nextScores),
-        scores: nextScores,
-      };
-
-      if (nextEffectiveScore < 17) {
-        if (!handCombinationsByCard[nextCombination]) {
-          handCombinationsByCard[nextCombination] = true;
-          handsQueueByCard.push(nextHand);
-        }
-      } else {
-        const dealerFinals = dealerFinalsByCard[nextCards[0]];
-
-        if (!dealerFinals[nextEffectiveScore]) {
-          dealerFinals[nextEffectiveScore] = {
-            combinations: [],
-            probability: 0,
+  const result = options.useCardLevelProbabilities
+    ? Object.keys(finalScoresByDealerCard).reduce<FinalScoresByDealerCard>(
+        (byCardsReduced, dealerCard) => {
+          const finalScoresMap = finalScoresByDealerCard[dealerCard];
+          return {
+            ...byCardsReduced,
+            [dealerCard]: getNumericKeys(finalScoresMap).reduce<FinalScoresMap>(
+              (finalScoresReduced, finalScore) => {
+                return {
+                  ...finalScoresReduced,
+                  [finalScore]: {
+                    combinations: finalScoresMap[finalScore].combinations,
+                    probability: finalScoresMap[finalScore].probability * cardsNumber,
+                  },
+                };
+              },
+              {},
+            ),
           };
-        }
+        },
+        {},
+      )
+    : finalScoresByDealerCard;
 
-        dealerFinals[nextEffectiveScore].combinations.push(nextCombination);
-
-        const handProbability = 1 / Math.pow(cardsNumber, nextHand.cards.length - 1);
-        dealerFinals[nextEffectiveScore].probability += handProbability;
-      }
-    });
-  }
-
-  return dealerFinalsByCard;
+  return result;
 };

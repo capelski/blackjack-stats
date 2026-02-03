@@ -3,10 +3,10 @@ import { getDealerCombinations } from '../logic/dealer-combinations.logic';
 const dealerCombinations = getDealerCombinations();
 
 const combinationsTree = dealerCombinations
-  .map(({ cards, effectiveScore, label }) => {
-    const tabulations = '\t'.repeat(cards.length - 1);
-    const decision = effectiveScore < 17 ? 'Hit' : 'Stand';
-    return `${tabulations}- ${cards.join(',')}. ${label}. ${decision}`;
+  .map(cardsCombination => {
+    const { action, cards, label } = cardsCombination;
+    const tabulations = '  '.repeat(cards.length - 1);
+    return `${tabulations}- ${cards.join(',')}. ${label}. ${action}`;
   })
   .join('\n');
 

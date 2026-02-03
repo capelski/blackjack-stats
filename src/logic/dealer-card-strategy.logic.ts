@@ -2,7 +2,6 @@ import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
 import { FinalScoresByDealerCard } from '../types/final-scores.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { cards } from './cards.logic';
-import { getDealerFinalsByCard } from './dealer-finals-by-card.logic';
 import { getDealerFinals } from './dealer-finals.logic';
 import {
   createPlayerDecisionStrategy,
@@ -16,13 +15,13 @@ export const createDealerCardStrategy = (
   options: StrategyOptions = {},
 ): DealerCardStrategy => {
   const strategy: DealerCardStrategy = {
-    dealerFinalScores: getDealerFinals(),
     dealerCards: cards.reduce((reduced, card) => {
       return {
         ...reduced,
         [card]: createPlayerDecisionStrategy(dealerFinalsByCard[card], options),
       };
     }, {}),
+    dealerFinalScores: getDealerFinals(),
     options,
     summary: createStrategySummary(),
   };
@@ -31,12 +30,10 @@ export const createDealerCardStrategy = (
 };
 
 export const setDealerCardStrategyTotals = (strategy: DealerCardStrategy) => {
-  const dealerFinalsByCard = getDealerFinalsByCard();
-
   Object.keys(strategy.dealerCards).forEach(dealerCard => {
     const partialStrategy = strategy.dealerCards[dealerCard];
 
-    const dealerFinals = dealerFinalsByCard[dealerCard];
+    const dealerFinals = strategy.dealerCards[dealerCard].dealerFinalScores;
 
     const consequences = decisionsToConsequences(partialStrategy.decisions);
     partialStrategy.summary = getStrategySummary(consequences, dealerFinals, strategy.options);

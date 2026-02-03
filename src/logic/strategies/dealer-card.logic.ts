@@ -12,7 +12,7 @@ import { printDealerCardStrategyTables } from '../table.logic';
 import { maxReturnsCore } from './max-returns.logic';
 
 export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
-  const dealerFinalsByCard = getDealerFinalsByCard();
+  const dealerFinalsByCard = getDealerFinalsByCard({ useCardLevelProbabilities: true });
   const strategy = createDealerCardStrategy(dealerFinalsByCard, options);
 
   cards.forEach(dealerCard => {
