@@ -1,5 +1,9 @@
 import { SearchMode } from '../enums/search-mode.enum';
-import { CardsCombination, HandResolver } from '../types/cards-combination.type';
+import {
+  CardsCombination,
+  CombinationsByFinalScore,
+  HandResolver,
+} from '../types/cards-combination.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
 import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
 import { createNextCardsCombination, createOneCardCombination } from './cards-combination.logic';
@@ -43,26 +47,41 @@ class CombinationsList {
 
 export type FinalScoresOptions = {
   collectCombinations?: boolean;
-  groupByFirstCard?: boolean;
+  groupCombinationsByFinalScore?: boolean;
+  groupFinalScoresByFirstCard?: boolean;
   searchMode?: SearchMode;
 };
 
-export const getFinalScores = <T extends FinalScoresByDealerCard | FinalScoresMap>(
+export type FinalScoresReturnType = {
+  combinations?: CardsCombination[] | CombinationsByFinalScore;
+  finalScores?: FinalScoresMap | FinalScoresByDealerCard;
+};
+
+export const getFinalScores = <
+  T extends FinalScoresReturnType = {
+    combinations: CardsCombination[];
+    finalScores: FinalScoresMap;
+  }
+>(
   handResolver: HandResolver,
   options: FinalScoresOptions = {},
 ): {
-  allCombinations: CardsCombination[];
-  finalScores: T;
+  combinations: T['combinations'];
+  finalScores: T['finalScores'];
 } => {
   const collectCombinations = options.collectCombinations ?? false;
-  const groupByFirstCard = options.groupByFirstCard ?? false;
+  const groupFinalScoresByFirstCard = options.groupFinalScoresByFirstCard ?? false;
+  const groupCombinationsByFinalScore = options.groupCombinationsByFinalScore ?? false;
   const searchMode = options.searchMode ?? SearchMode.breadthFirst;
 
-  const allCombinations: CardsCombination[] = [];
+  const combinations = groupCombinationsByFinalScore
+    ? <CombinationsByFinalScore>{}
+    : <CardsCombination[]>[];
+
   const combinationsList = new CombinationsList(searchMode, cards.map(createOneCardCombination));
   const sortedCards = searchMode === SearchMode.depthFirst ? [...cards].reverse() : cards;
 
-  const finalScores = groupByFirstCard
+  const finalScores = groupFinalScoresByFirstCard
     ? cards.reduce<FinalScoresByDealerCard>((reduced, card) => {
         return {
           ...reduced,
@@ -76,7 +95,16 @@ export const getFinalScores = <T extends FinalScoresByDealerCard | FinalScoresMa
 
     if (collectCombinations) {
       // Store all the combinations along the way, final or not
-      allCombinations.push(hand);
+
+      if (!groupCombinationsByFinalScore) {
+        (<CardsCombination[]>combinations).push(hand);
+      } else if (hand.isFinalHand) {
+        const castedCombinations = <CombinationsByFinalScore>combinations;
+        if (!castedCombinations[hand.effectiveScore]) {
+          castedCombinations[hand.effectiveScore] = [];
+        }
+        castedCombinations[hand.effectiveScore].push(hand);
+      }
 
       if (hand.isFinalHand) {
         continue;
@@ -91,7 +119,7 @@ export const getFinalScores = <T extends FinalScoresByDealerCard | FinalScoresMa
       }
 
       if (nextHand.considerFinalScore) {
-        const applicableFinalScores = groupByFirstCard
+        const applicableFinalScores = groupFinalScoresByFirstCard
           ? (<FinalScoresByDealerCard>finalScores)[nextHand.cards[0]]
           : <FinalScoresMap>finalScores;
         registerFinalScore(applicableFinalScores, nextHand);
@@ -99,7 +127,10 @@ export const getFinalScores = <T extends FinalScoresByDealerCard | FinalScoresMa
     });
   }
 
-  return { allCombinations, finalScores: finalScores as T };
+  return {
+    combinations: combinations as T['combinations'],
+    finalScores: finalScores as T['finalScores'],
+  };
 };
 
 const registerFinalScore = (finalScores: FinalScoresMap, hand: CardsCombination) => {

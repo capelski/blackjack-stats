@@ -9,12 +9,11 @@ export type DealerFinalsByCardOptions = {
 };
 
 export const getDealerFinalsByCard = (options: DealerFinalsByCardOptions = {}) => {
-  const { finalScores: finalScoresByDealerCard } = getFinalScores<FinalScoresByDealerCard>(
-    dealerHandResolver,
-    {
-      groupByFirstCard: true,
-    },
-  );
+  const { finalScores: finalScoresByDealerCard } = getFinalScores<{
+    finalScores: FinalScoresByDealerCard;
+  }>(dealerHandResolver, {
+    groupFinalScoresByFirstCard: true,
+  });
 
   const result = options.useCardLevelProbabilities
     ? Object.keys(finalScoresByDealerCard).reduce<FinalScoresByDealerCard>(

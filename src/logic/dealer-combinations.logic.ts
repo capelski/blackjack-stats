@@ -3,9 +3,9 @@ import { dealerHandResolver } from './dealer-finals.logic';
 import { getFinalScores } from './final-scores.logic';
 
 export const getDealerCombinations = () => {
-  const { allCombinations } = getFinalScores(dealerHandResolver, {
+  const { combinations } = getFinalScores(dealerHandResolver, {
     collectCombinations: true,
     searchMode: SearchMode.depthFirst,
   });
-  return allCombinations;
+  return combinations;
 };

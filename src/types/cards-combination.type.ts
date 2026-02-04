@@ -17,4 +17,6 @@ export type CardsCombination = CardsCombinationInput & {
   isFinalHand?: boolean;
 };
 
+export type CombinationsByFinalScore = Record<number, CardsCombination[]>;
+
 export type HandResolver = (hand: CardsCombinationInput) => Action;
