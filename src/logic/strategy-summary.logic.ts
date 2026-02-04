@@ -6,6 +6,7 @@ import { StrategyOptions } from '../types/strategy-options.type';
 import {
   ConsequencesByInitialPairs,
   PlayerFinalsSummaryMap,
+  PlayerFinalSummary,
   StrategySummary,
 } from '../types/strategy-summary.type';
 import { getPlayerHandsSorted } from './hands.logic';
@@ -41,9 +42,9 @@ const getFinalScoresSummaries = (playerFinalScores?: FinalScoresMap): PlayerFina
   return getNumericKeys(playerFinalScores || {}).reduce((reduced, finalScore) => {
     return {
       ...reduced,
-      [finalScore]: {
+      [finalScore]: <PlayerFinalSummary>{
         betMultiplier: 0,
-        combinations: playerFinalScores?.[finalScore].combinations || [],
+        combinations: playerFinalScores?.[finalScore].combinations.length || 0,
         dealerFinals: {},
         outcomes: createOutcomes(),
         probability: playerFinalScores?.[finalScore].probability || 0,

@@ -67,7 +67,7 @@ export const getOverallFinalProbabilitiesTable = (summary: StrategySummary) => {
 
     return [
       getScoresLabel([finalScore]),
-      finalScoreSummary.combinations.length,
+      finalScoreSummary.combinations,
       toPercentage(finalScoreSummary.probability),
     ];
   });

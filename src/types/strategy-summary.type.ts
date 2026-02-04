@@ -13,7 +13,7 @@ export type DealerFinalsSummaryMap = {
 };
 
 export type PlayerFinalSummary = {
-  combinations: number[];
+  combinations: number;
   dealerFinals: DealerFinalsSummaryMap;
   outcomes: Outcomes;
   probability: number;
