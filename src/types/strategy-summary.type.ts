@@ -13,6 +13,7 @@ export type DealerFinalsSummaryMap = {
 };
 
 export type PlayerFinalSummary = {
+  combinations: number[];
   dealerFinals: DealerFinalsSummaryMap;
   outcomes: Outcomes;
   probability: number;
@@ -27,6 +28,10 @@ export type ConsequencesByInitialPairs = {
 };
 
 export type StrategySummary = {
+  combinations: {
+    number: number;
+    probability: number;
+  };
   finalScoresSummaries: PlayerFinalsSummaryMap;
   consequencesByInitialPairs: ConsequencesByInitialPairs;
   outcomes: Outcomes;

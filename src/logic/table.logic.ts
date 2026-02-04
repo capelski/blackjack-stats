@@ -6,13 +6,10 @@ import { StrategyBase } from '../types/strategy-base.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { ConsequencesByInitialPairs, StrategySummary } from '../types/strategy-summary.type';
 import { cards } from './cards.logic';
-import {
-  mergeFinalProbabilities,
-  multiplyFinalProbabilities,
-  stringifyFinalProbabilities,
-} from './final-probabilities.logic';
+import { stringifyFinalProbabilities } from './final-probabilities.logic';
 import { getPlayerHandsSorted } from './hands.logic';
-import { getAbbreviatedAction } from './labels.logic';
+import { getAbbreviatedAction, getScoresLabel } from './labels.logic';
+import { getNumericKeys, toPercentage } from './numbers.logic';
 import { getOutcomesLabels, outcomesToValues } from './outcomes.logic';
 
 export const tableFormat: 'csv' | 'markdown' = 'markdown';
@@ -62,31 +59,26 @@ export const getActionsTable = (
   return getTable(headers, actionsRows);
 };
 
-export const getOverallFinalProbabilitiesTable = (
-  getFinalProbabilities: FinalProbabilitiesRowGetter,
-  options: StrategyOptions = {},
-) => {
-  const playerHands = getPlayerHandsSorted(options.splitting).filter(
-    hand => hand.initialProbability,
-  );
+export const getOverallFinalProbabilitiesTable = (summary: StrategySummary) => {
+  const headers = ['Final score', 'Combinations', 'Probability'];
 
-  const overallHeaders = ['Final Probabilities'];
-  const overallFinalProbabilities = playerHands.reduce<FinalProbabilities>(
-    (reduced, playerHand) => {
-      const initialProbability = playerHand.initialProbability;
-      const finalProbabilities = getFinalProbabilities(playerHand.label);
-      const weightedProbabilities = multiplyFinalProbabilities(
-        finalProbabilities,
-        initialProbability,
-      );
+  const finalScoreRows = getNumericKeys(summary.finalScoresSummaries).map(finalScore => {
+    const finalScoreSummary = summary.finalScoresSummaries[finalScore];
 
-      return mergeFinalProbabilities(weightedProbabilities, reduced);
-    },
-    {},
-  );
-  const overallRows = stringifyFinalProbabilities(overallFinalProbabilities).map(value => [value]);
+    return [
+      getScoresLabel([finalScore]),
+      finalScoreSummary.combinations.length,
+      toPercentage(finalScoreSummary.probability),
+    ];
+  });
 
-  return getTable(overallHeaders, overallRows);
+  const totalsRow = [
+    'Total',
+    summary.combinations.number,
+    toPercentage(summary.combinations.probability),
+  ];
+
+  return getTable(headers, [...finalScoreRows, totalsRow]);
 };
 
 export const getOverallOutcomesTable = (strategySummary: StrategySummary) => {
@@ -112,7 +104,6 @@ export const getBreakdownByInitialPairsTable = (consequences: ConsequencesByInit
 export type StrategyTableResolvers = {
   actionsHeaders: Card[];
   actionsRowGetter: PlayerScoresRowGetter;
-  overallFinalProbabilitiesRowGetter: FinalProbabilitiesRowGetter;
 };
 
 export const printStrategyTable = (strategy: StrategyBase, resolvers: StrategyTableResolvers) => {
@@ -122,10 +113,7 @@ export const printStrategyTable = (strategy: StrategyBase, resolvers: StrategyTa
     strategy.options,
   );
 
-  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(
-    resolvers.overallFinalProbabilitiesRowGetter,
-    strategy.options,
-  );
+  const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(strategy.summary);
 
   const overallOutcomesTable = getOverallOutcomesTable(strategy.summary);
 
@@ -148,8 +136,6 @@ export const printPlayerDecisionStrategyTables = (strategy: PlayerDecisionStrate
       playerScoresLabel,
       strategy.decisions[playerScoresLabel].action,
     ],
-    overallFinalProbabilitiesRowGetter: playerScoresLabel =>
-      strategy.decisions[playerScoresLabel].selectedConsequence.finalProbabilities,
   });
 };
 
@@ -163,16 +149,6 @@ export const printDealerCardStrategyTables = (strategy: DealerCardStrategy) => {
         );
       });
       return [playerScoresLabel, ...actions];
-    },
-    overallFinalProbabilitiesRowGetter: playerScoresLabel => {
-      const allProbabilities = cards.map(dealerCard => {
-        const decision = strategy.dealerCards[dealerCard].decisions[playerScoresLabel];
-        return multiplyFinalProbabilities(
-          decision.selectedConsequence.finalProbabilities,
-          1 / cards.length,
-        );
-      });
-      return allProbabilities.reduce<FinalProbabilities>(mergeFinalProbabilities, {});
     },
   });
 };

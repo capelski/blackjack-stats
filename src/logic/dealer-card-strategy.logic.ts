@@ -5,8 +5,8 @@ import { cards } from './cards.logic';
 import { getDealerFinals } from './dealer-finals.logic';
 import {
   createPlayerDecisionStrategy,
-  decisionsToConsequences,
   mergePlayerDecisionStrategies,
+  setPlayerDecisionStrategyTotals,
 } from './player-decision-strategy.logic';
 import { createStrategySummary, getStrategySummary } from './strategy-summary.logic';
 
@@ -32,11 +32,7 @@ export const createDealerCardStrategy = (
 export const setDealerCardStrategyTotals = (strategy: DealerCardStrategy) => {
   Object.keys(strategy.dealerCards).forEach(dealerCard => {
     const partialStrategy = strategy.dealerCards[dealerCard];
-
-    const dealerFinals = strategy.dealerCards[dealerCard].dealerFinalScores;
-
-    const consequences = decisionsToConsequences(partialStrategy.decisions);
-    partialStrategy.summary = getStrategySummary(consequences, dealerFinals, strategy.options);
+    setPlayerDecisionStrategyTotals(partialStrategy);
   });
 
   const mergedConsequences = mergePlayerDecisionStrategies(Object.values(strategy.dealerCards));

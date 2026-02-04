@@ -1,3 +1,6 @@
+import { Action } from '../enums/action.enum';
+import { SearchMode } from '../enums/search-mode.enum';
+import { CombinationsByFinalScore } from '../types/cards-combination.type';
 import { FinalScoresMap } from '../types/final-scores.type';
 import {
   ConsequencesByPlayerScore,
@@ -6,7 +9,8 @@ import {
 } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { mergeConsequences, multiplyConsequence } from './consequence.logic';
-import { getDealerFinals } from './dealer-finals.logic';
+import { getFinalScores } from './final-scores.logic';
+import { getScoresLabel } from './labels.logic';
 import { createStrategySummary, getStrategySummary } from './strategy-summary.logic';
 
 export const createPlayerDecisionStrategy = (
@@ -65,7 +69,34 @@ export const mergePlayerDecisionStrategies = (strategies: PlayerDecisionStrategy
 };
 
 export const setPlayerDecisionStrategyTotals = (strategy: PlayerDecisionStrategy) => {
-  const dealerFinals = getDealerFinals();
   const consequences = decisionsToConsequences(strategy.decisions);
-  strategy.summary = getStrategySummary(consequences, dealerFinals, strategy.options);
+
+  const { combinations, finalScores } = getFinalScores<{
+    combinations: CombinationsByFinalScore;
+    finalScores: FinalScoresMap;
+  }>(
+    ({ canDouble, scores, splitCard }) => {
+      const label = getScoresLabel(scores, {
+        splitCard: strategy.options.splitting ? splitCard : undefined,
+      });
+      const action = strategy.decisions[label]?.action;
+      const parsedAction =
+        action === Action.double ? (canDouble ? Action.double : Action.hit) : action;
+
+      return parsedAction;
+    },
+    {
+      groupCombinationsByFinalScore: true,
+      collectCombinations: true,
+      searchMode: SearchMode.depthFirst,
+    },
+  );
+
+  strategy.summary = getStrategySummary(
+    consequences,
+    strategy.dealerFinalScores,
+    strategy.options,
+    finalScores,
+    combinations,
+  );
 };
