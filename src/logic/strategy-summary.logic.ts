@@ -8,7 +8,7 @@ import { createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logi
 
 export const createStrategySummary = (): StrategySummary => {
   return {
-    breakdownByFinalScores: {},
+    finalScoresSummaries: {},
     consequencesByInitialPairs: {},
     outcomes: createOutcomes(),
   };
@@ -43,7 +43,7 @@ export const getStrategySummary = (
   const mergedOutcomes = mergeOutcomes(weightedOutcomes);
 
   return {
-    breakdownByFinalScores: {},
+    finalScoresSummaries: {},
     consequencesByInitialPairs,
     outcomes: mergedOutcomes,
   };

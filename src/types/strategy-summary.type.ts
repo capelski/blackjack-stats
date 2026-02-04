@@ -2,23 +2,24 @@ import { Result } from '../enums/result.enum';
 import { Consequence } from './consequence.type';
 import { Outcomes } from './outcomes.type';
 
-export type DealerFinalScoreSummary = {
+export type DealerFinalSummary = {
+  outcomes: Outcomes;
   probability: number;
-  rowProbability: number;
   result: Result;
-  outcomes: Outcomes;
 };
 
-export type PlayerFinalScoreSummary = {
+export type DealerFinalsSummaryMap = {
+  [dealerFinalScore: number]: DealerFinalSummary;
+};
+
+export type PlayerFinalSummary = {
+  dealerFinals: DealerFinalsSummaryMap;
+  outcomes: Outcomes;
   probability: number;
-  dealerFinals: {
-    [dealerFinalScore: number]: DealerFinalScoreSummary;
-  };
-  outcomes: Outcomes;
 };
 
-export type StrategyBreakdownByFinalScores = {
-  [playerFinalScore: number]: PlayerFinalScoreSummary;
+export type PlayerFinalsSummaryMap = {
+  [playerFinalScore: number]: PlayerFinalSummary;
 };
 
 export type ConsequencesByInitialPairs = {
@@ -26,7 +27,7 @@ export type ConsequencesByInitialPairs = {
 };
 
 export type StrategySummary = {
-  breakdownByFinalScores: StrategyBreakdownByFinalScores;
+  finalScoresSummaries: PlayerFinalsSummaryMap;
   consequencesByInitialPairs: ConsequencesByInitialPairs;
   outcomes: Outcomes;
 };
