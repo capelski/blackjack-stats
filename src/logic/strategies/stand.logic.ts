@@ -8,7 +8,7 @@ import {
 } from '../player-decision-strategy.logic';
 import { printPlayerDecisionStrategyTables } from '../table.logic';
 
-export const getStandStrategy = (threshold: number) => {
+export const getStandStrategy = (threshold: number, softThreshold?: number) => {
   const dealerFinals = getDealerFinals();
   const strategy = createPlayerDecisionStrategy(dealerFinals);
   const dealerProbabilities = getFinalProbabilities(dealerFinals);
@@ -16,7 +16,13 @@ export const getStandStrategy = (threshold: number) => {
   for (const playerHand of getPlayerHands()) {
     strategy.decisions[playerHand.label] = getStandDecision(playerHand, dealerProbabilities);
 
-    if (!playerHand.isFinal && playerHand.effectiveScore < threshold) {
+    if (
+      !playerHand.isFinal &&
+      (playerHand.effectiveScore < threshold ||
+        (playerHand.scores.length > 1 &&
+          softThreshold !== undefined &&
+          playerHand.effectiveScore < softThreshold))
+    ) {
       strategy.decisions[playerHand.label] = getHitDecision(
         playerHand,
         strategy.decisions[playerHand.label].standConsequence,
@@ -30,7 +36,7 @@ export const getStandStrategy = (threshold: number) => {
   return strategy;
 };
 
-export const printStandStrategy = (threshold: number) => {
-  const strategy = getStandStrategy(threshold);
+export const printStandStrategy = (threshold: number, softThreshold?: number) => {
+  const strategy = getStandStrategy(threshold, softThreshold);
   printPlayerDecisionStrategyTables(strategy);
 };
