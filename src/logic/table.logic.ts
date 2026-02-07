@@ -5,12 +5,16 @@ import { FinalProbabilities } from '../types/final-probabilities.type';
 import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
 import { StrategyBase } from '../types/strategy-base.type';
 import { StrategyOptions } from '../types/strategy-options.type';
-import { ConsequencesByInitialPairs, StrategySummary } from '../types/strategy-summary.type';
+import {
+  InitialPairsConsequences,
+  PlayerFinalSummary,
+  StrategySummary,
+} from '../types/strategy-summary.type';
 import { cards } from './cards.logic';
 import { stringifyFinalProbabilities } from './final-probabilities.logic';
 import { getPlayerHandsSorted } from './hands.logic';
 import { getAbbreviatedAction, getScoresLabel } from './labels.logic';
-import { getNumericKeys, toPercentage } from './numbers.logic';
+import { getNumericKeys, toDecimal, toPercentage } from './numbers.logic';
 import { getOutcomesLabels, outcomesToValues } from './outcomes.logic';
 
 export const tableFormat: 'csv' | 'markdown' = 'markdown';
@@ -87,19 +91,75 @@ export const getOverallFinalProbabilitiesTable = (summary: StrategySummary) => {
   return getTable(headers, [...finalScoreRows, totalsRow]);
 };
 
-export const getOverallOutcomesTable = (strategySummary: StrategySummary) => {
-  const overallHeaders = getOutcomesLabels();
-  const overallRows = [outcomesToValues(strategySummary.outcomes)];
-
-  return getTable(overallHeaders, overallRows);
+const twoLinesCell = (firstValue: Card, secondValue: string) => {
+  return `${firstValue}<br /><i>${secondValue}</i>`;
 };
 
-export const getBreakdownByInitialPairsTable = (consequences: ConsequencesByInitialPairs) => {
+const percentagesCell = (percentage: number, factor: number) => {
+  return percentage
+    ? twoLinesCell(toPercentage(percentage), toPercentage(percentage * factor))
+    : '-';
+};
+
+export const betReturnsCell = (betReturns: number, factor: number) => {
+  return betReturns && toDecimal(betReturns) !== '0'
+    ? twoLinesCell(toDecimal(betReturns), toDecimal(betReturns * factor, 3))
+    : '0';
+};
+
+/** Helper to validate that all rows have the same length */
+export const overallRow = (values: [string, string, string, string, string, string]) => {
+  return values;
+};
+
+const getFinalScoreRow = (finalScore: number, playerScoreSummary: PlayerFinalSummary) => {
+  const { outcomes, probability } = playerScoreSummary;
+  const playerScoreRow = overallRow([
+    twoLinesCell(getScoresLabel([finalScore]), toPercentage(probability)),
+    percentagesCell(outcomes.win, probability),
+    percentagesCell(outcomes.push, probability),
+    percentagesCell(outcomes.lose, probability),
+    percentagesCell(outcomes.edge, probability),
+    betReturnsCell(outcomes.roi, probability),
+  ]);
+  return playerScoreRow;
+};
+
+const getSummaryRow = (summary: StrategySummary) => {
+  const { outcomes } = summary;
+  const summaryRow = overallRow([
+    '<b>Total</b>',
+    `<b>${toPercentage(outcomes.win)}</b>`,
+    `<b>${toPercentage(outcomes.push)}</b>`,
+    `<b>${toPercentage(outcomes.lose)}</b>`,
+    `<b>${toPercentage(outcomes.roi - 1)}</b>`,
+    `<b>${toDecimal(outcomes.roi, 3)}</b>`,
+  ]);
+  return summaryRow;
+};
+
+export const getFinalScoresTable = (summary: StrategySummary) => {
+  const headers = overallRow(['Final score', ...getOutcomesLabels()]);
+
+  const playerFinalScores = getNumericKeys(summary.finalScoresSummaries);
+  const finalScoreRows = playerFinalScores.map(playerFinalScore => {
+    const playerScoreSummary = summary.finalScoresSummaries[playerFinalScore];
+    const headerRow = getFinalScoreRow(playerFinalScore, playerScoreSummary);
+    return headerRow;
+  });
+
+  const summaryRow = getSummaryRow(summary);
+
+  return getTable(headers, [...finalScoreRows, summaryRow]);
+};
+
+export const getInitialScoresTable = (consequences: InitialPairsConsequences) => {
   const headers = ['Score', 'Final Probabilities', ...getOutcomesLabels()];
-  const rows = Object.keys(consequences).map(playerScoresLabel => {
-    const { finalProbabilities, outcomes } = consequences[playerScoresLabel];
+  const rows = Object.keys(consequences).map(playerScoreLabel => {
+    const consequence = consequences[playerScoreLabel];
+    const { finalProbabilities, outcomes } = consequence;
     return [
-      playerScoresLabel,
+      playerScoreLabel,
       stringifyFinalProbabilities(finalProbabilities).join(' / '),
       ...outcomesToValues(outcomes),
     ];
@@ -153,18 +213,16 @@ export const printStrategyTable = (strategy: StrategyBase, resolvers: StrategyTa
 
   const finalScoresMatrix = getFinalScoresMatrix(strategy);
 
-  const overallOutcomesTable = getOverallOutcomesTable(strategy.summary);
+  const finalScoresTable = getFinalScoresTable(strategy.summary);
 
-  const breakdownByInitialPairsTable = getBreakdownByInitialPairsTable(
-    strategy.summary.consequencesByInitialPairs,
-  );
+  const initialScoresTable = getInitialScoresTable(strategy.summary.initialPairsConsequences);
 
   console.log(
     `${actionsTable}\n
 ${overallFinalProbabilitiesTable}\n
 ${finalScoresMatrix}\n
-${overallOutcomesTable}\n
-${breakdownByInitialPairsTable}`,
+${finalScoresTable}\n
+${initialScoresTable}`,
   );
 };
 

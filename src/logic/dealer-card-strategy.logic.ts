@@ -38,6 +38,6 @@ export const setDealerCardStrategyTotals = (strategy: DealerCardStrategy) => {
   const mergedConsequences = mergePlayerDecisionStrategies(Object.values(strategy.dealerCards));
 
   const overallDealerFinals = getDealerFinals();
-  // TODO Pass playerFinalScores and combinations
-  strategy.summary = getStrategySummary(mergedConsequences, overallDealerFinals, strategy.options);
+  // TODO Pass playerFinalScores and combinations from combined partial strategies
+  strategy.summary = getStrategySummary(mergedConsequences, overallDealerFinals);
 };

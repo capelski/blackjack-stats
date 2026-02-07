@@ -28,9 +28,10 @@ const increaseOutcomes = (target: Outcomes, addition: Outcomes, weight: number) 
   // Deliberately not increasing edge, betMultiplier and roi
 };
 
-const createConsequence = (): Consequence => {
+const createConsequence = (initialProbability: number | undefined): Consequence => {
   return {
     finalProbabilities: {},
+    initialProbability,
     outcomes: createOutcomes(),
   };
 };
@@ -39,7 +40,7 @@ export const getDoubleConsequence = (
   playerHand: PlayerHand,
   getNextScoreConsequence: (nextScoresLabel: string) => Consequence,
 ): Consequence => {
-  const consequence = createConsequence();
+  const consequence = createConsequence(playerHand.initialProbability);
 
   for (const nextCardValues of cardValues) {
     const nextScores = getScores(playerHand.scores, nextCardValues, undefined);
@@ -69,7 +70,7 @@ export const getHitConsequence = (
   playerHand: PlayerHand,
   getNextScoreDecision: (nextScoresLabel: string) => PlayerDecision,
 ): Consequence => {
-  const consequence = createConsequence();
+  const consequence = createConsequence(playerHand.initialProbability);
 
   for (const nextCardValues of cardValues) {
     const nextScores = getScores(playerHand.scores, nextCardValues, undefined);
@@ -99,7 +100,10 @@ export const getHitConsequence = (
   return consequence;
 };
 
-export const getSplitConsequence = (playerDecision: PlayerDecision): Consequence => {
+export const getSplitConsequence = (
+  playerDecision: PlayerDecision,
+  initialProbability: number | undefined,
+): Consequence => {
   const outcomes = {
     ...playerDecision.selectedConsequence.outcomes,
   };
@@ -109,6 +113,7 @@ export const getSplitConsequence = (playerDecision: PlayerDecision): Consequence
   const consequence: Consequence = {
     ...playerDecision.selectedConsequence,
     outcomes,
+    initialProbability,
   };
 
   return consequence;
@@ -133,6 +138,7 @@ export const getStandConsequence = (
 
   return {
     finalProbabilities: { [playerHand.effectiveScore]: 1 },
+    initialProbability: playerHand.initialProbability,
     outcomes,
   };
 };
@@ -144,14 +150,16 @@ export const mergeConsequences = (outcomesList: Consequence[]): Consequence => {
         reduced.finalProbabilities,
         consequence.finalProbabilities,
       ),
+      initialProbability: (reduced.initialProbability || 0) + (consequence.initialProbability || 0),
       outcomes: reduceOutcomes(reduced.outcomes, consequence.outcomes),
     };
-  }, createConsequence());
+  }, createConsequence(0));
 };
 
 export const multiplyConsequence = (consequence: Consequence, factor: number): Consequence => {
   return {
     finalProbabilities: multiplyFinalProbabilities(consequence.finalProbabilities, factor),
+    initialProbability: (consequence.initialProbability || 0) * factor,
     outcomes: multiplyOutcomes(consequence.outcomes, factor),
   };
 };

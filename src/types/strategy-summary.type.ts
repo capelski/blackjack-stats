@@ -24,7 +24,7 @@ export type PlayerFinalsSummaryMap = {
   [playerFinalScore: number]: PlayerFinalSummary;
 };
 
-export type ConsequencesByInitialPairs = {
+export type InitialPairsConsequences = {
   [initialPairLabel: string]: Consequence;
 };
 
@@ -34,6 +34,6 @@ export type StrategySummary = {
     probability: number;
   };
   finalScoresSummaries: PlayerFinalsSummaryMap;
-  consequencesByInitialPairs: ConsequencesByInitialPairs;
+  initialPairsConsequences: InitialPairsConsequences;
   outcomes: Outcomes;
 };

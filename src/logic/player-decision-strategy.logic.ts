@@ -10,8 +10,11 @@ import {
 import { StrategyOptions } from '../types/strategy-options.type';
 import { mergeConsequences, multiplyConsequence } from './consequence.logic';
 import { getFinalScores } from './final-scores.logic';
+import { getPlayerHandsSorted } from './hands.logic';
 import { getScoresLabel } from './labels.logic';
 import { createStrategySummary, getStrategySummary } from './strategy-summary.logic';
+
+// TODO Rename to max-returns-strategy.logic.ts
 
 export const createPlayerDecisionStrategy = (
   dealerFinalScores: FinalScoresMap,
@@ -26,14 +29,23 @@ export const createPlayerDecisionStrategy = (
   return strategy;
 };
 
-export const decisionsToConsequences = (decisions: DecisionsByPlayerScore, factor?: number) => {
-  return Object.keys(decisions).reduce<ConsequencesByPlayerScore>((reduced, playerScoresLabel) => {
-    const { selectedConsequence } = decisions[playerScoresLabel];
+export const decisionsToConsequences = (
+  decisions: DecisionsByPlayerScore,
+  options: StrategyOptions,
+  factor = 1,
+): ConsequencesByPlayerScore => {
+  const playerHands = getPlayerHandsSorted(options.splitting);
+
+  return playerHands.reduce<ConsequencesByPlayerScore>((reduced, playerHand) => {
+    const { selectedConsequence } = decisions[playerHand.label];
     const weightedConsequence = factor
       ? multiplyConsequence(selectedConsequence, factor)
       : selectedConsequence;
 
-    return { ...reduced, [playerScoresLabel]: weightedConsequence };
+    return {
+      ...reduced,
+      [playerHand.label]: weightedConsequence,
+    };
   }, {});
 };
 
@@ -62,6 +74,7 @@ export const mergePlayerDecisionStrategies = (strategies: PlayerDecisionStrategy
   return strategies.reduce<ConsequencesByPlayerScore>((reduced, partialStrategy) => {
     const weightedConsequences = decisionsToConsequences(
       partialStrategy.decisions,
+      partialStrategy.options,
       1 / strategies.length,
     );
     return mergeConsequencesByPlayerScore(reduced, weightedConsequences);
@@ -69,7 +82,7 @@ export const mergePlayerDecisionStrategies = (strategies: PlayerDecisionStrategy
 };
 
 export const setPlayerDecisionStrategyTotals = (strategy: PlayerDecisionStrategy) => {
-  const consequences = decisionsToConsequences(strategy.decisions);
+  const consequences = decisionsToConsequences(strategy.decisions, strategy.options);
 
   const { combinations, finalScores } = getFinalScores<{
     combinations: CombinationsByFinalScore;
@@ -95,7 +108,6 @@ export const setPlayerDecisionStrategyTotals = (strategy: PlayerDecisionStrategy
   strategy.summary = getStrategySummary(
     consequences,
     strategy.dealerFinalScores,
-    strategy.options,
     finalScores,
     combinations,
   );

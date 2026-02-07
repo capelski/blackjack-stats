@@ -4,6 +4,7 @@ import { Outcomes } from './outcomes.type';
 
 export type Consequence = {
   finalProbabilities: FinalProbabilities;
+  initialProbability: number | undefined;
   outcomes: Outcomes;
 };
 

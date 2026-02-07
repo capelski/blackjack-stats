@@ -75,7 +75,10 @@ export const maxReturnsCore = (
     }
 
     if (playerHand.splitLabel) {
-      additionalConsequences[Action.split] = getSplitConsequence(decisions[playerHand.splitLabel]);
+      additionalConsequences[Action.split] = getSplitConsequence(
+        decisions[playerHand.splitLabel],
+        playerHand.initialProbability,
+      );
     }
 
     decisions[playerHand.label] = selectConsequence(standConsequence, additionalConsequences);
