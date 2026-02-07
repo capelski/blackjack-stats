@@ -1,3 +1,4 @@
+import { Result } from '../enums/result.enum';
 import { Card } from '../types/card.type';
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
@@ -62,15 +63,20 @@ export const getActionsTable = (
 export const getOverallFinalProbabilitiesTable = (summary: StrategySummary) => {
   const headers = ['Final score', 'Combinations', 'Probability'];
 
-  const finalScoreRows = getNumericKeys(summary.finalScoresSummaries).map(finalScore => {
-    const finalScoreSummary = summary.finalScoresSummaries[finalScore];
+  const finalScoreRows = getNumericKeys(summary.finalScoresSummaries)
+    .filter(finalScore => {
+      const finalScoreSummary = summary.finalScoresSummaries[finalScore];
+      return finalScoreSummary.probability > 0;
+    })
+    .map(finalScore => {
+      const finalScoreSummary = summary.finalScoresSummaries[finalScore];
 
-    return [
-      getScoresLabel([finalScore]),
-      finalScoreSummary.combinations,
-      toPercentage(finalScoreSummary.probability),
-    ];
-  });
+      return [
+        getScoresLabel([finalScore]),
+        finalScoreSummary.combinations,
+        toPercentage(finalScoreSummary.probability),
+      ];
+    });
 
   const totalsRow = [
     'Total',
@@ -101,6 +107,36 @@ export const getBreakdownByInitialPairsTable = (consequences: ConsequencesByInit
   return getTable(headers, rows);
 };
 
+const getResultColor = (result: Result) => {
+  return result === Result.win ? '#284E13' : result === Result.lose ? '#660000' : '#7F6001';
+};
+
+export const getFinalScoresMatrix = ({ dealerFinalScores, summary }: StrategyBase) => {
+  const headers = ['', ...getNumericKeys(dealerFinalScores)];
+
+  const rows = getNumericKeys(summary.finalScoresSummaries)
+    .filter(finalScore => {
+      const finalScoreSummary = summary.finalScoresSummaries[finalScore];
+      return finalScoreSummary.probability > 0;
+    })
+    .map(playerFinalScore => {
+      const playerFinal = summary.finalScoresSummaries[playerFinalScore];
+      return [
+        `<b>${getScoresLabel([playerFinalScore])}</b>`,
+        ...getNumericKeys(playerFinal.dealerFinals).map(dealerFinal => {
+          const dealerFinalSummary = playerFinal.dealerFinals[dealerFinal];
+          const probability = dealerFinalSummary.probability * playerFinal.probability;
+
+          return `<span style="color: ${getResultColor(dealerFinalSummary.result)}">${toPercentage(
+            probability,
+          )}</span>`;
+        }),
+      ];
+    });
+
+  return getTable(headers, rows);
+};
+
 export type StrategyTableResolvers = {
   actionsHeaders: Card[];
   actionsRowGetter: PlayerScoresRowGetter;
@@ -115,6 +151,8 @@ export const printStrategyTable = (strategy: StrategyBase, resolvers: StrategyTa
 
   const overallFinalProbabilitiesTable = getOverallFinalProbabilitiesTable(strategy.summary);
 
+  const finalScoresMatrix = getFinalScoresMatrix(strategy);
+
   const overallOutcomesTable = getOverallOutcomesTable(strategy.summary);
 
   const breakdownByInitialPairsTable = getBreakdownByInitialPairsTable(
@@ -124,6 +162,7 @@ export const printStrategyTable = (strategy: StrategyBase, resolvers: StrategyTa
   console.log(
     `${actionsTable}\n
 ${overallFinalProbabilitiesTable}\n
+${finalScoresMatrix}\n
 ${overallOutcomesTable}\n
 ${breakdownByInitialPairsTable}`,
   );

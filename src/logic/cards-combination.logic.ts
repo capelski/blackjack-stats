@@ -32,6 +32,7 @@ export const createNextCardsCombination = (
   const nextCards = [...previous.cards, card];
   const nextScores = getScores(previous.scores, cardValuesDictionary[card], nextCards.length);
 
+  // TODO Introduce betMultiplier here?
   const nextInput: CardsCombinationInput = {
     cards: nextCards,
     canDouble: nextCards.length === 2,

@@ -3,15 +3,10 @@ import { FinalScoresMap } from '../types/final-scores.type';
 import { PlayerHand } from '../types/hand.type';
 import { ConsequencesByPlayerScore } from '../types/player-decision-strategy.type';
 import { StrategyOptions } from '../types/strategy-options.type';
-import {
-  ConsequencesByInitialPairs,
-  PlayerFinalsSummaryMap,
-  PlayerFinalSummary,
-  StrategySummary,
-} from '../types/strategy-summary.type';
+import { ConsequencesByInitialPairs, StrategySummary } from '../types/strategy-summary.type';
 import { getPlayerHandsSorted } from './hands.logic';
-import { getNumericKeys } from './numbers.logic';
 import { createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logic';
+import { getFinalScoresSummaries } from './player-finals-summary.logic';
 
 export const createStrategySummary = (): StrategySummary => {
   return {
@@ -38,21 +33,6 @@ export const getConsequencesByInitialPairs = (
   }, {});
 };
 
-const getFinalScoresSummaries = (playerFinalScores?: FinalScoresMap): PlayerFinalsSummaryMap => {
-  return getNumericKeys(playerFinalScores || {}).reduce((reduced, finalScore) => {
-    return {
-      ...reduced,
-      [finalScore]: <PlayerFinalSummary>{
-        betMultiplier: 0,
-        combinations: playerFinalScores?.[finalScore].combinations.length || 0,
-        dealerFinals: {},
-        outcomes: createOutcomes(),
-        probability: playerFinalScores?.[finalScore].probability || 0,
-      },
-    };
-  }, {});
-};
-
 export const getStrategySummary = (
   consequences: ConsequencesByPlayerScore,
   dealerFinalScores: FinalScoresMap,
@@ -70,7 +50,14 @@ export const getStrategySummary = (
   });
   const mergedOutcomes = mergeOutcomes(weightedOutcomes);
 
-  const finalScoresSummaries = getFinalScoresSummaries(playerFinalScores);
+  const finalScoresSummaries = getFinalScoresSummaries(
+    consequences,
+    dealerFinalScores,
+    playerFinalScores,
+  );
+  // const weightedOutcomes = Object.values(finalScoresSummaries).map(x =>
+  //   multiplyOutcomes(x.outcomes, x.probability),
+  // );
 
   return {
     combinations: {

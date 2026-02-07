@@ -39,6 +39,17 @@
 | 22+         | 16808        | 20.04%      |
 | Total       | 34177        | 100%        |
 
+|            | 17                                        | 18                                        | 19                                        | 20                                        | 21                                        | 21.5                                      | 22                                        |
+| ---------- | ----------------------------------------- | ----------------------------------------- | ----------------------------------------- | ----------------------------------------- | ----------------------------------------- | ----------------------------------------- | ----------------------------------------- |
+| <b>16</b>  | <span style="color: #660000">2.02%</span> | <span style="color: #660000">1.94%</span> | <span style="color: #660000">1.85%</span> | <span style="color: #660000">2.50%</span> | <span style="color: #660000">1.01%</span> | <span style="color: #660000">0.66%</span> | <span style="color: #284E13">3.91%</span> |
+| <b>17</b>  | <span style="color: #7F6001">1.94%</span> | <span style="color: #660000">1.86%</span> | <span style="color: #660000">1.78%</span> | <span style="color: #660000">2.41%</span> | <span style="color: #660000">0.97%</span> | <span style="color: #660000">0.63%</span> | <span style="color: #284E13">3.76%</span> |
+| <b>18</b>  | <span style="color: #284E13">1.86%</span> | <span style="color: #7F6001">1.79%</span> | <span style="color: #660000">1.71%</span> | <span style="color: #660000">2.31%</span> | <span style="color: #660000">0.93%</span> | <span style="color: #660000">0.61%</span> | <span style="color: #284E13">3.60%</span> |
+| <b>19</b>  | <span style="color: #284E13">1.77%</span> | <span style="color: #284E13">1.70%</span> | <span style="color: #7F6001">1.63%</span> | <span style="color: #660000">2.20%</span> | <span style="color: #660000">0.89%</span> | <span style="color: #660000">0.58%</span> | <span style="color: #284E13">3.43%</span> |
+| <b>20</b>  | <span style="color: #284E13">2.45%</span> | <span style="color: #284E13">2.35%</span> | <span style="color: #284E13">2.25%</span> | <span style="color: #7F6001">3.04%</span> | <span style="color: #660000">1.23%</span> | <span style="color: #660000">0.80%</span> | <span style="color: #284E13">4.75%</span> |
+| <b>21</b>  | <span style="color: #284E13">0.89%</span> | <span style="color: #284E13">0.85%</span> | <span style="color: #284E13">0.82%</span> | <span style="color: #284E13">1.10%</span> | <span style="color: #7F6001">0.45%</span> | <span style="color: #660000">0.29%</span> | <span style="color: #284E13">1.72%</span> |
+| <b>BJ</b>  | <span style="color: #284E13">0.69%</span> | <span style="color: #284E13">0.66%</span> | <span style="color: #284E13">0.63%</span> | <span style="color: #284E13">0.85%</span> | <span style="color: #284E13">0.34%</span> | <span style="color: #7F6001">0.22%</span> | <span style="color: #284E13">1.33%</span> |
+| <b>22+</b> | <span style="color: #660000">2.91%</span> | <span style="color: #660000">2.80%</span> | <span style="color: #660000">2.67%</span> | <span style="color: #660000">3.61%</span> | <span style="color: #660000">1.46%</span> | <span style="color: #660000">0.95%</span> | <span style="color: #660000">5.64%</span> |
+
 | Win    | Push  | Lose   | Edge   | ROI   |
 | ------ | ----- | ------ | ------ | ----- |
 | 41.74% | 9.06% | 49.20% | -5.21% | 0.948 |
