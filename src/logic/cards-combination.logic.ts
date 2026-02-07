@@ -15,12 +15,12 @@ export const createOneCardCombination = (card: Card): CardsCombination => {
   return {
     action: Action.hit,
     canDouble: false,
+    canSplit: false,
     cards: [card],
     considerFinalScore: false,
     effectiveScore: getEffectiveScore(scores),
     label: getScoresLabel(scores),
     scores,
-    splitCard: undefined,
   };
 };
 
@@ -36,10 +36,10 @@ export const createNextCardsCombination = (
   const nextInput: CardsCombinationInput = {
     cards: nextCards,
     canDouble: nextCards.length === 2,
+    canSplit: nextCards.length === 2 && nextCards[0] === nextCards[1],
     effectiveScore: getEffectiveScore(nextScores),
     label: getScoresLabel(nextScores),
     scores: nextScores,
-    splitCard: nextCards.length === 2 && nextCards[0] === card ? card : undefined,
   };
 
   const nextAction = handResolver(nextInput);

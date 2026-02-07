@@ -3,12 +3,11 @@ import { Card } from './card.type';
 
 export type CardsCombinationInput = {
   canDouble: boolean;
+  canSplit: boolean;
   cards: Card[];
   effectiveScore: number;
   label: string;
   scores: number[];
-  /** When set, the hand can be split */
-  splitCard: Card | undefined;
 };
 
 export type CardsCombination = CardsCombinationInput & {

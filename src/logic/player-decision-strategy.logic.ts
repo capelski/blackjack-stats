@@ -88,9 +88,9 @@ export const setPlayerDecisionStrategyTotals = (strategy: PlayerDecisionStrategy
     combinations: CombinationsByFinalScore;
     finalScores: FinalScoresMap;
   }>(
-    ({ canDouble, scores, splitCard }) => {
+    ({ canDouble, canSplit, cards, scores }) => {
       const label = getScoresLabel(scores, {
-        splitCard: strategy.options.splitting ? splitCard : undefined,
+        splitCard: strategy.options.splitting && canSplit ? cards[0] : undefined,
       });
       const action = strategy.decisions[label]?.action;
       const parsedAction =
