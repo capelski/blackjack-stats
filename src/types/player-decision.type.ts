@@ -7,3 +7,7 @@ export type PlayerDecision = {
   selectedConsequence: Consequence;
   standConsequence: Consequence;
 };
+
+export type DecisionsByPlayerScore = {
+  [playerScoreLabel: string]: PlayerDecision;
+};

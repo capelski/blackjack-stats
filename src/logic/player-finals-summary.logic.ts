@@ -1,7 +1,6 @@
 import { Result } from '../enums/result.enum';
-import { Consequence } from '../types/consequence.type';
+import { Consequence, ConsequencesByPlayerScore } from '../types/consequence.type';
 import { FinalScore, FinalScoresMap } from '../types/final-scores.type';
-import { ConsequencesByPlayerScore } from '../types/player-decision-strategy.type';
 import {
   DealerFinalsSummaryMap,
   DealerFinalSummary,

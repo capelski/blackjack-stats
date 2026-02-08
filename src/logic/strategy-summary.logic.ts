@@ -1,6 +1,6 @@
 import { CombinationsByFinalScore } from '../types/cards-combination.type';
+import { ConsequencesByPlayerScore } from '../types/consequence.type';
 import { FinalScoresMap } from '../types/final-scores.type';
-import { ConsequencesByPlayerScore } from '../types/player-decision-strategy.type';
 import { StrategySummary } from '../types/strategy-summary.type';
 import { createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logic';
 import { getFinalScoresSummaries } from './player-finals-summary.logic';

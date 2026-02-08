@@ -1,12 +1,10 @@
 import { Action } from '../enums/action.enum';
 import { SearchMode } from '../enums/search-mode.enum';
 import { CombinationsByFinalScore } from '../types/cards-combination.type';
+import { ConsequencesByPlayerScore } from '../types/consequence.type';
 import { FinalScoresMap } from '../types/final-scores.type';
-import {
-  ConsequencesByPlayerScore,
-  DecisionsByPlayerScore,
-  PlayerDecisionStrategy,
-} from '../types/player-decision-strategy.type';
+import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
+import { DecisionsByPlayerScore } from '../types/player-decision.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { mergeConsequences, multiplyConsequence } from './consequence.logic';
 import { getFinalScores } from './final-scores.logic';

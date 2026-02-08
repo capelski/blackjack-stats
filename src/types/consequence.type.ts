@@ -11,3 +11,7 @@ export type Consequence = {
 export type ConsequenceByAction = {
   [action in Action]?: Consequence;
 };
+
+export type ConsequencesByPlayerScore = {
+  [playerScoreLabel: string]: Consequence;
+};
