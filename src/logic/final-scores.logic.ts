@@ -6,6 +6,7 @@ import {
 } from '../types/cards-combination.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
 import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
+import { StrategyOptions } from '../types/strategy-options.type';
 import { createNextCardsCombination, createOneCardCombination } from './cards-combination.logic';
 import { cards, cardsNumber, getCardsCombinations } from './cards.logic';
 import { getNumericKeys } from './numbers.logic';
@@ -50,6 +51,7 @@ export type FinalScoresOptions = {
   groupCombinationsByFinalScore?: boolean;
   groupFinalScoresByFirstCard?: boolean;
   searchMode?: SearchMode;
+  strategyOptions?: StrategyOptions;
 };
 
 export type FinalScoresReturnType = {
@@ -73,6 +75,7 @@ export const getFinalScores = <
   const groupFinalScoresByFirstCard = options.groupFinalScoresByFirstCard ?? false;
   const groupCombinationsByFinalScore = options.groupCombinationsByFinalScore ?? false;
   const searchMode = options.searchMode ?? SearchMode.breadthFirst;
+  const strategyOptions = options.strategyOptions ?? {};
 
   const combinations = groupCombinationsByFinalScore
     ? <CombinationsByFinalScore>{}
@@ -112,7 +115,7 @@ export const getFinalScores = <
     }
 
     sortedCards.map(card => {
-      const nextHand = createNextCardsCombination(handResolver, hand, card);
+      const nextHand = createNextCardsCombination(handResolver, hand, card, strategyOptions);
 
       if (!nextHand.isFinalHand || collectCombinations) {
         combinationsList.addCombination(nextHand);

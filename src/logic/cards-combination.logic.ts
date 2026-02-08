@@ -5,9 +5,12 @@ import {
   CardsCombinationInput,
   HandResolver,
 } from '../types/cards-combination.type';
+import { StrategyOptions } from '../types/strategy-options.type';
 import { cardValuesDictionary } from './cards.logic';
+import { canDouble } from './doubling.logic';
 import { getScoresLabel } from './labels.logic';
 import { getEffectiveScore, getScores, playerScoreLimit } from './scores.logic';
+import { canSplit } from './splitting.logic';
 
 export const createOneCardCombination = (card: Card): CardsCombination => {
   const scores = cardValuesDictionary[card];
@@ -28,15 +31,15 @@ export const createNextCardsCombination = (
   handResolver: HandResolver,
   previous: CardsCombination,
   card: Card,
+  options: StrategyOptions,
 ): CardsCombination => {
   const nextCards = [...previous.cards, card];
   const nextScores = getScores(previous.scores, cardValuesDictionary[card], nextCards.length);
 
-  // TODO Introduce betMultiplier here?
   const nextInput: CardsCombinationInput = {
     cards: nextCards,
-    canDouble: nextCards.length === 2,
-    canSplit: nextCards.length === 2 && nextCards[0] === nextCards[1],
+    canDouble: nextCards.length === 2 && canDouble(nextScores, options.doubling),
+    canSplit: canSplit(nextCards, options.splitting),
     effectiveScore: getEffectiveScore(nextScores),
     label: getScoresLabel(nextScores),
     scores: nextScores,
