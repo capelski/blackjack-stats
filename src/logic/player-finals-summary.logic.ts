@@ -57,12 +57,11 @@ export const createPlayerFinalsSummary = (): PlayerFinalSummary => {
 
 const getDealerFinalSummary = (
   playerScore: number,
-  dealerScore: number,
   dealerFinalScore: FinalScore,
   betMultiplier: number,
 ): DealerFinalSummary => {
-  const { probability } = dealerFinalScore;
-  const result = getResult(playerScore, dealerScore);
+  const { probability, score } = dealerFinalScore;
+  const result = getResult(playerScore, score);
 
   const outcomes = createOutcomes();
   outcomes.win = result === Result.win ? 1 : 0;
@@ -97,7 +96,6 @@ export const getPlayerFinalSummary = (
         ...dealerScoresReduced,
         [dealerScore]: getDealerFinalSummary(
           playerScore,
-          dealerScore,
           dealerFinalScores[dealerScore],
           consequence.outcomes.betMultiplier,
         ),

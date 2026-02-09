@@ -1,9 +1,9 @@
 import { Card } from './card.type';
 
-// TODO Add the score here
 export type FinalScore = {
   combinations: string[];
   probability: number;
+  score: number;
 };
 
 export type FinalScoresMap = {

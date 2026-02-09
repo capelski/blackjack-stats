@@ -28,6 +28,7 @@ export const getDealerFinalsByCard = (options: DealerFinalsByCardOptions = {}) =
                   [finalScore]: {
                     combinations: finalScoresMap[finalScore].combinations,
                     probability: finalScoresMap[finalScore].probability * cardsNumber,
+                    score: finalScore,
                   },
                 };
               },

@@ -141,6 +141,7 @@ const registerFinalScore = (finalScores: FinalScoresMap, hand: CardsCombination)
     finalScores[hand.effectiveScore] = {
       combinations: [],
       probability: 0,
+      score: hand.effectiveScore,
     };
   }
 
