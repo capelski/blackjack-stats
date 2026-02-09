@@ -14,11 +14,8 @@ import { getStandDecision } from '../decisions.logic';
 import { canDouble } from '../doubling.logic';
 import { getFinalProbabilities } from '../final-scores.logic';
 import { getPlayerHands } from '../hands.logic';
-import {
-  createPlayerDecisionStrategy,
-  setPlayerDecisionStrategyTotals,
-} from '../player-decision-strategy.logic';
-import { printPlayerDecisionStrategyTables } from '../table.logic';
+import { createSelfAwareStrategy, setSelfAwareStrategyTotals } from '../self-aware-strategy.logic';
+import { printSelfAwareStrategyTables } from '../table.logic';
 
 export const selectConsequence = (
   standConsequence: Consequence,
@@ -88,16 +85,16 @@ export const maxReturnsCore = (
 
 export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
   const dealerFinals = getDealerFinals();
-  const strategy = createPlayerDecisionStrategy(dealerFinals, options);
+  const strategy = createSelfAwareStrategy(dealerFinals, options);
 
   strategy.decisions = maxReturnsCore(getFinalProbabilities(dealerFinals), options);
 
-  setPlayerDecisionStrategyTotals(strategy);
+  setSelfAwareStrategyTotals(strategy);
 
   return strategy;
 };
 
 export const printMaxReturnsStrategy = (strategyOptions: StrategyOptions = {}) => {
   const strategy = getMaxReturnsStrategy(strategyOptions);
-  printPlayerDecisionStrategyTables(strategy);
+  printSelfAwareStrategyTables(strategy);
 };

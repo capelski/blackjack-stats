@@ -6,10 +6,10 @@ import { getDealerFinalsByCard } from '../dealer-finals-by-card.logic';
 import { getDealerFinals } from '../dealer-finals.logic';
 import { getFinalProbabilities } from '../final-scores.logic';
 import {
-  createPlayerDecisionStrategy,
-  mergePlayerDecisionStrategies,
-  setPlayerDecisionStrategyTotals,
-} from '../player-decision-strategy.logic';
+  createSelfAwareStrategy,
+  mergeSelfAwareStrategies,
+  setSelfAwareStrategyTotals,
+} from '../self-aware-strategy.logic';
 import { createStrategySummary, getStrategySummary } from '../strategy-summary.logic';
 import { printDealerCardStrategyTables } from '../table.logic';
 import { maxReturnsCore } from './max-returns.logic';
@@ -22,7 +22,7 @@ const createDealerCardStrategy = (
     dealerCards: cards.reduce((reduced, card) => {
       return {
         ...reduced,
-        [card]: createPlayerDecisionStrategy(dealerFinalsByCard[card], options),
+        [card]: createSelfAwareStrategy(dealerFinalsByCard[card], options),
       };
     }, {}),
     dealerFinalScores: getDealerFinals(),
@@ -56,10 +56,10 @@ export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) =
 const setDealerCardStrategyTotals = (strategy: DealerCardStrategy) => {
   Object.keys(strategy.dealerCards).forEach(dealerCard => {
     const partialStrategy = strategy.dealerCards[dealerCard];
-    setPlayerDecisionStrategyTotals(partialStrategy);
+    setSelfAwareStrategyTotals(partialStrategy);
   });
 
-  const mergedConsequences = mergePlayerDecisionStrategies(Object.values(strategy.dealerCards));
+  const mergedConsequences = mergeSelfAwareStrategies(Object.values(strategy.dealerCards));
 
   const overallDealerFinals = getDealerFinals();
   // TODO Pass playerFinalScores and combinations from combined partial strategies

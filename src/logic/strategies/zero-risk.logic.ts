@@ -2,15 +2,12 @@ import { getDealerFinals } from '../dealer-finals.logic';
 import { getHitDecision, getStandDecision } from '../decisions.logic';
 import { getFinalProbabilities } from '../final-scores.logic';
 import { getPlayerHands } from '../hands.logic';
-import {
-  createPlayerDecisionStrategy,
-  setPlayerDecisionStrategyTotals,
-} from '../player-decision-strategy.logic';
-import { printPlayerDecisionStrategyTables } from '../table.logic';
+import { createSelfAwareStrategy, setSelfAwareStrategyTotals } from '../self-aware-strategy.logic';
+import { printSelfAwareStrategyTables } from '../table.logic';
 
 export const getZeroRiskStrategy = () => {
   const dealerFinals = getDealerFinals();
-  const strategy = createPlayerDecisionStrategy(dealerFinals);
+  const strategy = createSelfAwareStrategy(dealerFinals);
   const dealerProbabilities = getFinalProbabilities(dealerFinals);
 
   for (const playerHand of getPlayerHands()) {
@@ -25,12 +22,12 @@ export const getZeroRiskStrategy = () => {
     }
   }
 
-  setPlayerDecisionStrategyTotals(strategy);
+  setSelfAwareStrategyTotals(strategy);
 
   return strategy;
 };
 
 export const printZeroRiskStrategy = () => {
   const strategy = getZeroRiskStrategy();
-  printPlayerDecisionStrategyTables(strategy);
+  printSelfAwareStrategyTables(strategy);
 };

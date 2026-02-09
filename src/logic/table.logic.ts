@@ -2,7 +2,7 @@ import { Result } from '../enums/result.enum';
 import { Card } from '../types/card.type';
 import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
-import { PlayerDecisionStrategy } from '../types/player-decision-strategy.type';
+import { SelfAwareStrategy } from '../types/self-aware-strategy.type';
 import { StrategyBase } from '../types/strategy-base.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import {
@@ -226,7 +226,7 @@ ${initialScoresTable}`,
   );
 };
 
-export const printPlayerDecisionStrategyTables = (strategy: PlayerDecisionStrategy) => {
+export const printSelfAwareStrategyTables = (strategy: SelfAwareStrategy) => {
   return printStrategyTable(strategy, {
     actionsHeaders: ['Score', 'Action'],
     actionsRowGetter: playerScoresLabel => [
