@@ -1,3 +1,3 @@
-import { printDealerCardStrategy } from '../../../logic/strategies/dealer-card.logic';
+import { printDealerAwareStrategy } from '../../../logic/strategies/dealer-card.logic';
 
-printDealerCardStrategy({ splitting: true });
+printDealerAwareStrategy({ splitting: true });

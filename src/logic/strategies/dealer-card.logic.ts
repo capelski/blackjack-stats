@@ -1,4 +1,4 @@
-import { DealerCardStrategy } from '../../types/dealer-card-strategy.type';
+import { DealerAwareStrategy } from '../../types/dealer-aware-strategy.type';
 import { FinalScoresByDealerCard } from '../../types/final-scores.type';
 import { StrategyOptions } from '../../types/strategy-options.type';
 import { cards } from '../cards.logic';
@@ -11,14 +11,14 @@ import {
   setSelfAwareStrategyTotals,
 } from '../self-aware-strategy.logic';
 import { createStrategySummary, getStrategySummary } from '../strategy-summary.logic';
-import { printDealerCardStrategyTables } from '../table.logic';
+import { printDealerAwareStrategyTables } from '../table.logic';
 import { maxReturnsCore } from './max-returns.logic';
 
-const createDealerCardStrategy = (
+const createDealerAwareStrategy = (
   dealerFinalsByCard: FinalScoresByDealerCard,
   options: StrategyOptions = {},
-): DealerCardStrategy => {
-  const strategy: DealerCardStrategy = {
+): DealerAwareStrategy => {
+  const strategy: DealerAwareStrategy = {
     dealerCards: cards.reduce((reduced, card) => {
       return {
         ...reduced,
@@ -33,9 +33,9 @@ const createDealerCardStrategy = (
   return strategy;
 };
 
-export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
+export const getDealerAwareStrategy = (options: StrategyOptions = {}) => {
   const dealerFinalsByCard = getDealerFinalsByCard({ useCardLevelProbabilities: true });
-  const strategy = createDealerCardStrategy(dealerFinalsByCard, options);
+  const strategy = createDealerAwareStrategy(dealerFinalsByCard, options);
 
   cards.forEach(dealerCard => {
     const dealerFinalProbabilities = getFinalProbabilities(dealerFinalsByCard[dealerCard]);
@@ -43,17 +43,17 @@ export const getDealerCardStrategy = (options: StrategyOptions = {}) => {
     cardStrategy.decisions = maxReturnsCore(dealerFinalProbabilities, options);
   });
 
-  setDealerCardStrategyTotals(strategy);
+  setDealerAwareStrategyTotals(strategy);
 
   return strategy;
 };
 
-export const printDealerCardStrategy = (strategyOptions: StrategyOptions = {}) => {
-  const strategy = getDealerCardStrategy(strategyOptions);
-  printDealerCardStrategyTables(strategy);
+export const printDealerAwareStrategy = (strategyOptions: StrategyOptions = {}) => {
+  const strategy = getDealerAwareStrategy(strategyOptions);
+  printDealerAwareStrategyTables(strategy);
 };
 
-const setDealerCardStrategyTotals = (strategy: DealerCardStrategy) => {
+const setDealerAwareStrategyTotals = (strategy: DealerAwareStrategy) => {
   Object.keys(strategy.dealerCards).forEach(dealerCard => {
     const partialStrategy = strategy.dealerCards[dealerCard];
     setSelfAwareStrategyTotals(partialStrategy);

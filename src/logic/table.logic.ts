@@ -1,6 +1,6 @@
 import { Result } from '../enums/result.enum';
 import { Card } from '../types/card.type';
-import { DealerCardStrategy } from '../types/dealer-card-strategy.type';
+import { DealerAwareStrategy } from '../types/dealer-aware-strategy.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
 import { SelfAwareStrategy } from '../types/self-aware-strategy.type';
 import { StrategyBase } from '../types/strategy-base.type';
@@ -236,7 +236,7 @@ export const printSelfAwareStrategyTables = (strategy: SelfAwareStrategy) => {
   });
 };
 
-export const printDealerCardStrategyTables = (strategy: DealerCardStrategy) => {
+export const printDealerAwareStrategyTables = (strategy: DealerAwareStrategy) => {
   return printStrategyTable(strategy, {
     actionsHeaders: ['', ...cards],
     actionsRowGetter: playerScoresLabel => {

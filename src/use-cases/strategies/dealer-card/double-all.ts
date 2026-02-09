@@ -1,4 +1,4 @@
 import { Doubling } from '../../../enums/doubling.enum';
-import { printDealerCardStrategy } from '../../../logic/strategies/dealer-card.logic';
+import { printDealerAwareStrategy } from '../../../logic/strategies/dealer-card.logic';
 
-printDealerCardStrategy({ doubling: Doubling.all });
+printDealerAwareStrategy({ doubling: Doubling.all });
