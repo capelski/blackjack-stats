@@ -70,26 +70,36 @@ export const getActionsTable = (
 export const getOverallFinalProbabilitiesTable = (summary: StrategySummary) => {
   const headers = ['Final score', 'Combinations', 'Probability'];
 
-  const finalScoreRows = getNumericKeys(summary.finalScoresSummaries)
-    .filter(finalScore => {
-      const finalScoreSummary = summary.finalScoresSummaries[finalScore];
-      return finalScoreSummary.probability > 0;
-    })
-    .map(finalScore => {
-      const finalScoreSummary = summary.finalScoresSummaries[finalScore];
+  const applicableKeys = getNumericKeys(summary.finalScoresSummaries).filter(finalScore => {
+    const finalScoreSummary = summary.finalScoresSummaries[finalScore];
+    return finalScoreSummary.probability > 0;
+  });
 
-      return [
-        getScoresLabel([finalScore]),
-        finalScoreSummary.combinations,
-        toPercentage(finalScoreSummary.probability),
-      ];
-    });
+  const finalScoreRows = applicableKeys.map(finalScore => {
+    const finalScoreSummary = summary.finalScoresSummaries[finalScore];
 
-  const totalsRow = [
-    'Total',
-    summary.combinations.number,
-    toPercentage(summary.combinations.probability),
-  ];
+    return [
+      getScoresLabel([finalScore]),
+      finalScoreSummary.combinations,
+      toPercentage(finalScoreSummary.probability),
+    ];
+  });
+
+  const totals = applicableKeys.reduce<{ combinations: number; probability: number }>(
+    (reduced, finalScore) => {
+      const finalScoreSummary = summary.finalScoresSummaries[finalScore];
+      return {
+        combinations: (reduced.combinations || 0) + finalScoreSummary.combinations,
+        probability: (reduced.probability || 0) + finalScoreSummary.probability,
+      };
+    },
+    {
+      combinations: 0,
+      probability: 0,
+    },
+  );
+
+  const totalsRow = ['Total', totals.combinations, toPercentage(totals.probability)];
 
   return getTable(headers, [...finalScoreRows, totalsRow]);
 };

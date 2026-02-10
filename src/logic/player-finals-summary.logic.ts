@@ -31,7 +31,7 @@ const adjustPlayerFinalScores = (
         betMultiplier: betMultiplier,
         dealerFinals: playerFinalSummary.dealerFinals,
         outcomes,
-        probability: playerFinalScores?.[finalScore]?.probability || 0,
+        probability: playerFinalSummary.probability || 0,
       };
 
       return {
@@ -119,7 +119,7 @@ export const getPlayerFinalSummary = (
 
   const playerFinalSummary: PlayerFinalSummary = {
     betMultiplier: consequence.outcomes.betMultiplier * consequenceProbability,
-    combinations: 0, // Populated at the end of the aggregation
+    combinations: 0, // Populated in adjustPlayerFinalScores
     dealerFinals: dealerFinalsSummary,
     outcomes: aggregatedOutcomes,
     probability: consequenceProbability,
