@@ -1,9 +1,5 @@
 import { SearchMode } from '../enums/search-mode.enum';
-import {
-  CardsCombination,
-  CombinationsByFinalScore,
-  HandResolver,
-} from '../types/cards-combination.type';
+import { CardsCombination, HandResolver } from '../types/cards-combination.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
 import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
 import { StrategyOptions } from '../types/strategy-options.type';
@@ -48,38 +44,26 @@ class CombinationsList {
 
 export type FinalScoresOptions = {
   collectCombinations?: boolean;
-  groupCombinationsByFinalScore?: boolean;
   groupFinalScoresByFirstCard?: boolean;
   searchMode?: SearchMode;
   strategyOptions?: StrategyOptions;
 };
 
-export type FinalScoresReturnType = {
-  combinations?: CardsCombination[] | CombinationsByFinalScore;
-  finalScores?: FinalScoresMap | FinalScoresByDealerCard;
-};
-
 export const getFinalScores = <
-  T extends FinalScoresReturnType = {
-    combinations: CardsCombination[];
-    finalScores: FinalScoresMap;
-  }
+  TFinalScores extends FinalScoresMap | FinalScoresByDealerCard = FinalScoresMap
 >(
   handResolver: HandResolver,
   options: FinalScoresOptions = {},
 ): {
-  combinations: T['combinations'];
-  finalScores: T['finalScores'];
+  combinations: CardsCombination[];
+  finalScores: TFinalScores;
 } => {
   const collectCombinations = options.collectCombinations ?? false;
   const groupFinalScoresByFirstCard = options.groupFinalScoresByFirstCard ?? false;
-  const groupCombinationsByFinalScore = options.groupCombinationsByFinalScore ?? false;
   const searchMode = options.searchMode ?? SearchMode.breadthFirst;
   const strategyOptions = options.strategyOptions ?? {};
 
-  const combinations = groupCombinationsByFinalScore
-    ? <CombinationsByFinalScore>{}
-    : <CardsCombination[]>[];
+  const combinations: CardsCombination[] = [];
 
   const combinationsList = new CombinationsList(searchMode, cards.map(createOneCardCombination));
   const sortedCards = searchMode === SearchMode.depthFirst ? [...cards].reverse() : cards;
@@ -98,16 +82,7 @@ export const getFinalScores = <
 
     if (collectCombinations) {
       // Store all the combinations along the way, final or not
-
-      if (!groupCombinationsByFinalScore) {
-        (<CardsCombination[]>combinations).push(hand);
-      } else if (hand.isFinalHand) {
-        const castedCombinations = <CombinationsByFinalScore>combinations;
-        if (!castedCombinations[hand.effectiveScore]) {
-          castedCombinations[hand.effectiveScore] = [];
-        }
-        castedCombinations[hand.effectiveScore].push(hand);
-      }
+      combinations.push(hand);
 
       if (hand.isFinalHand) {
         continue;
@@ -131,8 +106,8 @@ export const getFinalScores = <
   }
 
   return {
-    combinations: combinations as T['combinations'],
-    finalScores: finalScores as T['finalScores'],
+    combinations,
+    finalScores: finalScores as TFinalScores,
   };
 };
 

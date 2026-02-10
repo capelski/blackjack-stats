@@ -62,6 +62,6 @@ const setDealerAwareStrategyTotals = (strategy: DealerAwareStrategy) => {
   const mergedConsequences = mergeSelfAwareStrategies(Object.values(strategy.dealerCards));
 
   const overallDealerFinals = getDealerFinals();
-  // TODO Pass playerFinalScores and combinations from combined partial strategies
+  // TODO Pass playerFinalScores from combined partial strategies
   strategy.summary = getStrategySummary(mergedConsequences, overallDealerFinals);
 };

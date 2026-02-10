@@ -1,6 +1,5 @@
 import { Action } from '../enums/action.enum';
 import { SearchMode } from '../enums/search-mode.enum';
-import { CombinationsByFinalScore } from '../types/cards-combination.type';
 import { ConsequencesByPlayerScore } from '../types/consequence.type';
 import { FinalScoresMap } from '../types/final-scores.type';
 import { DecisionsByPlayerScore } from '../types/player-decision.type';
@@ -80,10 +79,7 @@ export const mergeSelfAwareStrategies = (strategies: SelfAwareStrategy[]) => {
 export const setSelfAwareStrategyTotals = (strategy: SelfAwareStrategy) => {
   const consequences = decisionsToConsequences(strategy.decisions, strategy.options);
 
-  const { combinations, finalScores } = getFinalScores<{
-    combinations: CombinationsByFinalScore;
-    finalScores: FinalScoresMap;
-  }>(
+  const { finalScores } = getFinalScores(
     ({ canDouble, canSplit, cards, scores }) => {
       const label = getScoresLabel(scores, {
         splitCard: canSplit ? cards[0] : undefined,
@@ -95,17 +91,11 @@ export const setSelfAwareStrategyTotals = (strategy: SelfAwareStrategy) => {
       return parsedAction;
     },
     {
-      groupCombinationsByFinalScore: true,
       collectCombinations: true,
       searchMode: SearchMode.depthFirst,
       strategyOptions: strategy.options,
     },
   );
 
-  strategy.summary = getStrategySummary(
-    consequences,
-    strategy.dealerFinalScores,
-    finalScores,
-    combinations,
-  );
+  strategy.summary = getStrategySummary(consequences, strategy.dealerFinalScores, finalScores);
 };

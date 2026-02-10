@@ -21,6 +21,4 @@ export type CardsCombination = CardsCombinationInput & {
   isPostSplit: boolean;
 };
 
-export type CombinationsByFinalScore = Record<number, CardsCombination[]>;
-
 export type HandResolver = (hand: CardsCombinationInput) => Action;
