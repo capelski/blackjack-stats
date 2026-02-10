@@ -1,0 +1,182 @@
+- A. 1/11. Continue
+  - A,A. 2/12. Stand
+  - A,2. 3/13. Stand
+  - A,3. 4/14. Stand
+  - A,4. 5/15. Stand
+  - A,5. 6/16. Stand
+  - A,6. 7/17. Stand
+  - A,7. 8/18. Stand
+  - A,8. 9/19. Stand
+  - A,9. 10/20. Stand
+  - A,10. BJ. End. 1.5x
+  - A,J. BJ. End. 1.5x
+  - A,Q. BJ. End. 1.5x
+  - A,K. BJ. End. 1.5x
+- 2. 2. Continue
+  - 2,A. 3/13. Stand
+  - 2,2. 4. Stand
+  - 2,3. 5. Stand
+  - 2,4. 6. Stand
+  - 2,5. 7. Stand
+  - 2,6. 8. Stand
+  - 2,7. 9. Stand
+  - 2,8. 10. Stand
+  - 2,9. 11. Stand
+  - 2,10. 12. Stand
+  - 2,J. 12. Stand
+  - 2,Q. 12. Stand
+  - 2,K. 12. Stand
+- 3. 3. Continue
+  - 3,A. 4/14. Stand
+  - 3,2. 5. Stand
+  - 3,3. 6. Stand
+  - 3,4. 7. Stand
+  - 3,5. 8. Stand
+  - 3,6. 9. Stand
+  - 3,7. 10. Stand
+  - 3,8. 11. Stand
+  - 3,9. 12. Stand
+  - 3,10. 13. Stand
+  - 3,J. 13. Stand
+  - 3,Q. 13. Stand
+  - 3,K. 13. Stand
+- 4. 4. Continue
+  - 4,A. 5/15. Stand
+  - 4,2. 6. Stand
+  - 4,3. 7. Stand
+  - 4,4. 8. Stand
+  - 4,5. 9. Stand
+  - 4,6. 10. Stand
+  - 4,7. 11. Stand
+  - 4,8. 12. Stand
+  - 4,9. 13. Stand
+  - 4,10. 14. Stand
+  - 4,J. 14. Stand
+  - 4,Q. 14. Stand
+  - 4,K. 14. Stand
+- 5. 5. Continue
+  - 5,A. 6/16. Stand
+  - 5,2. 7. Stand
+  - 5,3. 8. Stand
+  - 5,4. 9. Stand
+  - 5,5. 10. Stand
+  - 5,6. 11. Stand
+  - 5,7. 12. Stand
+  - 5,8. 13. Stand
+  - 5,9. 14. Stand
+  - 5,10. 15. Stand
+  - 5,J. 15. Stand
+  - 5,Q. 15. Stand
+  - 5,K. 15. Stand
+- 6. 6. Continue
+  - 6,A. 7/17. Stand
+  - 6,2. 8. Stand
+  - 6,3. 9. Stand
+  - 6,4. 10. Stand
+  - 6,5. 11. Stand
+  - 6,6. 12. Stand
+  - 6,7. 13. Stand
+  - 6,8. 14. Stand
+  - 6,9. 15. Stand
+  - 6,10. 16. Stand
+  - 6,J. 16. Stand
+  - 6,Q. 16. Stand
+  - 6,K. 16. Stand
+- 7. 7. Continue
+  - 7,A. 8/18. Stand
+  - 7,2. 9. Stand
+  - 7,3. 10. Stand
+  - 7,4. 11. Stand
+  - 7,5. 12. Stand
+  - 7,6. 13. Stand
+  - 7,7. 14. Stand
+  - 7,8. 15. Stand
+  - 7,9. 16. Stand
+  - 7,10. 17. Stand
+  - 7,J. 17. Stand
+  - 7,Q. 17. Stand
+  - 7,K. 17. Stand
+- 8. 8. Continue
+  - 8,A. 9/19. Stand
+  - 8,2. 10. Stand
+  - 8,3. 11. Stand
+  - 8,4. 12. Stand
+  - 8,5. 13. Stand
+  - 8,6. 14. Stand
+  - 8,7. 15. Stand
+  - 8,8. 16. Stand
+  - 8,9. 17. Stand
+  - 8,10. 18. Stand
+  - 8,J. 18. Stand
+  - 8,Q. 18. Stand
+  - 8,K. 18. Stand
+- 9. 9. Continue
+  - 9,A. 10/20. Stand
+  - 9,2. 11. Stand
+  - 9,3. 12. Stand
+  - 9,4. 13. Stand
+  - 9,5. 14. Stand
+  - 9,6. 15. Stand
+  - 9,7. 16. Stand
+  - 9,8. 17. Stand
+  - 9,9. 18. Stand
+  - 9,10. 19. Stand
+  - 9,J. 19. Stand
+  - 9,Q. 19. Stand
+  - 9,K. 19. Stand
+- 10. 10. Continue
+  - 10,A. BJ. End. 1.5x
+  - 10,2. 12. Stand
+  - 10,3. 13. Stand
+  - 10,4. 14. Stand
+  - 10,5. 15. Stand
+  - 10,6. 16. Stand
+  - 10,7. 17. Stand
+  - 10,8. 18. Stand
+  - 10,9. 19. Stand
+  - 10,10. 20. Stand
+  - 10,J. 20. Stand
+  - 10,Q. 20. Stand
+  - 10,K. 20. Stand
+- J. 10. Continue
+  - J,A. BJ. End. 1.5x
+  - J,2. 12. Stand
+  - J,3. 13. Stand
+  - J,4. 14. Stand
+  - J,5. 15. Stand
+  - J,6. 16. Stand
+  - J,7. 17. Stand
+  - J,8. 18. Stand
+  - J,9. 19. Stand
+  - J,10. 20. Stand
+  - J,J. 20. Stand
+  - J,Q. 20. Stand
+  - J,K. 20. Stand
+- Q. 10. Continue
+  - Q,A. BJ. End. 1.5x
+  - Q,2. 12. Stand
+  - Q,3. 13. Stand
+  - Q,4. 14. Stand
+  - Q,5. 15. Stand
+  - Q,6. 16. Stand
+  - Q,7. 17. Stand
+  - Q,8. 18. Stand
+  - Q,9. 19. Stand
+  - Q,10. 20. Stand
+  - Q,J. 20. Stand
+  - Q,Q. 20. Stand
+  - Q,K. 20. Stand
+- K. 10. Continue
+  - K,A. BJ. End. 1.5x
+  - K,2. 12. Stand
+  - K,3. 13. Stand
+  - K,4. 14. Stand
+  - K,5. 15. Stand
+  - K,6. 16. Stand
+  - K,7. 17. Stand
+  - K,8. 18. Stand
+  - K,9. 19. Stand
+  - K,10. 20. Stand
+  - K,J. 20. Stand
+  - K,Q. 20. Stand
+  - K,K. 20. Stand

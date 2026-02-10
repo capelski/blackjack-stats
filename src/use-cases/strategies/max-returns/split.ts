@@ -1,3 +1,3 @@
 import { printMaxReturnsStrategy } from '../../../logic/strategies/max-returns.logic';
 
-printMaxReturnsStrategy({ splitting: true });
+printMaxReturnsStrategy('split', { splitting: true });

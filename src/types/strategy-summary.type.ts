@@ -1,4 +1,5 @@
 import { Result } from '../enums/result.enum';
+import { CardsCombination } from './cards-combination.type';
 import { Consequence } from './consequence.type';
 import { Outcomes } from './outcomes.type';
 
@@ -32,6 +33,7 @@ export type StrategySummary = {
   combinations: {
     number: number;
     probability: number;
+    tree?: CardsCombination[];
   };
   finalScoresSummaries: PlayerFinalsSummaryMap;
   initialPairsConsequences: InitialPairsConsequences;

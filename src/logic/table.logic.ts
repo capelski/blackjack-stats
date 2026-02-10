@@ -1,3 +1,5 @@
+import { writeFileSync } from 'fs';
+import { resolve } from 'path';
 import { Result } from '../enums/result.enum';
 import { Card } from '../types/card.type';
 import { DealerAwareStrategy } from '../types/dealer-aware-strategy.type';
@@ -10,6 +12,7 @@ import {
   PlayerFinalSummary,
   StrategySummary,
 } from '../types/strategy-summary.type';
+import { printCardsCombinations } from './cards-combination.logic';
 import { cards } from './cards.logic';
 import { stringifyFinalProbabilities } from './final-probabilities.logic';
 import { getPlayerHandsSorted } from './hands.logic';
@@ -202,7 +205,11 @@ export type StrategyTableResolvers = {
   actionsRowGetter: PlayerScoresRowGetter;
 };
 
-export const printStrategyTable = (strategy: StrategyBase, resolvers: StrategyTableResolvers) => {
+export const printStrategyTable = (
+  outputFile: [string, string],
+  strategy: StrategyBase,
+  resolvers: StrategyTableResolvers,
+) => {
   const actionsTable = getActionsTable(
     resolvers.actionsHeaders,
     resolvers.actionsRowGetter,
@@ -217,17 +224,30 @@ export const printStrategyTable = (strategy: StrategyBase, resolvers: StrategyTa
 
   const initialScoresTable = getInitialScoresTable(strategy.summary.initialPairsConsequences);
 
-  console.log(
-    `${actionsTable}\n
-${overallFinalProbabilitiesTable}\n
+  const [directory, fileName] = outputFile;
+  const path = resolve('output', 'strategies', directory);
+  const combinationsOutputName = `${fileName}.combinations.md`;
+
+  const output = `${actionsTable}\n
+${overallFinalProbabilitiesTable}
+*See all the combinations in [${combinationsOutputName}](./${combinationsOutputName})*\n
 ${finalScoresMatrix}\n
 ${finalScoresTable}\n
-${initialScoresTable}`,
-  );
+${initialScoresTable}`;
+
+  const outputPath = resolve(path, `${fileName}.md`);
+  writeFileSync(outputPath, output);
+
+  const combinationsTree = printCardsCombinations(strategy.summary.combinations.tree || [], true);
+  const combinationsOutputPath = resolve(path, combinationsOutputName);
+  writeFileSync(combinationsOutputPath, combinationsTree);
 };
 
-export const printSelfAwareStrategyTables = (strategy: SelfAwareStrategy) => {
-  return printStrategyTable(strategy, {
+export const printSelfAwareStrategyTables = (
+  outputFile: [string, string],
+  strategy: SelfAwareStrategy,
+) => {
+  return printStrategyTable(outputFile, strategy, {
     actionsHeaders: ['Score', 'Action'],
     actionsRowGetter: playerScoresLabel => [
       playerScoresLabel,
@@ -236,8 +256,11 @@ export const printSelfAwareStrategyTables = (strategy: SelfAwareStrategy) => {
   });
 };
 
-export const printDealerAwareStrategyTables = (strategy: DealerAwareStrategy) => {
-  return printStrategyTable(strategy, {
+export const printDealerAwareStrategyTables = (
+  outputFile: [string, string],
+  strategy: DealerAwareStrategy,
+) => {
+  return printStrategyTable(outputFile, strategy, {
     actionsHeaders: ['', ...cards],
     actionsRowGetter: playerScoresLabel => {
       const actions = cards.map(dealerCard => {

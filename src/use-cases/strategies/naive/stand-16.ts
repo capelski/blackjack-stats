@@ -1,3 +1,3 @@
 import { printStandStrategy } from '../../../logic/strategies/stand.logic';
 
-printStandStrategy(16);
+printStandStrategy('stand-16', 16);

@@ -15387,10 +15387,10 @@
   - A,7. 8/18. Stand
   - A,8. 9/19. Stand
   - A,9. 10/20. Stand
-  - A,10. BJ. End
-  - A,J. BJ. End
-  - A,Q. BJ. End
-  - A,K. BJ. End
+  - A,10. BJ. End. 1.5x
+  - A,J. BJ. End. 1.5x
+  - A,Q. BJ. End. 1.5x
+  - A,K. BJ. End. 1.5x
 - 2. 2. Continue
   - 2,A. 3/13. Hit
     - 2,A,A. 4/14. Hit
@@ -84443,7 +84443,7 @@
   - 9,Q. 19. Stand
   - 9,K. 19. Stand
 - 10. 10. Continue
-  - 10,A. BJ. End
+  - 10,A. BJ. End. 1.5x
   - 10,2. 12. Hit
     - 10,2,A. 13. Hit
       - 10,2,A,A. 14. Hit
@@ -84860,7 +84860,7 @@
   - 10,Q. 20. Stand
   - 10,K. 20. Stand
 - J. 10. Continue
-  - J,A. BJ. End
+  - J,A. BJ. End. 1.5x
   - J,2. 12. Hit
     - J,2,A. 13. Hit
       - J,2,A,A. 14. Hit
@@ -85277,7 +85277,7 @@
   - J,Q. 20. Stand
   - J,K. 20. Stand
 - Q. 10. Continue
-  - Q,A. BJ. End
+  - Q,A. BJ. End. 1.5x
   - Q,2. 12. Hit
     - Q,2,A. 13. Hit
       - Q,2,A,A. 14. Hit
@@ -85694,7 +85694,7 @@
   - Q,Q. 20. Stand
   - Q,K. 20. Stand
 - K. 10. Continue
-  - K,A. BJ. End
+  - K,A. BJ. End. 1.5x
   - K,2. 12. Hit
     - K,2,A. 13. Hit
       - K,2,A,A. 14. Hit
@@ -86110,4 +86110,3 @@
   - K,J. 20. Stand
   - K,Q. 20. Stand
   - K,K. 20. Stand
-

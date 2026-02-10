@@ -79,7 +79,7 @@ export const mergeSelfAwareStrategies = (strategies: SelfAwareStrategy[]) => {
 export const setSelfAwareStrategyTotals = (strategy: SelfAwareStrategy) => {
   const consequences = decisionsToConsequences(strategy.decisions, strategy.options);
 
-  const { finalScores } = getFinalScores(
+  const { combinations, finalScores } = getFinalScores(
     ({ canDouble, canSplit, cards, scores }) => {
       const label = getScoresLabel(scores, {
         splitCard: canSplit ? cards[0] : undefined,
@@ -97,5 +97,10 @@ export const setSelfAwareStrategyTotals = (strategy: SelfAwareStrategy) => {
     },
   );
 
-  strategy.summary = getStrategySummary(consequences, strategy.dealerFinalScores, finalScores);
+  strategy.summary = getStrategySummary(
+    consequences,
+    strategy.dealerFinalScores,
+    finalScores,
+    combinations,
+  );
 };

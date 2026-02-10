@@ -48,9 +48,12 @@ export const getDealerAwareStrategy = (options: StrategyOptions = {}) => {
   return strategy;
 };
 
-export const printDealerAwareStrategy = (strategyOptions: StrategyOptions = {}) => {
+export const printDealerAwareStrategy = (
+  fileName: string,
+  strategyOptions: StrategyOptions = {},
+) => {
   const strategy = getDealerAwareStrategy(strategyOptions);
-  printDealerAwareStrategyTables(strategy);
+  printDealerAwareStrategyTables(['dealer-card', fileName], strategy);
 };
 
 const setDealerAwareStrategyTotals = (strategy: DealerAwareStrategy) => {

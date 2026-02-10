@@ -17,7 +17,7 @@ export const createOneCardCombination = (card: Card): CardsCombination => {
   const scores = cardValuesDictionary[card];
 
   return {
-    action: Action.hit,
+    action: 'Continue',
     betMultiplier: 1,
     canDouble: false,
     canSplit: false,
@@ -108,5 +108,5 @@ export const printCardsCombinations = (
     })
     .join('\n');
 
-  return combinationsTree;
+  return combinationsTree ? `${combinationsTree}\n` : '';
 };

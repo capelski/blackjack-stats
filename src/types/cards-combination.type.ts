@@ -13,7 +13,7 @@ export type CardsCombinationInput = {
 };
 
 export type CardsCombination = CardsCombinationInput & {
-  action: Action | 'End';
+  action: Action | 'Continue' | 'End';
   betMultiplier: number;
   considerFinalScore: boolean;
   isFinalHand: boolean;

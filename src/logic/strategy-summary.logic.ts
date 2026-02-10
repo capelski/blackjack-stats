@@ -1,3 +1,4 @@
+import { CardsCombination } from '../types/cards-combination.type';
 import { ConsequencesByPlayerScore } from '../types/consequence.type';
 import { FinalScoresMap } from '../types/final-scores.type';
 import { StrategySummary } from '../types/strategy-summary.type';
@@ -20,6 +21,7 @@ export const getStrategySummary = (
   consequences: ConsequencesByPlayerScore,
   dealerFinalScores: FinalScoresMap,
   playerFinalScores?: FinalScoresMap,
+  combinationsTree?: CardsCombination[],
 ): StrategySummary => {
   const finalScoresSummaries = getFinalScoresSummaries(
     consequences,
@@ -43,6 +45,7 @@ export const getStrategySummary = (
         (sum, pf) => sum + (pf.probability || 0),
         0,
       ),
+      tree: combinationsTree,
     },
     finalScoresSummaries,
     initialPairsConsequences: consequences,

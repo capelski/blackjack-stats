@@ -29,5 +29,5 @@ export const getZeroRiskStrategy = () => {
 
 export const printZeroRiskStrategy = () => {
   const strategy = getZeroRiskStrategy();
-  printSelfAwareStrategyTables(strategy);
+  printSelfAwareStrategyTables(['naive', 'zero-risk'], strategy);
 };

@@ -33,7 +33,7 @@ export const getStandStrategy = (threshold: number, softThreshold?: number) => {
   return strategy;
 };
 
-export const printStandStrategy = (threshold: number, softThreshold?: number) => {
+export const printStandStrategy = (fileName: string, threshold: number, softThreshold?: number) => {
   const strategy = getStandStrategy(threshold, softThreshold);
-  printSelfAwareStrategyTables(strategy);
+  printSelfAwareStrategyTables(['naive', fileName], strategy);
 };

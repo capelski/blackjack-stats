@@ -94,7 +94,10 @@ export const getMaxReturnsStrategy = (options: StrategyOptions = {}) => {
   return strategy;
 };
 
-export const printMaxReturnsStrategy = (strategyOptions: StrategyOptions = {}) => {
+export const printMaxReturnsStrategy = (
+  fileName: string,
+  strategyOptions: StrategyOptions = {},
+) => {
   const strategy = getMaxReturnsStrategy(strategyOptions);
-  printSelfAwareStrategyTables(strategy);
+  printSelfAwareStrategyTables(['max-returns', fileName], strategy);
 };
