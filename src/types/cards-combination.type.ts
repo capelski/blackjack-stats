@@ -6,14 +6,19 @@ export type CardsCombinationInput = {
   canSplit: boolean;
   cards: Card[];
   effectiveScore: number;
+  indentationLevel: number;
   label: string;
   scores: number[];
+  text: string;
 };
 
 export type CardsCombination = CardsCombinationInput & {
   action: Action | 'End';
+  betMultiplier: number;
   considerFinalScore: boolean;
-  isFinalHand?: boolean;
+  isFinalHand: boolean;
+  isPostDouble: boolean;
+  isPostSplit: boolean;
 };
 
 export type CombinationsByFinalScore = Record<number, CardsCombination[]>;

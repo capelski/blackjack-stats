@@ -11,11 +11,12 @@ export const getScores = (
   values1: number[],
   values2: number[],
   cardsNumber: number | undefined,
+  isPostSplit?: boolean,
 ) => {
   const allScores = getUniqueScores(values1, values2);
   const validScores = allScores.filter(x => x < bustScore);
   return validScores.length > 0
-    ? cardsNumber && isBlackjack(validScores, cardsNumber)
+    ? !isPostSplit && cardsNumber && isBlackjack(validScores, cardsNumber)
       ? [blackjackScore]
       : validScores
     : [bustScore];

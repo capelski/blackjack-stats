@@ -1,13 +1,8 @@
+import { printCardsCombinations } from '../logic/cards-combination.logic';
 import { getDealerCombinations } from '../logic/dealer-combinations.logic';
 
 const dealerCombinations = getDealerCombinations();
 
-const combinationsTree = dealerCombinations
-  .map(cardsCombination => {
-    const { action, cards, label } = cardsCombination;
-    const tabulations = '  '.repeat(cards.length - 1);
-    return `${tabulations}- ${cards.join(',')}. ${label}. ${action}`;
-  })
-  .join('\n');
+const combinationsTree = printCardsCombinations(dealerCombinations);
 
 console.log(combinationsTree);
