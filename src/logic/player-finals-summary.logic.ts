@@ -31,7 +31,7 @@ const adjustPlayerFinalScores = (
         betMultiplier: betMultiplier,
         dealerFinals: playerFinalSummary.dealerFinals,
         outcomes,
-        probability: playerFinalSummary.probability || 0,
+        probability: playerFinalScores?.[finalScore]?.probability || 0,
       };
 
       return {

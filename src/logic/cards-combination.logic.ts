@@ -6,7 +6,7 @@ import {
   HandResolver,
 } from '../types/cards-combination.type';
 import { StrategyOptions } from '../types/strategy-options.type';
-import { cardCombinationSeparator, cardValuesDictionary } from './cards.logic';
+import { cardCombinationSeparator, cardsNumber, cardValuesDictionary } from './cards.logic';
 import { canDouble } from './doubling.logic';
 import { getScoresLabel } from './labels.logic';
 import { getBetMultiplier } from './outcomes.logic';
@@ -22,13 +22,13 @@ export const createOneCardCombination = (card: Card): CardsCombination => {
     canDouble: false,
     canSplit: false,
     cards: [card],
-    considerFinalScore: false,
     effectiveScore: getEffectiveScore(scores),
     indentationLevel: 1,
     isFinalHand: false,
     isPostDouble: false,
     isPostSplit: false,
     label: getScoresLabel(scores),
+    probability: 1 / cardsNumber,
     scores,
     text: String(card),
   };
@@ -69,6 +69,8 @@ export const createNextCardsCombination = (
     effectiveScore: getEffectiveScore(nextScores),
     indentationLevel: previous.indentationLevel + 1,
     label: getScoresLabel(nextScores),
+    // Computing based on previous probability to account for post split combinations
+    probability: previous.probability / cardsNumber,
     scores: nextScores,
     text: previousSplit
       ? `${nextCards[0]}${cardCombinationSeparator}s${cardCombinationSeparator}${card}`
@@ -87,7 +89,6 @@ export const createNextCardsCombination = (
         isBlackjack: nextInput.effectiveScore === blackjackScore,
         isDoubleBet: nextAction === Action.double || nextAction === Action.split,
       }),
-    considerFinalScore: isFinalHand && !isPostSplit,
     isFinalHand,
     isPostDouble,
     isPostSplit,

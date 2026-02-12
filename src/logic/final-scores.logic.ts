@@ -4,7 +4,7 @@ import { FinalProbabilities } from '../types/final-probabilities.type';
 import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { createNextCardsCombination, createOneCardCombination } from './cards-combination.logic';
-import { cards, cardsNumber } from './cards.logic';
+import { cards } from './cards.logic';
 import { getNumericKeys } from './numbers.logic';
 
 export const getFinalProbabilities = (finalScores: FinalScoresMap): FinalProbabilities => {
@@ -96,7 +96,7 @@ export const getFinalScores = <
         combinationsList.addCombination(nextHand);
       }
 
-      if (nextHand.considerFinalScore) {
+      if (nextHand.isFinalHand) {
         const applicableFinalScores = groupFinalScoresByFirstCard
           ? (<FinalScoresByDealerCard>finalScores)[nextHand.cards[0]]
           : <FinalScoresMap>finalScores;
@@ -120,9 +120,9 @@ const registerFinalScore = (finalScores: FinalScoresMap, hand: CardsCombination)
     };
   }
 
-  const nextCombination = hand.text;
-  finalScores[hand.effectiveScore].combinations.push(nextCombination);
+  finalScores[hand.effectiveScore].probability += hand.probability;
 
-  const combinationProbability = 1 / Math.pow(cardsNumber, hand.cards.length);
-  finalScores[hand.effectiveScore].probability += combinationProbability;
+  if (!hand.isPostSplit) {
+    finalScores[hand.effectiveScore].combinations.push(hand.text);
+  }
 };

@@ -8,6 +8,7 @@ export type CardsCombinationInput = {
   effectiveScore: number;
   indentationLevel: number;
   label: string;
+  probability: number;
   scores: number[];
   text: string;
 };
@@ -15,7 +16,6 @@ export type CardsCombinationInput = {
 export type CardsCombination = CardsCombinationInput & {
   action: Action | 'Continue' | 'End';
   betMultiplier: number;
-  considerFinalScore: boolean;
   isFinalHand: boolean;
   isPostDouble: boolean;
   isPostSplit: boolean;
