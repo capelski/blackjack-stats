@@ -42,6 +42,42 @@ class CombinationsList {
   }
 }
 
+class FinalScoresSet {
+  public finalScores: FinalScoresByDealerCard | FinalScoresMap;
+
+  constructor(public groupFinalScoresByFirstCard = false) {
+    this.finalScores = groupFinalScoresByFirstCard
+      ? cards.reduce<FinalScoresByDealerCard>((reduced, card) => {
+          const map: FinalScoresMap = {};
+          return {
+            ...reduced,
+            [card]: map,
+          };
+        }, {})
+      : <FinalScoresMap>{};
+  }
+
+  registerFinalScore(hand: CardsCombination) {
+    const applicableFinalScores = this.groupFinalScoresByFirstCard
+      ? (<FinalScoresByDealerCard>this.finalScores)[hand.cards[0]]
+      : <FinalScoresMap>this.finalScores;
+
+    if (!applicableFinalScores[hand.effectiveScore]) {
+      applicableFinalScores[hand.effectiveScore] = {
+        combinations: [],
+        probability: 0,
+        score: hand.effectiveScore,
+      };
+    }
+
+    applicableFinalScores[hand.effectiveScore].probability += hand.probability;
+
+    if (!hand.isPostSplit) {
+      applicableFinalScores[hand.effectiveScore].combinations.push(hand.text);
+    }
+  }
+}
+
 export type FinalScoresOptions = {
   collectCombinations?: boolean;
   groupFinalScoresByFirstCard?: boolean;
@@ -68,14 +104,7 @@ export const getFinalScores = <
   const combinationsList = new CombinationsList(searchMode, cards.map(createOneCardCombination));
   const sortedCards = searchMode === SearchMode.depthFirst ? [...cards].reverse() : cards;
 
-  const finalScores = groupFinalScoresByFirstCard
-    ? cards.reduce<FinalScoresByDealerCard>((reduced, card) => {
-        return {
-          ...reduced,
-          [card]: {},
-        };
-      }, {})
-    : <FinalScoresMap>{};
+  const finalScoresSet = new FinalScoresSet(groupFinalScoresByFirstCard);
 
   while (combinationsList.length > 0) {
     const hand = combinationsList.extractCombination()!;
@@ -97,32 +126,13 @@ export const getFinalScores = <
       }
 
       if (nextHand.isFinalHand) {
-        const applicableFinalScores = groupFinalScoresByFirstCard
-          ? (<FinalScoresByDealerCard>finalScores)[nextHand.cards[0]]
-          : <FinalScoresMap>finalScores;
-        registerFinalScore(applicableFinalScores, nextHand);
+        finalScoresSet.registerFinalScore(nextHand);
       }
     });
   }
 
   return {
     combinations,
-    finalScores: finalScores as TFinalScores,
+    finalScores: finalScoresSet.finalScores as TFinalScores,
   };
-};
-
-const registerFinalScore = (finalScores: FinalScoresMap, hand: CardsCombination) => {
-  if (!finalScores[hand.effectiveScore]) {
-    finalScores[hand.effectiveScore] = {
-      combinations: [],
-      probability: 0,
-      score: hand.effectiveScore,
-    };
-  }
-
-  finalScores[hand.effectiveScore].probability += hand.probability;
-
-  if (!hand.isPostSplit) {
-    finalScores[hand.effectiveScore].combinations.push(hand.text);
-  }
 };
