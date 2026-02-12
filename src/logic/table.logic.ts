@@ -9,6 +9,7 @@ import { StrategyBase } from '../types/strategy-base.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import {
   InitialPairsConsequences,
+  PlayerFinalsSummaryMap,
   PlayerFinalSummary,
   StrategySummary,
 } from '../types/strategy-summary.type';
@@ -67,13 +68,18 @@ export const getActionsTable = (
   return getTable(headers, actionsRows);
 };
 
+const getApplicableKeys = (finalScoresSummaries: PlayerFinalsSummaryMap): number[] => {
+  const applicableKeys = getNumericKeys(finalScoresSummaries).filter(finalScore => {
+    const finalScoreSummary = finalScoresSummaries[finalScore];
+    return finalScoreSummary.probability > 0;
+  });
+  return applicableKeys;
+};
+
 export const getOverallFinalProbabilitiesTable = (summary: StrategySummary) => {
   const headers = ['Final score', 'Combinations', 'Probability'];
 
-  const applicableKeys = getNumericKeys(summary.finalScoresSummaries).filter(finalScore => {
-    const finalScoreSummary = summary.finalScoresSummaries[finalScore];
-    return finalScoreSummary.probability > 0;
-  });
+  const applicableKeys = getApplicableKeys(summary.finalScoresSummaries);
 
   const finalScoreRows = applicableKeys.map(finalScore => {
     const finalScoreSummary = summary.finalScoresSummaries[finalScore];
@@ -154,8 +160,7 @@ const getSummaryRow = (summary: StrategySummary) => {
 export const getFinalScoresTable = (summary: StrategySummary) => {
   const headers = overallRow(['Final score', ...getOutcomesLabels()]);
 
-  const playerFinalScores = getNumericKeys(summary.finalScoresSummaries);
-  const finalScoreRows = playerFinalScores.map(playerFinalScore => {
+  const finalScoreRows = getApplicableKeys(summary.finalScoresSummaries).map(playerFinalScore => {
     const playerScoreSummary = summary.finalScoresSummaries[playerFinalScore];
     const headerRow = getFinalScoreRow(playerFinalScore, playerScoreSummary);
     return headerRow;
@@ -187,25 +192,20 @@ const getResultColor = (result: Result) => {
 export const getFinalScoresMatrix = ({ dealerFinalScores, summary }: StrategyBase) => {
   const headers = ['', ...getNumericKeys(dealerFinalScores)];
 
-  const rows = getNumericKeys(summary.finalScoresSummaries)
-    .filter(finalScore => {
-      const finalScoreSummary = summary.finalScoresSummaries[finalScore];
-      return finalScoreSummary.probability > 0;
-    })
-    .map(playerFinalScore => {
-      const playerFinal = summary.finalScoresSummaries[playerFinalScore];
-      return [
-        `<b>${getScoresLabel([playerFinalScore])}</b>`,
-        ...getNumericKeys(playerFinal.dealerFinals).map(dealerFinal => {
-          const dealerFinalSummary = playerFinal.dealerFinals[dealerFinal];
-          const probability = dealerFinalSummary.probability * playerFinal.probability;
+  const rows = getApplicableKeys(summary.finalScoresSummaries).map(playerFinalScore => {
+    const playerFinal = summary.finalScoresSummaries[playerFinalScore];
+    return [
+      `<b>${getScoresLabel([playerFinalScore])}</b>`,
+      ...getNumericKeys(playerFinal.dealerFinals).map(dealerFinal => {
+        const dealerFinalSummary = playerFinal.dealerFinals[dealerFinal];
+        const probability = dealerFinalSummary.probability * playerFinal.probability;
 
-          return `<span style="color: ${getResultColor(dealerFinalSummary.result)}">${toPercentage(
-            probability,
-          )}</span>`;
-        }),
-      ];
-    });
+        return `<span style="color: ${getResultColor(dealerFinalSummary.result)}">${toPercentage(
+          probability,
+        )}</span>`;
+      }),
+    ];
+  });
 
   return getTable(headers, rows);
 };

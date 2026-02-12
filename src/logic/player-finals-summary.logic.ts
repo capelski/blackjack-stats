@@ -11,40 +11,6 @@ import { getNumericKeys } from './numbers.logic';
 import { computeOutcomes, createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logic';
 import { getResult } from './result.logic';
 
-const adjustPlayerFinalScores = (
-  playerFinalsSummaryMap: PlayerFinalsSummaryMap,
-  playerFinalScores?: FinalScoresMap,
-) => {
-  const weightedSummaryMap = getNumericKeys(playerFinalsSummaryMap).reduce<PlayerFinalsSummaryMap>(
-    (reduced, finalScore) => {
-      const playerFinalSummary = playerFinalsSummaryMap[finalScore];
-      const betMultiplier = playerFinalSummary.probability
-        ? playerFinalSummary.betMultiplier / playerFinalSummary.probability
-        : 0;
-      const outcomes = playerFinalSummary.probability
-        ? multiplyOutcomes(playerFinalSummary.outcomes, 1 / playerFinalSummary.probability)
-        : playerFinalSummary.outcomes;
-      computeOutcomes(outcomes, betMultiplier);
-
-      const weightedPlayerFinalSummary: PlayerFinalSummary = {
-        combinations: playerFinalScores?.[finalScore]?.combinations.length || 0,
-        betMultiplier: betMultiplier,
-        dealerFinals: playerFinalSummary.dealerFinals,
-        outcomes,
-        probability: playerFinalScores?.[finalScore]?.probability || 0,
-      };
-
-      return {
-        ...reduced,
-        [finalScore]: weightedPlayerFinalSummary,
-      };
-    },
-    {},
-  );
-
-  return weightedSummaryMap;
-};
-
 export const createPlayerFinalsSummary = (): PlayerFinalSummary => {
   return {
     betMultiplier: 0,
@@ -82,13 +48,13 @@ export const getPlayerFinalSummary = (
   playerScore: number,
   consequence: Consequence,
   dealerFinalScores: FinalScoresMap,
+  playerFinalScores?: FinalScoresMap,
 ): PlayerFinalSummary => {
-  /** Each consequence contributes differently to the final player score probability.
-   * Multiply each consequence's contribution by its probability and adjust to the
-   * total probability at the end of the aggregation
-   */
-  const consequenceProbability =
-    (consequence.initialProbability || 0) * consequence.finalProbabilities[playerScore];
+  const probability = playerFinalScores?.[playerScore]?.probability || 0;
+  const consequenceProbability = probability
+    ? ((consequence.initialProbability || 0) * consequence.finalProbabilities[playerScore]) /
+      probability
+    : 0;
 
   const dealerFinalsSummary = getNumericKeys(dealerFinalScores).reduce<DealerFinalsSummaryMap>(
     (dealerScoresReduced, dealerScore) => {
@@ -119,10 +85,10 @@ export const getPlayerFinalSummary = (
 
   const playerFinalSummary: PlayerFinalSummary = {
     betMultiplier: consequence.outcomes.betMultiplier * consequenceProbability,
-    combinations: 0, // Populated in adjustPlayerFinalScores
+    combinations: playerFinalScores?.[playerScore]?.combinations.length || 0,
     dealerFinals: dealerFinalsSummary,
     outcomes: aggregatedOutcomes,
-    probability: consequenceProbability,
+    probability: playerFinalScores?.[playerScore]?.probability || 0,
   };
 
   return playerFinalSummary;
@@ -147,6 +113,7 @@ export const getFinalScoresSummaries = (
           playerScore,
           consequence,
           dealerFinalScores,
+          playerFinalScores,
         );
 
         return {
@@ -161,9 +128,7 @@ export const getFinalScoresSummaries = (
     {},
   );
 
-  const adjustedSummaryMap = adjustPlayerFinalScores(playerFinalsSummaryMap, playerFinalScores);
-
-  return adjustedSummaryMap;
+  return playerFinalsSummaryMap;
 };
 
 export const mergePlayerFinalsSummaries = (
@@ -175,6 +140,6 @@ export const mergePlayerFinalsSummaries = (
     combinations: a.combinations,
     dealerFinals: a.dealerFinals,
     outcomes: mergeOutcomes([a.outcomes, b.outcomes]),
-    probability: a.probability + b.probability,
+    probability: a.probability,
   };
 };
