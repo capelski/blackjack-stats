@@ -11,3 +11,11 @@ export type FinalScoresMap = {
 };
 
 export type FinalScoresByDealerCard = Record<Card, FinalScoresMap>;
+
+export type FinalScoresByInitialPair = Record<
+  string,
+  {
+    finalScores: FinalScoresMap;
+    probability: number;
+  }
+>;

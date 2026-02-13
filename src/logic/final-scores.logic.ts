@@ -1,7 +1,11 @@
 import { SearchMode } from '../enums/search-mode.enum';
 import { CardsCombination, HandResolver } from '../types/cards-combination.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
-import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
+import {
+  FinalScoresByDealerCard,
+  FinalScoresByInitialPair,
+  FinalScoresMap,
+} from '../types/final-scores.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { createNextCardsCombination, createOneCardCombination } from './cards-combination.logic';
 import { cards, getCardsCombinations } from './cards.logic';
@@ -44,6 +48,7 @@ class CombinationsList {
 
 class FinalScoresSet {
   public finalScores: FinalScoresByDealerCard | FinalScoresMap;
+  public finalScoresByInitialPair: FinalScoresByInitialPair;
 
   constructor(public groupFinalScoresByFirstCard = false) {
     this.finalScores = groupFinalScoresByFirstCard
@@ -55,6 +60,15 @@ class FinalScoresSet {
           };
         }, {})
       : <FinalScoresMap>{};
+    this.finalScoresByInitialPair = {};
+  }
+
+  createFinalScore(score: number) {
+    return {
+      combinations: [],
+      probability: 0,
+      score,
+    };
   }
 
   registerFinalScore(hand: CardsCombination) {
@@ -63,11 +77,7 @@ class FinalScoresSet {
       : <FinalScoresMap>this.finalScores;
 
     if (!applicableFinalScores[hand.effectiveScore]) {
-      applicableFinalScores[hand.effectiveScore] = {
-        combinations: [],
-        probability: 0,
-        score: hand.effectiveScore,
-      };
+      applicableFinalScores[hand.effectiveScore] = this.createFinalScore(hand.effectiveScore);
     }
 
     applicableFinalScores[hand.effectiveScore].probability += hand.probability;
@@ -76,6 +86,27 @@ class FinalScoresSet {
       const combinationSymbols = getCardsCombinations(hand.symbols);
       applicableFinalScores[hand.effectiveScore].combinations.push(combinationSymbols);
     }
+
+    this.registerFinalScoreByInitialPair(hand);
+  }
+
+  registerFinalScoreByInitialPair(hand: CardsCombination) {
+    if (!this.finalScoresByInitialPair[hand.initialPair]) {
+      this.finalScoresByInitialPair[hand.initialPair] = {
+        finalScores: {},
+        probability: 0,
+      };
+    }
+
+    if (!this.finalScoresByInitialPair[hand.initialPair].finalScores[hand.effectiveScore]) {
+      this.finalScoresByInitialPair[hand.initialPair].finalScores[
+        hand.effectiveScore
+      ] = this.createFinalScore(hand.effectiveScore);
+    }
+
+    this.finalScoresByInitialPair[hand.initialPair].probability += hand.probability;
+    this.finalScoresByInitialPair[hand.initialPair].finalScores[hand.effectiveScore].probability +=
+      hand.probability;
   }
 }
 
@@ -94,6 +125,7 @@ export const getFinalScores = <
 ): {
   combinations: CardsCombination[];
   finalScores: TFinalScores;
+  finalScoresByInitialPair: FinalScoresByInitialPair;
 } => {
   const collectCombinations = options.collectCombinations ?? false;
   const groupFinalScoresByFirstCard = options.groupFinalScoresByFirstCard ?? false;
@@ -135,5 +167,6 @@ export const getFinalScores = <
   return {
     combinations,
     finalScores: finalScoresSet.finalScores as TFinalScores,
+    finalScoresByInitialPair: finalScoresSet.finalScoresByInitialPair,
   };
 };

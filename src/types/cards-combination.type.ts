@@ -6,6 +6,7 @@ export type CardsCombinationInput = {
   canSplit: boolean;
   cards: Card[];
   effectiveScore: number;
+  initialPair: string;
   label: string;
   probability: number;
   scores: number[];

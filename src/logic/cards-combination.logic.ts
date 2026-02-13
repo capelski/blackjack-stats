@@ -23,6 +23,7 @@ export const createOneCardCombination = (card: Card): CardsCombination => {
     canSplit: false,
     cards: [card],
     effectiveScore: getEffectiveScore(scores),
+    initialPair: '',
     isFinalHand: false,
     isPostDouble: false,
     isPostSplit: false,
@@ -60,17 +61,25 @@ export const createNextCardsCombination = (
     nextCards.length,
     isPostSplit,
   );
+  const nextCanSplit = !isPostSplit && canSplit(nextCards, options.splitting);
+  const nextSymbols = previousSplit
+    ? [previous.symbols[0], 's', card]
+    : [...previous.symbols, card];
 
   const nextInput: CardsCombinationInput = {
     canDouble: nextCards.length === 2 && canDouble(nextScores, options.doubling),
-    canSplit: !isPostSplit && canSplit(nextCards, options.splitting),
+    canSplit: nextCanSplit,
     cards: nextCards,
     effectiveScore: getEffectiveScore(nextScores),
+    initialPair:
+      nextSymbols.length === 2
+        ? getScoresLabel(nextScores, { splitCard: nextCanSplit ? nextCards[0] : undefined })
+        : previous.initialPair,
     label: getScoresLabel(nextScores),
     // Computing based on previous probability to account for post split combinations
     probability: previous.probability / cardsNumber,
     scores: nextScores,
-    symbols: previousSplit ? [previous.symbols[0], 's', card] : [...previous.symbols, card],
+    symbols: nextSymbols,
   };
 
   const nextAction = handResolver(nextInput);
