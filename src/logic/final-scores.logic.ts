@@ -4,7 +4,7 @@ import { FinalProbabilities } from '../types/final-probabilities.type';
 import { FinalScoresByDealerCard, FinalScoresMap } from '../types/final-scores.type';
 import { StrategyOptions } from '../types/strategy-options.type';
 import { createNextCardsCombination, createOneCardCombination } from './cards-combination.logic';
-import { cards } from './cards.logic';
+import { cards, getCardsCombinations } from './cards.logic';
 import { getNumericKeys } from './numbers.logic';
 
 export const getFinalProbabilities = (finalScores: FinalScoresMap): FinalProbabilities => {
@@ -73,7 +73,8 @@ class FinalScoresSet {
     applicableFinalScores[hand.effectiveScore].probability += hand.probability;
 
     if (!hand.isPostSplit) {
-      applicableFinalScores[hand.effectiveScore].combinations.push(hand.text);
+      const combinationSymbols = getCardsCombinations(hand.symbols);
+      applicableFinalScores[hand.effectiveScore].combinations.push(combinationSymbols);
     }
   }
 }

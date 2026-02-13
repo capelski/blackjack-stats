@@ -6,11 +6,11 @@ export type CardsCombinationInput = {
   canSplit: boolean;
   cards: Card[];
   effectiveScore: number;
-  indentationLevel: number;
   label: string;
   probability: number;
   scores: number[];
-  text: string;
+  /** Contains the cards plus split symbols when applicable */
+  symbols: (Card | 's')[];
 };
 
 export type CardsCombination = CardsCombinationInput & {

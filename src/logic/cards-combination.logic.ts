@@ -6,7 +6,7 @@ import {
   HandResolver,
 } from '../types/cards-combination.type';
 import { StrategyOptions } from '../types/strategy-options.type';
-import { cardCombinationSeparator, cardsNumber, cardValuesDictionary } from './cards.logic';
+import { cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { canDouble } from './doubling.logic';
 import { getScoresLabel } from './labels.logic';
 import { getBetMultiplier } from './outcomes.logic';
@@ -23,14 +23,13 @@ export const createOneCardCombination = (card: Card): CardsCombination => {
     canSplit: false,
     cards: [card],
     effectiveScore: getEffectiveScore(scores),
-    indentationLevel: 1,
     isFinalHand: false,
     isPostDouble: false,
     isPostSplit: false,
     label: getScoresLabel(scores),
     probability: 1 / cardsNumber,
     scores,
-    text: String(card),
+    symbols: [card],
   };
 };
 
@@ -67,14 +66,11 @@ export const createNextCardsCombination = (
     canSplit: !isPostSplit && canSplit(nextCards, options.splitting),
     cards: nextCards,
     effectiveScore: getEffectiveScore(nextScores),
-    indentationLevel: previous.indentationLevel + 1,
     label: getScoresLabel(nextScores),
     // Computing based on previous probability to account for post split combinations
     probability: previous.probability / cardsNumber,
     scores: nextScores,
-    text: previousSplit
-      ? `${nextCards[0]}${cardCombinationSeparator}s${cardCombinationSeparator}${card}`
-      : previous.text + cardCombinationSeparator + card,
+    symbols: previousSplit ? [previous.symbols[0], 's', card] : [...previous.symbols, card],
   };
 
   const nextAction = handResolver(nextInput);
@@ -101,9 +97,9 @@ export const printCardsCombinations = (
 ): string => {
   const combinationsTree = combinations
     .map(cardsCombination => {
-      const { action, betMultiplier, text, indentationLevel, label } = cardsCombination;
-      const tabulations = '  '.repeat(indentationLevel - 1);
-      return `${tabulations}- ${text}. ${label}. ${action}${
+      const { action, betMultiplier, label, symbols } = cardsCombination;
+      const tabulations = '  '.repeat(symbols.length - 1);
+      return `${tabulations}- ${getCardsCombinations(symbols)}. ${label}. ${action}${
         printMultiplier && betMultiplier !== 1 ? `. ${betMultiplier}x` : ''
       }`;
     })
