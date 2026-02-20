@@ -57,7 +57,7 @@ export const mergeConsequencesByPlayerScore = (
         ? consequenceB
         : !consequenceB
         ? consequenceA
-        : mergeConsequences([consequenceA, consequenceB]);
+        : mergeConsequences(consequenceA, consequenceB);
 
       return { ...reduced, [playerScoresLabel]: mergedConsequence };
     },

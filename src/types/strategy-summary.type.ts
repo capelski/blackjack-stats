@@ -2,11 +2,13 @@ import { Result } from '../enums/result.enum';
 import { CardsCombination } from './cards-combination.type';
 import { Consequence } from './consequence.type';
 import { Outcomes } from './outcomes.type';
+import { Results } from './results.type';
 
 export type DealerFinalSummary = {
   outcomes: Outcomes;
   probability: number;
-  result: Result;
+  result: Result; // This should go...
+  results: Results;
 };
 
 export type DealerFinalsSummaryMap = {
@@ -19,6 +21,7 @@ export type PlayerFinalSummary = {
   dealerFinals: DealerFinalsSummaryMap;
   outcomes: Outcomes;
   probability: number;
+  results: Results;
 };
 
 export type PlayerFinalsSummaryMap = {
@@ -38,4 +41,5 @@ export type StrategySummary = {
   finalScoresSummaries: PlayerFinalsSummaryMap;
   initialPairsConsequences: InitialPairsConsequences;
   outcomes: Outcomes;
+  results: Results;
 };

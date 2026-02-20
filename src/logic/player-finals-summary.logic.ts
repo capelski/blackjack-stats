@@ -8,8 +8,9 @@ import {
   PlayerFinalSummary,
 } from '../types/strategy-summary.type';
 import { getNumericKeys } from './numbers.logic';
-import { computeOutcomes, createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logic';
+import { createOutcomes, mergeOutcomes, reduceOutcomes } from './outcomes.logic';
 import { getResult } from './result.logic';
+import { computeResults, createResults, mergeResults, reduceResults } from './results.logic';
 
 export const createPlayerFinalsSummary = (): PlayerFinalSummary => {
   return {
@@ -17,6 +18,7 @@ export const createPlayerFinalsSummary = (): PlayerFinalSummary => {
     combinations: 0,
     dealerFinals: {},
     outcomes: createOutcomes(),
+    results: createResults(),
     probability: 0,
   };
 };
@@ -33,12 +35,12 @@ const getDealerFinalSummary = (
   outcomes.win = result === Result.win ? 1 : 0;
   outcomes.push = result === Result.push ? 1 : 0;
   outcomes.lose = result === Result.lose ? 1 : 0;
-  computeOutcomes(outcomes, betMultiplier);
 
   const dealerFinalSummary: DealerFinalSummary = {
     outcomes,
     probability,
     result,
+    results: computeResults(outcomes, betMultiplier),
   };
 
   return dealerFinalSummary;
@@ -63,31 +65,22 @@ export const getPlayerFinalSummary = (
         [dealerScore]: getDealerFinalSummary(
           playerScore,
           dealerFinalScores[dealerScore],
-          consequence.outcomes.betMultiplier,
+          consequence.results.betMultiplier,
         ),
       };
     },
     {},
   );
 
-  const aggregatedOutcomes = Object.values(dealerFinalsSummary).reduce(
-    (reduced, dealerFinalSummary) => {
-      return mergeOutcomes([
-        reduced,
-        multiplyOutcomes(
-          dealerFinalSummary.outcomes,
-          dealerFinalSummary.probability * consequenceProbability,
-        ),
-      ]);
-    },
-    createOutcomes(),
-  );
+  const outcomes = reduceOutcomes(Object.values(dealerFinalsSummary), consequenceProbability);
+  const results = reduceResults(Object.values(dealerFinalsSummary), consequenceProbability);
 
   const playerFinalSummary: PlayerFinalSummary = {
-    betMultiplier: consequence.outcomes.betMultiplier * consequenceProbability,
+    betMultiplier: consequence.results.betMultiplier * consequenceProbability,
     combinations: playerFinalScores?.[playerScore]?.combinations.length || 0,
     dealerFinals: dealerFinalsSummary,
-    outcomes: aggregatedOutcomes,
+    outcomes,
+    results,
     probability: playerFinalScores?.[playerScore]?.probability || 0,
   };
 
@@ -139,7 +132,8 @@ export const mergePlayerFinalsSummaries = (
     betMultiplier: a.betMultiplier + b.betMultiplier,
     combinations: a.combinations,
     dealerFinals: a.dealerFinals,
-    outcomes: mergeOutcomes([a.outcomes, b.outcomes]),
+    outcomes: mergeOutcomes(a.outcomes, b.outcomes),
+    results: mergeResults(a.results, b.results),
     probability: a.probability,
   };
 };

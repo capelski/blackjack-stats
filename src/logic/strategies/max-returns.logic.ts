@@ -28,7 +28,7 @@ export const selectConsequence = (
     (reduced, actionStr) => {
       const action = actionStr as Action;
       const consequence = additionalConsequences[action]!;
-      return consequence.outcomes.roi > reduced.selectedConsequence.outcomes.roi
+      return consequence.results.roi > reduced.selectedConsequence.results.roi
         ? { action, selectedConsequence: consequence }
         : reduced;
     },

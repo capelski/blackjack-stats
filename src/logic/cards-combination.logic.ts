@@ -6,10 +6,10 @@ import {
   HandResolver,
 } from '../types/cards-combination.type';
 import { StrategyOptions } from '../types/strategy-options.type';
+import { getBetMultiplier } from './bet-multiplier.logic';
 import { cardsNumber, cardValuesDictionary, getCardsCombinations } from './cards.logic';
 import { canDouble } from './doubling.logic';
 import { getScoresLabel } from './labels.logic';
-import { getBetMultiplier } from './outcomes.logic';
 import { blackjackScore, getEffectiveScore, getScores, playerScoreLimit } from './scores.logic';
 import { canSplit } from './splitting.logic';
 

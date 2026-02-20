@@ -2,8 +2,9 @@ import { CardsCombination } from '../types/cards-combination.type';
 import { ConsequencesByPlayerScore } from '../types/consequence.type';
 import { FinalScoresMap } from '../types/final-scores.type';
 import { StrategySummary } from '../types/strategy-summary.type';
-import { createOutcomes, mergeOutcomes, multiplyOutcomes } from './outcomes.logic';
+import { createOutcomes, reduceOutcomes } from './outcomes.logic';
 import { getFinalScoresSummaries } from './player-finals-summary.logic';
+import { createResults, reduceResults } from './results.logic';
 
 export const createStrategySummary = (): StrategySummary => {
   return {
@@ -14,6 +15,7 @@ export const createStrategySummary = (): StrategySummary => {
     finalScoresSummaries: {},
     initialPairsConsequences: {},
     outcomes: createOutcomes(),
+    results: createResults(),
   };
 };
 
@@ -29,11 +31,8 @@ export const getStrategySummary = (
     playerFinalScores,
   );
 
-  const weightedOutcomes = Object.values(finalScoresSummaries).map(x =>
-    multiplyOutcomes(x.outcomes, x.probability),
-  );
-
-  const mergedOutcomes = mergeOutcomes(weightedOutcomes);
+  const outcomes = reduceOutcomes(Object.values(finalScoresSummaries));
+  const results = reduceResults(Object.values(finalScoresSummaries));
 
   return {
     combinations: {
@@ -49,6 +48,7 @@ export const getStrategySummary = (
     },
     finalScoresSummaries,
     initialPairsConsequences: consequences,
-    outcomes: mergedOutcomes,
+    outcomes,
+    results,
   };
 };

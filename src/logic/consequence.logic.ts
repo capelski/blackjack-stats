@@ -3,6 +3,7 @@ import { FinalProbabilities } from '../types/final-probabilities.type';
 import { PlayerHand } from '../types/hand.type';
 import { Outcomes } from '../types/outcomes.type';
 import { PlayerDecision } from '../types/player-decision.type';
+import { getBetMultiplier } from './bet-multiplier.logic';
 import { cardsNumber, cardValues } from './cards.logic';
 import {
   getLoseProbability,
@@ -13,26 +14,20 @@ import {
 } from './final-probabilities.logic';
 import { getScoresLabel } from './labels.logic';
 import {
-  computeOutcomes,
   createOutcomes,
-  getBetMultiplier,
+  incrementOutcomes,
+  mergeOutcomes,
   multiplyOutcomes,
-  reduceOutcomes,
 } from './outcomes.logic';
+import { computeResults, createResults, mergeResults, multiplyResults } from './results.logic';
 import { blackjackScore, getScores } from './scores.logic';
-
-const increaseOutcomes = (target: Outcomes, addition: Outcomes, weight: number) => {
-  target.lose += addition.lose * weight;
-  target.push += addition.push * weight;
-  target.win += addition.win * weight;
-  // Deliberately not increasing edge, betMultiplier and roi
-};
 
 const createConsequence = (initialProbability: number | undefined): Consequence => {
   return {
     finalProbabilities: {},
     initialProbability,
     outcomes: createOutcomes(),
+    results: createResults(),
   };
 };
 
@@ -57,11 +52,11 @@ export const getDoubleConsequence = (
       weightedProbabilities,
     );
 
-    increaseOutcomes(consequence.outcomes, nextConsequence.outcomes, 1 / cardsNumber);
+    incrementOutcomes(consequence.outcomes, nextConsequence.outcomes, 1 / cardsNumber);
   }
 
   const betMultiplier = getBetMultiplier({ isDoubleBet: true });
-  computeOutcomes(consequence.outcomes, betMultiplier);
+  consequence.results = computeResults(consequence.outcomes, betMultiplier);
 
   return consequence;
 };
@@ -87,7 +82,7 @@ export const getHitConsequence = (
       weightedProbabilities,
     );
 
-    increaseOutcomes(
+    incrementOutcomes(
       consequence.outcomes,
       nextDecision.selectedConsequence.outcomes,
       1 / cardsNumber,
@@ -95,7 +90,7 @@ export const getHitConsequence = (
   }
 
   const betMultiplier = getBetMultiplier();
-  computeOutcomes(consequence.outcomes, betMultiplier);
+  consequence.results = computeResults(consequence.outcomes, betMultiplier);
 
   return consequence;
 };
@@ -108,11 +103,11 @@ export const getSplitConsequence = (
     ...playerDecision.selectedConsequence.outcomes,
   };
   const betMultiplier = getBetMultiplier({ isDoubleBet: true });
-  computeOutcomes(outcomes, betMultiplier);
+  const results = computeResults(outcomes, betMultiplier);
 
   const consequence: Consequence = {
     ...playerDecision.selectedConsequence,
-    outcomes,
+    results,
     initialProbability,
   };
 
@@ -127,33 +122,27 @@ export const getStandConsequence = (
   const push = getPushProbability(dealerProbabilities, playerHand.effectiveScore);
   const win = getWinProbability(dealerProbabilities, playerHand.effectiveScore);
 
-  const outcomes = createOutcomes();
-  outcomes.lose = lose;
-  outcomes.push = push;
-  outcomes.win = win;
+  const outcomes: Outcomes = { lose, push, win };
   const betMultiplier = getBetMultiplier({
     isBlackjack: playerHand.effectiveScore === blackjackScore,
   });
-  computeOutcomes(outcomes, betMultiplier);
+  const results = computeResults(outcomes, betMultiplier);
 
   return {
     finalProbabilities: { [playerHand.effectiveScore]: 1 },
     initialProbability: playerHand.initialProbability,
     outcomes,
+    results,
   };
 };
 
-export const mergeConsequences = (outcomesList: Consequence[]): Consequence => {
-  return outcomesList.reduce<Consequence>((reduced, consequence) => {
-    return {
-      finalProbabilities: mergeFinalProbabilities(
-        reduced.finalProbabilities,
-        consequence.finalProbabilities,
-      ),
-      initialProbability: (reduced.initialProbability || 0) + (consequence.initialProbability || 0),
-      outcomes: reduceOutcomes(reduced.outcomes, consequence.outcomes),
-    };
-  }, createConsequence(0));
+export const mergeConsequences = (a: Consequence, b: Consequence) => {
+  return {
+    finalProbabilities: mergeFinalProbabilities(a.finalProbabilities, b.finalProbabilities),
+    initialProbability: (a.initialProbability || 0) + (b.initialProbability || 0),
+    outcomes: mergeOutcomes(a.outcomes, b.outcomes),
+    results: mergeResults(a.results, b.results),
+  };
 };
 
 export const multiplyConsequence = (consequence: Consequence, factor: number): Consequence => {
@@ -161,5 +150,6 @@ export const multiplyConsequence = (consequence: Consequence, factor: number): C
     finalProbabilities: multiplyFinalProbabilities(consequence.finalProbabilities, factor),
     initialProbability: (consequence.initialProbability || 0) * factor,
     outcomes: multiplyOutcomes(consequence.outcomes, factor),
+    results: multiplyResults(consequence.results, factor),
   };
 };
