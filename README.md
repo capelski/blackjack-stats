@@ -27,8 +27,8 @@ Probability and statistics about Blackjack
 - [Double all](./output/strategies/max-returns/double-all.md)
 - [Double 9/10/11](./output/strategies/max-returns/double-nine.md)
 - [Split](./output/strategies/max-returns/split.md)
-- [Split + Double all](./output/strategies/max-returns/split-dobule-all.md)
-- [Split + Double 9/10/11](./output/strategies/max-returns/split-dobule-nine.md)
+- [Split + Double all](./output/strategies/max-returns/split-double-all.md)
+- [Split + Double 9/10/11](./output/strategies/max-returns/split-double-nine.md)
 
 ## Dealer card strategies
 
@@ -36,5 +36,5 @@ Probability and statistics about Blackjack
 - [Double all](./output/strategies/dealer-card/double-all.md)
 - [Double 9/10/11](./output/strategies/dealer-card/double-nine.md)
 - [Split](./output/strategies/dealer-card/split.md)
-- [Split + Double all](./output/strategies/dealer-card/split-dobule-all.md)
-- [Split + Double 9/10/11](./output/strategies/dealer-card/split-dobule-nine.md)
+- [Split + Double all](./output/strategies/dealer-card/split-double-all.md)
+- [Split + Double 9/10/11](./output/strategies/dealer-card/split-double-nine.md)
