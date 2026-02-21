@@ -107,7 +107,11 @@ export const getOverallFinalProbabilitiesTable = (summary: StrategySummary) => {
     },
   );
 
-  const totalsRow = ['Total', totals.combinations, toPercentage(totals.probability)];
+  const totalsRow = [
+    '<b>Total</b>',
+    `<b>${totals.combinations}</b>`,
+    `<b>${toPercentage(totals.probability)}</b>`,
+  ];
 
   return getTable(headers, [...finalScoreRows, totalsRow]);
 };
