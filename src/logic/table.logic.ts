@@ -13,6 +13,7 @@ import {
   PlayerFinalSummary,
   StrategySummary,
 } from '../types/strategy-summary.type';
+import { formatBetMultiplier, getBetMultiplierLabel } from './bet-multiplier.logic';
 import { printCardsCombinations } from './cards-combination.logic';
 import { cards } from './cards.logic';
 import { stringifyFinalProbabilities } from './final-probabilities.logic';
@@ -119,11 +120,12 @@ export const overallRow = (
 };
 
 const getFinalScoreRow = (finalScore: number, playerScoreSummary: PlayerFinalSummary) => {
-  const { outcomes, probability, results } = playerScoreSummary;
+  const { betMultiplier, outcomes, probability, results } = playerScoreSummary;
   const playerScoreRow = overallRow([
     getScoresLabel([finalScore]),
     toPercentage(probability),
     ...outcomesToValues(outcomes),
+    formatBetMultiplier(betMultiplier),
     ...resultsToValues(results),
   ]);
   return playerScoreRow;
@@ -135,7 +137,8 @@ const getSummaryRow = (summary: StrategySummary) => {
     '<b>Total</b>',
     '-',
     ...outcomesToValues(outcomes, { bold: true }),
-    ...resultsToValues(results, { bold: true, hideBetMultiplier: true }),
+    '-',
+    ...resultsToValues(results, { bold: true }),
   ]);
   return summaryRow;
 };
@@ -145,6 +148,7 @@ export const getFinalScoresTable = (summary: StrategySummary) => {
     'Final score',
     'Probability',
     ...getOutcomesLabels(),
+    getBetMultiplierLabel(),
     ...getResultsLabels(),
   ]);
 
@@ -163,16 +167,18 @@ export const getInitialScoresTable = (consequences: InitialPairsConsequences) =>
     'Score',
     'Final Probabilities',
     ...getOutcomesLabels(),
+    getBetMultiplierLabel(),
     ...getResultsLabels(),
   ]);
 
   const rows = Object.keys(consequences).map(playerScoreLabel => {
     const consequence = consequences[playerScoreLabel];
-    const { finalProbabilities, outcomes, results } = consequence;
+    const { finalProbabilities, outcomes, betMultiplier, results } = consequence;
     return overallRow([
       playerScoreLabel,
       stringifyFinalProbabilities(finalProbabilities).join(' / '),
       ...outcomesToValues(outcomes),
+      formatBetMultiplier(betMultiplier),
       ...resultsToValues(results),
     ]);
   });

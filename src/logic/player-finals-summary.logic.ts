@@ -65,7 +65,7 @@ export const getPlayerFinalSummary = (
         [dealerScore]: getDealerFinalSummary(
           playerScore,
           dealerFinalScores[dealerScore],
-          consequence.results.betMultiplier,
+          consequence.betMultiplier,
         ),
       };
     },
@@ -76,7 +76,7 @@ export const getPlayerFinalSummary = (
   const results = reduceResults(Object.values(dealerFinalsSummary), consequenceProbability);
 
   const playerFinalSummary: PlayerFinalSummary = {
-    betMultiplier: consequence.results.betMultiplier * consequenceProbability,
+    betMultiplier: consequence.betMultiplier * consequenceProbability,
     combinations: playerFinalScores?.[playerScore]?.combinations.length || 0,
     dealerFinals: dealerFinalsSummary,
     outcomes,
