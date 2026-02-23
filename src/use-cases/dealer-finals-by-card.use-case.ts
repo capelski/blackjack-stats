@@ -32,7 +32,7 @@ const getRows = (
 const dealerFinalsByCard = getDealerFinalsByCard();
 
 const combinationsRows = getRows(dealerFinalsByCard, (dealerFinals, dealerFinalScore) => {
-  return dealerFinals[dealerFinalScore]?.combinations.length || 0;
+  return dealerFinals[dealerFinalScore]?.combinations || 0;
 });
 const combinationsTable = getTable(headers, combinationsRows);
 

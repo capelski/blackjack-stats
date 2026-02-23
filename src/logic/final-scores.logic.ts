@@ -2,8 +2,10 @@ import { SearchMode } from '../enums/search-mode.enum';
 import { CardsCombination, HandResolver } from '../types/cards-combination.type';
 import { FinalProbabilities } from '../types/final-probabilities.type';
 import {
+  CombinationsByFinalScore,
+  FinalScore,
   FinalScoresByDealerCard,
-  FinalScoresByInitialPair,
+  FinalScoresByInitialPairMap,
   FinalScoresMap,
 } from '../types/final-scores.type';
 import { StrategyOptions } from '../types/strategy-options.type';
@@ -47,10 +49,12 @@ class CombinationsList {
 }
 
 class FinalScoresSet {
+  public combinationsByFinalScore: CombinationsByFinalScore;
   public finalScores: FinalScoresByDealerCard | FinalScoresMap;
-  public finalScoresByInitialPair: FinalScoresByInitialPair;
+  public finalScoresByInitialPairMap: FinalScoresByInitialPairMap;
 
   constructor(public groupFinalScoresByFirstCard = false) {
+    this.combinationsByFinalScore = {};
     this.finalScores = groupFinalScoresByFirstCard
       ? cards.reduce<FinalScoresByDealerCard>((reduced, card) => {
           const map: FinalScoresMap = {};
@@ -60,15 +64,19 @@ class FinalScoresSet {
           };
         }, {})
       : <FinalScoresMap>{};
-    this.finalScoresByInitialPair = {};
+    this.finalScoresByInitialPairMap = {};
   }
 
-  createFinalScore(score: number) {
+  createFinalScore(score: number): FinalScore {
     return {
-      combinations: [],
+      combinations: 0,
       probability: 0,
       score,
     };
+  }
+
+  increaseFinalScore(finalScore: FinalScore, hand: CardsCombination) {
+    finalScore.probability += hand.probability;
   }
 
   registerFinalScore(hand: CardsCombination) {
@@ -80,33 +88,37 @@ class FinalScoresSet {
       applicableFinalScores[hand.effectiveScore] = this.createFinalScore(hand.effectiveScore);
     }
 
-    applicableFinalScores[hand.effectiveScore].probability += hand.probability;
+    this.increaseFinalScore(applicableFinalScores[hand.effectiveScore], hand);
 
     if (!hand.isPostSplit) {
       const combinationSymbols = getCardsCombinations(hand.symbols);
-      applicableFinalScores[hand.effectiveScore].combinations.push(combinationSymbols);
+      applicableFinalScores[hand.effectiveScore].combinations += 1;
+
+      if (!this.combinationsByFinalScore[hand.effectiveScore]) {
+        this.combinationsByFinalScore[hand.effectiveScore] = [];
+      }
+
+      this.combinationsByFinalScore[hand.effectiveScore].push(combinationSymbols);
     }
 
     this.registerFinalScoreByInitialPair(hand);
   }
 
   registerFinalScoreByInitialPair(hand: CardsCombination) {
-    if (!this.finalScoresByInitialPair[hand.initialPair]) {
-      this.finalScoresByInitialPair[hand.initialPair] = {
+    if (!this.finalScoresByInitialPairMap[hand.initialPair]) {
+      this.finalScoresByInitialPairMap[hand.initialPair] = {
         finalScores: {},
         probability: 0,
       };
     }
+    const fs = this.finalScoresByInitialPairMap[hand.initialPair];
 
-    if (!this.finalScoresByInitialPair[hand.initialPair].finalScores[hand.effectiveScore]) {
-      this.finalScoresByInitialPair[hand.initialPair].finalScores[
-        hand.effectiveScore
-      ] = this.createFinalScore(hand.effectiveScore);
+    if (!fs.finalScores[hand.effectiveScore]) {
+      fs.finalScores[hand.effectiveScore] = this.createFinalScore(hand.effectiveScore);
     }
 
-    this.finalScoresByInitialPair[hand.initialPair].probability += hand.probability;
-    this.finalScoresByInitialPair[hand.initialPair].finalScores[hand.effectiveScore].probability +=
-      hand.probability;
+    fs.probability += hand.probability;
+    this.increaseFinalScore(fs.finalScores[hand.effectiveScore], hand);
   }
 }
 
@@ -124,8 +136,9 @@ export const getFinalScores = <
   options: FinalScoresOptions = {},
 ): {
   combinations: CardsCombination[];
+  combinationsByFinalScore: CombinationsByFinalScore;
   finalScores: TFinalScores;
-  finalScoresByInitialPair: FinalScoresByInitialPair;
+  finalScoresByInitialPairMap: FinalScoresByInitialPairMap;
 } => {
   const collectCombinations = options.collectCombinations ?? false;
   const groupFinalScoresByFirstCard = options.groupFinalScoresByFirstCard ?? false;
@@ -166,7 +179,8 @@ export const getFinalScores = <
 
   return {
     combinations,
+    combinationsByFinalScore: finalScoresSet.combinationsByFinalScore,
     finalScores: finalScoresSet.finalScores as TFinalScores,
-    finalScoresByInitialPair: finalScoresSet.finalScoresByInitialPair,
+    finalScoresByInitialPairMap: finalScoresSet.finalScoresByInitialPairMap,
   };
 };

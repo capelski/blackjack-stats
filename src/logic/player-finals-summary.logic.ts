@@ -77,7 +77,7 @@ export const getPlayerFinalSummary = (
 
   const playerFinalSummary: PlayerFinalSummary = {
     betMultiplier: consequence.betMultiplier * consequenceProbability,
-    combinations: playerFinalScores?.[playerScore]?.combinations.length || 0,
+    combinations: playerFinalScores?.[playerScore]?.combinations || 0,
     dealerFinals: dealerFinalsSummary,
     outcomes,
     results,

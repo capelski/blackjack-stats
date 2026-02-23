@@ -36,10 +36,7 @@ export const getStrategySummary = (
 
   return {
     combinations: {
-      number: Object.values(playerFinalScores || {}).reduce(
-        (sum, x) => sum + x.combinations.length,
-        0,
-      ),
+      number: Object.values(playerFinalScores || {}).reduce((sum, x) => sum + x.combinations, 0),
       probability: Object.values(playerFinalScores || {}).reduce(
         (sum, pf) => sum + (pf.probability || 0),
         0,
