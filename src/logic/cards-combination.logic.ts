@@ -82,12 +82,13 @@ export const createNextCardsCombination = (
     symbols: nextSymbols,
   };
 
-  const nextAction = handResolver(nextInput);
-  const isFinalHand = isPostDouble || nextAction === Action.stand;
+  const hasReachedEnd = nextInput.effectiveScore >= playerScoreLimit || isPostDouble;
+  const nextAction = hasReachedEnd ? End : handResolver(nextInput);
+  const isFinalHand = hasReachedEnd || nextAction === Action.stand;
 
   return {
     ...nextInput,
-    action: nextInput.effectiveScore >= playerScoreLimit || isPostDouble ? End : nextAction,
+    action: nextAction,
     betMultiplier:
       previous.betMultiplier *
       getBetMultiplier({
