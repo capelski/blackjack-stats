@@ -1,4 +1,4 @@
-import { Action } from '../enums/action.enum';
+import { Action, Continue, End } from '../enums/action.enum';
 import { Card } from '../types/card.type';
 import {
   CardsCombination,
@@ -17,7 +17,7 @@ export const createOneCardCombination = (card: Card): CardsCombination => {
   const scores = cardValuesDictionary[card];
 
   return {
-    action: 'Continue',
+    action: Continue,
     betMultiplier: 1,
     canDouble: false,
     canSplit: false,
@@ -87,7 +87,7 @@ export const createNextCardsCombination = (
 
   return {
     ...nextInput,
-    action: nextInput.effectiveScore >= playerScoreLimit || isPostDouble ? 'End' : nextAction,
+    action: nextInput.effectiveScore >= playerScoreLimit || isPostDouble ? End : nextAction,
     betMultiplier:
       previous.betMultiplier *
       getBetMultiplier({

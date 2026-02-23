@@ -1,4 +1,4 @@
-import { Action } from '../enums/action.enum';
+import { Action, AppliedAction } from '../enums/action.enum';
 import { Card } from './card.type';
 
 export type CardsCombinationInput = {
@@ -15,7 +15,7 @@ export type CardsCombinationInput = {
 };
 
 export type CardsCombination = CardsCombinationInput & {
-  action: Action | 'Continue' | 'End';
+  action: AppliedAction;
   betMultiplier: number;
   isFinalHand: boolean;
   isPostDouble: boolean;

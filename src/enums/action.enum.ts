@@ -4,3 +4,9 @@ export enum Action {
   split = 'Split',
   stand = 'Stand',
 }
+
+export const Continue = 'Continue';
+
+export const End = 'End';
+
+export type AppliedAction = Action | typeof Continue | typeof End;
