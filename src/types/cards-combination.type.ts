@@ -6,7 +6,6 @@ export type CardsCombinationInput = {
   canSplit: boolean;
   cards: Card[];
   effectiveScore: number;
-  initialPair: string;
   label: string;
   probability: number;
   scores: number[];
@@ -17,7 +16,12 @@ export type CardsCombinationInput = {
 export type CardsCombination = CardsCombinationInput & {
   action: AppliedAction;
   betMultiplier: number;
-  isFinalHand: boolean;
+  initialPair: {
+    action: AppliedAction;
+    label: string;
+    score: number;
+  };
+  isFinal: boolean;
   isPostDouble: boolean;
   isPostSplit: boolean;
 };

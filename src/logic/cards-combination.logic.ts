@@ -23,8 +23,8 @@ export const createOneCardCombination = (card: Card): CardsCombination => {
     canSplit: false,
     cards: [card],
     effectiveScore: getEffectiveScore(scores),
-    initialPair: '',
-    isFinalHand: false,
+    initialPair: undefined!,
+    isFinal: false,
     isPostDouble: false,
     isPostSplit: false,
     label: getScoresLabel(scores),
@@ -65,17 +65,16 @@ export const createNextCardsCombination = (
   const nextSymbols = previousSplit
     ? [previous.symbols[0], 's', card]
     : [...previous.symbols, card];
+  const nextLabel = getScoresLabel(nextScores, {
+    splitCard: nextCanSplit ? nextCards[0] : undefined,
+  });
 
   const nextInput: CardsCombinationInput = {
     canDouble: nextCards.length === 2 && canDouble(nextScores, options.doubling),
     canSplit: nextCanSplit,
     cards: nextCards,
     effectiveScore: getEffectiveScore(nextScores),
-    initialPair:
-      nextSymbols.length === 2
-        ? getScoresLabel(nextScores, { splitCard: nextCanSplit ? nextCards[0] : undefined })
-        : previous.initialPair,
-    label: getScoresLabel(nextScores),
+    label: nextLabel,
     // Computing based on previous probability to account for post split combinations
     probability: previous.probability / cardsNumber,
     scores: nextScores,
@@ -95,7 +94,15 @@ export const createNextCardsCombination = (
         isBlackjack: nextInput.effectiveScore === blackjackScore,
         isDoubleBet: nextAction === Action.double || nextAction === Action.split,
       }),
-    isFinalHand,
+    initialPair:
+      nextSymbols.length === 2
+        ? {
+            action: nextAction,
+            label: nextLabel,
+            score: nextInput.effectiveScore,
+          }
+        : previous.initialPair,
+    isFinal: isFinalHand,
     isPostDouble,
     isPostSplit,
   };

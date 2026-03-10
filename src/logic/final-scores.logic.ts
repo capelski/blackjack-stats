@@ -105,13 +105,21 @@ class FinalScoresSet {
   }
 
   registerFinalScoreByInitialPair(hand: CardsCombination) {
-    if (!this.finalScoresByInitialPairMap[hand.initialPair]) {
-      this.finalScoresByInitialPairMap[hand.initialPair] = {
+    if (!this.finalScoresByInitialPairMap[hand.initialPair.label]) {
+      this.finalScoresByInitialPairMap[hand.initialPair.label] = {
+        action: hand.initialPair.action,
         finalScores: {},
+        initialPairScore: hand.initialPair.score,
         probability: 0,
       };
     }
-    const fs = this.finalScoresByInitialPairMap[hand.initialPair];
+    const fs = this.finalScoresByInitialPairMap[hand.initialPair.label];
+
+    if (fs.action !== hand.initialPair.action) {
+      throw new Error(
+        `Inconsistent action for initial pair ${hand.initialPair.label}: ${fs.action} vs ${hand.initialPair.action}`,
+      );
+    }
 
     if (!fs.finalScores[hand.effectiveScore]) {
       fs.finalScores[hand.effectiveScore] = this.createFinalScore(hand.effectiveScore);
@@ -159,7 +167,7 @@ export const getFinalScores = <
       // Store all the combinations along the way, final or not
       combinations.push(hand);
 
-      if (hand.isFinalHand) {
+      if (hand.isFinal) {
         continue;
       }
     }
@@ -167,11 +175,11 @@ export const getFinalScores = <
     sortedCards.map(card => {
       const nextHand = createNextCardsCombination(handResolver, hand, card, strategyOptions);
 
-      if (!nextHand.isFinalHand || collectCombinations) {
+      if (!nextHand.isFinal || collectCombinations) {
         combinationsList.addCombination(nextHand);
       }
 
-      if (nextHand.isFinalHand) {
+      if (nextHand.isFinal) {
         finalScoresSet.registerFinalScore(nextHand);
       }
     });

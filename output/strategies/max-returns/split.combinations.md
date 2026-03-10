@@ -1,5 +1,5 @@
 - A. 1/11. Continue
-  - A,A. 2/12. Split. 2x
+  - A,A. A,A. Split. 2x
     - A,s,A. 2/12. Hit. 2x
       - A,s,A,A. 3/13. Hit. 2x
         - A,s,A,A,A. 4/14. Hit. 2x
@@ -12117,7 +12117,7 @@
       - 2,A,K,J. 22+. End
       - 2,A,K,Q. 22+. End
       - 2,A,K,K. 22+. End
-  - 2,2. 4. Hit
+  - 2,2. 2,2. Hit
     - 2,2,A. 5/15. Hit
       - 2,2,A,A. 6/16. Hit
         - 2,2,A,A,A. 7/17. Hit
@@ -21258,7 +21258,7 @@
     - 3,2,J. 15. Stand
     - 3,2,Q. 15. Stand
     - 3,2,K. 15. Stand
-  - 3,3. 6. Hit
+  - 3,3. 3,3. Hit
     - 3,3,A. 7/17. Hit
       - 3,3,A,A. 8/18. Stand
       - 3,3,A,2. 9/19. Stand
@@ -25485,7 +25485,7 @@
     - 4,3,J. 17. Stand
     - 4,3,Q. 17. Stand
     - 4,3,K. 17. Stand
-  - 4,4. 8. Hit
+  - 4,4. 4,4. Hit
     - 4,4,A. 9/19. Stand
     - 4,4,2. 10. Hit
       - 4,4,2,A. 11/21. End
@@ -27606,7 +27606,7 @@
     - 5,4,J. 19. Stand
     - 5,4,Q. 19. Stand
     - 5,4,K. 19. Stand
-  - 5,5. 10. Hit
+  - 5,5. 5,5. Hit
     - 5,5,A. 11/21. End
     - 5,5,2. 12. Hit
       - 5,5,2,A. 13. Hit
@@ -28752,7 +28752,7 @@
     - 6,5,J. 21. End
     - 6,5,Q. 21. End
     - 6,5,K. 21. End
-  - 6,6. 12. Hit
+  - 6,6. 6,6. Hit
     - 6,6,A. 13. Hit
       - 6,6,A,A. 14. Hit
         - 6,6,A,A,A. 15. Stand
@@ -29352,7 +29352,7 @@
     - 7,6,J. 22+. End
     - 7,6,Q. 22+. End
     - 7,6,K. 22+. End
-  - 7,7. 14. Hit
+  - 7,7. 7,7. Hit
     - 7,7,A. 15. Stand
     - 7,7,2. 16. Stand
     - 7,7,3. 17. Stand
@@ -29679,7 +29679,7 @@
     - 8,6,Q. 22+. End
     - 8,6,K. 22+. End
   - 8,7. 15. Stand
-  - 8,8. 16. Split. 2x
+  - 8,8. 8,8. Split. 2x
     - 8,s,A. 9/19. Stand. 2x
     - 8,s,2. 10. Hit. 2x
       - 8,s,2,A. 11/21. End. 2x
@@ -30201,7 +30201,7 @@
   - 9,6. 15. Stand
   - 9,7. 16. Stand
   - 9,8. 17. Stand
-  - 9,9. 18. Stand
+  - 9,9. 9,9. Stand
   - 9,10. 19. Stand
   - 9,J. 19. Stand
   - 9,Q. 19. Stand
@@ -30307,7 +30307,7 @@
   - 10,7. 17. Stand
   - 10,8. 18. Stand
   - 10,9. 19. Stand
-  - 10,10. 20. Stand
+  - 10,10. 10,10. Stand
   - 10,J. 20. Stand
   - 10,Q. 20. Stand
   - 10,K. 20. Stand
@@ -30413,7 +30413,7 @@
   - J,8. 18. Stand
   - J,9. 19. Stand
   - J,10. 20. Stand
-  - J,J. 20. Stand
+  - J,J. J,J. Stand
   - J,Q. 20. Stand
   - J,K. 20. Stand
 - Q. 10. Continue
@@ -30519,7 +30519,7 @@
   - Q,9. 19. Stand
   - Q,10. 20. Stand
   - Q,J. 20. Stand
-  - Q,Q. 20. Stand
+  - Q,Q. Q,Q. Stand
   - Q,K. 20. Stand
 - K. 10. Continue
   - K,A. BJ. End. 1.5x
@@ -30625,4 +30625,4 @@
   - K,10. 20. Stand
   - K,J. 20. Stand
   - K,Q. 20. Stand
-  - K,K. 20. Stand
+  - K,K. K,K. Stand

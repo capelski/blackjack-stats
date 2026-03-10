@@ -1,3 +1,4 @@
+import { AppliedAction } from '../enums/action.enum';
 import { Card } from './card.type';
 
 export type CombinationsByFinalScore = {
@@ -17,7 +18,9 @@ export type FinalScoresMap = {
 export type FinalScoresByDealerCard = Record<Card, FinalScoresMap>;
 
 export type FinalScoresByInitialPair = {
+  action: AppliedAction;
   finalScores: FinalScoresMap;
+  initialPairScore: number;
   probability: number;
 };
 
