@@ -3,8 +3,9 @@ import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  base: '/blackjack-stats/',
   build: {
     outDir: '../docs',
   },
+  plugins: [react()],
 });
