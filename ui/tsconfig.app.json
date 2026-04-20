@@ -10,7 +10,7 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false, // true breaks prettier
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
