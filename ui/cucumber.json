@@ -1,0 +1,6 @@
+{
+  "default": {
+    "require": ["src/**/*.steps.ts"],
+    "requireModule": ["tsx/cjs"]
+  }
+}

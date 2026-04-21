@@ -9,8 +9,6 @@ export type Hand = {
   label: string;
   probability: number;
   scores: number[];
-  /** Contains the cards plus split symbols when applicable */
-  symbols: string[];
 };
 
 export type HandExtended = Hand & {
