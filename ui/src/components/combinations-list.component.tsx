@@ -7,6 +7,7 @@ import { CombinationsListProps, CombinationsListRow } from './combinations-list-
 export const CombinationsList: React.FC<CombinationsListProps> = props => {
   const { handResolver } = useStrategyContext();
   const [cardsFilter, setCardsFilter] = useState('');
+  const [finalHandsOnly, setFinalHandsOnly] = useState(false);
 
   const combinations = useMemo(() => getCombinationsList(handResolver), [handResolver]);
   const filteredCombinations = useMemo(() => {
@@ -15,19 +16,23 @@ export const CombinationsList: React.FC<CombinationsListProps> = props => {
       .toUpperCase()
       .replaceAll(' ', '');
 
-    if (!normalizedFilter) {
-      return combinations;
-    }
-
     return combinations.filter(combination => {
+      if (finalHandsOnly && !combination.isFinal) {
+        return false;
+      }
+
+      if (!normalizedFilter) {
+        return true;
+      }
+
       const symbols = combination.cards.map(card => card.symbol).join(',');
       return symbols.includes(normalizedFilter);
     });
-  }, [cardsFilter, combinations]);
+  }, [cardsFilter, combinations, finalHandsOnly]);
 
   return (
     <div className="combination-list">
-      <p style={{ display: 'block', marginBottom: '12px' }}>
+      <p>
         Cards filter
         <input
           type="text"
@@ -36,6 +41,13 @@ export const CombinationsList: React.FC<CombinationsListProps> = props => {
           placeholder="Example: A,A"
           style={{ marginLeft: 8 }}
         />
+        <input
+          type="checkbox"
+          checked={finalHandsOnly}
+          onChange={event => setFinalHandsOnly(event.target.checked)}
+          style={{ marginLeft: 16 }}
+        />
+        <span>Final hands only</span>
       </p>
 
       <p>
