@@ -1,11 +1,11 @@
-export type CombinationsListProps = {
+export type HandsListProps = {
   hideAction?: boolean;
   hideLabel?: boolean;
   isHeader?: boolean;
   showBetMultiplier?: boolean;
 };
 
-export type CombinationsListRowProps = CombinationsListProps & {
+export type HandsListItemProps = HandsListProps & {
   label: string;
   cards: string;
   probability: string;
@@ -13,7 +13,7 @@ export type CombinationsListRowProps = CombinationsListProps & {
   action: string;
 };
 
-export const CombinationsListRow: React.FC<CombinationsListRowProps> = props => {
+export const HandsListItem: React.FC<HandsListItemProps> = props => {
   const gridTemplateColumns = [
     '3fr',
     ...(props.hideLabel ? [] : ['1fr']),

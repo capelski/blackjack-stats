@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { getCombinationsList } from '../logic/combinations-list.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { useStrategyContext } from '../strategy.context';
-import { CombinationsListProps, CombinationsListRow } from './combinations-list-row.component';
+import { HandsListItem, HandsListProps } from './hands-list-item.component';
 
 const pageSize = 50;
 
-export const CombinationsList: React.FC<CombinationsListProps> = props => {
+export const HandsList: React.FC<HandsListProps> = props => {
   const { handResolver } = useStrategyContext();
   const [cardsFilter, setCardsFilter] = useState('');
   const [finalHandsOnly, setFinalHandsOnly] = useState(false);
@@ -81,7 +81,7 @@ export const CombinationsList: React.FC<CombinationsListProps> = props => {
         </button>
       </p>
 
-      <CombinationsListRow
+      <HandsListItem
         {...props}
         action="Action"
         betMultiplier="Bet multiplier"
@@ -89,10 +89,10 @@ export const CombinationsList: React.FC<CombinationsListProps> = props => {
         isHeader={true}
         label="Score"
         probability="Probability"
-      ></CombinationsListRow>
+      ></HandsListItem>
 
       {paginatedCombinations.map((combination, index) => (
-        <CombinationsListRow
+        <HandsListItem
           {...props}
           key={`${currentPage}-${index}-${combination.label}`}
           action={combination.action}
@@ -100,7 +100,7 @@ export const CombinationsList: React.FC<CombinationsListProps> = props => {
           cards={combination.cards.map(card => card.symbol).join(', ')}
           label={combination.label}
           probability={toPercentage(combination.probability)}
-        ></CombinationsListRow>
+        ></HandsListItem>
       ))}
     </div>
   );
