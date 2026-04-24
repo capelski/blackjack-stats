@@ -1,16 +1,16 @@
 export type HandsListProps = {
   hideAction?: boolean;
   hideLabel?: boolean;
-  isHeader?: boolean;
   showBetMultiplier?: boolean;
 };
 
 export type HandsListItemProps = HandsListProps & {
-  label: string;
-  cards: string;
-  probability: string;
-  betMultiplier: string;
   action: string;
+  betMultiplier: string;
+  cards: string;
+  label: string;
+  isHeader?: boolean;
+  probability: string;
 };
 
 export const HandsListItem: React.FC<HandsListItemProps> = props => {

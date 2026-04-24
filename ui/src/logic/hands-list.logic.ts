@@ -6,15 +6,15 @@ import { createNextCardsCombination, createOneCardCombination } from './hand.log
 /** Reversing the cards for the depth first search to list cards in A-K order */
 const reversedCards = [...cards].reverse();
 
-export const getCombinationsList = (handResolver: HandResolver): HandExtended[] => {
-  const allCombinations: HandExtended[] = [];
-  const pendingCombinations: HandExtended[] = cards.map(card => createOneCardCombination(card));
+export const getHandsList = (handResolver: HandResolver): HandExtended[] => {
+  const allHands: HandExtended[] = [];
+  const pendingHands: HandExtended[] = cards.map(card => createOneCardCombination(card));
 
-  while (pendingCombinations.length > 0) {
-    const hand = pendingCombinations.shift()!;
+  while (pendingHands.length > 0) {
+    const hand = pendingHands.shift()!;
 
     if (hand.cards.length > 1) {
-      allCombinations.push(hand);
+      allHands.push(hand);
 
       if (hand.isFinal) {
         continue;
@@ -23,9 +23,9 @@ export const getCombinationsList = (handResolver: HandResolver): HandExtended[] 
 
     for (const card of reversedCards) {
       const nextHand = createNextCardsCombination(handResolver, hand, card, {});
-      pendingCombinations.unshift(nextHand);
+      pendingHands.unshift(nextHand);
     }
   }
 
-  return allCombinations;
+  return allHands;
 };

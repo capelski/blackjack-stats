@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, NavLinkRenderProps, Outlet } from 'react-router-dom';
 import { StandThresholdSlider } from '../components/stand-threshold-slider.component';
+import { getFinalScoresList } from '../logic/final-scores-list.logic';
+import { getHandsList } from '../logic/hands-list.logic';
 import { hit, stand } from '../models/action.model';
-import { handsListRoute } from '../models/routes.model';
+import { finalScoresRoute, handsListRoute } from '../models/routes.model';
 import { StrategyContext } from '../strategy.context';
 import { Hand } from '../types/hand.type';
 
@@ -15,22 +17,32 @@ export const StandThresholdPage: React.FC = () => {
     };
   }, [standThreshold]);
 
+  const hands = useMemo(() => getHandsList(handResolver), [handResolver]);
+  const finalScores = useMemo(() => getFinalScoresList(hands), [hands]);
+
+  const getNavLinkStyle: (props: NavLinkRenderProps) => React.CSSProperties = ({
+    isActive,
+  }): React.CSSProperties => ({
+    marginRight: 16,
+    fontWeight: isActive ? 'bold' : 'normal',
+  });
+
   return (
     <div>
       <h1>Stand threshold</h1>
 
       <StandThresholdSlider value={standThreshold} onChange={setStandThreshold} />
 
-      <nav className="nested-navigation">
-        <NavLink
-          to={handsListRoute}
-          className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-        >
+      <nav className="nested-navbar">
+        <NavLink to={handsListRoute} style={getNavLinkStyle}>
           Hands
+        </NavLink>
+        <NavLink to={finalScoresRoute} style={getNavLinkStyle}>
+          Final Scores
         </NavLink>
       </nav>
 
-      <StrategyContext.Provider value={{ handResolver }}>
+      <StrategyContext.Provider value={{ finalScores, hands }}>
         <Outlet />
       </StrategyContext.Provider>
     </div>

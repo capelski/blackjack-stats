@@ -52,7 +52,7 @@ export const createNextCardsCombination = (
     cards: nextCards,
     effectiveScore: getEffectiveScore(nextScores),
     label: getLabel(nextCards, nextCanSplit, isPostSplit),
-    // Computing based on previous probability to account for post split combinations
+    // Computing based on previous probability to account for post split hands
     probability: previous.probability / cardsNumber,
     scores: nextScores,
   };

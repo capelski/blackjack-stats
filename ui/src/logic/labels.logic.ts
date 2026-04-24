@@ -8,6 +8,18 @@ import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { getEffectiveScore, getScores } from './scores.logic';
 
+export const effectiveScoreToLabel = (effectiveScore: number): string => {
+  if (effectiveScore === bustScore) {
+    return bustLabel;
+  }
+
+  if (effectiveScore === blackjackScore) {
+    return blackjackLabel;
+  }
+
+  return String(effectiveScore);
+};
+
 export const getLabel = (cards: Card[], canSplit: boolean, isPostSplit?: boolean) => {
   const scores = getScores(cards, isPostSplit);
   const score = getEffectiveScore(scores);

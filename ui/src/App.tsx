@@ -1,7 +1,8 @@
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import './App.css';
+import { FinalScoresList } from './components/final-scores-list.component';
 import { HandsList } from './components/hands-list.component';
-import { handsListRoute, standThresholdRoute } from './models/routes.model';
+import { finalScoresRoute, handsListRoute, standThresholdRoute } from './models/routes.model';
 import { StandThresholdPage } from './pages/stand-threshold.page';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path={standThresholdRoute} element={<StandThresholdPage />}>
           <Route index element={<Navigate to={handsListRoute} replace />} />
           <Route path={handsListRoute} element={<HandsList />} />
+          <Route path={finalScoresRoute} element={<FinalScoresList />} />
         </Route>
         <Route path="*" element={<Navigate to={standThresholdRoute} replace />} />
       </Routes>

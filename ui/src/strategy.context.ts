@@ -1,8 +1,10 @@
 import { createContext, useContext } from 'react';
-import { HandResolver } from './types/hand-resolver.type';
+import { FinalScore } from './types/final-score.type';
+import { HandExtended } from './types/hand.type';
 
 export type StrategyContextValue = {
-  handResolver: HandResolver;
+  finalScores: FinalScore[];
+  hands: HandExtended[];
 };
 
 export const StrategyContext = createContext<StrategyContextValue | null>(null);
