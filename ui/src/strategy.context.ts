@@ -1,8 +1,10 @@
 import { createContext, useContext } from 'react';
+import { ExpectedResults } from './types/expected-result.type';
 import { FinalScore } from './types/final-score.type';
 import { HandExtended } from './types/hand.type';
 
 export type StrategyContextValue = {
+  expectedResults: ExpectedResults;
   finalScores: FinalScore[];
   hands: HandExtended[];
 };

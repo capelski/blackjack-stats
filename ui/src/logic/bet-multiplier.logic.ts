@@ -1,5 +1,7 @@
-import { BetMultiplierOptions } from '../types/bet-multiplier-options.type';
+import { BetMultiplierOptions } from '../types/bet-multiplier.type';
+
+export const blackjackMultiplier = 1.5;
 
 export const getBetMultiplier = (options: BetMultiplierOptions = {}): number => {
-  return options.isBlackjack ? 1.5 : options.isDoubleBet ? 2 : 1;
+  return options.isBlackjack ? blackjackMultiplier : options.isDoubleBet ? 2 : 1;
 };
