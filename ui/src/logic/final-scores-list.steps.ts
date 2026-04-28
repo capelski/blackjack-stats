@@ -19,6 +19,13 @@ When('getting the final scores list of a hand resolver with a stand threshold of
   this.list = getFinalScoresList(hands);
 });
 
+Then('the returned final scores list contains {int} elements', function(
+  this: FinalScoresListWorld,
+  count: number,
+) {
+  assert.strictEqual(this.list.length, count);
+});
+
 Then('the element {int} has score {string}, probability {string} and {string} hands', function(
   this: FinalScoresListWorld,
   index: number,

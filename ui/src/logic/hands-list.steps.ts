@@ -16,7 +16,10 @@ When('getting the hands list of a hand resolver with a stand threshold of {int}'
   this.list = getHandsList(hand => (hand.effectiveScore >= threshold ? stand : hit));
 });
 
-Then('the returned list contains {int} elements', function(this: HandsListWorld, count: number) {
+Then('the returned hands list contains {int} elements', function(
+  this: HandsListWorld,
+  count: number,
+) {
   assert.strictEqual(this.list.length, count);
 });
 
