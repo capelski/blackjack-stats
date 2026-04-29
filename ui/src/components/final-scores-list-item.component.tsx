@@ -1,9 +1,9 @@
-import { HandExtended } from '../types/hand.type';
+import { HandWithAction } from '../types/hand.type';
 import { FinalScoresListModal } from './final-scores-list-modal.component';
 import { HandsListProps } from './hands-list-item.component';
 
 export type FinalScoresListItemProps = Pick<HandsListProps, 'showBetMultiplier'> & {
-  hands: string | HandExtended[];
+  hands: string | HandWithAction[];
   isHeader?: boolean;
   probability: string;
   score: string;

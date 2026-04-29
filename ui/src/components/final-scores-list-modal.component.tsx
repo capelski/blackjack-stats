@@ -1,12 +1,12 @@
 // import { Close, Content, Description, Overlay, Portal, Root, Title } from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import { HandExtended } from '../types/hand.type';
+import { HandWithAction } from '../types/hand.type';
 import { HandsListCore } from './hands-list-core.component';
 import { HandsListProps } from './hands-list-item.component';
 
 type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
-  hands: HandExtended[];
+  hands: HandWithAction[];
   score: string;
 };
 

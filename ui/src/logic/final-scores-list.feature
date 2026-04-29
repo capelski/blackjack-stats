@@ -6,5 +6,5 @@ Feature: Final scores list
   Scenario: Hands list generation
     When getting the final scores list of a hand resolver with a stand threshold of 17
     Then the returned final scores list contains 7 elements
-    And the element 1 has score "17", probability "14.5126%" and "6640" hands
-    And the element 7 has cards "22+", probability "28.1593%" and "46098" hands
+    And the final score 1 has score "17", probability "14.5126%" and "6640" hands
+    And the final score 7 has cards "22+", probability "28.1593%" and "46098" hands

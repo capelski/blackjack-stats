@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
-import { HandExtended } from '../types/hand.type';
+import { HandWithAction } from '../types/hand.type';
 import { HandsListItem, HandsListProps } from './hands-list-item.component';
 
 const pageSize = 50;
 
 export type HandsListCoreProps = HandsListProps & {
-  hands: HandExtended[];
+  hands: HandWithAction[];
   nonFinalHandsControl?: boolean;
 };
 

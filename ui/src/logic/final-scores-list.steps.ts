@@ -26,7 +26,7 @@ Then('the returned final scores list contains {int} elements', function(
   assert.strictEqual(this.list.length, count);
 });
 
-Then('the element {int} has score {string}, probability {string} and {string} hands', function(
+Then('the final score {int} has score {string}, probability {string} and {string} hands', function(
   this: FinalScoresListWorld,
   index: number,
   expectedScore: string,
@@ -40,7 +40,7 @@ Then('the element {int} has score {string}, probability {string} and {string} ha
   assert.strictEqual(String(item.hands.length), expectedHands);
 });
 
-Then('the element {int} has cards {string}, probability {string} and {string} hands', function(
+Then('the final score {int} has cards {string}, probability {string} and {string} hands', function(
   this: FinalScoresListWorld,
   index: number,
   expectedScore: string,

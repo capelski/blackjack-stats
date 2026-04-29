@@ -1,20 +1,23 @@
 import { HandStatus } from '../models/hand-status.model';
 import { Card } from './card.type';
 
-export type Hand = {
+export type HandBase = {
   canDouble: boolean;
   canSplit: boolean;
-  cards: Card[];
   effectiveScore: number;
   label: string;
-  probability: number;
   scores: number[];
 };
 
-export type HandExtended = Hand & {
+export type Hand = HandBase & {
+  cards: Card[];
+  isPostDouble: boolean;
+  isPostSplit: boolean;
+  probability: number;
+};
+
+export type HandWithAction = Hand & {
   action: HandStatus;
   betMultiplier: number;
   isFinal: boolean;
-  isPostDouble: boolean;
-  isPostSplit: boolean;
 };

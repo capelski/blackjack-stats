@@ -4,14 +4,14 @@ import { end } from '../models/hand-status.model';
 import { blackjackScore, playerScoreLimit } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { HandResolver } from '../types/hand-resolver.type';
-import { Hand, HandExtended } from '../types/hand.type';
+import { Hand, HandWithAction } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getLabel } from './labels.logic';
 import { canDouble, canSplit } from './rules.logic';
 import { getEffectiveScore, getScores } from './scores.logic';
 
-export const createOneCardCombination = (card: Card): HandExtended => {
+export const cardToHandWithAction = (card: Card): HandWithAction => {
   const { scores } = card;
 
   return {
@@ -30,12 +30,12 @@ export const createOneCardCombination = (card: Card): HandExtended => {
   };
 };
 
-export const createNextCardsCombination = (
+export const getNextHandWithAction = (
   handResolver: HandResolver,
-  previous: HandExtended,
+  previous: HandWithAction,
   card: Card,
   rules: Rules,
-): HandExtended => {
+): HandWithAction => {
   const isPostDouble = previous.action === double;
   const previousSplit = previous.action === split;
   const isPostSplit = previousSplit || previous.isPostSplit;
@@ -47,10 +47,12 @@ export const createNextCardsCombination = (
   const nextScores = getScores(nextCards, isPostSplit);
 
   const nextHand: Hand = {
-    canDouble: canDouble(nextCards, rules.doubling),
+    canDouble: canDouble(nextScores, nextCards.length, rules.doubling),
     canSplit: nextCanSplit,
     cards: nextCards,
     effectiveScore: getEffectiveScore(nextScores),
+    isPostDouble,
+    isPostSplit,
     label: getLabel(nextCards, nextCanSplit, isPostSplit),
     // Computing based on previous probability to account for post split hands
     probability: previous.probability / cardsNumber,
@@ -71,7 +73,5 @@ export const createNextCardsCombination = (
         isDoubleBet: nextAction === double || nextAction === split,
       }),
     isFinal,
-    isPostDouble,
-    isPostSplit,
   };
 };

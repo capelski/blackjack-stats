@@ -1,8 +1,8 @@
 import { FinalScore, FinalScoresMap } from '../types/final-score.type';
-import { HandExtended } from '../types/hand.type';
+import { HandWithAction } from '../types/hand.type';
 import { getSortedNumericKeys } from './numbers.logic';
 
-export const getFinalScoresList = (hands: HandExtended[]): FinalScore[] => {
+export const getFinalScoresList = (hands: HandWithAction[]): FinalScore[] => {
   const finalScoresMap: FinalScoresMap = {};
 
   for (const hand of hands) {

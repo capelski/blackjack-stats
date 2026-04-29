@@ -1,14 +1,14 @@
 import { cards } from '../models/cards.model';
 import { HandResolver } from '../types/hand-resolver.type';
-import { HandExtended } from '../types/hand.type';
-import { createNextCardsCombination, createOneCardCombination } from './hand.logic';
+import { HandWithAction } from '../types/hand.type';
+import { cardToHandWithAction, getNextHandWithAction } from './hand.logic';
 
 /** Reversing the cards for the depth first search to list cards in A-K order */
 const reversedCards = [...cards].reverse();
 
-export const getHandsList = (handResolver: HandResolver): HandExtended[] => {
-  const allHands: HandExtended[] = [];
-  const pendingHands: HandExtended[] = cards.map(card => createOneCardCombination(card));
+export const getHandsList = (handResolver: HandResolver): HandWithAction[] => {
+  const allHands: HandWithAction[] = [];
+  const pendingHands: HandWithAction[] = cards.map(cardToHandWithAction);
 
   while (pendingHands.length > 0) {
     const hand = pendingHands.shift()!;
@@ -22,7 +22,7 @@ export const getHandsList = (handResolver: HandResolver): HandExtended[] => {
     }
 
     for (const card of reversedCards) {
-      const nextHand = createNextCardsCombination(handResolver, hand, card, {});
+      const nextHand = getNextHandWithAction(handResolver, hand, card, {});
       pendingHands.unshift(nextHand);
     }
   }

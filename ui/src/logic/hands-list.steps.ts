@@ -1,12 +1,12 @@
 import { Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { hit, stand } from '../models/action.model';
-import { HandExtended } from '../types/hand.type';
+import { HandWithAction } from '../types/hand.type';
 import { getHandsList } from './hands-list.logic';
 import { toPercentage } from './numbers.logic';
 
 interface HandsListWorld {
-  list: HandExtended[];
+  list: HandWithAction[];
 }
 
 When('getting the hands list of a hand resolver with a stand threshold of {int}', function(
@@ -24,7 +24,7 @@ Then('the returned hands list contains {int} elements', function(
 });
 
 Then(
-  'the element {int} has cards {string}, score {string}, probability {string} and action {string}',
+  'the hand {int} has cards {string}, score {string}, probability {string} and action {string}',
   function(
     this: HandsListWorld,
     index: number,

@@ -1,7 +1,7 @@
-import { HandExtended } from './hand.type';
+import { HandWithAction } from './hand.type';
 
 export type FinalScore = {
-  hands: HandExtended[];
+  hands: HandWithAction[];
   probability: number;
   score: number;
 };
