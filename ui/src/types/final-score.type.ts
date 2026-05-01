@@ -1,4 +1,4 @@
-import { HandWithAction } from './hand.type';
+import { MaterialHand } from './hand.type';
 
 export type FinalScoreBase = {
   probability: number;
@@ -6,7 +6,7 @@ export type FinalScoreBase = {
 };
 
 export type FinalScore = FinalScoreBase & {
-  hands: HandWithAction[];
+  hands: MaterialHand[];
 };
 
 export type FinalScoresMap = {

@@ -1,12 +1,11 @@
 import { Given, Then, When } from '@cucumber/cucumber';
-import { hit, stand } from '../models/action.model';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
 import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
-import { getHandsList } from './hands-list.logic';
+import { getMaterialHandsForStandThreshold } from './material-hands.steps';
 import { parseScore } from './result.steps';
 
 interface FinalComparisonWorld {
@@ -43,8 +42,8 @@ Given('a player hand resolver with a stand threshold of {int}', function(
   this: FinalComparisonWorld,
   threshold: number,
 ) {
-  const hands = getHandsList(hand => (hand.effectiveScore >= threshold ? stand : hit));
-  this.playerFinalScores = getFinalScoresList(hands);
+  const materialHands = getMaterialHandsForStandThreshold(threshold);
+  this.playerFinalScores = getFinalScoresList(materialHands);
 });
 
 When(

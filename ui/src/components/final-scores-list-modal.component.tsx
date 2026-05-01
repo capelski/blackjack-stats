@@ -1,12 +1,12 @@
 // import { Close, Content, Description, Overlay, Portal, Root, Title } from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import { HandWithAction } from '../types/hand.type';
-import { HandsListCore } from './hands-list-core.component';
-import { HandsListProps } from './hands-list-item.component';
+import { MaterialHand } from '../types/hand.type';
+import { MaterialHandsListCore } from './material-hands-list-core.component';
+import { HandsListProps } from './material-hands-list-item.component';
 
 type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
-  hands: HandWithAction[];
+  hands: MaterialHand[];
   score: string;
 };
 
@@ -38,7 +38,7 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
 
       <Modal isOpen={isModalOpen} onRequestClose={onClose}>
         <h3>{props.score}</h3>
-        <HandsListCore
+        <MaterialHandsListCore
           hands={props.hands}
           hideAction={true}
           hideLabel={true}

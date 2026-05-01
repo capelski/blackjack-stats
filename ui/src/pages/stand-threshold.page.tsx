@@ -3,29 +3,42 @@ import { NavLink, NavLinkRenderProps, Outlet } from 'react-router-dom';
 import { StandThresholdSlider } from '../components/stand-threshold-slider.component';
 import { getExpectedResults } from '../logic/expected-results.logic';
 import { getFinalScoresList } from '../logic/final-scores-list.logic';
-import { getHandIdentitiesWithConsequences } from '../logic/hand-identities.logic';
-import { getHandsList } from '../logic/hands-list.logic';
+import { getMaterialHands } from '../logic/material-hands.logic';
+import { getResolvedHands } from '../logic/resolved-hands.logic';
 import { hit, stand } from '../models/action.model';
-import { expectedResultsRoute, finalScoresRoute, handsListRoute } from '../models/routes.model';
+import {
+  expectedResultsRoute,
+  finalScoresRoute,
+  materialHandsRoute,
+  resolvedHandsRoute,
+} from '../models/routes.model';
 import { StrategyContext } from '../strategy.context';
-import { Hand } from '../types/hand.type';
+import { HandResolver } from '../types/hand-resolution.type';
 
 export const StandThresholdPage: React.FC = () => {
   const [standThreshold, setStandThreshold] = useState(17);
 
-  const handIdentities = useMemo(() => {
-    return getHandIdentitiesWithConsequences({});
-  }, []);
-
-  const handResolver = useMemo(() => {
-    return (hand: Hand) => {
+  const handResolver = useMemo((): HandResolver => {
+    return hand => {
       return hand.effectiveScore >= standThreshold ? stand : hit;
     };
   }, [standThreshold]);
 
-  const hands = useMemo(() => getHandsList(handResolver), [handResolver]);
-  const finalScores = useMemo(() => getFinalScoresList(hands), [hands]);
-  const expectedResults = useMemo(() => getExpectedResults(finalScores), [finalScores]);
+  const { resolvedHands, handResolutionMap } = useMemo(() => {
+    return getResolvedHands(handResolver, {});
+  }, [handResolver]);
+
+  const { expectedResults, finalScores, materialHands } = useMemo(() => {
+    const materialHands = getMaterialHands(handResolutionMap);
+    const finalScores = getFinalScoresList(materialHands);
+    const expectedResults = getExpectedResults(finalScores);
+
+    return {
+      expectedResults,
+      finalScores,
+      materialHands,
+    };
+  }, [handResolutionMap]);
 
   const getNavLinkStyle: (props: NavLinkRenderProps) => React.CSSProperties = ({
     isActive,
@@ -41,7 +54,7 @@ export const StandThresholdPage: React.FC = () => {
       <StandThresholdSlider value={standThreshold} onChange={setStandThreshold} />
 
       <nav className="nested-navbar">
-        <NavLink to={handsListRoute} style={getNavLinkStyle}>
+        <NavLink to={materialHandsRoute} style={getNavLinkStyle}>
           Hands
         </NavLink>
         <NavLink to={finalScoresRoute} style={getNavLinkStyle}>
@@ -50,9 +63,14 @@ export const StandThresholdPage: React.FC = () => {
         <NavLink to={expectedResultsRoute} style={getNavLinkStyle}>
           Expected Results
         </NavLink>
+        <NavLink to={resolvedHandsRoute} style={getNavLinkStyle}>
+          Hand Actions
+        </NavLink>
       </nav>
 
-      <StrategyContext.Provider value={{ expectedResults, finalScores, hands, handIdentities }}>
+      <StrategyContext.Provider
+        value={{ expectedResults, finalScores, materialHands, resolvedHands }}
+      >
         <Outlet />
       </StrategyContext.Provider>
     </div>

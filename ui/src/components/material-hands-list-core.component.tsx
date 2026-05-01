@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
-import { HandWithAction } from '../types/hand.type';
-import { HandsListItem, HandsListProps } from './hands-list-item.component';
+import { MaterialHand } from '../types/hand.type';
+import { HandsListItem, HandsListProps } from './material-hands-list-item.component';
 
 const pageSize = 50;
 
-export type HandsListCoreProps = HandsListProps & {
-  hands: HandWithAction[];
+export type MaterialHandsListCoreProps = HandsListProps & {
+  hands: MaterialHand[];
   nonFinalHandsControl?: boolean;
 };
 
-export const HandsListCore: React.FC<HandsListCoreProps> = props => {
+export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props => {
   const [cardsFilter, setCardsFilter] = useState('');
   const [showNonFinalHands, setShowNonFinalHands] = useState(false);
   const [page, setPage] = useState(1);

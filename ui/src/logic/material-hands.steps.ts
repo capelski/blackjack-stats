@@ -1,0 +1,48 @@
+import { Then, When } from '@cucumber/cucumber';
+import assert from 'node:assert';
+import { hit, stand } from '../models/action.model';
+import { HandResolver } from '../types/hand-resolution.type';
+import { MaterialHand } from '../types/hand.type';
+import { getMaterialHands } from './material-hands.logic';
+import { toPercentage } from './numbers.logic';
+import { getResolvedHands } from './resolved-hands.logic';
+
+interface MaterialHandsWorld {
+  list: MaterialHand[];
+}
+
+export const getMaterialHandsForStandThreshold = (threshold: number) => {
+  const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
+  const { handResolutionMap } = getResolvedHands(handResolver, {});
+  return getMaterialHands(handResolutionMap);
+};
+
+When('getting the material hands of a hand resolver with a stand threshold of {int}', function(
+  this: MaterialHandsWorld,
+  threshold: number,
+) {
+  this.list = getMaterialHandsForStandThreshold(threshold);
+});
+
+Then('{int} material hands are returned', function(this: MaterialHandsWorld, count: number) {
+  assert.strictEqual(this.list.length, count);
+});
+
+Then(
+  'the material hand {int} has cards {string}, score {string}, probability {string} and action {string}',
+  function(
+    this: MaterialHandsWorld,
+    index: number,
+    expectedCards: string,
+    expectedScore: string,
+    expectedProbability: string,
+    expectedAction: string,
+  ) {
+    const hand = this.list[index - 1];
+
+    assert.strictEqual(hand.cards.map(c => c.symbol).join(','), expectedCards);
+    assert.strictEqual(hand.label, expectedScore);
+    assert.strictEqual(toPercentage(hand.probability), expectedProbability);
+    assert.strictEqual(hand.action, expectedAction);
+  },
+);

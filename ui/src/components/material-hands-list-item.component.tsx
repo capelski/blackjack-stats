@@ -35,29 +35,29 @@ export const HandsListItem: React.FC<HandsListItemProps> = props => {
         padding: '8px 0',
       }}
     >
-      <span style={columnStyle} className="cell cards">
+      <span style={columnStyle} className="cards">
         {props.cards}
       </span>
 
       {!props.hideLabel && (
-        <span style={columnStyle} className="cell score">
+        <span style={columnStyle} className="score">
           {props.label}
         </span>
       )}
 
-      <span style={columnStyle} className="cell probability">
+      <span style={columnStyle} className="probability">
         {props.probability}
       </span>
 
       {props.showBetMultiplier && (
-        <span style={columnStyle} className="cell bet-size">
+        <span style={columnStyle} className="bet-size">
           {props.betMultiplier}
           {props.isHeader ? '' : 'x'}
         </span>
       )}
 
       {!props.hideAction && (
-        <span style={columnStyle} className={`cell action ${props.action.toLowerCase()}`}>
+        <span style={columnStyle} className="action">
           {props.action}
         </span>
       )}

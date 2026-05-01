@@ -1,11 +1,10 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
-import { hit, stand } from '../models/action.model';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore } from '../types/final-score.type';
 import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
-import { getHandsList } from './hands-list.logic';
 import { effectiveScoreToLabel } from './labels.logic';
+import { getMaterialHandsForStandThreshold } from './material-hands.steps';
 import { toPercentage } from './numbers.logic';
 import { parseScore } from './result.steps';
 
@@ -27,7 +26,7 @@ When('getting the final scores list of a hand resolver with a stand threshold of
   this: FinalScoresListWorld,
   threshold: number,
 ) {
-  const hands = getHandsList(hand => (hand.effectiveScore >= threshold ? stand : hit));
+  const hands = getMaterialHandsForStandThreshold(threshold);
   this.list = getFinalScoresList(hands);
 });
 
@@ -71,7 +70,7 @@ Given('the final score {string} of a hand resolver with a stand threshold of {in
   scoreLabel: string,
   threshold: number,
 ) {
-  const hands = getHandsList(hand => (hand.effectiveScore >= threshold ? stand : hit));
+  const hands = getMaterialHandsForStandThreshold(threshold);
   this.list = getFinalScoresList(hands);
   const score = parseScore(scoreLabel);
   const finalScore = this.list.find(item => item.score === score);

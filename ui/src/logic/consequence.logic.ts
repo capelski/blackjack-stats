@@ -3,7 +3,7 @@ import { cards } from '../models/cards.model';
 import { blackjackScore } from '../models/scores.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
-import { HandIdentitiesMap } from '../types/hand-identity.type';
+import { ResolvedHandsMap } from '../types/hand.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { getLabelFromScores } from './labels.logic';
@@ -12,7 +12,7 @@ import { getScoresFromScores } from './scores.logic';
 
 export const getHitConsequence = (
   scores: number[],
-  handIdentitiesMap: HandIdentitiesMap,
+  futureResolvedHandsMap: ResolvedHandsMap,
 ): Consequence => {
   const hitConsequence: Consequence = {
     action: hit,
@@ -22,8 +22,8 @@ export const getHitConsequence = (
   };
 
   for (const card of cards) {
-    const nextHandIdentity = getNextHandIdentity([scores, card.scores], handIdentitiesMap);
-    const nextConsequence = nextHandIdentity.selectedConsequence;
+    const nextResolvedHand = getNextResolvedHand([scores, card.scores], futureResolvedHandsMap);
+    const nextConsequence = nextResolvedHand.consequences[nextResolvedHand.action as typeof stand]!;
     const weight = 1 / cards.length;
 
     increaseFinalProbabilities(
@@ -38,13 +38,21 @@ export const getHitConsequence = (
   return hitConsequence;
 };
 
-const getNextHandIdentity = (allScores: number[][], handIdentitiesMap: HandIdentitiesMap) => {
+const getNextResolvedHand = (allScores: number[][], futureResolvedHandsMap: ResolvedHandsMap) => {
   const nextScores = getScoresFromScores(allScores, {
     cardsNumber: undefined,
     isPostSplit: false,
   });
   const nextLabel = getLabelFromScores(nextScores);
-  return handIdentitiesMap[nextLabel];
+  const nextResolvedHand = futureResolvedHandsMap[nextLabel];
+
+  if (!nextResolvedHand) {
+    const [firstScores] = allScores;
+    const label = getLabelFromScores(firstScores);
+    throw new Error(`The "${nextLabel}" resolved hand is not available before ${label}`);
+  }
+
+  return nextResolvedHand;
 };
 
 export const getStandConsequence = (score: number): Consequence => {
