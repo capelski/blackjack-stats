@@ -3,6 +3,7 @@ import { NavLink, NavLinkRenderProps, Outlet } from 'react-router-dom';
 import { StandThresholdSlider } from '../components/stand-threshold-slider.component';
 import { getExpectedResults } from '../logic/expected-results.logic';
 import { getFinalScoresList } from '../logic/final-scores-list.logic';
+import { getHandIdentitiesWithConsequences } from '../logic/hand-identities.logic';
 import { getHandsList } from '../logic/hands-list.logic';
 import { hit, stand } from '../models/action.model';
 import { expectedResultsRoute, finalScoresRoute, handsListRoute } from '../models/routes.model';
@@ -11,6 +12,10 @@ import { Hand } from '../types/hand.type';
 
 export const StandThresholdPage: React.FC = () => {
   const [standThreshold, setStandThreshold] = useState(17);
+
+  const handIdentities = useMemo(() => {
+    return getHandIdentitiesWithConsequences({});
+  }, []);
 
   const handResolver = useMemo(() => {
     return (hand: Hand) => {
@@ -47,7 +52,7 @@ export const StandThresholdPage: React.FC = () => {
         </NavLink>
       </nav>
 
-      <StrategyContext.Provider value={{ expectedResults, finalScores, hands }}>
+      <StrategyContext.Provider value={{ expectedResults, finalScores, hands, handIdentities }}>
         <Outlet />
       </StrategyContext.Provider>
     </div>

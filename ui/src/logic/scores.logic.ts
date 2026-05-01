@@ -1,16 +1,29 @@
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 
+export type ScoresOptions = {
+  cardsNumber: number | undefined;
+  isPostSplit: boolean | undefined;
+};
+
 export const getEffectiveScore = (scores: number[]) => {
   return scores[scores.length - 1];
 };
 
-export const getScores = (cards: Card[], isPostSplit: boolean | undefined) => {
-  const [first, ...rest] = cards;
-  let scores = first.scores;
+export const getScoresFromCards = (cards: Card[], isPostSplit: boolean | undefined) => {
+  const allScores = cards.map(card => card.scores);
+  return getScoresFromScores(allScores, { cardsNumber: cards.length, isPostSplit });
+};
 
-  for (const card of rest) {
-    scores = getUniqueScores(scores, card.scores);
+export const getScoresFromScores = (
+  allScores: number[][],
+  { isPostSplit, cardsNumber }: ScoresOptions,
+) => {
+  const [first, ...rest] = allScores;
+  let scores = first;
+
+  for (const scoreSet of rest) {
+    scores = getUniqueScores(scores, scoreSet);
   }
 
   const validScores = scores.filter(x => x < bustScore);
@@ -18,7 +31,7 @@ export const getScores = (cards: Card[], isPostSplit: boolean | undefined) => {
     return [bustScore];
   }
 
-  if (!isPostSplit && isBlackjack(validScores, cards.length)) {
+  if (!isPostSplit && isBlackjack(validScores, cardsNumber)) {
     return [blackjackScore];
   }
 
@@ -33,6 +46,6 @@ const getUniqueScores = (values1: number[], values2: number[]) => {
   return [...new Set(allValues)].sort((a, b) => a - b);
 };
 
-const isBlackjack = (scores: number[], cardsNumber: number) => {
+const isBlackjack = (scores: number[], cardsNumber: number | undefined) => {
   return cardsNumber === 2 && scores.includes(21);
 };

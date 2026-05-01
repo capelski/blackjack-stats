@@ -1,15 +1,27 @@
-import { Then, When } from '@cucumber/cucumber';
+import { Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { hit, stand } from '../models/action.model';
+import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore } from '../types/final-score.type';
-import { getFinalScoresList } from './final-scores-list.logic';
+import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { getHandsList } from './hands-list.logic';
 import { effectiveScoreToLabel } from './labels.logic';
 import { toPercentage } from './numbers.logic';
+import { parseScore } from './result.steps';
 
 interface FinalScoresListWorld {
   list: FinalScore[];
+  currentFinalScore: FinalScore;
+  probabilityByBetMultiplier: BetMultiplierMap;
 }
+
+const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): string => {
+  return Object.keys(values)
+    .map(parseFloat)
+    .sort((a, b) => a - b)
+    .map(multiplier => `${multiplier}=${values[multiplier]}`)
+    .join(',');
+};
 
 When('getting the final scores list of a hand resolver with a stand threshold of {int}', function(
   this: FinalScoresListWorld,
@@ -52,4 +64,32 @@ Then('the final score {int} has cards {string}, probability {string} and {string
   assert.strictEqual(effectiveScoreToLabel(item.score), expectedScore);
   assert.strictEqual(toPercentage(item.probability), expectedProbability);
   assert.strictEqual(String(item.hands.length), expectedHands);
+});
+
+Given('the final score {string} of a hand resolver with a stand threshold of {int}', function(
+  this: FinalScoresListWorld,
+  scoreLabel: string,
+  threshold: number,
+) {
+  const hands = getHandsList(hand => (hand.effectiveScore >= threshold ? stand : hit));
+  this.list = getFinalScoresList(hands);
+  const score = parseScore(scoreLabel);
+  const finalScore = this.list.find(item => item.score === score);
+
+  if (!finalScore) {
+    throw new Error(`Could not find final score for label "${scoreLabel}"`);
+  }
+
+  this.currentFinalScore = finalScore;
+});
+
+When('getting the probability by bet multiplier', function(this: FinalScoresListWorld) {
+  this.probabilityByBetMultiplier = getProbabilityByBetMultiplier(this.currentFinalScore);
+});
+
+Then('the returned probabilities are {string}', function(
+  this: FinalScoresListWorld,
+  expected: string,
+) {
+  assert.strictEqual(formatProbabilityByBetMultiplier(this.probabilityByBetMultiplier), expected);
 });

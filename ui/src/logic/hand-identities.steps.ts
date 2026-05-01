@@ -74,8 +74,5 @@ const assertHandIdentity = (
   assert.ok(handIdentity, 'Expected hand identity to exist');
   assert.strictEqual(handIdentity!.label, expectedLabel);
   assert.strictEqual(handIdentity!.scores.join(','), expectedScores);
-  assert.strictEqual(
-    handIdentity!.isNonActionable ? 'non-actionable' : 'actionable',
-    actionability,
-  );
+  assert.strictEqual(handIdentity!.isActionable ? actionable : nonActionable, actionability);
 };

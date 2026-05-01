@@ -6,8 +6,8 @@ export const createOutcomes = (partial?: Partial<Outcomes>): Outcomes => ({
   win: partial?.win ?? 0,
 });
 
-export const increaseOutcomes = (outcomes: Outcomes, toAdd: Outcomes): void => {
-  outcomes.lose += toAdd.lose;
-  outcomes.push += toAdd.push;
-  outcomes.win += toAdd.win;
+export const increaseOutcomes = (outcomes: Outcomes, toAdd: Outcomes, weight = 1): void => {
+  outcomes.lose += toAdd.lose * weight;
+  outcomes.push += toAdd.push * weight;
+  outcomes.win += toAdd.win * weight;
 };

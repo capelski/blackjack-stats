@@ -3,6 +3,7 @@ import { ExpectedResult, ExpectedResults } from '../types/expected-result.type';
 import { FinalScore } from '../types/final-score.type';
 import { Outcomes } from '../types/outcomes.type';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
+import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { parseScore } from './result.steps';
 
 interface ExpectedResultsWorld {
@@ -47,7 +48,8 @@ When('getting the expected result of a player score of {string}', function(
   playerScoreLabel: string,
 ) {
   const playerFinalScore = findFinalScore(this.playerFinalScores, playerScoreLabel);
-  this.selectedExpectedResult = getExpectedResult(playerFinalScore);
+  const probabilityByBetMultiplier = getProbabilityByBetMultiplier(playerFinalScore);
+  this.selectedExpectedResult = getExpectedResult(playerFinalScore, probabilityByBetMultiplier);
 
   setCurrentExpectedResult(
     this,

@@ -7,9 +7,9 @@ import { HandResolver } from '../types/hand-resolver.type';
 import { Hand, HandWithAction } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
-import { getLabel } from './labels.logic';
+import { getLabelFromCards } from './labels.logic';
 import { canDouble, canSplit } from './rules.logic';
-import { getEffectiveScore, getScores } from './scores.logic';
+import { getEffectiveScore, getScoresFromCards } from './scores.logic';
 
 export const cardToHandWithAction = (card: Card): HandWithAction => {
   const { scores } = card;
@@ -24,7 +24,7 @@ export const cardToHandWithAction = (card: Card): HandWithAction => {
     isFinal: false,
     isPostDouble: false,
     isPostSplit: false,
-    label: getLabel([card], false),
+    label: getLabelFromCards([card], false),
     probability: 1 / cardsNumber,
     scores,
   };
@@ -44,7 +44,7 @@ export const getNextHandWithAction = (
 
   const nextCards = [...previousCards, card];
   const nextCanSplit = !isPostSplit && canSplit(nextCards, rules.splitting);
-  const nextScores = getScores(nextCards, isPostSplit);
+  const nextScores = getScoresFromCards(nextCards, isPostSplit);
 
   const nextHand: Hand = {
     canDouble: canDouble(nextScores, nextCards.length, rules.doubling),
@@ -53,7 +53,7 @@ export const getNextHandWithAction = (
     effectiveScore: getEffectiveScore(nextScores),
     isPostDouble,
     isPostSplit,
-    label: getLabel(nextCards, nextCanSplit, isPostSplit),
+    label: getLabelFromCards(nextCards, nextCanSplit, isPostSplit),
     // Computing based on previous probability to account for post split hands
     probability: previous.probability / cardsNumber,
     scores: nextScores,

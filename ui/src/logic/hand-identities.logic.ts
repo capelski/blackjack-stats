@@ -1,3 +1,4 @@
+import { hit, stand } from '../models/action.model';
 import {
   blackjackLabel,
   bustLabel,
@@ -5,10 +6,38 @@ import {
   splitScoresSeparator,
 } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
-import { HandIdentity, HandIdentitySeed } from '../types/hand-identity.type';
+import {
+  HandIdentitiesMap,
+  HandIdentity,
+  HandIdentitySeed,
+  HandIdentityWithConsequences,
+} from '../types/hand-identity.type';
 import { Rules } from '../types/rules.type';
+import { getHitConsequence, getStandConsequence } from './consequence.logic';
 import { canDouble } from './rules.logic';
 import { getEffectiveScore } from './scores.logic';
+
+export const getDisplayHandIdentities = <T extends HandIdentity>(handIdentities: T[]): T[] => {
+  return [...handIdentities]
+    .filter(h => h.isActionable)
+    .sort((a, b) => {
+      const isASoft = a.label.includes(softScoresSeparator);
+      const isBSoft = b.label.includes(softScoresSeparator);
+
+      const isASplit = a.label.includes(splitScoresSeparator);
+      const isBSplit = b.label.includes(splitScoresSeparator);
+
+      if (isASplit !== isBSplit) {
+        return isASplit ? -1 : 1;
+      }
+
+      if (isASoft !== isBSoft) {
+        return isASoft ? -1 : 1;
+      }
+
+      return a.effectiveScore - b.effectiveScore;
+    });
+};
 
 /** The returned hand identities are sorted so dependencies to other identities are always resolved.
  * Example: Computing the expected results for '12' requires the expected results for '16' */
@@ -72,10 +101,42 @@ export const getHandIdentities = (rules: Rules): HandIdentity[] => {
 
   return handIdentitySeeds.map<HandIdentity>(seed => {
     return {
-      ...seed,
       canDouble: !seed.isNonActionable && canDouble(seed.scores, 2, rules.doubling),
       canSplit: !!rules.splitting && !!seed.splitLabel,
       effectiveScore: getEffectiveScore(seed.scores),
+      isActionable: !seed.isNonActionable,
+      label: seed.label,
+      scores: seed.scores,
     };
+  });
+};
+
+export const getHandIdentitiesWithConsequences = (rules: Rules): HandIdentityWithConsequences[] => {
+  const handIdentities = getHandIdentities(rules);
+  const handIdentitiesMap: HandIdentitiesMap = {};
+
+  return handIdentities.map(handIdentity => {
+    const standConsequence = getStandConsequence(handIdentity.effectiveScore);
+
+    const handIdentityWithConsequences: HandIdentityWithConsequences = {
+      ...handIdentity,
+      consequences: {
+        [stand]: standConsequence,
+      },
+      selectedConsequence: standConsequence,
+    };
+
+    if (handIdentity.isActionable) {
+      const hitConsequence = getHitConsequence(handIdentity.scores, handIdentitiesMap);
+      handIdentityWithConsequences.consequences[hit] = hitConsequence;
+
+      if (hitConsequence.edge > standConsequence.edge) {
+        handIdentityWithConsequences.selectedConsequence = hitConsequence;
+      }
+    }
+
+    handIdentitiesMap[handIdentityWithConsequences.label] = handIdentityWithConsequences;
+
+    return handIdentityWithConsequences;
   });
 };

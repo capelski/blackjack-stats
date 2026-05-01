@@ -4,8 +4,8 @@ import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
 import { dealerFinalScores } from './dealer-data.logic';
-import { getFinalComparison, getProbabilityByBetMultiplier } from './final-comparison.logic';
-import { getFinalScoresList } from './final-scores-list.logic';
+import { getFinalComparison } from './final-comparison.logic';
+import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { getHandsList } from './hands-list.logic';
 import { parseScore } from './result.steps';
 
