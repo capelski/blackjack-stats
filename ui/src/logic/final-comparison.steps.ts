@@ -1,11 +1,10 @@
-import { Given, Then, When } from '@cucumber/cucumber';
+import { Then, When } from '@cucumber/cucumber';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
-import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
-import { getMaterialHandsForStandThreshold } from './material-hands.steps';
+import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { parseScore } from './result.steps';
 
 interface FinalComparisonWorld {
@@ -37,14 +36,6 @@ const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): string => {
     .map(multiplier => `${multiplier}=${values[multiplier]}`)
     .join(',');
 };
-
-Given('a player hand resolver with a stand threshold of {int}', function(
-  this: FinalComparisonWorld,
-  threshold: number,
-) {
-  const materialHands = getMaterialHandsForStandThreshold(threshold);
-  this.playerFinalScores = getFinalScoresList(materialHands);
-});
 
 When(
   'getting the final comparison of a player score of {string} and a dealer score of {string}',

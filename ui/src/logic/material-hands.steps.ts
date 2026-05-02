@@ -4,7 +4,6 @@ import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/hand.type';
 import { getMaterialHands } from './material-hands.logic';
-import { toPercentage } from './numbers.logic';
 import { getResolvedHands } from './resolved-hands.logic';
 
 interface MaterialHandsWorld {
@@ -17,11 +16,23 @@ export const getMaterialHandsForStandThreshold = (threshold: number) => {
   return getMaterialHands(handResolutionMap);
 };
 
+export const getMaterialHandsForOptimalRoi = () => {
+  const handResolver: HandResolver = hand => hand.optimalConsequence.action;
+  const { handResolutionMap } = getResolvedHands(handResolver, {});
+  return getMaterialHands(handResolutionMap);
+};
+
 When('getting the material hands of a hand resolver with a stand threshold of {int}', function(
   this: MaterialHandsWorld,
   threshold: number,
 ) {
   this.list = getMaterialHandsForStandThreshold(threshold);
+});
+
+When('getting the material hands of a hand resolver for optimal roi', function(
+  this: MaterialHandsWorld,
+) {
+  this.list = getMaterialHandsForOptimalRoi();
 });
 
 Then('{int} material hands are returned', function(this: MaterialHandsWorld, count: number) {
@@ -42,7 +53,7 @@ Then(
 
     assert.strictEqual(hand.cards.map(c => c.symbol).join(','), expectedCards);
     assert.strictEqual(hand.label, expectedScore);
-    assert.strictEqual(toPercentage(hand.probability), expectedProbability);
+    assert.strictEqual(String(hand.probability), expectedProbability);
     assert.strictEqual(hand.action, expectedAction);
   },
 );

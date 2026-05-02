@@ -4,8 +4,10 @@ import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore } from '../types/final-score.type';
 import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { effectiveScoreToLabel } from './labels.logic';
-import { getMaterialHandsForStandThreshold } from './material-hands.steps';
-import { toPercentage } from './numbers.logic';
+import {
+  getMaterialHandsForOptimalRoi,
+  getMaterialHandsForStandThreshold,
+} from './material-hands.steps';
 import { parseScore } from './result.steps';
 
 interface FinalScoresListWorld {
@@ -13,6 +15,16 @@ interface FinalScoresListWorld {
   currentFinalScore: FinalScore;
   probabilityByBetMultiplier: BetMultiplierMap;
 }
+
+export const getFinalScoresListForStandThreshold = (threshold: number) => {
+  const hands = getMaterialHandsForStandThreshold(threshold);
+  return getFinalScoresList(hands);
+};
+
+export const getFinalScoresListForOptimalRoi = () => {
+  const hands = getMaterialHandsForOptimalRoi();
+  return getFinalScoresList(hands);
+};
 
 const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): string => {
   return Object.keys(values)
@@ -26,8 +38,13 @@ When('getting the final scores list of a hand resolver with a stand threshold of
   this: FinalScoresListWorld,
   threshold: number,
 ) {
-  const hands = getMaterialHandsForStandThreshold(threshold);
-  this.list = getFinalScoresList(hands);
+  this.list = getFinalScoresListForStandThreshold(threshold);
+});
+
+When('getting the final scores list of a hand resolver for optimal roi', function(
+  this: FinalScoresListWorld,
+) {
+  this.list = getFinalScoresListForOptimalRoi();
 });
 
 Then('the returned final scores list contains {int} elements', function(
@@ -47,7 +64,7 @@ Then('the final score {int} has score {string}, probability {string} and {string
   const item = this.list[index - 1];
 
   assert.strictEqual(effectiveScoreToLabel(item.score), expectedScore);
-  assert.strictEqual(toPercentage(item.probability), expectedProbability);
+  assert.strictEqual(String(item.probability), expectedProbability);
   assert.strictEqual(String(item.hands.length), expectedHands);
 });
 
@@ -61,7 +78,7 @@ Then('the final score {int} has cards {string}, probability {string} and {string
   const item = this.list[index - 1];
 
   assert.strictEqual(effectiveScoreToLabel(item.score), expectedScore);
-  assert.strictEqual(toPercentage(item.probability), expectedProbability);
+  assert.strictEqual(String(item.probability), expectedProbability);
   assert.strictEqual(String(item.hands.length), expectedHands);
 });
 

@@ -1,9 +1,13 @@
-import { Then, When } from '@cucumber/cucumber';
+import { Given, Then, When } from '@cucumber/cucumber';
 import { ExpectedResult, ExpectedResults } from '../types/expected-result.type';
 import { FinalScore } from '../types/final-score.type';
 import { Outcomes } from '../types/outcomes.type';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
+import {
+  getFinalScoresListForOptimalRoi,
+  getFinalScoresListForStandThreshold,
+} from './final-scores-list.steps';
 import { parseScore } from './result.steps';
 
 interface ExpectedResultsWorld {
@@ -42,6 +46,17 @@ const setCurrentExpectedResult = (
   world.currentOutcomes = outcomes;
   world.currentEdge = edge;
 };
+
+Given('a player hand resolver with a stand threshold of {int}', function(
+  this: ExpectedResultsWorld,
+  threshold: number,
+) {
+  this.playerFinalScores = getFinalScoresListForStandThreshold(threshold);
+});
+
+Given('a player hand resolver for optimal roi', function(this: ExpectedResultsWorld) {
+  this.playerFinalScores = getFinalScoresListForOptimalRoi();
+});
 
 When('getting the expected result of a player score of {string}', function(
   this: ExpectedResultsWorld,
