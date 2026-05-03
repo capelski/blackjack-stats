@@ -1,12 +1,12 @@
 import { getRoi } from '../logic/edge.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
-import { getResolvedHandsForDisplay } from '../logic/resolved-hands.logic';
+import { getActionableResolvedHands } from '../logic/resolved-hands.logic';
 import { useStrategyContext } from '../strategy.context';
 import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
 
 export const ResolvedHandsList: React.FC = () => {
   const { resolvedHands } = useStrategyContext();
-  const resolvedHandsForDisplay = getResolvedHandsForDisplay(resolvedHands);
+  const actionableResolvedHands = getActionableResolvedHands(resolvedHands);
 
   return (
     <div className="hand-actions-list">
@@ -17,7 +17,7 @@ export const ResolvedHandsList: React.FC = () => {
         score="Score"
       />
 
-      {resolvedHandsForDisplay.map(resolvedHand => {
+      {actionableResolvedHands.map(resolvedHand => {
         const consequences = Object.values(resolvedHand.consequences);
 
         return (

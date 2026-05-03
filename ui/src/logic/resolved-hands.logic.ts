@@ -26,12 +26,13 @@ export const getResolvedHands = (
       consequences[hit] = getHitConsequence(abstractHand.scores, resolvedHandsMap);
     }
 
+    const optimalConsequence = Object.values(consequences).reduce((optimal, consequence) => {
+      return !consequence || consequence.edge > optimal.edge ? consequence : optimal;
+    });
     const analyzedHand: AnalyzedHand = {
       ...abstractHand,
       consequences,
-      optimalConsequence: Object.values(consequences).reduce((optimal, consequence) => {
-        return !consequence || consequence.edge > optimal.edge ? consequence : optimal;
-      }),
+      optimalConsequence,
     };
 
     const action = handResolver(analyzedHand);
@@ -46,27 +47,29 @@ export const getResolvedHands = (
     handResolutionMap[resolvedHand.label] = action;
   }
 
-  return { resolvedHands, handResolutionMap };
+  return { resolvedHands: sortResolvedHands(resolvedHands), handResolutionMap };
 };
 
-export const getResolvedHandsForDisplay = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
-  return [...resolvedHands]
-    .filter(hand => hand.isActionable)
-    .sort((a, b) => {
-      const isASoft = a.label.includes(softScoresSeparator);
-      const isBSoft = b.label.includes(softScoresSeparator);
+export const getActionableResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
+  return resolvedHands.filter(hand => hand.isActionable);
+};
 
-      const isASplit = a.label.includes(splitScoresSeparator);
-      const isBSplit = b.label.includes(splitScoresSeparator);
+const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
+  return [...resolvedHands].sort((a, b) => {
+    const isASoft = a.label.includes(softScoresSeparator);
+    const isBSoft = b.label.includes(softScoresSeparator);
 
-      if (isASplit !== isBSplit) {
-        return isASplit ? -1 : 1;
-      }
+    const isASplit = a.label.includes(splitScoresSeparator);
+    const isBSplit = b.label.includes(splitScoresSeparator);
 
-      if (isASoft !== isBSoft) {
-        return isASoft ? -1 : 1;
-      }
+    if (isASplit !== isBSplit) {
+      return isASplit ? -1 : 1;
+    }
 
-      return a.effectiveScore - b.effectiveScore;
-    });
+    if (isASoft !== isBSoft) {
+      return isASoft ? -1 : 1;
+    }
+
+    return a.effectiveScore - b.effectiveScore;
+  });
 };
