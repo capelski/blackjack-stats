@@ -14,6 +14,15 @@ export const getHitConsequence = (
   scores: number[],
   futureResolvedHandsMap: ResolvedHandsMap,
 ): Consequence => {
+  const nextConsequences = cards.map(card => {
+    const nextResolvedHand = getNextResolvedHand([scores, card.scores], futureResolvedHandsMap);
+    return nextResolvedHand.consequences[nextResolvedHand.action as typeof stand]!;
+  });
+
+  return getHitConsequenceCore(nextConsequences);
+};
+
+export const getHitConsequenceCore = (nextConsequences: Consequence[]): Consequence => {
   const hitConsequence: Consequence = {
     action: hit,
     finalProbabilities: {},
@@ -21,11 +30,9 @@ export const getHitConsequence = (
     edge: 0,
   };
 
-  for (const card of cards) {
-    const nextResolvedHand = getNextResolvedHand([scores, card.scores], futureResolvedHandsMap);
-    const nextConsequence = nextResolvedHand.consequences[nextResolvedHand.action as typeof stand]!;
-    const weight = 1 / cards.length;
+  const weight = 1 / nextConsequences.length;
 
+  for (const nextConsequence of nextConsequences) {
     increaseFinalProbabilities(
       hitConsequence.finalProbabilities,
       nextConsequence.finalProbabilities,

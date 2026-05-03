@@ -26,7 +26,7 @@ export const getFinalScoresListForOptimalRoi = () => {
   return getFinalScoresList(hands);
 };
 
-const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): string => {
+export const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): string => {
   return Object.keys(values)
     .map(parseFloat)
     .sort((a, b) => a - b)

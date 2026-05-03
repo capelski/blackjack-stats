@@ -1,10 +1,10 @@
 import { Then, When } from '@cucumber/cucumber';
-import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
+import { formatProbabilityByBetMultiplier } from './final-scores-list.steps';
 import { parseScore } from './result.steps';
 
 interface FinalComparisonWorld {
@@ -27,14 +27,6 @@ const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalSco
   }
 
   return finalScore!;
-};
-
-const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): string => {
-  return Object.keys(values)
-    .map(parseFloat)
-    .sort((a, b) => a - b)
-    .map(multiplier => `${multiplier}=${values[multiplier]}`)
-    .join(',');
 };
 
 When(
