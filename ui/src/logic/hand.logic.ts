@@ -44,7 +44,7 @@ export const getNextMaterialHand = (
   const previousCards = previousSplit ? [previous.cards[0]] : previous.cards;
 
   const nextCards = [...previousCards, card];
-  const nextCanSplit = !isPostSplit && canSplit(nextCards, rules.splitting);
+  const nextCanSplit = canSplit(nextCards, rules.splitting, isPostSplit);
   const nextScores = getScoresFromCards(nextCards, isPostSplit);
   const nextEffectiveScore = getEffectiveScore(nextScores);
   const nextLabel = getLabelFromCards(nextCards, nextCanSplit, isPostSplit);
@@ -61,7 +61,7 @@ export const getNextMaterialHand = (
         isBlackjack: nextEffectiveScore === blackjackScore,
         isDoubleBet: nextAction === double || nextAction === split,
       }),
-    canDouble: canDouble(nextScores, nextCards.length, rules.doubling),
+    canDouble: canDouble(nextCards.length, rules.doubling),
     canSplit: nextCanSplit,
     cards: nextCards,
     effectiveScore: nextEffectiveScore,

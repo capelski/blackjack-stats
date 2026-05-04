@@ -2,6 +2,7 @@ import { Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore } from '../types/final-score.type';
+import { Rules } from '../types/rules.type';
 import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { effectiveScoreToLabel } from './labels.logic';
 import {
@@ -21,8 +22,8 @@ export const getFinalScoresListForStandThreshold = (threshold: number) => {
   return getFinalScoresList(hands);
 };
 
-export const getFinalScoresListForOptimalRoi = () => {
-  const hands = getMaterialHandsForOptimalRoi();
+export const getFinalScoresListForOptimalRoi = (rules: Rules = {}) => {
+  const hands = getMaterialHandsForOptimalRoi(rules);
   return getFinalScoresList(hands);
 };
 
@@ -45,6 +46,12 @@ When('getting the final scores list of a hand resolver for optimal roi', functio
   this: FinalScoresListWorld,
 ) {
   this.list = getFinalScoresListForOptimalRoi();
+});
+
+When('getting the final scores list of a hand resolver for optimal roi with doubling', function(
+  this: FinalScoresListWorld,
+) {
+  this.list = getFinalScoresListForOptimalRoi({ doubling: true });
 });
 
 Then('the returned final scores list contains {int} elements', function(
@@ -89,6 +96,21 @@ Given('the final score {string} of a hand resolver with a stand threshold of {in
 ) {
   const hands = getMaterialHandsForStandThreshold(threshold);
   this.list = getFinalScoresList(hands);
+  const score = parseScore(scoreLabel);
+  const finalScore = this.list.find(item => item.score === score);
+
+  if (!finalScore) {
+    throw new Error(`Could not find final score for label "${scoreLabel}"`);
+  }
+
+  this.currentFinalScore = finalScore;
+});
+
+Given('the final score {string} of a hand resolver for optimal roi with doubling', function(
+  this: FinalScoresListWorld,
+  scoreLabel: string,
+) {
+  this.list = getFinalScoresListForOptimalRoi({ doubling: true });
   const score = parseScore(scoreLabel);
   const finalScore = this.list.find(item => item.score === score);
 

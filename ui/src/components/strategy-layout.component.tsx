@@ -13,16 +13,18 @@ import {
 import { getNavLinkStyle } from '../nav-utils';
 import { StrategyContext } from '../strategy.context';
 import { HandResolver } from '../types/hand-resolution.type';
+import { Rules } from '../types/rules.type';
 
 export type StrategyLayoutComponentProps = PropsWithChildren<{
   handResolver: HandResolver;
+  rules: Rules;
   title: string;
 }>;
 
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
   const { resolvedHands, handResolutionMap } = useMemo(() => {
-    return getResolvedHands(props.handResolver, {});
-  }, [props.handResolver]);
+    return getResolvedHands(props.handResolver, props.rules);
+  }, [props.handResolver, props.rules]);
 
   const { expectedResults, finalScores, materialHands } = useMemo(() => {
     const materialHands = getMaterialHands(handResolutionMap);

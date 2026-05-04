@@ -1,4 +1,4 @@
-import { Action, hit, stand } from '../models/action.model';
+import { Action, double, hit, stand } from '../models/action.model';
 import { Outcomes } from './outcomes.type';
 
 export type FinalProbabilities = {
@@ -13,6 +13,7 @@ export type Consequence = {
 };
 
 export type ConsequencesMap = {
+  [double]?: Consequence;
   [hit]?: Consequence;
   [stand]: Consequence;
 };

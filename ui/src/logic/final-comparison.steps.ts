@@ -70,15 +70,12 @@ Then('the final comparison probability by bet multiplier equals {string}', funct
   );
 });
 
-Then('the final comparison outcomes equal win={string}, push={string} and lose ={string}', function(
+Then('the final comparison outcomes equals {string}', function(
   this: FinalComparisonWorld,
-  expectedWin: string,
-  expectedPush: string,
-  expectedLose: string,
+  expected: string,
 ) {
-  assertEqual(String(this.comparison.outcomes.win), expectedWin, 'Win outcome mismatch');
-  assertEqual(String(this.comparison.outcomes.push), expectedPush, 'Push outcome mismatch');
-  assertEqual(String(this.comparison.outcomes.lose), expectedLose, 'Lose outcome mismatch');
+  const actual = `win=${this.comparison.outcomes.win},push=${this.comparison.outcomes.push},lose=${this.comparison.outcomes.lose}`;
+  assertEqual(actual, expected, 'Final comparison outcomes mismatch');
 });
 
 Then('the final comparison edge equals {string}', function(

@@ -71,11 +71,12 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
   ];
 
   return handSeeds.map<AbstractHand>(seed => {
+    const isActionable = !seed.isNonActionable;
     return {
-      canDouble: !seed.isNonActionable && canDouble(seed.scores, 2, rules.doubling),
+      canDouble: isActionable && canDouble(2, rules.doubling),
       canSplit: !!rules.splitting && !!seed.splitLabel,
       effectiveScore: getEffectiveScore(seed.scores),
-      isActionable: !seed.isNonActionable,
+      isActionable,
       label: seed.label,
       scores: seed.scores,
     };

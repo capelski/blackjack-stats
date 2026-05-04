@@ -2,7 +2,7 @@ Feature: Resolved hands
 
   The resolved hands list resulting of a given hand resolver is generated in the expected order
 
-  Scenario: Stand threshold resolved hands
+  Scenario: Resolved hands for stand threshold
     When getting the resolved hands of a hand resolver with a stand threshold of 17
     Then 30 resolved hands are returned
     And the resolved hand 1 has label "2/12", action "Hit" and the following actions breakdown
@@ -17,7 +17,7 @@ Feature: Resolved hands
       | Stand  | 0.2815928473666239  | 0                    | 0.7184071526333512  | -0.4368143052667273   |
       | Hit    | 0.23643754785128446 | 0.055591587238910015 | 0.7079708649097806  | -0.4715333170584962   |
 
-  Scenario: Optimal ROI resolved hands
+  Scenario: Resolved hands for optimal roi
     When getting the resolved hands of a hand resolver for optimal roi
     Then 30 resolved hands are returned
     And the resolved hand 1 has label "2/12", action "Hit" and the following actions breakdown
@@ -31,3 +31,11 @@ Feature: Resolved hands
       | Action | Win                 | Push                 | Lose                | Edge                  |
       | Stand  | 0.2815928473666239  | 0                    | 0.7184071526333512  | -0.4368143052667273   |
       | Hit    | 0.24121013983516376 | 0.05162075957898787  | 0.7071691005858234  | -0.4659589607506597   |
+
+  Scenario: Resolved hands for optimal roi with doubling
+    When getting the resolved hands of a hand resolver for optimal roi with doubling
+    Then the resolved hand with label "10" has action "Double" and the following actions breakdown
+      | Action | Win                 | Push                 | Lose                | Edge                  |
+      | Stand  | 0.2815928473666239  | 0                    | 0.7184071526333512  | -0.4368143052667273   |
+      | Hit    | 0.48978422853219344 | 0.10606979663493174  | 0.4041459748328498  | 0.08563825369934373   |
+      | Double | 0.48931862386555103 | 0.09321747278891154  | 0.4174639033455124  | 0.14370944104007735   |

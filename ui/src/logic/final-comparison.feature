@@ -9,7 +9,7 @@ Feature: Final comparison
     Then the final comparison result equals "Win"
     And the final comparison probability equals "0.01861781164971388"
     And the final comparison probability by bet multiplier equals "1=0.01861781164971388"
-    And the final comparison outcomes equal win="0.01861781164971388", push="0" and lose ="0"
+    And the final comparison outcomes equals "win=0.01861781164971388,push=0,lose=0"
     And the final comparison edge equals "0.01861781164971388"
 
   Scenario: Final comparison for pushes
@@ -18,7 +18,7 @@ Feature: Final comparison
     Then the final comparison result equals "Push"
     And the final comparison probability equals "0.017812627440711677"
     And the final comparison probability by bet multiplier equals "1=0.017812627440711677"
-    And the final comparison outcomes equal win="0", push="0.017812627440711677" and lose ="0"
+    And the final comparison outcomes equals "win=0,push=0.017812627440711677,lose=0"
     And the final comparison edge equals "0"
 
   Scenario: Final comparison for losses
@@ -27,5 +27,5 @@ Feature: Final comparison
     Then the final comparison result equals "Lose"
     And the final comparison probability equals "0.024057201498982644"
     And the final comparison probability by bet multiplier equals "1=0.024057201498982644"
-    And the final comparison outcomes equal win="0", push="0" and lose ="0.024057201498982644"
+    And the final comparison outcomes equals "win=0,push=0,lose=0.024057201498982644"
     And the final comparison edge equals "-0.024057201498982644"

@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/hand.type';
+import { Rules } from '../types/rules.type';
 import { getResolvedHands } from './resolved-hands.logic';
 
 interface ResolvedHandsWorld {
@@ -14,9 +15,9 @@ const getResolvedHandsForStandThreshold = (threshold: number): ResolvedHand[] =>
   return getResolvedHands(handResolver, {}).resolvedHands;
 };
 
-const getResolvedHandsForOptimalRoi = (): ResolvedHand[] => {
+const getResolvedHandsForOptimalRoi = (rules: Rules = {}): ResolvedHand[] => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
-  return getResolvedHands(handResolver, {}).resolvedHands;
+  return getResolvedHands(handResolver, rules).resolvedHands;
 };
 
 When('getting the resolved hands of a hand resolver with a stand threshold of {int}', function(
@@ -30,6 +31,12 @@ When('getting the resolved hands of a hand resolver for optimal roi', function(
   this: ResolvedHandsWorld,
 ) {
   this.list = getResolvedHandsForOptimalRoi();
+});
+
+When('getting the resolved hands of a hand resolver for optimal roi with doubling', function(
+  this: ResolvedHandsWorld,
+) {
+  this.list = getResolvedHandsForOptimalRoi({ doubling: true });
 });
 
 Then('{int} resolved hands are returned', function(this: ResolvedHandsWorld, count: number) {

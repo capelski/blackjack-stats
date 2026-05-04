@@ -1,11 +1,13 @@
-import { hit, stand } from '../models/action.model';
+import { double, hit, stand } from '../models/action.model';
 import { softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
+import { blackjackScore } from '../models/scores.model';
 import { ConsequencesMap } from '../types/consequence.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
 import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getAbstractHands } from './abstract-hands.logic';
-import { getHitConsequence, getStandConsequence } from './consequence.logic';
+import { getBetMultiplier } from './bet-multiplier.logic';
+import { getDoubleConsequence, getHitConsequence, getStandConsequence } from './consequence.logic';
 
 export const getResolvedHands = (
   handResolver: HandResolver,
@@ -18,12 +20,19 @@ export const getResolvedHands = (
   const handResolutionMap: HandResolutionMap = {};
 
   for (const abstractHand of abstractHands) {
+    const standBetMultiplier = getBetMultiplier({
+      isBlackjack: abstractHand.effectiveScore === blackjackScore,
+    });
     const consequences: ConsequencesMap = {
-      [stand]: getStandConsequence(abstractHand.effectiveScore),
+      [stand]: getStandConsequence(abstractHand.effectiveScore, standBetMultiplier),
     };
 
     if (abstractHand.isActionable) {
       consequences[hit] = getHitConsequence(abstractHand.scores, resolvedHandsMap);
+
+      if (abstractHand.canDouble) {
+        consequences[double] = getDoubleConsequence(abstractHand.scores);
+      }
     }
 
     const optimalConsequence = Object.values(consequences).reduce((optimal, consequence) => {

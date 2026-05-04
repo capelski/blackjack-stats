@@ -1,6 +1,5 @@
-import { hit, stand } from '../models/action.model';
+import { double, hit, stand } from '../models/action.model';
 import { cards } from '../models/cards.model';
-import { blackjackScore } from '../models/scores.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
 import { ResolvedHandsMap } from '../types/hand.type';
@@ -8,7 +7,39 @@ import { getBetMultiplier } from './bet-multiplier.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { getLabelFromScores } from './labels.logic';
 import { createOutcomes, increaseOutcomes } from './outcomes.logic';
-import { getScoresFromScores } from './scores.logic';
+import { getEffectiveScore, getScoresFromScores } from './scores.logic';
+
+export const getDoubleConsequence = (scores: number[]): Consequence => {
+  const doubleConsequence: Consequence = {
+    action: double,
+    finalProbabilities: {},
+    outcomes: createOutcomes(),
+    edge: 0,
+  };
+
+  const weight = 1 / cards.length;
+
+  for (const card of cards) {
+    const nextScores = getScoresFromScores([scores, card.scores], {
+      cardsNumber: undefined,
+      isPostSplit: false,
+    });
+    const nextEffectiveScore = getEffectiveScore(nextScores);
+
+    const betMultiplier = getBetMultiplier({ isDoubleBet: true });
+    const standConsequence = getStandConsequence(nextEffectiveScore, betMultiplier);
+
+    increaseFinalProbabilities(
+      doubleConsequence.finalProbabilities,
+      standConsequence.finalProbabilities,
+      weight,
+    );
+    increaseOutcomes(doubleConsequence.outcomes, standConsequence.outcomes, weight);
+    doubleConsequence.edge += standConsequence.edge * weight;
+  }
+
+  return doubleConsequence;
+};
 
 export const getHitConsequence = (
   scores: number[],
@@ -62,12 +93,11 @@ const getNextResolvedHand = (allScores: number[][], futureResolvedHandsMap: Reso
   return nextResolvedHand;
 };
 
-export const getStandConsequence = (score: number): Consequence => {
+export const getStandConsequence = (score: number, betMultiplier: number): Consequence => {
   const finalScore: FinalScoreBase = {
     score,
     probability: 1,
   };
-  const betMultiplier = getBetMultiplier({ isBlackjack: score === blackjackScore });
   const expectedResults = getExpectedResult(finalScore, { [betMultiplier]: 1 });
 
   return {

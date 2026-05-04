@@ -14,7 +14,7 @@ export const StandThresholdPage: React.FC = () => {
   }, [standThreshold]);
 
   return (
-    <StrategyLayoutComponent handResolver={handResolver} title="Stand threshold">
+    <StrategyLayoutComponent handResolver={handResolver} rules={{}} title="Stand threshold">
       <StandThresholdSlider value={standThreshold} onChange={setStandThreshold} />
     </StrategyLayoutComponent>
   );

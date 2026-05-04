@@ -44,26 +44,26 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
       </span>
 
       <span style={columnStyle} className="win">
-        {props.actionRows.map(({ win }) => (
-          <div key={win}>{win}</div>
+        {props.actionRows.map(({ action, win }) => (
+          <div key={action}>{win}</div>
         ))}
       </span>
 
       <span style={columnStyle} className="push">
-        {props.actionRows.map(({ push }) => (
-          <div key={push}>{push}</div>
+        {props.actionRows.map(({ action, push }) => (
+          <div key={action}>{push}</div>
         ))}
       </span>
 
       <span style={columnStyle} className="lose">
-        {props.actionRows.map(({ lose }) => (
-          <div key={lose}>{lose}</div>
+        {props.actionRows.map(({ action, lose }) => (
+          <div key={action}>{lose}</div>
         ))}
       </span>
 
       <span style={columnStyle} className="roi">
-        {props.actionRows.map(({ roi }) => (
-          <div key={roi}>{roi}</div>
+        {props.actionRows.map(({ action, roi }) => (
+          <div key={action}>{roi}</div>
         ))}
       </span>
     </div>

@@ -58,6 +58,10 @@ Given('a player hand resolver for optimal roi', function(this: ExpectedResultsWo
   this.playerFinalScores = getFinalScoresListForOptimalRoi();
 });
 
+Given('a player hand resolver for optimal roi with doubling', function(this: ExpectedResultsWorld) {
+  this.playerFinalScores = getFinalScoresListForOptimalRoi({ doubling: true });
+});
+
 When('getting the expected result of a player score of {string}', function(
   this: ExpectedResultsWorld,
   playerScoreLabel: string,
@@ -115,19 +119,16 @@ Then('the expected result probability equals {string}', function(
   );
 });
 
-Then('the expected result outcomes equal win={string}, push={string} and lose ={string}', function(
+Then('the expected result outcomes equals {string}', function(
   this: ExpectedResultsWorld,
-  expectedWin: string,
-  expectedPush: string,
-  expectedLose: string,
+  expected: string,
 ) {
   if (!this.currentOutcomes) {
     throw new Error('No expected result outcomes are available');
   }
 
-  assertEqual(String(this.currentOutcomes.win), expectedWin, 'Expected result win mismatch');
-  assertEqual(String(this.currentOutcomes.push), expectedPush, 'Expected result push mismatch');
-  assertEqual(String(this.currentOutcomes.lose), expectedLose, 'Expected result lose mismatch');
+  const actual = `win=${this.currentOutcomes.win},push=${this.currentOutcomes.push},lose=${this.currentOutcomes.lose}`;
+  assertEqual(actual, expected, 'Expected result outcomes mismatch');
 });
 
 Then('the expected result edge equals {string}', function(
