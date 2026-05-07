@@ -34,7 +34,7 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
       </span>
 
       <span style={columnStyle} className="hands">
-        {Array.isArray(props.hands) ? props.hands.length : 'Hands'}
+        {Array.isArray(props.hands) ? props.hands.length : props.hands}
       </span>
 
       <span style={columnStyle} className="view">

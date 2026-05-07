@@ -3,8 +3,22 @@ import { toPercentage } from '../logic/numbers.logic';
 import { useStrategyContext } from '../strategy.context';
 import { FinalScoresListItem } from './final-scores-list-item.component';
 
+type FinalScoresAggregation = {
+  totalHands: number;
+  totalProbability: number;
+};
+
 export const FinalScoresList: React.FC = () => {
   const { finalScores, showBetMultiplier } = useStrategyContext();
+
+  const { totalHands, totalProbability } = finalScores.reduce<FinalScoresAggregation>(
+    (reduced, finalScore) => {
+      reduced.totalHands += Array.isArray(finalScore.hands) ? finalScore.hands.length : 0;
+      reduced.totalProbability += finalScore.probability;
+      return reduced;
+    },
+    { totalHands: 0, totalProbability: 0 },
+  );
 
   return (
     <div className="final-scores-list">
@@ -26,6 +40,13 @@ export const FinalScoresList: React.FC = () => {
           showBetMultiplier={showBetMultiplier}
         ></FinalScoresListItem>
       ))}
+
+      <FinalScoresListItem
+        hands={String(totalHands)}
+        isHeader={true}
+        probability={toPercentage(totalProbability)}
+        score="Total"
+      ></FinalScoresListItem>
     </div>
   );
 };
