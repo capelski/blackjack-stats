@@ -36,19 +36,18 @@ export const getLabelFromCards = (
   }
 
   const scores = getScoresFromCards(rules, { cards, isPostSplit });
-  return getLabelFromScores(scores);
+  return getLabelFromScores(scores, isPostSplit);
 };
 
-export const getLabelFromScores = (scores: number[]) => {
+export const getLabelFromScores = (scores: number[], isPostSplit: boolean) => {
   const score = getEffectiveScore(scores);
 
-  if (score === bustScore) {
-    return bustLabel;
-  }
+  const label =
+    score === bustScore
+      ? bustLabel
+      : score === blackjackScore
+      ? blackjackLabel
+      : scores.join(softScoresSeparator);
 
-  if (score === blackjackScore) {
-    return blackjackLabel;
-  }
-
-  return scores.join(softScoresSeparator);
+  return isPostSplit ? `${label} (S)` : label;
 };
