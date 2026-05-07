@@ -1,4 +1,3 @@
-// import { Close, Content, Description, Overlay, Portal, Root, Title } from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { MaterialHand } from '../types/hand.type';
