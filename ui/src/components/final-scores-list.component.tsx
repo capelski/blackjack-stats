@@ -4,7 +4,7 @@ import { useStrategyContext } from '../strategy.context';
 import { FinalScoresListItem } from './final-scores-list-item.component';
 
 export const FinalScoresList: React.FC = () => {
-  const { finalScores } = useStrategyContext();
+  const { finalScores, showBetMultiplier } = useStrategyContext();
 
   return (
     <div className="final-scores-list">
@@ -23,6 +23,7 @@ export const FinalScoresList: React.FC = () => {
           key={index}
           probability={toPercentage(finalScore.probability)}
           score={effectiveScoreToLabel(finalScore.score)}
+          showBetMultiplier={showBetMultiplier}
         ></FinalScoresListItem>
       ))}
     </div>
