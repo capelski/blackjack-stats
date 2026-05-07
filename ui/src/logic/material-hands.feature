@@ -19,6 +19,5 @@ Feature: Material hands
   Scenario: Material hands for optimal roi with doubling
     When getting the material hands of a hand resolver for optimal roi with doubling enabled
     Then 19006 material hands are returned
-    And there is a material hand with cards "5,6", probability "0.00591715976331361" and action "Double"
-    And there is a material hand with cards "5,6,A", probability "0.0004551661356395085" and action "End"
-
+    And there is a material hand with cards "5,6", probability "0.00591715976331361", action "Double" and bet multiplier "2"
+    And there is a material hand with cards "5,6,A", probability "0.0004551661356395085", action "End" and bet multiplier "2"

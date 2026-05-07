@@ -87,3 +87,26 @@ Then(
     );
   },
 );
+
+Then(
+  'there is a material hand with cards {string}, probability {string}, action {string} and bet multiplier {string}',
+  function(
+    this: MaterialHandsWorld,
+    expectedCards: string,
+    expectedProbability: string,
+    expectedAction: string,
+    expectedBetMultiplier: string,
+  ) {
+    const hand = this.list.find(
+      h =>
+        h.cards.map(c => c.symbol).join(',') === expectedCards &&
+        String(h.probability) === expectedProbability &&
+        h.action === expectedAction &&
+        String(h.betMultiplier) === expectedBetMultiplier,
+    );
+    assert.ok(
+      hand,
+      `No material hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and bet multiplier "${expectedBetMultiplier}"`,
+    );
+  },
+);
