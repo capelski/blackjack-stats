@@ -18,6 +18,7 @@ import { Rules } from '../types/rules.type';
 export type StrategyLayoutComponentProps = PropsWithChildren<{
   handResolver: HandResolver;
   rules: Rules;
+  showBetMultiplier?: boolean;
   title: string;
 }>;
 
@@ -60,7 +61,13 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
       </nav>
 
       <StrategyContext.Provider
-        value={{ expectedResults, finalScores, materialHands, resolvedHands }}
+        value={{
+          expectedResults,
+          finalScores,
+          materialHands,
+          resolvedHands,
+          showBetMultiplier: props.showBetMultiplier,
+        }}
       >
         <Outlet />
       </StrategyContext.Provider>

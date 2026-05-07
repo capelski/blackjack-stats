@@ -8,6 +8,7 @@ export type StrategyContextValue = {
   finalScores: FinalScore[];
   materialHands: MaterialHand[];
   resolvedHands: ResolvedHand[];
+  showBetMultiplier?: boolean;
 };
 
 export const StrategyContext = createContext<StrategyContextValue | null>(null);

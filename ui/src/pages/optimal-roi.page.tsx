@@ -17,7 +17,12 @@ export const OptimalRoiPage: React.FC = () => {
   }, []);
 
   return (
-    <StrategyLayoutComponent handResolver={handResolver} rules={rules} title="Optimal ROI">
+    <StrategyLayoutComponent
+      handResolver={handResolver}
+      rules={rules}
+      showBetMultiplier={doubling}
+      title="Optimal ROI"
+    >
       <label>
         <input type="checkbox" checked={doubling} onChange={e => setDoubling(e.target.checked)} />
         Doubling
