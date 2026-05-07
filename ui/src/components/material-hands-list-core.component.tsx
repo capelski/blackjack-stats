@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { MaterialHand } from '../types/hand.type';
 import { HandsListItem, HandsListProps } from './material-hands-list-item.component';
@@ -14,6 +14,16 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
   const [cardsFilter, setCardsFilter] = useState('');
   const [showNonFinalHands, setShowNonFinalHands] = useState(false);
   const [page, setPage] = useState(1);
+
+  const updateCardsFilter = (value: string) => {
+    setCardsFilter(value);
+    setPage(1);
+  };
+
+  const updateShowNonFinalHands = (value: boolean) => {
+    setShowNonFinalHands(value);
+    setPage(1);
+  };
 
   const filteredHands = useMemo(() => {
     const normalizedFilter = cardsFilter
@@ -35,11 +45,6 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
     });
   }, [cardsFilter, props.hands, showNonFinalHands]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPage(1);
-  }, [cardsFilter, showNonFinalHands]);
-
   const pages = Math.max(1, Math.ceil(filteredHands.length / pageSize));
   const currentPage = Math.min(page, pages);
   const paginatedHands = useMemo(() => {
@@ -54,7 +59,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
         <input
           type="text"
           value={cardsFilter}
-          onChange={event => setCardsFilter(event.target.value)}
+          onChange={event => updateCardsFilter(event.target.value)}
           placeholder="Example: A,A"
           style={{ marginLeft: 8 }}
         />
@@ -63,7 +68,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
             <input
               type="checkbox"
               checked={showNonFinalHands}
-              onChange={event => setShowNonFinalHands(event.target.checked)}
+              onChange={event => updateShowNonFinalHands(event.target.checked)}
               style={{ marginLeft: 16 }}
             />
             <span>Non-final hands</span>
