@@ -32,10 +32,10 @@ export const cardToMaterialHand = (card: Card): MaterialHand => {
 };
 
 export const getNextMaterialHand = (
+  rules: Rules,
   handResolutionMap: HandResolutionMap,
   previous: MaterialHand,
   card: Card,
-  rules: Rules,
 ): MaterialHand => {
   const previousDouble = previous.action === double;
   const previousSplit = previous.action === split;

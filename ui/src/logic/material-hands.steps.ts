@@ -13,14 +13,15 @@ interface MaterialHandsWorld {
 
 export const getMaterialHandsForStandThreshold = (threshold: number) => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
-  const { handResolutionMap } = getResolvedHands({}, handResolver);
-  return getMaterialHands(handResolutionMap);
+  const rules: Rules = {};
+  const { handResolutionMap } = getResolvedHands(rules, handResolver);
+  return getMaterialHands(rules, handResolutionMap);
 };
 
 export const getMaterialHandsForOptimalRoi = (rules: Rules = {}) => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
   const { handResolutionMap } = getResolvedHands(rules, handResolver);
-  return getMaterialHands(handResolutionMap);
+  return getMaterialHands(rules, handResolutionMap);
 };
 
 When('getting the material hands of a hand resolver with a stand threshold of {int}', function(

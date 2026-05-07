@@ -27,7 +27,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
   }, [props.handResolver, props.rules]);
 
   const { expectedResults, finalScores, materialHands } = useMemo(() => {
-    const materialHands = getMaterialHands(handResolutionMap);
+    const materialHands = getMaterialHands(props.rules, handResolutionMap);
     const finalScores = getFinalScoresList(materialHands);
     const expectedResults = getExpectedResults(finalScores);
 
@@ -36,7 +36,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
       finalScores,
       materialHands,
     };
-  }, [handResolutionMap]);
+  }, [props.rules, handResolutionMap]);
 
   return (
     <div>
