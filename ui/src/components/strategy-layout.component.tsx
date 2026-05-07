@@ -23,7 +23,7 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
 
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
   const { resolvedHands, handResolutionMap } = useMemo(() => {
-    return getResolvedHands(props.handResolver, props.rules);
+    return getResolvedHands(props.rules, props.handResolver);
   }, [props.handResolver, props.rules]);
 
   const { expectedResults, finalScores, materialHands } = useMemo(() => {

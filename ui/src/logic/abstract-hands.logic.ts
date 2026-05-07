@@ -73,7 +73,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
   return handSeeds.map<AbstractHand>(seed => {
     const isActionable = !seed.isNonActionable;
     return {
-      canDouble: isActionable && canDouble(2, rules.doubling),
+      canDouble: isActionable && canDouble(rules, { cardsNumber: 2, isPostSplit: false }),
       canSplit: !!rules.splitting && !!seed.splitLabel,
       effectiveScore: getEffectiveScore(seed.scores),
       isActionable,

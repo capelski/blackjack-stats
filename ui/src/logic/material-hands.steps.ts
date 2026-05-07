@@ -13,13 +13,13 @@ interface MaterialHandsWorld {
 
 export const getMaterialHandsForStandThreshold = (threshold: number) => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
-  const { handResolutionMap } = getResolvedHands(handResolver, {});
+  const { handResolutionMap } = getResolvedHands({}, handResolver);
   return getMaterialHands(handResolutionMap);
 };
 
 export const getMaterialHandsForOptimalRoi = (rules: Rules = {}) => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
-  const { handResolutionMap } = getResolvedHands(handResolver, rules);
+  const { handResolutionMap } = getResolvedHands(rules, handResolver);
   return getMaterialHands(handResolutionMap);
 };
 

@@ -6,6 +6,8 @@ import {
 } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
+import { Rules } from '../types/rules.type';
+import { canSplit } from './rules.logic';
 import { getEffectiveScore, getScoresFromCards } from './scores.logic';
 
 export const effectiveScoreToLabel = (effectiveScore: number): string => {
@@ -20,12 +22,20 @@ export const effectiveScoreToLabel = (effectiveScore: number): string => {
   return String(effectiveScore);
 };
 
-export const getLabelFromCards = (cards: Card[], canSplit: boolean, isPostSplit?: boolean) => {
-  if (canSplit && cards.length === 2 && cards[0].symbol === cards[1].symbol) {
+export type LabelFromCardsParameters = {
+  cards: Card[];
+  isPostSplit: boolean;
+};
+
+export const getLabelFromCards = (
+  rules: Rules,
+  { cards, isPostSplit }: LabelFromCardsParameters,
+) => {
+  if (canSplit(rules, { cardSymbols: cards.map(c => c.symbol), isPostSplit })) {
     return `${cards[0].symbol}${splitScoresSeparator}${cards[1].symbol}`;
   }
 
-  const scores = getScoresFromCards(cards, isPostSplit);
+  const scores = getScoresFromCards(rules, { cards, isPostSplit });
   return getLabelFromScores(scores);
 };
 

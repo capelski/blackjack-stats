@@ -10,8 +10,8 @@ import { getBetMultiplier } from './bet-multiplier.logic';
 import { getDoubleConsequence, getHitConsequence, getStandConsequence } from './consequence.logic';
 
 export const getResolvedHands = (
-  handResolver: HandResolver,
   rules: Rules,
+  handResolver: HandResolver,
 ): { handResolutionMap: HandResolutionMap; resolvedHands: ResolvedHand[] } => {
   const abstractHands = getAbstractHands(rules);
   const resolvedHandsMap: ResolvedHandsMap = {};
@@ -28,10 +28,10 @@ export const getResolvedHands = (
     };
 
     if (abstractHand.isActionable) {
-      consequences[hit] = getHitConsequence(abstractHand.scores, resolvedHandsMap);
+      consequences[hit] = getHitConsequence(rules, abstractHand.scores, resolvedHandsMap);
 
       if (abstractHand.canDouble) {
-        consequences[double] = getDoubleConsequence(abstractHand.scores);
+        consequences[double] = getDoubleConsequence(rules, abstractHand.scores);
       }
     }
 

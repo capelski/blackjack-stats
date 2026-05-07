@@ -53,7 +53,7 @@ When('getting the consequences of doubling with a score of {string}', function(
   scoreLabel: string,
 ) {
   const score = parseScore(scoreLabel);
-  this.consequence = getDoubleConsequence([score]);
+  this.consequence = getDoubleConsequence({}, [score]);
 });
 
 Then('the consequence action equals {string}', function(

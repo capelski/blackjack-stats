@@ -3,13 +3,14 @@ import { cards } from '../models/cards.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
 import { ResolvedHandsMap } from '../types/hand.type';
+import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { getLabelFromScores } from './labels.logic';
 import { createOutcomes, increaseOutcomes } from './outcomes.logic';
 import { getEffectiveScore, getScoresFromScores } from './scores.logic';
 
-export const getDoubleConsequence = (scores: number[]): Consequence => {
+export const getDoubleConsequence = (rules: Rules, scores: number[]): Consequence => {
   const doubleConsequence: Consequence = {
     action: double,
     finalProbabilities: {},
@@ -20,8 +21,9 @@ export const getDoubleConsequence = (scores: number[]): Consequence => {
   const weight = 1 / cards.length;
 
   for (const card of cards) {
-    const nextScores = getScoresFromScores([scores, card.scores], {
-      cardsNumber: undefined,
+    const nextScores = getScoresFromScores(rules, {
+      allScores: [scores, card.scores],
+      cardsNumber: -1,
       isPostSplit: false,
     });
     const nextEffectiveScore = getEffectiveScore(nextScores);
@@ -42,11 +44,16 @@ export const getDoubleConsequence = (scores: number[]): Consequence => {
 };
 
 export const getHitConsequence = (
+  rules: Rules,
   scores: number[],
   futureResolvedHandsMap: ResolvedHandsMap,
 ): Consequence => {
   const nextConsequences = cards.map(card => {
-    const nextResolvedHand = getNextResolvedHand([scores, card.scores], futureResolvedHandsMap);
+    const nextResolvedHand = getNextResolvedHand(
+      rules,
+      [scores, card.scores],
+      futureResolvedHandsMap,
+    );
     return nextResolvedHand.consequences[nextResolvedHand.action as typeof stand]!;
   });
 
@@ -76,9 +83,14 @@ export const getHitConsequenceCore = (nextConsequences: Consequence[]): Conseque
   return hitConsequence;
 };
 
-const getNextResolvedHand = (allScores: number[][], futureResolvedHandsMap: ResolvedHandsMap) => {
-  const nextScores = getScoresFromScores(allScores, {
-    cardsNumber: undefined,
+const getNextResolvedHand = (
+  rules: Rules,
+  allScores: number[][],
+  futureResolvedHandsMap: ResolvedHandsMap,
+) => {
+  const nextScores = getScoresFromScores(rules, {
+    allScores,
+    cardsNumber: -1,
     isPostSplit: false,
   });
   const nextLabel = getLabelFromScores(nextScores);

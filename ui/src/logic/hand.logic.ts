@@ -1,14 +1,14 @@
 import { double, hit, split, stand } from '../models/action.model';
 import { cardsNumber } from '../models/cards.model';
 import { end } from '../models/hand-status.model';
-import { blackjackScore, playerScoreLimit } from '../models/scores.model';
+import { blackjackScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { HandResolutionMap } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getLabelFromCards } from './labels.logic';
-import { canDouble, canSplit } from './rules.logic';
+import { canAction, canDouble, canSplit } from './rules.logic';
 import { getEffectiveScore, getScoresFromCards } from './scores.logic';
 
 export const cardToMaterialHand = (card: Card): MaterialHand => {
@@ -25,7 +25,7 @@ export const cardToMaterialHand = (card: Card): MaterialHand => {
     isFinal: false,
     isPostDouble: false,
     isPostSplit: false,
-    label: getLabelFromCards([card], false),
+    label: getLabelFromCards({}, { cards: [card], isPostSplit: false }),
     probability: 1 / cardsNumber,
     scores,
   };
@@ -37,21 +37,25 @@ export const getNextMaterialHand = (
   card: Card,
   rules: Rules,
 ): MaterialHand => {
-  const isPostDouble = previous.action === double;
+  const previousDouble = previous.action === double;
   const previousSplit = previous.action === split;
+  const previousCards = previousSplit ? [previous.cards[0]] : previous.cards;
   const isPostSplit = previousSplit || previous.isPostSplit;
 
-  const previousCards = previousSplit ? [previous.cards[0]] : previous.cards;
-
   const nextCards = [...previousCards, card];
-  const nextCanSplit = canSplit(nextCards, rules.splitting, isPostSplit);
-  const nextScores = getScoresFromCards(nextCards, isPostSplit);
+  const nextScores = getScoresFromCards(rules, { cards: nextCards, isPostSplit });
   const nextEffectiveScore = getEffectiveScore(nextScores);
-  const nextLabel = getLabelFromCards(nextCards, nextCanSplit, isPostSplit);
-
-  const hasReachedEnd = nextEffectiveScore >= playerScoreLimit || isPostDouble;
-  const nextAction = hasReachedEnd ? end : handResolutionMap[nextLabel];
-  const isFinal = hasReachedEnd || nextAction === stand;
+  const nextLabel = getLabelFromCards(rules, {
+    cards: nextCards,
+    isPostSplit,
+  });
+  const nextIsActionable = canAction(rules, {
+    isPostDouble: previousDouble,
+    isPostSplit,
+    label: nextLabel,
+    score: nextEffectiveScore,
+  });
+  const nextAction = nextIsActionable ? handResolutionMap[nextLabel] : end;
 
   const nextHand: MaterialHand = {
     action: nextAction,
@@ -61,13 +65,13 @@ export const getNextMaterialHand = (
         isBlackjack: nextEffectiveScore === blackjackScore,
         isDoubleBet: nextAction === double || nextAction === split,
       }),
-    canDouble: canDouble(nextCards.length, rules.doubling),
-    canSplit: nextCanSplit,
+    canDouble: canDouble(rules, { cardsNumber: nextCards.length, isPostSplit }),
+    canSplit: canSplit(rules, { cardSymbols: nextCards.map(c => c.symbol), isPostSplit }),
     cards: nextCards,
     effectiveScore: nextEffectiveScore,
-    isActionable: !hasReachedEnd,
-    isFinal,
-    isPostDouble,
+    isActionable: nextIsActionable,
+    isFinal: nextAction === stand || !nextIsActionable,
+    isPostDouble: previousDouble,
     isPostSplit,
     label: nextLabel,
     // Computing based on previous probability to account for post split hands

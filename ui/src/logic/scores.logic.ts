@@ -1,23 +1,33 @@
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
-
-export type ScoresOptions = {
-  cardsNumber: number | undefined;
-  isPostSplit: boolean | undefined;
-};
+import { Rules } from '../types/rules.type';
 
 export const getEffectiveScore = (scores: number[]) => {
   return scores[scores.length - 1];
 };
 
-export const getScoresFromCards = (cards: Card[], isPostSplit: boolean | undefined) => {
+export type ScoresFromCardsParameters = {
+  cards: Card[];
+  isPostSplit: boolean;
+};
+
+export const getScoresFromCards = (
+  rules: Rules,
+  { cards, isPostSplit }: ScoresFromCardsParameters,
+) => {
   const allScores = cards.map(card => card.scores);
-  return getScoresFromScores(allScores, { cardsNumber: cards.length, isPostSplit });
+  return getScoresFromScores(rules, { allScores, cardsNumber: cards.length, isPostSplit });
+};
+
+export type ScoresFromScoresOptions = {
+  allScores: number[][];
+  cardsNumber: number;
+  isPostSplit: boolean;
 };
 
 export const getScoresFromScores = (
-  allScores: number[][],
-  { isPostSplit, cardsNumber }: ScoresOptions,
+  rules: Rules,
+  { allScores, isPostSplit, cardsNumber }: ScoresFromScoresOptions,
 ) => {
   const [first, ...rest] = allScores;
   let scores = first;
@@ -31,7 +41,7 @@ export const getScoresFromScores = (
     return [bustScore];
   }
 
-  if (!isPostSplit && isBlackjack(validScores, cardsNumber)) {
+  if (isBlackjack(rules, { scores: validScores, cardsNumber, isPostSplit })) {
     return [blackjackScore];
   }
 
@@ -46,6 +56,12 @@ const getUniqueScores = (values1: number[], values2: number[]) => {
   return [...new Set(allValues)].sort((a, b) => a - b);
 };
 
-const isBlackjack = (scores: number[], cardsNumber: number | undefined) => {
-  return cardsNumber === 2 && scores.includes(21);
+type BlackjackParameters = {
+  scores: number[];
+  cardsNumber: number;
+  isPostSplit: boolean;
+};
+
+const isBlackjack = (rules: Rules, { cardsNumber, scores, isPostSplit }: BlackjackParameters) => {
+  return cardsNumber === 2 && scores.includes(21) && (!isPostSplit || rules.blackjackAfterSplit);
 };

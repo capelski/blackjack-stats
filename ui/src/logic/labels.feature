@@ -18,16 +18,32 @@ Feature: Labels
     When getting the label of a hand with cards "A,J"
     Then the returned value is "BJ"
 
-  Scenario: Post-split 21 label
+  Scenario: Blackjack label (splitting)
+    Given splitting is enabled
+    When getting the label of a hand with cards "A,J"
+    Then the returned value is "BJ"
+
+  Scenario: Blackjack label (post split)
+    Given splitting is enabled
     When getting the label of a post split hand with cards "A,J"
     Then the returned value is "11/21"
 
+  Scenario: Blackjack label (blackjackAfterSplit)
+    Given splitting is enabled
+    And blackjackAfterSplit is enabled
+    When getting the label of a post split hand with cards "A,J"
+    Then the returned value is "BJ"
+
   Scenario: Pair hand label
+    When getting the label of a hand with cards "8,8"
+    Then the returned value is "16"
+
+  Scenario: Pair hand label (splitting)
+    Given splitting is enabled
     When getting the label of a hand with cards "8,8"
     Then the returned value is "8,8"
 
-  Scenario: Post-split pair hand label
+  Scenario: Pair hand label (post split)
+    Given splitting is enabled
     When getting the label of a post split hand with cards "8,8"
     Then the returned value is "16"
-
-    

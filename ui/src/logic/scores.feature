@@ -29,3 +29,8 @@ Feature: Scores
   Scenario: Post-split 21 scores
     When getting the score of a post split hand with cards "A,J"
     Then the returned values are "11,21"
+
+  Scenario: Post-split BJ scores
+    Given blackjackAfterSplit is enabled
+    When getting the score of a post split hand with cards "A,J"
+    Then the returned values are "21.5"

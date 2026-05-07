@@ -1,4 +1,7 @@
 export type Rules = {
-  splitting?: boolean;
+  blackjackAfterSplit?: boolean;
   doubling?: boolean;
+  doublingAfterSplit?: boolean;
+  hitSplitAces?: boolean;
+  splitting?: boolean;
 };

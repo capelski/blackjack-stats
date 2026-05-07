@@ -3,10 +3,11 @@ import assert from 'node:assert';
 import { cards } from '../models/cards.model';
 import { Card } from '../types/card.type';
 import { getLabelFromCards } from './labels.logic';
+import { RulesWorld } from './rules.steps';
 
-interface LabelsWorld {
+type LabelsWorld = RulesWorld & {
   result: string;
-}
+};
 
 export function parseCards(symbols: string): Card[] {
   return symbols.split(',').map(symbol => {
@@ -20,14 +21,20 @@ When('getting the label of a hand with cards {string}', function(
   this: LabelsWorld,
   cardSymbols: string,
 ) {
-  this.result = getLabelFromCards(parseCards(cardSymbols), true);
+  this.result = getLabelFromCards(this.rules, {
+    cards: parseCards(cardSymbols),
+    isPostSplit: false,
+  });
 });
 
 When('getting the label of a post split hand with cards {string}', function(
   this: LabelsWorld,
   cardSymbols: string,
 ) {
-  this.result = getLabelFromCards(parseCards(cardSymbols), false, true);
+  this.result = getLabelFromCards(this.rules, {
+    cards: parseCards(cardSymbols),
+    isPostSplit: true,
+  });
 });
 
 Then('the returned value is {string}', function(this: LabelsWorld, expected: string) {

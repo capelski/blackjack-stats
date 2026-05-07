@@ -12,12 +12,12 @@ interface ResolvedHandsWorld {
 
 const getResolvedHandsForStandThreshold = (threshold: number): ResolvedHand[] => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
-  return getResolvedHands(handResolver, {}).resolvedHands;
+  return getResolvedHands({}, handResolver).resolvedHands;
 };
 
 const getResolvedHandsForOptimalRoi = (rules: Rules = {}): ResolvedHand[] => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
-  return getResolvedHands(handResolver, rules).resolvedHands;
+  return getResolvedHands(rules, handResolver).resolvedHands;
 };
 
 When('getting the resolved hands of a hand resolver with a stand threshold of {int}', function(

@@ -69,7 +69,7 @@ export const getHitConsequence = (
   const consequence = createConsequence(playerHand.initialProbability);
 
   for (const nextCardValues of cardValues) {
-    const nextScores = getScores(playerHand.scores, nextCardValues, undefined);
+    const nextScores = getScores(playerHand.scores, nextCardValues, -1);
     const nextScoresLabel = getScoresLabel(nextScores);
     const nextDecision = getNextScoreDecision(nextScoresLabel);
 
