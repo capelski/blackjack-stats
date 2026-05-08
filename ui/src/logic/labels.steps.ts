@@ -1,13 +1,8 @@
-import { Then, When } from '@cucumber/cucumber';
+import { DataTable, Then } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { cards } from '../models/cards.model';
 import { Card } from '../types/card.type';
 import { getLabelFromCards } from './labels.logic';
-import { RulesWorld } from './rules.steps';
-
-type LabelsWorld = RulesWorld & {
-  result: string;
-};
 
 export function parseCards(symbols: string): Card[] {
   return symbols.split(',').map(symbol => {
@@ -17,26 +12,21 @@ export function parseCards(symbols: string): Card[] {
   });
 }
 
-When('getting the label of a hand with cards {string}', function(
-  this: LabelsWorld,
-  cardSymbols: string,
-) {
-  this.result = getLabelFromCards(this.rules, {
-    cards: parseCards(cardSymbols),
-    isPostSplit: false,
-  });
-});
+Then('the following label scenarios are considered', function(table: DataTable) {
+  for (const row of table.hashes()) {
+    const caseName = row['Case name'].trim();
+    const parsedCards = parseCards(row['Cards'].trim());
+    const rules = JSON.parse(row['Rules'].trim());
+    const isPostSplit = row['Is post split'].trim() === 'true';
+    const expectedLabel = row['Label'].trim();
+    const isPostSplitAces = isPostSplit && parsedCards[0].symbol === 'A';
 
-When('getting the label of a post split hand with cards {string}', function(
-  this: LabelsWorld,
-  cardSymbols: string,
-) {
-  this.result = getLabelFromCards(this.rules, {
-    cards: parseCards(cardSymbols),
-    isPostSplit: true,
-  });
-});
+    const actual = getLabelFromCards(rules, {
+      cards: parsedCards,
+      isPostSplit,
+      isPostSplitAces,
+    });
 
-Then('the returned value is {string}', function(this: LabelsWorld, expected: string) {
-  assert.strictEqual(this.result, expected);
+    assert.strictEqual(actual, expectedLabel, `Label mismatch for case "${caseName}"`);
+  }
 });

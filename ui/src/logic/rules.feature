@@ -12,8 +12,8 @@ Feature: Rules
       | 20    | 20     | {}                                       | false          | false         | true   |
       | 20    | 20     | {"doubling": true}                       | true           | false         | false  |
       | 20    | 20     | {"splitting": true}                      | false          | true          | true   |
-      | A,A   | 12     | {"splitting": true}                      | false          | true          | false  |
-      | A,A   | 12     | {"splitting": true, "hitSplitAces":true} | false          | true          | true   |
+      | A,3   | 14     | {"splitting": true}                      | false          | true          | false  |
+      | A,3   | 14     | {"splitting": true, "hitSplitAces":true} | false          | true          | true   |
 
   Scenario: Doubling
     Then the following doubling scenarios are considered

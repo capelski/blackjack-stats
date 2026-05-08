@@ -28,7 +28,8 @@ Then('the following actionable scenarios are considered', function(table: DataTa
     const isPostSplit = row['Is post split'].trim() === 'true';
     const expected = row['Result'].trim() === 'true';
 
-    const actual = canAction(rules, { label, score, isPostDouble, isPostSplit });
+    const isPostSplitAces = isPostSplit && label.startsWith('A');
+    const actual = canAction(rules, { score, isPostDouble, isPostSplit, isPostSplitAces });
     assert.strictEqual(
       actual,
       expected,

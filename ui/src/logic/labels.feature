@@ -2,48 +2,27 @@ Feature: Labels
 
   Different aspects of a hand are considered when generating its label
 
-  Scenario: Hard hand label
-    When getting the label of a hand with cards "9,8"
-    Then the returned value is "17"
-
-  Scenario: Bust hand label
-    When getting the label of a hand with cards "9,8,7"
-    Then the returned value is "22+"
-
-  Scenario: Soft hand label
-    When getting the label of a hand with cards "9,A"
-    Then the returned value is "10/20"
-
-  Scenario: Blackjack label
-    When getting the label of a hand with cards "A,J"
-    Then the returned value is "BJ"
-
-  Scenario: Blackjack label (splitting)
-    Given splitting is enabled
-    When getting the label of a hand with cards "A,J"
-    Then the returned value is "BJ"
-
-  Scenario: Blackjack label (post split)
-    Given splitting is enabled
-    When getting the label of a post split hand with cards "A,J"
-    Then the returned value is "11/21 (S)"
-
-  Scenario: Blackjack label (blackjackAfterSplit)
-    Given splitting is enabled
-    And blackjackAfterSplit is enabled
-    When getting the label of a post split hand with cards "A,J"
-    Then the returned value is "BJ (S)"
-
-  Scenario: Pair hand label
-    When getting the label of a hand with cards "8,8"
-    Then the returned value is "16"
-
-  Scenario: Pair hand label (splitting)
-    Given splitting is enabled
-    When getting the label of a hand with cards "8,8"
-    Then the returned value is "8,8"
-
-  Scenario: Pair hand label (post split)
-    Given splitting is enabled
-    When getting the label of a post split hand with cards "8,8"
-    Then the returned value is "16 (S)"
+  Scenario: Labels generation
+    Then the following label scenarios are considered
+      | Case name                    | Cards   | Rules                                            | Is post split | Label       |
+      | Hard score                   | 9,8     | {}                                               | false         | 17          |
+      | Soft score                   | 9,A     | {}                                               | false         | 10/20       |
+      | Bust                         | 9,8,7   | {}                                               | false         | 22+         |
+      | Blackjack                    | J,A     | {}                                               | false         | BJ          |
+      | Pair                         | 9,9     | {}                                               | false         | 18          |
+      | Pair split                   | 9,9     | {"splitting": true}                              | false         | 9,9         |
+      | Hard score (post split)      | 9,8     | {"splitting": true}                              | true          | 17 (S)      |
+      | Soft score (post split)      | 9,A     | {"splitting": true}                              | true          | 10/20 (S)   |
+      | Bust (post split)            | 9,8,7   | {"splitting": true}                              | true          | 22+ (S)     |
+      | Blackjack (post split)       | J,A     | {"splitting": true}                              | true          | 11/21 (S)   |
+      | Blackjack (BJ after split)   | J,A     | {"splitting": true, "blackjackAfterSplit": true} | true          | BJ (S)      |
+      | Pair (post split)            | 9,9     | {"splitting": true}                              | true          | 18 (S)      |
+      | Soft score (post aces split) | A,9     | {"splitting": true}                              | true          | 10/20 (S,A) |
+      | Blackjack (post aces split)  | A,J     | {"splitting": true}                              | true          | 11/21 (S,A) |
+      | Blackjack (BJ after split)   | A,J     | {"splitting": true, "blackjackAfterSplit": true} | true          | BJ (S,A)    |
+      | Pair (post aces split)       | A,A     | {"splitting": true}                              | true          | 2/12 (S,A)  |
+      | Hard score (hit split aces)  | A,9,5   | {"splitting": true, "hitSplitAces": true}        | true          | 15 (S)      |
+      | Soft score (hit split aces)  | A,9     | {"splitting": true, "hitSplitAces": true}        | true          | 10/20 (S)   |
+      | Bust (hit split aces)        | A,9,7,5 | {"splitting": true, "hitSplitAces": true}        | true          | 22+ (S)     |
+      | Blackjack (hit split aces)   | A,J     | {"splitting": true, "hitSplitAces": true}        | true          | 11/21 (S)   |
+      | Pair (hit split aces)        | A,A     | {"splitting": true, "hitSplitAces": true}        | true          | 2/12 (S)    |

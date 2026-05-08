@@ -93,12 +93,20 @@ const getNextResolvedHand = (
     cardsNumber: -1,
     isPostSplit: false,
   });
-  const nextLabel = getLabelFromScores(nextScores, false);
+  const nextLabel = getLabelFromScores(rules, {
+    scores: nextScores,
+    isPostSplit: false,
+    isPostSplitAces: false,
+  });
   const nextResolvedHand = futureResolvedHandsMap[nextLabel];
 
   if (!nextResolvedHand) {
     const [firstScores] = allScores;
-    const label = getLabelFromScores(firstScores, false);
+    const label = getLabelFromScores(rules, {
+      scores: firstScores,
+      isPostSplit: false,
+      isPostSplitAces: false,
+    });
     throw new Error(`The "${nextLabel}" resolved hand is not available before ${label}`);
   }
 

@@ -1,11 +1,10 @@
-import { acesLabel } from '../models/labels.model';
 import { playerScoreLimit } from '../models/scores.model';
 import { Rules } from '../types/rules.type';
 
 export type ActionableParameters = {
   isPostDouble: boolean;
   isPostSplit: boolean;
-  label: string;
+  isPostSplitAces: boolean;
   score: number;
 };
 
@@ -14,12 +13,12 @@ export type ActionableParameters = {
  * - When splitting aces, the casino might prevent hitting further */
 export const canAction = (
   rules: Rules,
-  { isPostDouble, isPostSplit, label, score }: ActionableParameters,
+  { isPostDouble, isPostSplit, isPostSplitAces, score }: ActionableParameters,
 ): boolean => {
   return (
     score < playerScoreLimit &&
     !isPostDouble &&
-    (!isPostSplit || label !== acesLabel || !!rules.hitSplitAces)
+    (!isPostSplit || !isPostSplitAces || !!rules.hitSplitAces)
   );
 };
 

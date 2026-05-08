@@ -26,21 +26,31 @@ export const effectiveScoreToLabel = (effectiveScore: number): string => {
 export type LabelFromCardsParameters = {
   cards: Card[];
   isPostSplit: boolean;
+  isPostSplitAces: boolean;
 };
 
 export const getLabelFromCards = (
   rules: Rules,
-  { cards, isPostSplit }: LabelFromCardsParameters,
+  { cards, isPostSplit, isPostSplitAces }: LabelFromCardsParameters,
 ) => {
   if (canSplit(rules, { cardSymbols: cards.map(c => c.symbol), isPostSplit })) {
     return `${cards[0].symbol}${splitScoresSeparator}${cards[1].symbol}`;
   }
 
   const scores = getScoresFromCards(rules, { cards, isPostSplit });
-  return getLabelFromScores(scores, isPostSplit);
+  return getLabelFromScores(rules, { scores, isPostSplit, isPostSplitAces });
 };
 
-export const getLabelFromScores = (scores: number[], isPostSplit: boolean) => {
+export type LabelFromScoresParameters = {
+  scores: number[];
+  isPostSplit: boolean;
+  isPostSplitAces: boolean;
+};
+
+export const getLabelFromScores = (
+  rules: Rules,
+  { scores, isPostSplit, isPostSplitAces }: LabelFromScoresParameters,
+) => {
   const score = getEffectiveScore(scores);
 
   const label =
@@ -50,5 +60,7 @@ export const getLabelFromScores = (scores: number[], isPostSplit: boolean) => {
       ? blackjackLabel
       : scores.join(softScoresSeparator);
 
-  return `${label}${isPostSplit ? ` (${postSplitSymbol})` : ''}`;
+  return `${label}${
+    isPostSplit ? ` (${postSplitSymbol}${isPostSplitAces && !rules.hitSplitAces ? ',A' : ''})` : ''
+  }`;
 };

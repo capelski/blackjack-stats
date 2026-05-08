@@ -53,7 +53,7 @@ const cardToMaterialHand = (card: Card): MaterialHand => {
     isFinal: false,
     isPostDouble: false,
     isPostSplit: false,
-    label: getLabelFromCards({}, { cards: [card], isPostSplit: false }),
+    label: getLabelFromCards({}, { cards: [card], isPostSplit: false, isPostSplitAces: false }),
     probability: 1 / cardsNumber,
     scores,
   };
@@ -76,11 +76,12 @@ const getNextMaterialHand = (
   const nextLabel = getLabelFromCards(rules, {
     cards: nextCards,
     isPostSplit,
+    isPostSplitAces: false,
   });
   const nextIsActionable = canAction(rules, {
     isPostDouble: previousDouble,
     isPostSplit,
-    label: nextLabel,
+    isPostSplitAces: false,
     score: nextEffectiveScore,
   });
   const nextAction = nextIsActionable ? handResolutionMap[nextLabel] : end;
