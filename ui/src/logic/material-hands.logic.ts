@@ -1,6 +1,7 @@
 import { double, hit, split, stand } from '../models/action.model';
 import { cards, cardsNumber } from '../models/cards.model';
 import { end } from '../models/hand-status.model';
+import { postSplitSymbol } from '../models/labels.model';
 import { blackjackScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { HandResolutionMap } from '../types/hand-resolution.type';
@@ -107,4 +108,14 @@ const getNextMaterialHand = (
   };
 
   return nextHand;
+};
+
+export const serializeCards = (hand: MaterialHand, separator: string = ','): string => {
+  const symbols = hand.cards.map(c => c.symbol);
+
+  if (hand.isPostSplit) {
+    symbols.splice(1, 0, postSplitSymbol);
+  }
+
+  return symbols.join(separator);
 };

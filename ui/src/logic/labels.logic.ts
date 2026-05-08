@@ -1,6 +1,7 @@
 import {
   blackjackLabel,
   bustLabel,
+  postSplitSymbol,
   softScoresSeparator,
   splitScoresSeparator,
 } from '../models/labels.model';
@@ -49,5 +50,5 @@ export const getLabelFromScores = (scores: number[], isPostSplit: boolean) => {
       ? blackjackLabel
       : scores.join(softScoresSeparator);
 
-  return isPostSplit ? `${label} (S)` : label;
+  return `${label}${isPostSplit ? ` (${postSplitSymbol})` : ''}`;
 };

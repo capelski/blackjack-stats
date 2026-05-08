@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { MaterialHand } from '../types/hand.type';
 import { HandsListItem, HandsListProps } from './material-hands-list-item.component';
@@ -40,7 +41,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
         return true;
       }
 
-      const symbols = hand.cards.map(card => card.symbol).join(',');
+      const symbols = serializeCards(hand);
       return symbols.includes(normalizedFilter);
     });
   }, [cardsFilter, props.hands, showNonFinalHands]);
@@ -106,7 +107,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
           key={`${currentPage}-${index}-${hand.label}`}
           action={hand.action}
           betMultiplier={toDecimal(hand.betMultiplier)}
-          cards={hand.cards.map(card => card.symbol).join(', ')}
+          cards={serializeCards(hand, ', ')}
           label={hand.label}
           probability={toPercentage(hand.probability)}
         ></HandsListItem>
