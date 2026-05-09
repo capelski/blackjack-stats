@@ -5,12 +5,12 @@ import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { useStrategyContext } from '../strategy.context';
 import { FinalScore } from '../types/final-score.type';
-import { BetMultipliersCell } from './expected-results-bet-mulitplier-cell.component';
+import { BetMultipliersCell } from './bet-multipliers-cell.component';
 
 type ExpectedResultsMatrixRowProps = {
-  firstCell: string;
+  firstCell: React.ReactNode;
   dealerScoreToCell: (dealerScore: FinalScore) => { node: React.ReactNode; style?: CSSProperties };
-  lastCell: string;
+  lastCell: React.ReactNode;
   isHeader?: boolean;
 };
 
@@ -66,10 +66,20 @@ export const ExpectedResultsMatrix: React.FC = () => {
 
               return {
                 style: resultToStyles(finalComparison.result),
-                node: <BetMultipliersCell finalComparison={finalComparison} />,
+                node: (
+                  <BetMultipliersCell
+                    betMultiplierMap={finalComparison.probabilityByBetMultiplier}
+                    transform={toPercentage}
+                  />
+                ),
               };
             }}
-            lastCell={toPercentage(expectedResult.probability)}
+            lastCell={
+              <BetMultipliersCell
+                betMultiplierMap={expectedResult.probabilityByBetMultiplier}
+                transform={toPercentage}
+              />
+            }
           />
         );
       })}

@@ -1,18 +1,29 @@
 import React, { CSSProperties } from 'react';
-import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { getRoi } from '../logic/edge.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toDecimal, toPercentage } from '../logic/numbers.logic';
+import { resultToStyles } from '../logic/result.logic';
 import { useStrategyContext } from '../strategy.context';
+import { BetMultiplierMap } from '../types/bet-multiplier.type';
+import { Outcomes } from '../types/outcomes.type';
+import { BetMultipliersCell } from './bet-multipliers-cell.component';
 
 type ExpectedResultsListRowProps = {
-  isHeader?: boolean;
-  lose: string;
-  push: string;
-  roi: string;
   score: string;
-  win: string;
-};
+} & (
+  | {
+      edgeByBetMultiplier?: undefined;
+      isHeader: true;
+      probabilityByBetMultiplier?: undefined;
+    }
+  | {
+      edgeByBetMultiplier: BetMultiplierMap;
+      isHeader?: false;
+      outcomes: Outcomes;
+      probability: number;
+      probabilityByBetMultiplier: BetMultiplierMap;
+    }
+);
 
 const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
   const cellStyle: CSSProperties = {
@@ -25,18 +36,54 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${dealerFinalScores.length + 2}, 1fr)`,
+        gridTemplateColumns: 'repeat(5, 1fr)',
       }}
     >
       <div style={cellStyle}>{props.score}</div>
 
-      <div style={cellStyle}>{props.win}</div>
+      <div style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Win')) }}>
+        {props.probabilityByBetMultiplier ? (
+          <BetMultipliersCell
+            betMultiplierMap={props.probabilityByBetMultiplier}
+            transform={number => toPercentage((number * props.outcomes.win) / props.probability)}
+          />
+        ) : (
+          '% Win'
+        )}
+      </div>
 
-      <div style={cellStyle}>{props.push}</div>
+      <div style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Push')) }}>
+        {props.probabilityByBetMultiplier ? (
+          <BetMultipliersCell
+            betMultiplierMap={props.probabilityByBetMultiplier}
+            transform={number => toPercentage((number * props.outcomes.push) / props.probability)}
+          />
+        ) : (
+          '% Push'
+        )}
+      </div>
 
-      <div style={cellStyle}>{props.lose}</div>
+      <div style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Lose')) }}>
+        {props.probabilityByBetMultiplier ? (
+          <BetMultipliersCell
+            betMultiplierMap={props.probabilityByBetMultiplier}
+            transform={number => toPercentage((number * props.outcomes.lose) / props.probability)}
+          />
+        ) : (
+          '% Lose'
+        )}
+      </div>
 
-      <div style={cellStyle}>{props.roi}</div>
+      <div style={cellStyle}>
+        {props.edgeByBetMultiplier ? (
+          <BetMultipliersCell
+            betMultiplierMap={props.edgeByBetMultiplier}
+            transform={number => toDecimal(getRoi(number / props.probability))}
+          />
+        ) : (
+          'ROI'
+        )}
+      </div>
     </div>
   );
 };
@@ -46,26 +93,24 @@ export const ExpectedResultsList: React.FC = () => {
 
   return (
     <div>
-      <ExpectedResultsListRow
-        isHeader={true}
-        lose="% Lose"
-        push="% Push"
-        score="Score"
-        roi="ROI"
-        win="% Win"
-      />
+      <ExpectedResultsListRow isHeader={true} score="Score" />
 
       {getSortedNumericKeys(expectedResults.breakdown).map(playerScore => {
-        const { outcomes, probability, edge } = expectedResults.breakdown[playerScore];
+        const {
+          outcomes,
+          probability,
+          probabilityByBetMultiplier,
+          edgeByBetMultiplier,
+        } = expectedResults.breakdown[playerScore];
 
         return (
           <ExpectedResultsListRow
             key={playerScore}
-            lose={toPercentage(outcomes.lose / probability)}
-            push={toPercentage(outcomes.push / probability)}
+            outcomes={outcomes}
+            probability={probability}
+            probabilityByBetMultiplier={probabilityByBetMultiplier}
             score={effectiveScoreToLabel(playerScore)}
-            roi={toDecimal(getRoi(edge / probability))}
-            win={toPercentage(outcomes.win / probability)}
+            edgeByBetMultiplier={edgeByBetMultiplier}
           />
         );
       })}

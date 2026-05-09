@@ -8,6 +8,7 @@ export type FinalComparison = {
   result: Result;
   outcomes: Outcomes;
   edge: number;
+  edgeByBetMultiplier: BetMultiplierMap;
 };
 
 export type FinalComparisonsMap = {
