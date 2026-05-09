@@ -1,30 +1,11 @@
 import React, { CSSProperties } from 'react';
-import { blackjackMultiplier } from '../logic/bet-multiplier.logic';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { useStrategyContext } from '../strategy.context';
-import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
-
-const getBetMultipliersCell = (finalComparison: FinalComparison): React.ReactNode => {
-  return (
-    <React.Fragment>
-      {getSortedNumericKeys(finalComparison.probabilityByBetMultiplier).map(betMultiplier => {
-        const betMultiplierProbability = finalComparison.probabilityByBetMultiplier[betMultiplier];
-
-        return (
-          <div key={betMultiplier} className="expected-cell-breakdown">
-            {betMultiplier <= blackjackMultiplier
-              ? toPercentage(betMultiplierProbability)
-              : `${betMultiplier}x: ${toPercentage(betMultiplierProbability)}`}
-          </div>
-        );
-      })}
-    </React.Fragment>
-  );
-};
+import { BetMultipliersCell } from './expected-results-bet-mulitplier-cell.component';
 
 type ExpectedResultsMatrixRowProps = {
   firstCell: string;
@@ -85,7 +66,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
 
               return {
                 style: resultToStyles(finalComparison.result),
-                node: getBetMultipliersCell(finalComparison),
+                node: <BetMultipliersCell finalComparison={finalComparison} />,
               };
             }}
             lastCell={toPercentage(expectedResult.probability)}
