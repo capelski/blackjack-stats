@@ -28,7 +28,7 @@ export const getDoubleConsequence = (rules: Rules, scores: number[]): Consequenc
     });
     const nextEffectiveScore = getEffectiveScore(nextScores);
 
-    const betMultiplier = getBetMultiplier({ isDoubleBet: true });
+    const betMultiplier = getBetMultiplier(1, { isDoubleBet: true });
     const standConsequence = getStandConsequence(nextEffectiveScore, betMultiplier);
 
     increaseFinalProbabilities(

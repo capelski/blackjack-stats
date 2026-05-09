@@ -20,7 +20,7 @@ export const getResolvedHands = (
   const handResolutionMap: HandResolutionMap = {};
 
   for (const abstractHand of abstractHands) {
-    const standBetMultiplier = getBetMultiplier({
+    const standBetMultiplier = getBetMultiplier(1, {
       isBlackjack: abstractHand.effectiveScore === blackjackScore,
     });
     const consequences: ConsequencesMap = {

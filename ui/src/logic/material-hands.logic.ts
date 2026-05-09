@@ -89,12 +89,10 @@ const getNextMaterialHand = (
 
   const nextHand: MaterialHand = {
     action: nextAction,
-    betMultiplier:
-      previous.betMultiplier *
-      getBetMultiplier({
-        isBlackjack: nextEffectiveScore === blackjackScore,
-        isDoubleBet: nextAction === double || nextAction === split,
-      }),
+    betMultiplier: getBetMultiplier(previous.betMultiplier, {
+      isBlackjack: nextEffectiveScore === blackjackScore,
+      isDoubleBet: nextAction === double || nextAction === split,
+    }),
     canDouble: canDouble(rules, { cardsNumber: nextCards.length, isPostSplit }),
     canSplit: canSplit(rules, { cardSymbols: nextCards.map(c => c.symbol), isPostSplit }),
     cards: nextCards,

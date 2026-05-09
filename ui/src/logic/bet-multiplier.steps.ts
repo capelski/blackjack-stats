@@ -7,17 +7,17 @@ interface BetMultiplierWorld {
 }
 
 When('getting the bet multiplier', function(this: BetMultiplierWorld) {
-  this.result = getBetMultiplier();
+  this.result = getBetMultiplier(1);
 });
 
 When('getting the bet multiplier for a blackjack hand', function(this: BetMultiplierWorld) {
-  this.result = getBetMultiplier({ isBlackjack: true });
+  this.result = getBetMultiplier(1, { isBlackjack: true });
 });
 
 When('getting the bet multiplier for a hand that doubled the bet', function(
   this: BetMultiplierWorld,
 ) {
-  this.result = getBetMultiplier({ isDoubleBet: true });
+  this.result = getBetMultiplier(1, { isDoubleBet: true });
 });
 
 Then('the returned value is {float}', function(this: BetMultiplierWorld, expected: number) {

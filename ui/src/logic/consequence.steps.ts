@@ -29,7 +29,7 @@ When('getting the consequences of standing with a score of {string}', function(
   scoreLabel: string,
 ) {
   const score = parseScore(scoreLabel);
-  const standBetMultiplier = getBetMultiplier({
+  const standBetMultiplier = getBetMultiplier(1, {
     isBlackjack: score === blackjackScore,
   });
   this.consequence = getStandConsequence(score, standBetMultiplier);
