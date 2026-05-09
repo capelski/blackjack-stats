@@ -26,10 +26,11 @@ Then('the following actionable scenarios are considered', function(table: DataTa
     const rules: Rules = JSON.parse(row['Rules'].trim());
     const isPostDouble = row['Is post double'].trim() === 'true';
     const isPostSplit = row['Is post split'].trim() === 'true';
+    const isPostSplitAces = row['Is post split aces'].trim() === 'true';
+
     const expected = row['Result'].trim() === 'true';
 
-    const isPostSplitAces = isPostSplit && label.startsWith('A');
-    const actual = canAction(rules, { score, isPostDouble, isPostSplit, isPostSplitAces });
+    const actual = canAction(rules, { isPostDouble, isPostSplit, isPostSplitAces, label, score });
     assert.strictEqual(
       actual,
       expected,

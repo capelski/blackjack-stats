@@ -82,6 +82,7 @@ const getNextMaterialHand = (
     isPostDouble: previousDouble,
     isPostSplit,
     isPostSplitAces: false,
+    label: nextLabel,
     score: nextEffectiveScore,
   });
   const nextAction = nextIsActionable ? handResolutionMap[nextLabel] : end;

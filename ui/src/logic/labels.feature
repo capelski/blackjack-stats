@@ -26,3 +26,5 @@ Feature: Labels
       | Bust (hit split aces)        | A,9,7,5 | {"splitting": true, "hitSplitAces": true}        | true          | 22+ (S)     |
       | Blackjack (hit split aces)   | A,J     | {"splitting": true, "hitSplitAces": true}        | true          | 11/21 (S)   |
       | Pair (hit split aces)        | A,A     | {"splitting": true, "hitSplitAces": true}        | true          | 2/12 (S)    |
+      | Single ace post split        | A       | {"splitting": true}                              | true          | 1/11 (S,A)  |
+      | Single ace post split        | A       | {"splitting": true, "hitSplitAces": true}        | true          | 1/11 (S)    |
