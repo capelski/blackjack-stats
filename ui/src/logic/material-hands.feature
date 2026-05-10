@@ -26,7 +26,7 @@ Feature: Material hands
   Scenario: Material hands for optimal roi with splitting
     Given splitting is allowed
     When getting the material hands of a hand resolver for optimal roi
-    Then 23699 material hands are returned
+    Then 23660 material hands are returned
     And there is a material hand with cards "A,A", probability "0.00591715976331361", action "Split" and bet multiplier "2"
     And there is a material post split hand with cards "A,A", probability "0.0004551661356395085", action "End" and bet multiplier "2"
     And there is a material hand with cards "8,8", probability "0.00591715976331361", action "Split" and bet multiplier "2"
@@ -36,20 +36,20 @@ Feature: Material hands
     Given splitting is allowed
     And hitting split aces is allowed
     When getting the material hands of a hand resolver for optimal roi
-    Then 30654 material hands are returned
+    Then 30615 material hands are returned
     And there is a material post split hand with cards "A,A", probability "0.0004551661356395085", action "Hit" and bet multiplier "2"
 
   Scenario: Material hands for optimal roi with doubling and splitting
     Given doubling is allowed
     And splitting is allowed
     When getting the material hands of a hand resolver for optimal roi
-    Then 15782 material hands are returned
+    Then 15743 material hands are returned
 
   Scenario: Material hands for optimal roi with doubling after splitting is allowed
     Given doubling is allowed
     And splitting is allowed
     And doubling after splitting is allowed
     When getting the material hands of a hand resolver for optimal roi
-    Then 15600 material hands are returned
+    Then 15561 material hands are returned
     And there is a material post split hand with cards "8,2", probability "0.0004551661356395085", action "Double" and bet multiplier "4"
     And there is a material post split hand with cards "8,2,6", probability "0.00003501277966457758", action "End" and bet multiplier "4"

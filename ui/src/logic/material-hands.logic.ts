@@ -89,6 +89,10 @@ const getNextMaterialHand = (
   });
   const nextAction = nextIsActionable ? handResolutionMap[nextLabel] : end;
 
+  if (!nextAction) {
+    throw new Error(`No action was defined for hand ${nextLabel}`);
+  }
+
   const nextHand: MaterialHand = {
     action: nextAction,
     betMultiplier: getBetMultiplier(previous.betMultiplier, {

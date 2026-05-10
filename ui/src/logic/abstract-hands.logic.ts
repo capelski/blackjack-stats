@@ -139,6 +139,9 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
           { label: '8,8', scores: [16], postSplitLabel: '8 (S)' },
           { label: '9,9', scores: [18], postSplitLabel: '9 (S)' },
           { label: '10,10', scores: [20], postSplitLabel: '10 (S)' },
+          { label: 'J,J', scores: [20], postSplitLabel: '10 (S)', isHidden: true },
+          { label: 'Q,Q', scores: [20], postSplitLabel: '10 (S)', isHidden: true },
+          { label: 'K,K', scores: [20], postSplitLabel: '10 (S)', isHidden: true },
         ]
       : []),
   ];
