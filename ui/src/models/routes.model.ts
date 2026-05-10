@@ -1,6 +1,6 @@
 export const expectedResultsRoute = 'expected-results';
-export const expectedResultsListRoute = 'expected-results-list';
-export const expectedResultsMatrixRoute = 'expected-results-matrix';
+export const expectedResultsListRoute = 'list';
+export const expectedResultsMatrixRoute = 'matrix';
 export const finalScoresRoute = 'final-scores';
 export const materialHandsRoute = 'hands';
 export const optimalRoiRoute = 'optimal-roi';
