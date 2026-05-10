@@ -33,7 +33,8 @@ Feature: Expected results
     And the expected result edge equals "-0.04066171140996397"
 
   Scenario: Single expected result for optimal roi with doubling
-    Given a player hand resolver for optimal roi with doubling
+    Given doubling is allowed
+    And a player hand resolver for optimal roi
     When getting the expected result of a player score of "12"
     Then the expected result score equals "12"
     And the expected result probability equals "0.008169993882086286"
@@ -41,7 +42,8 @@ Feature: Expected results
     And the expected result edge equals "-0.007137540403274045"
 
   Scenario: Overall expected results for optimal roi with doubling
-    Given a player hand resolver for optimal roi with doubling
+    Given doubling is allowed
+    And a player hand resolver for optimal roi
     When getting the overall expected results
     Then the expected result probability equals "0.9999999999999736"
     And the expected result outcomes equals "win=0.4261114967923784,push=0.08310311693853635,lose=0.49078538626905893"

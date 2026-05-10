@@ -1,4 +1,4 @@
-import { double, hit, stand } from '../models/action.model';
+import { double, hit, split, stand } from '../models/action.model';
 import { cards } from '../models/cards.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
@@ -10,7 +10,11 @@ import { getLabelFromScores } from './labels.logic';
 import { createOutcomes, increaseOutcomes } from './outcomes.logic';
 import { getEffectiveScore, getScoresFromScores } from './scores.logic';
 
-export const getDoubleConsequence = (rules: Rules, scores: number[]): Consequence => {
+export const getDoubleConsequence = (
+  rules: Rules,
+  scores: number[],
+  betMultiplier: number,
+): Consequence => {
   const doubleConsequence: Consequence = {
     action: double,
     finalProbabilities: {},
@@ -28,8 +32,8 @@ export const getDoubleConsequence = (rules: Rules, scores: number[]): Consequenc
     });
     const nextEffectiveScore = getEffectiveScore(nextScores);
 
-    const betMultiplier = getBetMultiplier(1, { isDoubleBet: true });
-    const standConsequence = getStandConsequence(nextEffectiveScore, betMultiplier);
+    const nextBetMultiplier = getBetMultiplier(betMultiplier, { isDoubleBet: true });
+    const standConsequence = getStandConsequence(nextEffectiveScore, nextBetMultiplier);
 
     increaseFinalProbabilities(
       doubleConsequence.finalProbabilities,
@@ -46,15 +50,18 @@ export const getDoubleConsequence = (rules: Rules, scores: number[]): Consequenc
 export const getHitConsequence = (
   rules: Rules,
   scores: number[],
+  isPostSplit: boolean,
+  isPostSplitAces: boolean,
   futureResolvedHandsMap: ResolvedHandsMap,
 ): Consequence => {
   const nextConsequences = cards.map(card => {
-    const nextResolvedHand = getNextResolvedHand(
-      rules,
-      [scores, card.scores],
+    const nextResolvedHand = getNextResolvedHand(rules, {
+      allScores: [scores, card.scores],
       futureResolvedHandsMap,
-    );
-    return nextResolvedHand.consequences[nextResolvedHand.action as typeof stand]!;
+      isPostSplit,
+      isPostSplitAces,
+    });
+    return nextResolvedHand.consequences[nextResolvedHand.action]!;
   });
 
   return getHitConsequenceCore(nextConsequences);
@@ -83,34 +90,51 @@ export const getHitConsequenceCore = (nextConsequences: Consequence[]): Conseque
   return hitConsequence;
 };
 
+type NextResolvedHand = {
+  allScores: number[][];
+  futureResolvedHandsMap: ResolvedHandsMap;
+  isPostSplit: boolean;
+  isPostSplitAces: boolean;
+};
+
 const getNextResolvedHand = (
   rules: Rules,
-  allScores: number[][],
-  futureResolvedHandsMap: ResolvedHandsMap,
+  { allScores, futureResolvedHandsMap, isPostSplit, isPostSplitAces }: NextResolvedHand,
 ) => {
   const nextScores = getScoresFromScores(rules, {
     allScores,
     cardsNumber: -1,
-    isPostSplit: false,
+    isPostSplit,
   });
-  const nextLabel = getLabelFromScores(rules, {
-    scores: nextScores,
-    isPostSplit: false,
-    isPostSplitAces: false,
-  });
+  const nextLabel = getLabelFromScores(rules, { scores: nextScores, isPostSplit, isPostSplitAces });
   const nextResolvedHand = futureResolvedHandsMap[nextLabel];
 
   if (!nextResolvedHand) {
     const [firstScores] = allScores;
-    const label = getLabelFromScores(rules, {
-      scores: firstScores,
-      isPostSplit: false,
-      isPostSplitAces: false,
-    });
+    const label = getLabelFromScores(rules, { scores: firstScores, isPostSplit, isPostSplitAces });
     throw new Error(`The "${nextLabel}" resolved hand is not available before ${label}`);
   }
 
   return nextResolvedHand;
+};
+
+export const getSplitConsequence = (
+  postSplitLabel: string,
+  futureResolvedHandsMap: ResolvedHandsMap,
+): Consequence => {
+  const nextResolvedHand = futureResolvedHandsMap[postSplitLabel];
+  const nextConsequence = nextResolvedHand.consequences[nextResolvedHand.action]!;
+
+  const { edge, finalProbabilities, outcomes } = nextConsequence;
+
+  const splitConsequence: Consequence = {
+    action: split,
+    finalProbabilities,
+    outcomes,
+    edge,
+  };
+
+  return splitConsequence;
 };
 
 export const getStandConsequence = (score: number, betMultiplier: number): Consequence => {

@@ -10,19 +10,20 @@ import {
   getMaterialHandsForStandThreshold,
 } from './material-hands.steps';
 import { parseScore } from './result.steps';
+import { RulesWorld } from './rules.steps';
 
-interface FinalScoresListWorld {
+type FinalScoresListWorld = RulesWorld & {
   list: FinalScore[];
   currentFinalScore: FinalScore;
   probabilityByBetMultiplier: BetMultiplierMap;
-}
+};
 
-export const getFinalScoresListForStandThreshold = (threshold: number) => {
-  const hands = getMaterialHandsForStandThreshold(threshold);
+export const getFinalScoresListForStandThreshold = (rules: Rules, threshold: number) => {
+  const hands = getMaterialHandsForStandThreshold(rules, threshold);
   return getFinalScoresList(hands);
 };
 
-export const getFinalScoresListForOptimalRoi = (rules: Rules = {}) => {
+export const getFinalScoresListForOptimalRoi = (rules: Rules) => {
   const hands = getMaterialHandsForOptimalRoi(rules);
   return getFinalScoresList(hands);
 };
@@ -39,19 +40,13 @@ When('getting the final scores list of a hand resolver with a stand threshold of
   this: FinalScoresListWorld,
   threshold: number,
 ) {
-  this.list = getFinalScoresListForStandThreshold(threshold);
+  this.list = getFinalScoresListForStandThreshold(this.rules, threshold);
 });
 
 When('getting the final scores list of a hand resolver for optimal roi', function(
   this: FinalScoresListWorld,
 ) {
-  this.list = getFinalScoresListForOptimalRoi();
-});
-
-When('getting the final scores list of a hand resolver for optimal roi with doubling', function(
-  this: FinalScoresListWorld,
-) {
-  this.list = getFinalScoresListForOptimalRoi({ doubling: true });
+  this.list = getFinalScoresListForOptimalRoi(this.rules);
 });
 
 Then('the returned final scores list contains {int} elements', function(
@@ -94,7 +89,7 @@ Given('the final score {string} of a hand resolver with a stand threshold of {in
   scoreLabel: string,
   threshold: number,
 ) {
-  const hands = getMaterialHandsForStandThreshold(threshold);
+  const hands = getMaterialHandsForStandThreshold(this.rules, threshold);
   this.list = getFinalScoresList(hands);
   const score = parseScore(scoreLabel);
   const finalScore = this.list.find(item => item.score === score);

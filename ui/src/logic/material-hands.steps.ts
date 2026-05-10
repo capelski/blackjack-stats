@@ -6,19 +6,19 @@ import { MaterialHand } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getMaterialHands } from './material-hands.logic';
 import { getResolvedHands } from './resolved-hands.logic';
+import { RulesWorld } from './rules.steps';
 
-interface MaterialHandsWorld {
+type MaterialHandsWorld = RulesWorld & {
   list: MaterialHand[];
-}
+};
 
-export const getMaterialHandsForStandThreshold = (threshold: number) => {
+export const getMaterialHandsForStandThreshold = (rules: Rules, threshold: number) => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
-  const rules: Rules = {};
   const { handResolutionMap } = getResolvedHands(rules, handResolver);
   return getMaterialHands(rules, handResolutionMap);
 };
 
-export const getMaterialHandsForOptimalRoi = (rules: Rules = {}) => {
+export const getMaterialHandsForOptimalRoi = (rules: Rules) => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
   const { handResolutionMap } = getResolvedHands(rules, handResolver);
   return getMaterialHands(rules, handResolutionMap);
@@ -28,21 +28,14 @@ When('getting the material hands of a hand resolver with a stand threshold of {i
   this: MaterialHandsWorld,
   threshold: number,
 ) {
-  this.list = getMaterialHandsForStandThreshold(threshold);
+  this.list = getMaterialHandsForStandThreshold(this.rules, threshold);
 });
 
 When('getting the material hands of a hand resolver for optimal roi', function(
   this: MaterialHandsWorld,
 ) {
-  this.list = getMaterialHandsForOptimalRoi();
+  this.list = getMaterialHandsForOptimalRoi(this.rules);
 });
-
-When(
-  'getting the material hands of a hand resolver for optimal roi with doubling enabled',
-  function(this: MaterialHandsWorld) {
-    this.list = getMaterialHandsForOptimalRoi({ doubling: true });
-  },
-);
 
 Then('{int} material hands are returned', function(this: MaterialHandsWorld, count: number) {
   assert.strictEqual(this.list.length, count);
@@ -107,6 +100,30 @@ Then(
     assert.ok(
       hand,
       `No material hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and bet multiplier "${expectedBetMultiplier}"`,
+    );
+  },
+);
+
+Then(
+  'there is a material post split hand with cards {string}, probability {string}, action {string} and bet multiplier {string}',
+  function(
+    this: MaterialHandsWorld,
+    expectedCards: string,
+    expectedProbability: string,
+    expectedAction: string,
+    expectedBetMultiplier: string,
+  ) {
+    const hand = this.list.find(
+      h =>
+        h.isPostSplit &&
+        h.cards.map(c => c.symbol).join(',') === expectedCards &&
+        String(h.probability) === expectedProbability &&
+        h.action === expectedAction &&
+        String(h.betMultiplier) === expectedBetMultiplier,
+    );
+    assert.ok(
+      hand,
+      `No material post split hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and bet multiplier "${expectedBetMultiplier}"`,
     );
   },
 );

@@ -26,7 +26,8 @@ Feature: Final scores list
     And the final score 9 has cards "22+", probability "0.1375096477714669" and "9882" hands
 
   Scenario: Final scores for optimal roi with doubling
-    When getting the final scores list of a hand resolver for optimal roi with doubling
+    Given doubling is allowed
+    When getting the final scores list of a hand resolver for optimal roi
     Then the returned final scores list contains 12 elements
     And the final score 1 has score "12", probability "0.008169993882086491" and "87" hands
     And the final score 12 has cards "22+", probability "0.12723858582229794" and "6576" hands

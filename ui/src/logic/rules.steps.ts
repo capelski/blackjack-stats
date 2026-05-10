@@ -11,12 +11,24 @@ Before(function(this: RulesWorld) {
   this.rules = {};
 });
 
-Given('splitting is enabled', function(this: RulesWorld) {
+Given('doubling is allowed', function(this: RulesWorld) {
+  this.rules.doubling = true;
+});
+
+Given('splitting is allowed', function(this: RulesWorld) {
   this.rules.splitting = true;
+});
+
+Given('hitting split aces is allowed', function(this: RulesWorld) {
+  this.rules.hitSplitAces = true;
 });
 
 Given('blackjackAfterSplit is enabled', function(this: RulesWorld) {
   this.rules.blackjackAfterSplit = true;
+});
+
+Given('doubling after splitting is allowed', function(this: RulesWorld) {
+  this.rules.doublingAfterSplit = true;
 });
 
 Then('the following actionable scenarios are considered', function(table: DataTable) {

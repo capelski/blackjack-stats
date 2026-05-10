@@ -9,15 +9,16 @@ import {
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
 import { parseScore } from './result.steps';
+import { RulesWorld } from './rules.steps';
 
-interface ExpectedResultsWorld {
+type ExpectedResultsWorld = RulesWorld & {
   playerFinalScores: FinalScore[];
   selectedExpectedResult?: ExpectedResult;
   computedExpectedResults?: ExpectedResults;
   currentOutcomes?: Outcomes;
   currentProbability?: number;
   currentEdge?: number;
-}
+};
 
 const assertEqual = (actual: unknown, expected: unknown, message: string): void => {
   if (actual !== expected) {
@@ -51,15 +52,11 @@ Given('a player hand resolver with a stand threshold of {int}', function(
   this: ExpectedResultsWorld,
   threshold: number,
 ) {
-  this.playerFinalScores = getFinalScoresListForStandThreshold(threshold);
+  this.playerFinalScores = getFinalScoresListForStandThreshold(this.rules, threshold);
 });
 
 Given('a player hand resolver for optimal roi', function(this: ExpectedResultsWorld) {
-  this.playerFinalScores = getFinalScoresListForOptimalRoi();
-});
-
-Given('a player hand resolver for optimal roi with doubling', function(this: ExpectedResultsWorld) {
-  this.playerFinalScores = getFinalScoresListForOptimalRoi({ doubling: true });
+  this.playerFinalScores = getFinalScoresListForOptimalRoi(this.rules);
 });
 
 When('getting the expected result of a player score of {string}', function(

@@ -1,5 +1,5 @@
-import { double, hit, stand } from '../models/action.model';
-import { softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
+import { double, hit, split, stand } from '../models/action.model';
+import { acesLabel, softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
 import { blackjackScore } from '../models/scores.model';
 import { ConsequencesMap } from '../types/consequence.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
@@ -7,7 +7,12 @@ import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/hand.type
 import { Rules } from '../types/rules.type';
 import { getAbstractHands } from './abstract-hands.logic';
 import { getBetMultiplier } from './bet-multiplier.logic';
-import { getDoubleConsequence, getHitConsequence, getStandConsequence } from './consequence.logic';
+import {
+  getDoubleConsequence,
+  getHitConsequence,
+  getSplitConsequence,
+  getStandConsequence,
+} from './consequence.logic';
 
 export const getResolvedHands = (
   rules: Rules,
@@ -20,7 +25,7 @@ export const getResolvedHands = (
   const handResolutionMap: HandResolutionMap = {};
 
   for (const abstractHand of abstractHands) {
-    const standBetMultiplier = getBetMultiplier(1, {
+    const standBetMultiplier = getBetMultiplier(abstractHand.betMultiplier, {
       isBlackjack: abstractHand.effectiveScore === blackjackScore,
     });
     const consequences: ConsequencesMap = {
@@ -28,10 +33,24 @@ export const getResolvedHands = (
     };
 
     if (abstractHand.isActionable) {
-      consequences[hit] = getHitConsequence(rules, abstractHand.scores, resolvedHandsMap);
+      consequences[hit] = getHitConsequence(
+        rules,
+        abstractHand.scores,
+        abstractHand.isPostSplit,
+        abstractHand.isPostSplitAces,
+        resolvedHandsMap,
+      );
 
       if (abstractHand.canDouble) {
-        consequences[double] = getDoubleConsequence(rules, abstractHand.scores);
+        consequences[double] = getDoubleConsequence(
+          rules,
+          abstractHand.scores,
+          abstractHand.betMultiplier,
+        );
+      }
+
+      if (abstractHand.canSplit && abstractHand.postSplitLabel) {
+        consequences[split] = getSplitConsequence(abstractHand.postSplitLabel, resolvedHandsMap);
       }
     }
 
@@ -60,7 +79,7 @@ export const getResolvedHands = (
 };
 
 export const getActionableResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
-  return resolvedHands.filter(hand => hand.isActionable);
+  return resolvedHands.filter(hand => hand.isActionable && !hand.isHidden);
 };
 
 const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
@@ -71,12 +90,19 @@ const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
     const isASplit = a.label.includes(splitScoresSeparator);
     const isBSplit = b.label.includes(splitScoresSeparator);
 
+    const isAAces = a.label === acesLabel;
+    const isBAces = b.label === acesLabel;
+
     if (isASplit !== isBSplit) {
       return isASplit ? -1 : 1;
     }
 
     if (isASoft !== isBSoft) {
       return isASoft ? -1 : 1;
+    }
+
+    if (isAAces !== isBAces) {
+      return isAAces ? -1 : 1;
     }
 
     return a.effectiveScore - b.effectiveScore;
