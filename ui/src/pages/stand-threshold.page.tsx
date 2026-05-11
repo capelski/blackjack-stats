@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { StandThresholdSlider } from '../components/stand-threshold-slider.component';
+import { StandThresholdControl } from '../components/stand-threshold-control.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
@@ -15,7 +15,7 @@ export const StandThresholdPage: React.FC = () => {
 
   return (
     <StrategyLayoutComponent handResolver={handResolver} rules={{}} title="Stand threshold">
-      <StandThresholdSlider value={standThreshold} onChange={setStandThreshold} />
+      <StandThresholdControl value={standThreshold} onChange={setStandThreshold} />
     </StrategyLayoutComponent>
   );
 };
