@@ -55,15 +55,7 @@ Feature: Final scores list
     And the final score 1 has score "12", probability "0.008625160017726001" and "88" hands
     And the final score 12 has cards "22+", probability "0.1268783314136255" and "5365" hands
 
-  Scenario: Final scores for optimal roi with doubling and splitting
-    Given doubling is allowed
-    And splitting is allowed
-    When getting the final scores list of a hand resolver for optimal roi
-    Then the returned final scores list contains 12 elements
-    And the final score 1 has score "12", probability "0.008625160017726001" and "88" hands
-    And the final score 12 has cards "22+", probability "0.1268783314136255" and "5365" hands
-
-  Scenario: Final scores for optimal roi with doubling and splitting
+  Scenario: Final scores for optimal roi with doubling after splitting
     Given doubling is allowed
     And splitting is allowed
     And doubling after splitting is allowed
