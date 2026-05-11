@@ -1,16 +1,20 @@
-import { Then, When } from '@cucumber/cucumber';
+import { Given, Then, When } from '@cucumber/cucumber';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
-import { formatProbabilityByBetMultiplier } from './final-scores-list.steps';
+import {
+  formatProbabilityByBetMultiplier,
+  getFinalScoresListForStandThreshold,
+} from './final-scores-list.steps';
 import { parseScore } from './result.steps';
+import { RulesWorld } from './rules.steps';
 
-interface FinalComparisonWorld {
+type FinalComparisonWorld = RulesWorld & {
   comparison: FinalComparison;
   playerFinalScores: FinalScore[];
-}
+};
 
 const assertEqual = (actual: unknown, expected: unknown, message: string): void => {
   if (actual !== expected) {
@@ -28,6 +32,13 @@ const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalSco
 
   return finalScore!;
 };
+
+Given('a player hand resolver with a stand threshold of {int}', function(
+  this: FinalComparisonWorld,
+  threshold: number,
+) {
+  this.playerFinalScores = getFinalScoresListForStandThreshold(this.rules, threshold);
+});
 
 When(
   'getting the final comparison of a player score of {string} and a dealer score of {string}',

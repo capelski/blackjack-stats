@@ -1,7 +1,6 @@
-import { Given, Then, When } from '@cucumber/cucumber';
-import { ExpectedResult, ExpectedResults } from '../types/expected-result.type';
+import { DataTable, Then } from '@cucumber/cucumber';
 import { FinalScore } from '../types/final-score.type';
-import { Outcomes } from '../types/outcomes.type';
+import { Rules } from '../types/rules.type';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import {
@@ -9,16 +8,6 @@ import {
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
 import { parseScore } from './result.steps';
-import { RulesWorld } from './rules.steps';
-
-type ExpectedResultsWorld = RulesWorld & {
-  playerFinalScores: FinalScore[];
-  selectedExpectedResult?: ExpectedResult;
-  computedExpectedResults?: ExpectedResults;
-  currentOutcomes?: Outcomes;
-  currentProbability?: number;
-  currentEdge?: number;
-};
 
 const assertEqual = (actual: unknown, expected: unknown, message: string): void => {
   if (actual !== expected) {
@@ -37,104 +26,49 @@ const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalSco
   return finalScore;
 };
 
-const setCurrentExpectedResult = (
-  world: ExpectedResultsWorld,
-  probability: number,
-  outcomes: Outcomes,
-  edge: number,
-): void => {
-  world.currentProbability = probability;
-  world.currentOutcomes = outcomes;
-  world.currentEdge = edge;
+const getFinalScoresFromResolver = (rules: Rules, resolver: string): FinalScore[] => {
+  if (resolver === 'Optimal ROI') {
+    return getFinalScoresListForOptimalRoi(rules);
+  }
+
+  const thresholdMatch = resolver.match(/^(\d+) stand threshold$/);
+  if (thresholdMatch) {
+    return getFinalScoresListForStandThreshold(rules, Number(thresholdMatch[1]));
+  }
+
+  throw new Error(`Unknown hand resolver: "${resolver}"`);
 };
 
-Given('a player hand resolver with a stand threshold of {int}', function(
-  this: ExpectedResultsWorld,
-  threshold: number,
+Then('the following individual expected result scenarios are considered', function(
+  table: DataTable,
 ) {
-  this.playerFinalScores = getFinalScoresListForStandThreshold(this.rules, threshold);
-});
+  for (const row of table.hashes()) {
+    const resolver = row['Hand resolver'].trim();
+    const rules: Rules = JSON.parse(row['Rules'].trim());
+    const finalScores = getFinalScoresFromResolver(rules, resolver);
+    const finalScore = findFinalScore(finalScores, row['Score'].trim());
+    const probabilityByBetMultiplier = getProbabilityByBetMultiplier(finalScore);
+    const result = getExpectedResult(finalScore, probabilityByBetMultiplier);
 
-Given('a player hand resolver for optimal roi', function(this: ExpectedResultsWorld) {
-  this.playerFinalScores = getFinalScoresListForOptimalRoi(this.rules);
-});
-
-When('getting the expected result of a player score of {string}', function(
-  this: ExpectedResultsWorld,
-  playerScoreLabel: string,
-) {
-  const playerFinalScore = findFinalScore(this.playerFinalScores, playerScoreLabel);
-  const probabilityByBetMultiplier = getProbabilityByBetMultiplier(playerFinalScore);
-  this.selectedExpectedResult = getExpectedResult(playerFinalScore, probabilityByBetMultiplier);
-
-  setCurrentExpectedResult(
-    this,
-    this.selectedExpectedResult.probability,
-    this.selectedExpectedResult.outcomes,
-    this.selectedExpectedResult.edge,
-  );
-});
-
-When('getting the overall expected results', function(this: ExpectedResultsWorld) {
-  this.computedExpectedResults = getExpectedResults(this.playerFinalScores);
-
-  setCurrentExpectedResult(
-    this,
-    this.computedExpectedResults.probability,
-    this.computedExpectedResults.outcomes,
-    this.computedExpectedResults.edge,
-  );
-});
-
-Then('the expected result score equals {string}', function(
-  this: ExpectedResultsWorld,
-  expectedScoreLabel: string,
-) {
-  if (!this.selectedExpectedResult) {
-    throw new Error('No selected expected result is available');
+    assertEqual(String(result.probability), row['Probability'].trim(), 'Probability mismatch');
+    assertEqual(String(result.outcomes.win), row['Win'].trim(), 'Win mismatch');
+    assertEqual(String(result.outcomes.push), row['Push'].trim(), 'Push mismatch');
+    assertEqual(String(result.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
+    assertEqual(String(result.edge), row['Edge'].trim(), 'Edge mismatch');
   }
-
-  assertEqual(
-    String(this.selectedExpectedResult.score),
-    String(parseScore(expectedScoreLabel)),
-    'Expected result score mismatch',
-  );
 });
 
-Then('the expected result probability equals {string}', function(
-  this: ExpectedResultsWorld,
-  expectedProbability: string,
-) {
-  if (this.currentProbability === undefined) {
-    throw new Error('No expected result probability is available');
+Then('the following overall expected results scenarios are considered', function(table: DataTable) {
+  for (const row of table.hashes()) {
+    const resolver = row['Hand resolver'].trim();
+    const rules: Rules = JSON.parse(row['Rules'].trim());
+    const finalScores = getFinalScoresFromResolver(rules, resolver);
+    const results = getExpectedResults(finalScores);
+
+    assertEqual(String(results.probability), row['Probability'].trim(), 'Probability mismatch');
+    assertEqual(String(results.outcomes.win), row['Win'].trim(), 'Win mismatch');
+    assertEqual(String(results.outcomes.push), row['Push'].trim(), 'Push mismatch');
+    assertEqual(String(results.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
+    assertEqual(String(results.edge), row['Edge'].trim(), 'Edge mismatch');
   }
-
-  assertEqual(
-    String(this.currentProbability),
-    expectedProbability,
-    'Expected result probability mismatch',
-  );
-});
-
-Then('the expected result outcomes equals {string}', function(
-  this: ExpectedResultsWorld,
-  expected: string,
-) {
-  if (!this.currentOutcomes) {
-    throw new Error('No expected result outcomes are available');
-  }
-
-  const actual = `win=${this.currentOutcomes.win},push=${this.currentOutcomes.push},lose=${this.currentOutcomes.lose}`;
-  assertEqual(actual, expected, 'Expected result outcomes mismatch');
-});
-
-Then('the expected result edge equals {string}', function(
-  this: ExpectedResultsWorld,
-  expectedEdge: string,
-) {
-  if (this.currentEdge === undefined) {
-    throw new Error('No expected result edge is available');
-  }
-
-  assertEqual(String(this.currentEdge), expectedEdge, 'Expected result edge mismatch');
 });
