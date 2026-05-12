@@ -142,13 +142,13 @@ export const getStandConsequence = (score: number, betMultiplier: number): Conse
     score,
     probability: 1,
   };
-  const expectedResults = getExpectedResult(finalScore, { [betMultiplier]: 1 });
+  const expectedResult = getExpectedResult(finalScore, { [betMultiplier]: 1 });
 
   return {
     finalProbabilities: { [score]: 1 },
     action: stand,
-    outcomes: expectedResults.outcomes,
-    edge: expectedResults.edge,
+    outcomes: expectedResult.outcomes,
+    edge: expectedResult.edge,
   };
 };
 
