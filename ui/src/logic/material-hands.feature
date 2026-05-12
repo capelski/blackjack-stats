@@ -45,7 +45,7 @@ Feature: Material hands
     When getting the material hands of a hand resolver for optimal roi
     Then 15743 material hands are returned
 
-  Scenario: Material hands for optimal roi with doubling after splitting is allowed
+  Scenario: Material hands for optimal roi with doubling after splitting
     Given doubling is allowed
     And splitting is allowed
     And doubling after splitting is allowed

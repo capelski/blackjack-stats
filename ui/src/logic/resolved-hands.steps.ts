@@ -5,10 +5,11 @@ import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getResolvedHands } from './resolved-hands.logic';
+import { RulesWorld } from './rules.steps';
 
-interface ResolvedHandsWorld {
+type ResolvedHandsWorld = RulesWorld & {
   list: ResolvedHand[];
-}
+};
 
 const getResolvedHandsForStandThreshold = (threshold: number): ResolvedHand[] => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
@@ -30,13 +31,7 @@ When('getting the resolved hands of a hand resolver with a stand threshold of {i
 When('getting the resolved hands of a hand resolver for optimal roi', function(
   this: ResolvedHandsWorld,
 ) {
-  this.list = getResolvedHandsForOptimalRoi();
-});
-
-When('getting the resolved hands of a hand resolver for optimal roi with doubling', function(
-  this: ResolvedHandsWorld,
-) {
-  this.list = getResolvedHandsForOptimalRoi({ doubling: true });
+  this.list = getResolvedHandsForOptimalRoi(this.rules);
 });
 
 Then('{int} resolved hands are returned', function(this: ResolvedHandsWorld, count: number) {
