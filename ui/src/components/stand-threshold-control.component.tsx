@@ -6,6 +6,9 @@ type StandThresholdSliderProps = {
   value: number;
 };
 
+const minValue = 4;
+const maxValue = 20;
+
 export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
   disabled,
   onChange,
@@ -17,7 +20,7 @@ export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
   };
 
   const updateValue = (newValue: number) => {
-    if (newValue >= 4 && newValue <= 20) {
+    if (newValue >= minValue && newValue <= maxValue) {
       onChange(newValue);
     }
   };
@@ -25,11 +28,19 @@ export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
   return (
     <React.Fragment>
       <label>Stand threshold:</label>
-      <button disabled={disabled} onClick={() => updateValue(value - 1)} style={buttonStyle}>
+      <button
+        disabled={disabled || value <= minValue}
+        onClick={() => updateValue(value - 1)}
+        style={buttonStyle}
+      >
         -
       </button>
       <span>{value}</span>
-      <button disabled={disabled} onClick={() => updateValue(value + 1)} style={buttonStyle}>
+      <button
+        disabled={disabled || value >= maxValue}
+        onClick={() => updateValue(value + 1)}
+        style={buttonStyle}
+      >
         +
       </button>
     </React.Fragment>
