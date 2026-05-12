@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { CheckboxComponent } from '../components/checkbox.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { getStrategy } from '../logic/strategy.logic';
 import { StrategyContext } from '../strategy.context';
@@ -38,24 +39,18 @@ export const OptimalRoiPage: React.FC = () => {
       value={{ computing, showBetMultiplier: !!rules.doubling || !!rules.splitting, strategy }}
     >
       <StrategyLayoutComponent title="Optimal ROI">
-        <label>
-          <input
-            checked={!!rules.doubling}
-            disabled={computing}
-            onChange={e => updateRules({ ...rules, doubling: e.target.checked })}
-            type="checkbox"
-          />
-          Doubling
-        </label>
-        <label>
-          <input
-            checked={!!rules.splitting}
-            disabled={computing}
-            onChange={e => updateRules({ ...rules, splitting: e.target.checked })}
-            type="checkbox"
-          />
-          Splitting
-        </label>
+        <CheckboxComponent
+          checked={!!rules.doubling}
+          disabled={computing}
+          label="Doubling"
+          onChange={checked => updateRules({ ...rules, doubling: checked })}
+        />
+        <CheckboxComponent
+          checked={!!rules.splitting}
+          disabled={computing}
+          label="Splitting"
+          onChange={checked => updateRules({ ...rules, splitting: checked })}
+        />
       </StrategyLayoutComponent>
     </StrategyContext.Provider>
   );
