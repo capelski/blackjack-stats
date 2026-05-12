@@ -6,12 +6,17 @@ Feature: Final scores list
   Scenario: Bet multipliers probability
     Given the final score "17" of a hand resolver with a stand threshold of 17
     When getting the probability by bet multiplier
-    Then the returned probabilities are "1=0.14512590450523458"
+    Then the returned probabilities are "1=1"
+
+  Scenario: Bet multipliers probability (BJ)
+    Given the final score "BJ" of a hand resolver with a stand threshold of 17
+    When getting the probability by bet multiplier
+    Then the returned probabilities are "1.5=1"
 
   Scenario: Bet multipliers probability with doubling
     Given the final score "17" of a hand resolver for optimal roi with doubling
     When getting the probability by bet multiplier
-    Then the returned probabilities are "1=0.10335329705103159,2=0.008169993882086491"
+    Then the returned probabilities are "1=0.9267418149722098,2=0.07325818502779068"
 
   Scenario: Final scores for stand threshold
     When getting the final scores list of a hand resolver with a stand threshold of 17

@@ -27,23 +27,11 @@ export const getFinalComparison = (
 
   for (const betMultiplier of getSortedNumericKeys(probabilityByBetMultiplier)) {
     edgeByBetMultiplier[betMultiplier] = getEdge(outcomes, betMultiplier);
-
-    const betMultiplierProbability =
-      probabilityByBetMultiplier[betMultiplier] / playerScore.probability;
-
-    edge += edgeByBetMultiplier[betMultiplier] * betMultiplierProbability;
+    edge += edgeByBetMultiplier[betMultiplier] * probabilityByBetMultiplier[betMultiplier];
   }
-
-  const weightedProbabilityByBetMultiplier = getSortedNumericKeys(
-    probabilityByBetMultiplier,
-  ).reduce<BetMultiplierMap>((reduced, betMultiplier) => {
-    reduced[betMultiplier] = probabilityByBetMultiplier[betMultiplier] / playerScore.probability;
-    return reduced;
-  }, {});
 
   const finalComparison: FinalComparison = {
     probability,
-    probabilityByBetMultiplier: weightedProbabilityByBetMultiplier,
     result,
     outcomes,
     edge,

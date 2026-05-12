@@ -45,7 +45,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         {props.probabilityByBetMultiplier ? (
           <BetMultipliersCell
             betMultiplierMap={props.probabilityByBetMultiplier}
-            transform={number => toPercentage((number * props.outcomes.win) / props.probability)}
+            transform={number => toPercentage(number * props.outcomes.win)}
           />
         ) : (
           '% Win'
@@ -56,7 +56,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         {props.probabilityByBetMultiplier ? (
           <BetMultipliersCell
             betMultiplierMap={props.probabilityByBetMultiplier}
-            transform={number => toPercentage((number * props.outcomes.push) / props.probability)}
+            transform={number => toPercentage(number * props.outcomes.push)}
           />
         ) : (
           '% Push'
@@ -67,7 +67,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         {props.probabilityByBetMultiplier ? (
           <BetMultipliersCell
             betMultiplierMap={props.probabilityByBetMultiplier}
-            transform={number => toPercentage((number * props.outcomes.lose) / props.probability)}
+            transform={number => toPercentage(number * props.outcomes.lose)}
           />
         ) : (
           '% Lose'

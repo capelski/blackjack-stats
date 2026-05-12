@@ -70,14 +70,14 @@ Then('the final comparison probability equals {string}', function(
   );
 });
 
-Then('the final comparison probability by bet multiplier equals {string}', function(
+Then('the final comparison edge by bet multiplier equals {string}', function(
   this: FinalComparisonWorld,
   expected: string,
 ) {
   assertEqual(
-    formatProbabilityByBetMultiplier(this.comparison.probabilityByBetMultiplier),
+    formatProbabilityByBetMultiplier(this.comparison.edgeByBetMultiplier),
     expected,
-    'Final comparison probability by bet multiplier mismatch',
+    'Final comparison edge by bet multiplier mismatch',
   );
 });
 

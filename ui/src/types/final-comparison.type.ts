@@ -4,7 +4,6 @@ import { Outcomes } from './outcomes.type';
 
 export type FinalComparison = {
   probability: number;
-  probabilityByBetMultiplier: BetMultiplierMap;
   result: Result;
   outcomes: Outcomes;
   edge: number;

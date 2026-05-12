@@ -39,5 +39,9 @@ export const getProbabilityByBetMultiplier = (finalScore: FinalScore): BetMultip
     probabilityByBetMultiplier[hand.betMultiplier] += hand.probability;
   }
 
+  for (const betMultiplier of getSortedNumericKeys(probabilityByBetMultiplier)) {
+    probabilityByBetMultiplier[betMultiplier] /= finalScore.probability;
+  }
+
   return probabilityByBetMultiplier;
 };
