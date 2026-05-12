@@ -18,14 +18,14 @@ export const getExpectedResult = (
   const edgeByBetMultiplier: BetMultiplierMap = {};
 
   for (const finalComparison of Object.values(finalComparisons)) {
-    increaseOutcomes(outcomes, finalComparison.outcomes);
-    edge += finalComparison.edge;
+    increaseOutcomes(outcomes, finalComparison.outcomes, finalComparison.probability);
+    edge += finalComparison.edge * finalComparison.probability;
     probability += finalComparison.probability;
 
     for (const betMultiplier of getSortedNumericKeys(finalComparison.edgeByBetMultiplier)) {
       edgeByBetMultiplier[betMultiplier] =
         (edgeByBetMultiplier[betMultiplier] || 0) +
-        finalComparison.edgeByBetMultiplier[betMultiplier];
+        finalComparison.edgeByBetMultiplier[betMultiplier] * finalComparison.probability;
     }
   }
 

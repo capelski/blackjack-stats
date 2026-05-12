@@ -17,9 +17,9 @@ export const getFinalComparison = (
 
   const result = getResult(playerScore.score, dealerScore.score);
   const outcomes = createOutcomes({
-    lose: result === lose ? probability : 0,
-    push: result === push ? probability : 0,
-    win: result === win ? probability : 0,
+    lose: result === lose ? 1 : 0,
+    push: result === push ? 1 : 0,
+    win: result === win ? 1 : 0,
   });
 
   let edge = 0;
@@ -37,7 +37,7 @@ export const getFinalComparison = (
   const weightedProbabilityByBetMultiplier = getSortedNumericKeys(
     probabilityByBetMultiplier,
   ).reduce<BetMultiplierMap>((reduced, betMultiplier) => {
-    reduced[betMultiplier] = probabilityByBetMultiplier[betMultiplier] * dealerScore.probability;
+    reduced[betMultiplier] = probabilityByBetMultiplier[betMultiplier] / playerScore.probability;
     return reduced;
   }, {});
 
