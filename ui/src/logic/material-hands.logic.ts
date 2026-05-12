@@ -9,7 +9,7 @@ import { MaterialHand } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getLabelFromCards } from './labels.logic';
-import { canAction, canDouble, canSplit } from './rules.logic';
+import { canAction } from './rules.logic';
 import { getEffectiveScore, getScoresFromCards } from './scores.logic';
 
 /** Reversing the cards for the depth first search to list cards in A-K order */
@@ -45,18 +45,13 @@ const cardToMaterialHand = (card: Card): MaterialHand => {
   return {
     action: hit,
     betMultiplier: 1,
-    canDouble: false,
-    canSplit: false,
     cards: [card],
     effectiveScore: getEffectiveScore(scores),
-    isActionable: true,
     isFinal: false,
     isPostDouble: false,
     isPostSplit: false,
-    isPostSplitAces: false,
     label: getLabelFromCards({}, { cards: [card], isPostSplit: false, isPostSplitAces: false }),
     probability: 1 / cardsNumber,
-    scores,
   };
 };
 
@@ -99,19 +94,14 @@ const getNextMaterialHand = (
       isBlackjack: nextEffectiveScore === blackjackScore,
       isDoubleBet: nextAction === double || nextAction === split,
     }),
-    canDouble: canDouble(rules, { cardsNumber: nextCards.length, isPostSplit }),
-    canSplit: canSplit(rules, { cardSymbols: nextCards.map(c => c.symbol), isPostSplit }),
     cards: nextCards,
     effectiveScore: nextEffectiveScore,
-    isActionable: nextIsActionable,
     isFinal: nextAction === stand || !nextIsActionable,
     isPostDouble: previousDouble,
     isPostSplit,
-    isPostSplitAces,
     label: nextLabel,
     // Computing based on previous probability to account for post split hands
     probability: previous.probability / cardsNumber,
-    scores: nextScores,
   };
 
   return nextHand;
