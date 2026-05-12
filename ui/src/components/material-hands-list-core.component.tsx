@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
+import { useStrategyContext } from '../strategy.context';
 import { MaterialHand } from '../types/hand.type';
 import { HandsListItem, HandsListProps } from './material-hands-list-item.component';
 
@@ -12,6 +13,8 @@ export type MaterialHandsListCoreProps = HandsListProps & {
 };
 
 export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props => {
+  const { computing } = useStrategyContext();
+
   const [cardsFilter, setCardsFilter] = useState('');
   const [showNonFinalHands, setShowNonFinalHands] = useState(false);
   const [page, setPage] = useState(1);
@@ -58,6 +61,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
       <p>
         Cards filter
         <input
+          disabled={computing}
           type="text"
           value={cardsFilter}
           onChange={event => updateCardsFilter(event.target.value)}
@@ -71,6 +75,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
               checked={showNonFinalHands}
               onChange={event => updateShowNonFinalHands(event.target.checked)}
               style={{ marginLeft: 16 }}
+              disabled={computing}
             />
             <span>Non-final hands</span>
           </React.Fragment>
@@ -80,13 +85,16 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
       <p>Number of hands: {filteredHands.length}</p>
 
       <p>
-        <button disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>
+        <button disabled={computing || currentPage === 1} onClick={() => setPage(currentPage - 1)}>
           Previous
         </button>
         <span style={{ margin: '0 12px' }}>
           Page {currentPage} of {pages}
         </span>
-        <button disabled={currentPage === pages} onClick={() => setPage(currentPage + 1)}>
+        <button
+          disabled={computing || currentPage === pages}
+          onClick={() => setPage(currentPage + 1)}
+        >
           Next
         </button>
       </p>

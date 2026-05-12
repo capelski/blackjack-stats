@@ -26,23 +26,29 @@ const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = pr
 };
 
 export const ExpectedResultsSummary: React.FC = () => {
-  const { expectedResults } = useStrategyContext();
+  const { strategy } = useStrategyContext();
 
   return (
     <div
       className="expected-summary"
       style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}
     >
-      <ExpectedResultsSummaryCard title="Win" value={toPercentage(expectedResults.outcomes.win)} />
+      <ExpectedResultsSummaryCard
+        title="Win"
+        value={toPercentage(strategy.expectedResults.outcomes.win)}
+      />
       <ExpectedResultsSummaryCard
         title="Push"
-        value={toPercentage(expectedResults.outcomes.push)}
+        value={toPercentage(strategy.expectedResults.outcomes.push)}
       />
       <ExpectedResultsSummaryCard
         title="Lose"
-        value={toPercentage(expectedResults.outcomes.lose)}
+        value={toPercentage(strategy.expectedResults.outcomes.lose)}
       />
-      <ExpectedResultsSummaryCard title="ROI" value={toDecimal(getRoi(expectedResults.edge), 4)} />
+      <ExpectedResultsSummaryCard
+        title="ROI"
+        value={toDecimal(getRoi(strategy.expectedResults.edge), 4)}
+      />
     </div>
   );
 };

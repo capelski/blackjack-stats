@@ -9,9 +9,9 @@ type FinalScoresAggregation = {
 };
 
 export const FinalScoresList: React.FC = () => {
-  const { finalScores, showBetMultiplier } = useStrategyContext();
+  const { strategy, showBetMultiplier } = useStrategyContext();
 
-  const { totalHands, totalProbability } = finalScores.reduce<FinalScoresAggregation>(
+  const { totalHands, totalProbability } = strategy.finalScores.reduce<FinalScoresAggregation>(
     (reduced, finalScore) => {
       reduced.totalHands += Array.isArray(finalScore.hands) ? finalScore.hands.length : 0;
       reduced.totalProbability += finalScore.probability;
@@ -22,7 +22,7 @@ export const FinalScoresList: React.FC = () => {
 
   return (
     <div className="final-scores-list">
-      <p>Number of final scores: {finalScores.length}</p>
+      <p>Number of final scores: {strategy.finalScores.length}</p>
 
       <FinalScoresListItem
         hands="Hands"
@@ -31,7 +31,7 @@ export const FinalScoresList: React.FC = () => {
         score="Score"
       ></FinalScoresListItem>
 
-      {finalScores.map((finalScore, index) => (
+      {strategy.finalScores.map((finalScore, index) => (
         <FinalScoresListItem
           hands={finalScore.hands}
           key={index}

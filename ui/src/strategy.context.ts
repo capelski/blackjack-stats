@@ -1,14 +1,10 @@
 import { createContext, useContext } from 'react';
-import { ExpectedResults } from './types/expected-result.type';
-import { FinalScore } from './types/final-score.type';
-import { MaterialHand, ResolvedHand } from './types/hand.type';
+import { Strategy } from './types/strategy.type';
 
 export type StrategyContextValue = {
-  expectedResults: ExpectedResults;
-  finalScores: FinalScore[];
-  materialHands: MaterialHand[];
-  resolvedHands: ResolvedHand[];
-  showBetMultiplier?: boolean;
+  computing: boolean;
+  showBetMultiplier: boolean;
+  strategy: Strategy;
 };
 
 export const StrategyContext = createContext<StrategyContextValue | null>(null);

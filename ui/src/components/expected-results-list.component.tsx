@@ -95,17 +95,17 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
 };
 
 export const ExpectedResultsList: React.FC = () => {
-  const { expectedResults } = useStrategyContext();
+  const { strategy } = useStrategyContext();
 
   return (
     <div>
       <ExpectedResultsListRow isHeader={true} />
 
-      {getSortedNumericKeys(expectedResults.breakdown).map(playerScore => {
+      {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
         return (
           <ExpectedResultsListRow
             key={playerScore}
-            expectedResult={expectedResults.breakdown[playerScore]}
+            expectedResult={strategy.expectedResults.breakdown[playerScore]}
           />
         );
       })}

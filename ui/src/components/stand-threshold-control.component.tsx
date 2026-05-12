@@ -1,15 +1,18 @@
 import React from 'react';
 
 type StandThresholdSliderProps = {
-  value: number;
+  disabled?: boolean;
   onChange: (value: number) => void;
+  value: number;
 };
 
 export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
-  value,
+  disabled,
   onChange,
+  value,
 }: StandThresholdSliderProps) => {
   const buttonStyle: React.CSSProperties = {
+    cursor: disabled ? 'not-allowed' : 'pointer',
     margin: '0 5px',
   };
 
@@ -22,11 +25,11 @@ export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
   return (
     <React.Fragment>
       <label>Stand threshold:</label>
-      <button onClick={() => updateValue(value - 1)} style={buttonStyle}>
+      <button disabled={disabled} onClick={() => updateValue(value - 1)} style={buttonStyle}>
         -
       </button>
       <span>{value}</span>
-      <button onClick={() => updateValue(value + 1)} style={buttonStyle}>
+      <button disabled={disabled} onClick={() => updateValue(value + 1)} style={buttonStyle}>
         +
       </button>
     </React.Fragment>

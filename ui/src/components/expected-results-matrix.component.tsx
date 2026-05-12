@@ -43,7 +43,7 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
 };
 
 export const ExpectedResultsMatrix: React.FC = () => {
-  const { expectedResults } = useStrategyContext();
+  const { strategy } = useStrategyContext();
 
   return (
     <div>
@@ -54,8 +54,8 @@ export const ExpectedResultsMatrix: React.FC = () => {
         isHeader={true}
       />
 
-      {getSortedNumericKeys(expectedResults.breakdown).map(playerScore => {
-        const expectedResult = expectedResults.breakdown[playerScore];
+      {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
+        const expectedResult = strategy.expectedResults.breakdown[playerScore];
 
         return (
           <ExpectedResultsMatrixRow
@@ -87,7 +87,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
       <ExpectedResultsMatrixRow
         firstCell="Total"
         dealerScoreToCell={dealerScore => ({ node: toPercentage(dealerScore.probability) })}
-        lastCell={toPercentage(expectedResults.probability)}
+        lastCell={toPercentage(strategy.expectedResults.probability)}
       />
     </div>
   );

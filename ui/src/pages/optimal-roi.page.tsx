@@ -1,36 +1,62 @@
-import { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
+import { getStrategy } from '../logic/strategy.logic';
+import { StrategyContext } from '../strategy.context';
 import { HandResolver } from '../types/hand-resolution.type';
 import { Rules } from '../types/rules.type';
+import { Strategy } from '../types/strategy.type';
 
 const optimalRoiHandResolver: HandResolver = hand => hand.optimalConsequence.action;
 
-export const OptimalRoiPage: React.FC = () => {
-  const [doubling, setDoubling] = useState(false);
-  const [splitting, setSplitting] = useState(false);
+const defaultRules: Rules = {};
 
-  const rules: Rules = useMemo(() => {
-    return {
-      doubling,
-      splitting,
-    };
-  }, [doubling, splitting]);
+export const OptimalRoiPage: React.FC = () => {
+  const [computing, setComputing] = useState(false);
+  const [rules, setRules] = useState<Rules>(defaultRules);
+  const [strategy, setStrategy] = useState<Strategy>(undefined!);
+
+  const computeStrategy = async (rules: Rules) => {
+    setComputing(true);
+
+    const strategy = await getStrategy(rules, optimalRoiHandResolver);
+    setStrategy(strategy);
+    setComputing(false);
+  };
+
+  const updateRules = (newValue: Rules) => {
+    setRules(newValue);
+    return computeStrategy(newValue);
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    computeStrategy(defaultRules);
+  }, []);
 
   return (
-    <StrategyLayoutComponent
-      handResolver={optimalRoiHandResolver}
-      rules={rules}
-      showBetMultiplier={doubling || splitting}
-      title="Optimal ROI"
+    <StrategyContext.Provider
+      value={{ computing, showBetMultiplier: !!rules.doubling || !!rules.splitting, strategy }}
     >
-      <label>
-        <input type="checkbox" checked={doubling} onChange={e => setDoubling(e.target.checked)} />
-        Doubling
-      </label>
-      <label>
-        <input type="checkbox" checked={splitting} onChange={e => setSplitting(e.target.checked)} />
-        Splitting
-      </label>
-    </StrategyLayoutComponent>
+      <StrategyLayoutComponent title="Optimal ROI">
+        <label>
+          <input
+            checked={!!rules.doubling}
+            disabled={computing}
+            onChange={e => updateRules({ ...rules, doubling: e.target.checked })}
+            type="checkbox"
+          />
+          Doubling
+        </label>
+        <label>
+          <input
+            checked={!!rules.splitting}
+            disabled={computing}
+            onChange={e => updateRules({ ...rules, splitting: e.target.checked })}
+            type="checkbox"
+          />
+          Splitting
+        </label>
+      </StrategyLayoutComponent>
+    </StrategyContext.Provider>
   );
 };

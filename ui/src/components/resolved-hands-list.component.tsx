@@ -5,8 +5,8 @@ import { useStrategyContext } from '../strategy.context';
 import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
 
 export const ResolvedHandsList: React.FC = () => {
-  const { resolvedHands } = useStrategyContext();
-  const actionableResolvedHands = getActionableResolvedHands(resolvedHands);
+  const { strategy } = useStrategyContext();
+  const actionableResolvedHands = getActionableResolvedHands(strategy.resolvedHands);
 
   return (
     <div className="hand-actions-list">
