@@ -22,24 +22,42 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
 
       {props.children}
 
-      <nav className="nested-navbar">
-        <NavLink to={materialHandsRoute} style={getNavLinkStyle}>
-          Hands
-        </NavLink>
-        <NavLink to={finalScoresRoute} style={getNavLinkStyle}>
-          Final Scores
-        </NavLink>
-        <NavLink to={expectedResultsRoute} style={getNavLinkStyle}>
-          Expected Results
-        </NavLink>
-        <NavLink to={resolvedHandsRoute} style={getNavLinkStyle}>
-          Hand Actions
-        </NavLink>
-      </nav>
+      <div style={{ position: resolvedHandsRoute ? 'relative' : 'static' }}>
+        {(computing || !strategy) && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              top: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              display: 'flex',
+              justifyContent: 'center',
+              paddingTop: 100,
+            }}
+          >
+            <h1>🔄</h1>
+          </div>
+        )}
 
-      {(computing || !strategy) && <p>Computing...</p>}
+        <nav className="nested-navbar">
+          <NavLink to={materialHandsRoute} style={getNavLinkStyle}>
+            Hands
+          </NavLink>
+          <NavLink to={finalScoresRoute} style={getNavLinkStyle}>
+            Final Scores
+          </NavLink>
+          <NavLink to={expectedResultsRoute} style={getNavLinkStyle}>
+            Expected Results
+          </NavLink>
+          <NavLink to={resolvedHandsRoute} style={getNavLinkStyle}>
+            Hand Actions
+          </NavLink>
+        </nav>
 
-      {strategy && <Outlet />}
+        {strategy && <Outlet />}
+      </div>
     </div>
   );
 };

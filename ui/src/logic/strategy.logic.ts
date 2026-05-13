@@ -7,7 +7,7 @@ import { getMaterialHands } from './material-hands.logic';
 import { getResolvedHands } from './resolved-hands.logic';
 
 export const getStrategy = async (rules: Rules, handResolver: HandResolver): Promise<Strategy> => {
-  await new Promise(resolve => setTimeout(resolve, 100)); // Simulate async computation
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate async computation
   const { resolvedHands, handResolutionMap } = getResolvedHands(rules, handResolver);
   const materialHands = getMaterialHands(rules, handResolutionMap);
   const finalScores = getFinalScoresList(materialHands);
