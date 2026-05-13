@@ -2,7 +2,10 @@ import { DataTable, Then } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { cards } from '../models/cards.model';
 import { Card } from '../types/card.type';
-import { getLabelFromCards } from './labels.logic';
+import { Rules } from '../types/rules.type';
+import { LabelFromCardsParameters, getNextLabel } from './labels.logic';
+import { canSplit } from './rules.logic';
+import { getScoresFromCards } from './scores.logic';
 
 export function parseCards(symbols: string): Card[] {
   return symbols.split(',').map(symbol => {
@@ -11,6 +14,21 @@ export function parseCards(symbols: string): Card[] {
     return card;
   });
 }
+
+export const getLabelFromCards = (
+  rules: Rules,
+  { cards, isPostSplit, isPostSplitAces }: LabelFromCardsParameters,
+) => {
+  const scores = getScoresFromCards(rules, { cards, isPostSplit });
+  return getNextLabel(rules, {
+    isPostSplit,
+    isPostSplitAces,
+    scores,
+    splitSymbol: canSplit(rules, { cardSymbols: cards.map(c => c.symbol), isPostSplit })
+      ? cards[0].symbol
+      : undefined,
+  });
+};
 
 Then('the following label scenarios are considered', function(table: DataTable) {
   for (const row of table.hashes()) {

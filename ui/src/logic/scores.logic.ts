@@ -27,7 +27,7 @@ export type ScoresFromScoresOptions = {
 
 export const getScoresFromScores = (
   rules: Rules,
-  { allScores, isPostSplit, hasTwoCards }: ScoresFromScoresOptions,
+  { allScores, hasTwoCards, isPostSplit }: ScoresFromScoresOptions,
 ) => {
   const [first, ...rest] = allScores;
   let scores = first;

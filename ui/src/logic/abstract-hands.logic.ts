@@ -1,9 +1,8 @@
-import { cards } from '../models/cards.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { AbstractHand, AbstractHandSeed } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
-import { getLabelFromCards, getLabelFromScores } from './labels.logic';
+import { getNextLabel } from './labels.logic';
 import { canAction, canDouble, canSplit } from './rules.logic';
 import { getEffectiveScore } from './scores.logic';
 
@@ -190,21 +189,12 @@ const validateLabel = (rules: Rules, seed: AbstractHandSeed) => {
   const isPostSplit = !!seed.isPostSplit;
   const isPostSplitAces = !!seed.isPostSplitAces;
 
-  let label = getLabelFromScores(rules, {
+  const label = getNextLabel(rules, {
     scores: seed.scores,
     isPostSplit,
     isPostSplitAces,
+    splitSymbol: seed.postSplitLabel && seed.label.split(',')[0],
   });
-
-  const splitCardSymbol = seed.postSplitLabel && seed.label.split(',')[0];
-  if (splitCardSymbol) {
-    const card = cards.find(c => c.symbol === splitCardSymbol)!;
-    label = getLabelFromCards(rules, {
-      cards: [card, card],
-      isPostSplit,
-      isPostSplitAces,
-    });
-  }
 
   if (label !== seed.label) {
     throw new Error(

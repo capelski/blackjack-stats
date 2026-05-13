@@ -8,9 +8,9 @@ import { HandResolutionMap } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
-import { getLabelFromCards } from './labels.logic';
-import { canAction } from './rules.logic';
-import { getEffectiveScore, getScoresFromCards } from './scores.logic';
+import { getNextLabel, getNextLabelAndScores } from './labels.logic';
+import { canAction, canSplit } from './rules.logic';
+import { getEffectiveScore } from './scores.logic';
 
 /** Reversing the cards for the depth first search to list cards in A-K order */
 const reversedCards = [...cards].reverse();
@@ -42,6 +42,12 @@ export const getMaterialHands = (rules: Rules, handActions: HandResolutionMap): 
 const cardToMaterialHand = (card: Card): MaterialHand => {
   const { scores } = card;
 
+  const isPostSplit = false;
+  const label = getNextLabel(
+    {},
+    { scores, isPostSplit, isPostSplitAces: false, splitSymbol: undefined },
+  );
+
   return {
     action: hit,
     betMultiplier: 1,
@@ -49,8 +55,8 @@ const cardToMaterialHand = (card: Card): MaterialHand => {
     effectiveScore: getEffectiveScore(scores),
     isFinal: false,
     isPostDouble: false,
-    isPostSplit: false,
-    label: getLabelFromCards({}, { cards: [card], isPostSplit: false, isPostSplitAces: false }),
+    isPostSplit,
+    label,
     probability: 1 / cardsNumber,
   };
 };
@@ -68,13 +74,18 @@ const getNextMaterialHand = (
   const isPostSplitAces = isPostSplit && previousCards[0].symbol === 'A';
 
   const nextCards = [...previousCards, card];
-  const nextScores = getScoresFromCards(rules, { cards: nextCards, isPostSplit });
-  const nextEffectiveScore = getEffectiveScore(nextScores);
-  const nextLabel = getLabelFromCards(rules, {
-    cards: nextCards,
+  const allScores = nextCards.map(card => card.scores);
+  const { label: nextLabel, scores: nextScores } = getNextLabelAndScores(rules, {
+    allScores,
+    hasTwoCards: nextCards.length === 2,
     isPostSplit,
     isPostSplitAces,
+    splitSymbol: canSplit(rules, { cardSymbols: nextCards.map(c => c.symbol), isPostSplit })
+      ? nextCards[0].symbol
+      : undefined,
   });
+
+  const nextEffectiveScore = getEffectiveScore(nextScores);
   const nextIsActionable = canAction(rules, {
     isPostDouble: previousDouble,
     isPostSplit,

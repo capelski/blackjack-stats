@@ -6,7 +6,7 @@ import { ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getExpectedResult } from './expected-results.logic';
-import { getLabelFromScores } from './labels.logic';
+import { getNextLabel, getNextLabelAndScores } from './labels.logic';
 import { createOutcomes, increaseOutcomes } from './outcomes.logic';
 import { getEffectiveScore, getScoresFromScores } from './scores.logic';
 
@@ -53,12 +53,13 @@ export type HitConsequenceParameters = {
   isPostSplitAces: boolean;
   isSingleCard: boolean;
   scores: number[];
+  splitSymbol?: string;
 };
 
 export const getHitConsequence = (
   rules: Rules,
   futureResolvedHandsMap: ResolvedHandsMap,
-  { isPostSplit, isPostSplitAces, isSingleCard, scores }: HitConsequenceParameters,
+  { isPostSplit, isPostSplitAces, isSingleCard, scores, splitSymbol }: HitConsequenceParameters,
 ): Consequence => {
   const nextConsequences = cards.map(card => {
     const nextResolvedHand = getNextResolvedHand(rules, futureResolvedHandsMap, {
@@ -67,6 +68,7 @@ export const getHitConsequence = (
       hasTwoCards: isSingleCard,
       isPostSplit,
       isPostSplitAces,
+      splitSymbol,
     });
     return nextResolvedHand.consequences[nextResolvedHand.action]!;
   });
@@ -102,25 +104,33 @@ type NextResolvedHandParameters = {
   hasTwoCards: boolean;
   isPostSplit: boolean;
   isPostSplitAces: boolean;
+  splitSymbol?: string;
 };
 
 const getNextResolvedHand = (
   rules: Rules,
   futureResolvedHandsMap: ResolvedHandsMap,
-  { allScores, hasTwoCards, isPostSplit, isPostSplitAces }: NextResolvedHandParameters,
+  { allScores, hasTwoCards, isPostSplit, isPostSplitAces, splitSymbol }: NextResolvedHandParameters,
 ) => {
-  const nextScores = getScoresFromScores(rules, {
+  const { label } = getNextLabelAndScores(rules, {
     allScores,
     hasTwoCards,
     isPostSplit,
+    isPostSplitAces,
+    // The player will never get to a split hand after hitting
+    splitSymbol: undefined,
   });
-  const nextLabel = getLabelFromScores(rules, { scores: nextScores, isPostSplit, isPostSplitAces });
-  const nextResolvedHand = futureResolvedHandsMap[nextLabel];
+  const nextResolvedHand = futureResolvedHandsMap[label];
 
   if (!nextResolvedHand) {
     const [firstScores] = allScores;
-    const label = getLabelFromScores(rules, { scores: firstScores, isPostSplit, isPostSplitAces });
-    throw new Error(`The "${nextLabel}" resolved hand is not available before ${label}`);
+    const label = getNextLabel(rules, {
+      isPostSplit,
+      isPostSplitAces,
+      scores: firstScores,
+      splitSymbol,
+    });
+    throw new Error(`The "${label}" resolved hand is not available before ${label}`);
   }
 
   return nextResolvedHand;

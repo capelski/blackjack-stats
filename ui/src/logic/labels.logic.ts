@@ -8,8 +8,7 @@ import {
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
-import { canSplit } from './rules.logic';
-import { getEffectiveScore, getScoresFromCards } from './scores.logic';
+import { getEffectiveScore, getScoresFromScores } from './scores.logic';
 
 export const effectiveScoreToLabel = (effectiveScore: number): string => {
   if (effectiveScore === bustScore) {
@@ -29,28 +28,21 @@ export type LabelFromCardsParameters = {
   isPostSplitAces: boolean;
 };
 
-export const getLabelFromCards = (
-  rules: Rules,
-  { cards, isPostSplit, isPostSplitAces }: LabelFromCardsParameters,
-) => {
-  if (canSplit(rules, { cardSymbols: cards.map(c => c.symbol), isPostSplit })) {
-    return `${cards[0].symbol}${splitScoresSeparator}${cards[1].symbol}`;
-  }
-
-  const scores = getScoresFromCards(rules, { cards, isPostSplit });
-  return getLabelFromScores(rules, { scores, isPostSplit, isPostSplitAces });
-};
-
-export type LabelFromScoresParameters = {
-  scores: number[];
+export type NextLabelParameters = {
   isPostSplit: boolean;
   isPostSplitAces: boolean;
+  scores: number[];
+  splitSymbol: string | undefined;
 };
 
-export const getLabelFromScores = (
+export const getNextLabel = (
   rules: Rules,
-  { scores, isPostSplit, isPostSplitAces }: LabelFromScoresParameters,
+  { isPostSplit, isPostSplitAces, scores, splitSymbol }: NextLabelParameters,
 ) => {
+  if (splitSymbol) {
+    return `${splitSymbol}${splitScoresSeparator}${splitSymbol}`;
+  }
+
   const score = getEffectiveScore(scores);
 
   const label =
@@ -63,4 +55,35 @@ export const getLabelFromScores = (
   return `${label}${
     isPostSplit ? ` (${postSplitSymbol}${isPostSplitAces && !rules.hitSplitAces ? ',A' : ''})` : ''
   }`;
+};
+
+export type NextLabelAndScoresParameters = Omit<NextLabelParameters, 'scores'> & {
+  allScores: number[][];
+  hasTwoCards: boolean;
+  splitSymbol: string | undefined;
+};
+
+export const getNextLabelAndScores = (
+  rules: Rules,
+  {
+    allScores,
+    hasTwoCards,
+    isPostSplit,
+    isPostSplitAces,
+    splitSymbol,
+  }: NextLabelAndScoresParameters,
+) => {
+  const scores = getScoresFromScores(rules, {
+    allScores,
+    hasTwoCards,
+    isPostSplit,
+  });
+  const label = getNextLabel(rules, {
+    isPostSplit,
+    isPostSplitAces,
+    scores,
+    splitSymbol,
+  });
+
+  return { label, scores };
 };
