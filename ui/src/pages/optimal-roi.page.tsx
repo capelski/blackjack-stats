@@ -51,6 +51,24 @@ export const OptimalRoiPage: React.FC = () => {
           label="Splitting"
           onChange={checked => updateRules({ ...rules, splitting: checked })}
         />
+        <CheckboxComponent
+          checked={!!rules.doublingAfterSplit}
+          disabled={computing || !rules.doubling || !rules.splitting}
+          label="Doubling After Split"
+          onChange={checked => updateRules({ ...rules, doublingAfterSplit: checked })}
+        />
+        <CheckboxComponent
+          checked={!!rules.hitSplitAces}
+          disabled={computing || !rules.splitting}
+          label="Hit Split Aces"
+          onChange={checked => updateRules({ ...rules, hitSplitAces: checked })}
+        />
+        <CheckboxComponent
+          checked={!!rules.blackjackAfterSplit}
+          disabled={computing || !rules.splitting}
+          label="Blackjack After Split"
+          onChange={checked => updateRules({ ...rules, blackjackAfterSplit: checked })}
+        />
       </StrategyLayoutComponent>
     </StrategyContext.Provider>
   );
