@@ -1,4 +1,4 @@
-import { MaterialHand } from '../types/hand.type';
+import { MaterialHand } from '../types/material-hand.type';
 import { FinalScoresListModal } from './final-scores-list-modal.component';
 import { HandsListProps } from './material-hands-list-item.component';
 

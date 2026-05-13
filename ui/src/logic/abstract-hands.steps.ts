@@ -1,6 +1,6 @@
 import { Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
-import { AbstractHand } from '../types/hand.type';
+import { AbstractHand } from '../types/abstract-hand.type';
 import { getAbstractHands } from './abstract-hands.logic';
 import { RulesWorld } from './rules.steps';
 

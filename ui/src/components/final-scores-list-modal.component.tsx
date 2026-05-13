@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import { MaterialHand } from '../types/hand.type';
+import { MaterialHand } from '../types/material-hand.type';
 import { MaterialHandsListCore } from './material-hands-list-core.component';
 import { HandsListProps } from './material-hands-list-item.component';
 

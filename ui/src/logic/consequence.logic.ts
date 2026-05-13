@@ -2,7 +2,7 @@ import { double, hit, split, stand } from '../models/action.model';
 import { cards } from '../models/cards.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
-import { ResolvedHandsMap } from '../types/hand.type';
+import { ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getExpectedResult } from './expected-results.logic';

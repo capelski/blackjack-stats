@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { useStrategyContext } from '../strategy.context';
-import { MaterialHand } from '../types/hand.type';
+import { MaterialHand } from '../types/material-hand.type';
 import { HandsListItem, HandsListProps } from './material-hands-list-item.component';
 
 const pageSize = 50;

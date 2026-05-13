@@ -1,5 +1,5 @@
 import { Action } from '../models/action.model';
-import { AnalyzedHand } from './hand.type';
+import { AnalyzedHand } from './resolved-hand.type';
 
 export type HandResolver = (hand: AnalyzedHand) => Action;
 

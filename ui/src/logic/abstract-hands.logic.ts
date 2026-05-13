@@ -1,6 +1,6 @@
 import { cards } from '../models/cards.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
-import { AbstractHand, AbstractHandSeed } from '../types/hand.type';
+import { AbstractHand, AbstractHandSeed } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getLabelFromCards, getLabelFromScores } from './labels.logic';

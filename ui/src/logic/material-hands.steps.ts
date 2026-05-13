@@ -2,7 +2,7 @@ import { Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
-import { MaterialHand } from '../types/hand.type';
+import { MaterialHand } from '../types/material-hand.type';
 import { Rules } from '../types/rules.type';
 import { getMaterialHands } from './material-hands.logic';
 import { getResolvedHands } from './resolved-hands.logic';

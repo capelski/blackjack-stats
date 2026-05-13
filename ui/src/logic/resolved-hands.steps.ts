@@ -2,7 +2,7 @@ import { DataTable, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
-import { ResolvedHand } from '../types/hand.type';
+import { ResolvedHand } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { getResolvedHands } from './resolved-hands.logic';
 import { RulesWorld } from './rules.steps';

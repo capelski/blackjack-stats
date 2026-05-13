@@ -1,4 +1,4 @@
-import { MaterialHand } from './hand.type';
+import { MaterialHand } from './material-hand.type';
 
 export type FinalScoreBase = {
   probability: number;

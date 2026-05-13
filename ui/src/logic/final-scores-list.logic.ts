@@ -1,6 +1,6 @@
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore, FinalScoresMap } from '../types/final-score.type';
-import { MaterialHand } from '../types/hand.type';
+import { MaterialHand } from '../types/material-hand.type';
 import { getSortedNumericKeys } from './numbers.logic';
 
 export const getFinalScoresList = (hands: MaterialHand[]): FinalScore[] => {

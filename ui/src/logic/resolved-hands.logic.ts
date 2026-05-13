@@ -2,7 +2,7 @@ import { double, hit, split, stand } from '../models/action.model';
 import { acesLabel, softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
 import { ConsequencesMap } from '../types/consequence.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
-import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/hand.type';
+import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { getAbstractHands } from './abstract-hands.logic';
 import {
