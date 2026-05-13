@@ -16,18 +16,18 @@ export const getScoresFromCards = (
   { cards, isPostSplit }: ScoresFromCardsParameters,
 ) => {
   const allScores = cards.map(card => card.scores);
-  return getScoresFromScores(rules, { allScores, cardsNumber: cards.length, isPostSplit });
+  return getScoresFromScores(rules, { allScores, hasTwoCards: cards.length === 2, isPostSplit });
 };
 
 export type ScoresFromScoresOptions = {
   allScores: number[][];
-  cardsNumber: number;
+  hasTwoCards: boolean;
   isPostSplit: boolean;
 };
 
 export const getScoresFromScores = (
   rules: Rules,
-  { allScores, isPostSplit, cardsNumber }: ScoresFromScoresOptions,
+  { allScores, isPostSplit, hasTwoCards }: ScoresFromScoresOptions,
 ) => {
   const [first, ...rest] = allScores;
   let scores = first;
@@ -41,7 +41,7 @@ export const getScoresFromScores = (
     return [bustScore];
   }
 
-  if (isBlackjack(rules, { scores: validScores, cardsNumber, isPostSplit })) {
+  if (isBlackjack(rules, { scores: validScores, hasTwoCards, isPostSplit })) {
     return [blackjackScore];
   }
 
@@ -57,11 +57,11 @@ const getUniqueScores = (values1: number[], values2: number[]) => {
 };
 
 type BlackjackParameters = {
-  scores: number[];
-  cardsNumber: number;
+  hasTwoCards: boolean;
   isPostSplit: boolean;
+  scores: number[];
 };
 
-const isBlackjack = (rules: Rules, { cardsNumber, scores, isPostSplit }: BlackjackParameters) => {
-  return cardsNumber === 2 && scores.includes(21) && (!isPostSplit || rules.blackjackAfterSplit);
+const isBlackjack = (rules: Rules, { hasTwoCards, isPostSplit, scores }: BlackjackParameters) => {
+  return hasTwoCards && scores.includes(21) && (!isPostSplit || rules.blackjackAfterSplit);
 };

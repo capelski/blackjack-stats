@@ -56,6 +56,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       ? [
           /** Post-split hands */
           { label: '22+ (S)', scores: [bustScore], ...postSplit },
+          // BJ (S) can be reached when splitting 10s, but not when splitting Aces
           { label: 'BJ (S)', scores: [blackjackScore], ...postSplit },
           { label: '21 (S)', scores: [21], ...postSplit },
           { label: '11/21 (S)', scores: [11, 21], ...postSplit },
@@ -86,10 +87,11 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
           { label: '3/13 (S)', scores: [3, 13], ...postSplit },
           { label: '2/12 (S)', scores: [2, 12], ...postSplit },
           ...(rules.hitSplitAces
-            ? [{ label: '1/11 (S)', scores: [1, 11], ...postSplit }]
+            ? [{ label: '1/11 (S)', scores: [1, 11], isSingleCard: true, ...postSplit }]
             : [
                 /** Post-split aces hands */
                 { label: '22+ (S,A)', scores: [bustScore], ...postSplitAces },
+                // BJ (S,A) can only be reached when splitting A,A with blackjack after split enabled
                 { label: 'BJ (S,A)', scores: [blackjackScore], ...postSplitAces },
                 { label: '21 (S,A)', scores: [21], ...postSplitAces },
                 { label: '11/21 (S,A)', scores: [11, 21], ...postSplitAces },
@@ -119,7 +121,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
                 { label: '4/14 (S,A)', scores: [4, 14], ...postSplitAces },
                 { label: '3/13 (S,A)', scores: [3, 13], ...postSplitAces },
                 { label: '2/12 (S,A)', scores: [2, 12], ...postSplitAces },
-                { label: '1/11 (S,A)', scores: [1, 11], ...postSplitAces },
+                { label: '1/11 (S,A)', scores: [1, 11], isSingleCard: true, ...postSplitAces },
               ]),
           /** Single card post-split hands */
           { label: '3 (S)', scores: [3], ...postSplit },
@@ -149,6 +151,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
   return handSeeds.map<AbstractHand>(seed => {
     const isPostSplit = !!seed.isPostSplit;
     const isPostSplitAces = !!seed.isPostSplitAces;
+    const isSingleCard = !!seed.isSingleCard;
     const effectiveScore = getEffectiveScore(seed.scores);
     const splitCardSymbol = seed.postSplitLabel && seed.label.split(',')[0];
 
@@ -166,6 +169,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     });
 
     return {
+      ...seed,
       betMultiplier: getBetMultiplier(isPostSplit ? 2 : 1, {
         isBlackjack: effectiveScore === blackjackScore,
       }),
@@ -175,12 +179,9 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
         canSplit(rules, { cardSymbols: [splitCardSymbol, splitCardSymbol], isPostSplit }),
       effectiveScore,
       isActionable,
-      isHidden: seed.isHidden,
       isPostSplit,
       isPostSplitAces,
-      label: seed.label,
-      postSplitLabel: seed.postSplitLabel,
-      scores: seed.scores,
+      isSingleCard,
     };
   });
 };

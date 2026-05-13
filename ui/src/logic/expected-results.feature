@@ -12,6 +12,7 @@ Feature: Expected results
       | Optimal ROI        | {"splitting": true, "hitSplitAces": true}                         | 20    | 0.16277115111832252   | 0.6996796343095133     | 0.1802524239096693   | 0.12006794178079239    | 0.583524870460664    |
       | Optimal ROI        | {"doubling": true, "splitting": true}                             | 20    | 0.16039908017577664   | 0.6996796343095133     | 0.1802524239096693   | 0.12006794178079239    | 0.6524121630643883   |
       | Optimal ROI        | {"doubling": true, "splitting": true, "doublingAfterSplit": true} | 20    | 0.16038164550078662   | 0.6996796343095133     | 0.1802524239096693   | 0.12006794178079239    | 0.6536224142453908   |
+      | Optimal ROI        | {"splitting": true, "blackjackAfterSplit": true}                  | BJ    | 0.04915794264906569   | 0.9526627218934662     | 0.04733727810650889  | 0                      | 1.4819197896120588   |
 
   Scenario: Overall expected results
     Then the following overall expected results scenarios are considered
@@ -23,3 +24,4 @@ Feature: Expected results
       | Optimal ROI        | {"splitting": true, "hitSplitAces": true}                         | 0.9999999999999737  | 0.4276171906402636  | 0.08504111612055786  | 0.4873416932391274  | -0.036341566123630084 |
       | Optimal ROI        | {"doubling": true, "splitting": true}                             | 0.9999999999999737  | 0.4271959726228961  | 0.08352289367433421  | 0.4892811337027184  | -0.02860396795538636  |
       | Optimal ROI        | {"doubling": true, "splitting": true, "doublingAfterSplit": true} | 0.9999999999999738  | 0.4271955487679424  | 0.08351119378917625  | 0.48929325744283014 | -0.02844509395702416  |
+      | Optimal ROI        | {"splitting": true, "blackjackAfterSplit": true}                  | 0.9999999999999739  | 0.4273778425980176  | 0.08484170513111892  | 0.48778045227081235 | -0.03596330103272373  |

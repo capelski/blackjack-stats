@@ -1,12 +1,10 @@
 import { double, hit, split, stand } from '../models/action.model';
 import { acesLabel, softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
-import { blackjackScore } from '../models/scores.model';
 import { ConsequencesMap } from '../types/consequence.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
 import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/hand.type';
 import { Rules } from '../types/rules.type';
 import { getAbstractHands } from './abstract-hands.logic';
-import { getBetMultiplier } from './bet-multiplier.logic';
 import {
   getDoubleConsequence,
   getHitConsequence,
@@ -25,21 +23,12 @@ export const getResolvedHands = (
   const handResolutionMap: HandResolutionMap = {};
 
   for (const abstractHand of abstractHands) {
-    const standBetMultiplier = getBetMultiplier(abstractHand.betMultiplier, {
-      isBlackjack: abstractHand.effectiveScore === blackjackScore,
-    });
     const consequences: ConsequencesMap = {
-      [stand]: getStandConsequence(abstractHand.effectiveScore, standBetMultiplier),
+      [stand]: getStandConsequence(abstractHand.effectiveScore, abstractHand.betMultiplier),
     };
 
     if (abstractHand.isActionable) {
-      consequences[hit] = getHitConsequence(
-        rules,
-        abstractHand.scores,
-        abstractHand.isPostSplit,
-        abstractHand.isPostSplitAces,
-        resolvedHandsMap,
-      );
+      consequences[hit] = getHitConsequence(rules, resolvedHandsMap, abstractHand);
 
       if (abstractHand.canDouble) {
         consequences[double] = getDoubleConsequence(

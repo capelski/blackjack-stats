@@ -68,3 +68,10 @@ Feature: Final scores list
     Then the returned final scores list contains 12 elements
     And the final score 1 has score "12", probability "0.008695185577055155" and "90" hands
     And the final score 12 has cards "22+", probability "0.1267902974605682" and "5289" hands
+
+  Scenario: Final scores for optimal roi with blackjack after split
+    Given splitting is allowed
+    And blackjack after split is allowed
+    When getting the final scores list of a hand resolver for optimal roi
+    Then the returned final scores list contains 12 elements
+    And the final score 11 has score "BJ", probability "0.04915794264906692" and "12" hands

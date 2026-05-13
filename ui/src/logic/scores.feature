@@ -31,6 +31,6 @@ Feature: Scores
     Then the returned values are "11,21"
 
   Scenario: Post-split BJ scores
-    Given blackjackAfterSplit is enabled
+    Given blackjack after split is allowed
     When getting the score of a post split hand with cards "A,J"
     Then the returned values are "21.5"

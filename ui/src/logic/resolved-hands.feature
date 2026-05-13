@@ -83,3 +83,13 @@ Feature: Resolved hands
       | Hit    | 0.2195491515761927  | 0.05162075957898787  | 0.7288300888447944  | -0.5092809372686018   |
       | Double | 0.2195491515761927  | 0.05162075957898787  | 0.7288300888447944  | -1.0185618745372036   |
       | Split  | 0.3837641993859908  | 0.08963692378253117  | 0.526598876831453   | -0.25457856203562423  |
+
+  Scenario: Resolved hands for optimal roi with blackjack after split
+    Given splitting is allowed
+    And blackjack after split is allowed
+    When getting the resolved hands of a hand resolver for optimal roi
+    And the resolved hand with label "A,A" has action "Split" and the following actions breakdown
+      | Action | Win                 | Push                 | Lose                | Edge                  |
+      | Stand  | 0.2815928473666239  | 0                    | 0.7184071526333512  | -0.4368143052667273   |
+      | Hit    | 0.44988190522271815 | 0.08907669491247122  | 0.46104139986478565 | -0.011159494642067648 |
+      | Split  | 0.5532940028214082  | 0.06059140948296878  | 0.3861145876955981  | 0.6274858216034558    |

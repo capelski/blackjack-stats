@@ -21,6 +21,8 @@ export type AbstractHand = HandBase & {
    * For example: 4 is displaced by 2,2 */
   isHidden?: boolean;
   isPostSplitAces: boolean;
+  /** Used to determine whether a hand is a BJ after splitting */
+  isSingleCard: boolean;
   postSplitLabel?: string;
   scores: number[];
 };
@@ -28,6 +30,7 @@ export type AbstractHand = HandBase & {
 export type AbstractHandSeed = Pick<AbstractHand, 'isHidden' | 'label' | 'scores'> & {
   isPostSplit?: boolean;
   isPostSplitAces?: boolean;
+  isSingleCard?: boolean;
   postSplitLabel?: string;
 };
 

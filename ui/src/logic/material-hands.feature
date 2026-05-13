@@ -53,3 +53,10 @@ Feature: Material hands
     Then 15561 material hands are returned
     And there is a material post split hand with cards "8,2", probability "0.0004551661356395085", action "Double" and bet multiplier "4"
     And there is a material post split hand with cards "8,2,6", probability "0.00003501277966457758", action "End" and bet multiplier "4"
+
+  Scenario: Material hands for optimal roi with blackjack after split
+    Given splitting is allowed
+    And blackjack after split is allowed
+    When getting the material hands of a hand resolver for optimal roi
+    Then 23660 material hands are returned
+    And there is a material post split hand with cards "A,J", probability "0.0004551661356395085", action "End" and bet multiplier "3"

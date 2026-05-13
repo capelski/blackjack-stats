@@ -23,7 +23,7 @@ Given('hitting split aces is allowed', function(this: RulesWorld) {
   this.rules.hitSplitAces = true;
 });
 
-Given('blackjackAfterSplit is enabled', function(this: RulesWorld) {
+Given('blackjack after split is allowed', function(this: RulesWorld) {
   this.rules.blackjackAfterSplit = true;
 });
 

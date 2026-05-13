@@ -27,7 +27,8 @@ export const getDoubleConsequence = (
   for (const card of cards) {
     const nextScores = getScoresFromScores(rules, {
       allScores: [scores, card.scores],
-      cardsNumber: -1,
+      // The player will never have two cards after doubling
+      hasTwoCards: false,
       isPostSplit: false,
     });
     const nextEffectiveScore = getEffectiveScore(nextScores);
@@ -47,17 +48,23 @@ export const getDoubleConsequence = (
   return doubleConsequence;
 };
 
+export type HitConsequenceParameters = {
+  isPostSplit: boolean;
+  isPostSplitAces: boolean;
+  isSingleCard: boolean;
+  scores: number[];
+};
+
 export const getHitConsequence = (
   rules: Rules,
-  scores: number[],
-  isPostSplit: boolean,
-  isPostSplitAces: boolean,
   futureResolvedHandsMap: ResolvedHandsMap,
+  { isPostSplit, isPostSplitAces, isSingleCard, scores }: HitConsequenceParameters,
 ): Consequence => {
   const nextConsequences = cards.map(card => {
-    const nextResolvedHand = getNextResolvedHand(rules, {
+    const nextResolvedHand = getNextResolvedHand(rules, futureResolvedHandsMap, {
       allScores: [scores, card.scores],
-      futureResolvedHandsMap,
+      // When hitting a hand with a single card (i.e. after splitting), the player will have two cards
+      hasTwoCards: isSingleCard,
       isPostSplit,
       isPostSplitAces,
     });
@@ -90,20 +97,21 @@ export const getHitConsequenceCore = (nextConsequences: Consequence[]): Conseque
   return hitConsequence;
 };
 
-type NextResolvedHand = {
+type NextResolvedHandParameters = {
   allScores: number[][];
-  futureResolvedHandsMap: ResolvedHandsMap;
+  hasTwoCards: boolean;
   isPostSplit: boolean;
   isPostSplitAces: boolean;
 };
 
 const getNextResolvedHand = (
   rules: Rules,
-  { allScores, futureResolvedHandsMap, isPostSplit, isPostSplitAces }: NextResolvedHand,
+  futureResolvedHandsMap: ResolvedHandsMap,
+  { allScores, hasTwoCards, isPostSplit, isPostSplitAces }: NextResolvedHandParameters,
 ) => {
   const nextScores = getScoresFromScores(rules, {
     allScores,
-    cardsNumber: -1,
+    hasTwoCards,
     isPostSplit,
   });
   const nextLabel = getLabelFromScores(rules, { scores: nextScores, isPostSplit, isPostSplitAces });
