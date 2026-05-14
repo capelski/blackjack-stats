@@ -12,29 +12,35 @@ export const FinalScoresList: React.FC = () => {
     <div className="final-scores-list">
       <p>Number of final scores: {strategy.finalScores.length}</p>
 
-      <FinalScoresListItem
-        hands="Hands"
-        isHeader={true}
-        probability="Probability"
-        score="Score"
-      ></FinalScoresListItem>
+      <table style={{ width: '100%' }}>
+        <thead>
+          <FinalScoresListItem
+            hands="Hands"
+            isHeader={true}
+            probability="Probability"
+            score="Score"
+          />
+        </thead>
 
-      {strategy.finalScores.map((finalScore, index) => (
-        <FinalScoresListItem
-          hands={finalScore.hands}
-          key={index}
-          probability={toPercentage(finalScore.probability)}
-          score={effectiveScoreToLabel(finalScore.score)}
-          showBetMultiplier={showBetMultiplier}
-        ></FinalScoresListItem>
-      ))}
+        <tbody>
+          {strategy.finalScores.map((finalScore, index) => (
+            <FinalScoresListItem
+              hands={finalScore.hands}
+              key={index}
+              probability={toPercentage(finalScore.probability)}
+              score={effectiveScoreToLabel(finalScore.score)}
+              showBetMultiplier={showBetMultiplier}
+            />
+          ))}
 
-      <FinalScoresListItem
-        hands={String(totalHands)}
-        isHeader={true}
-        probability={toPercentage(totalProbability)}
-        score="Total"
-      ></FinalScoresListItem>
+          <FinalScoresListItem
+            hands={String(totalHands)}
+            isHeader={true}
+            probability={toPercentage(totalProbability)}
+            score="Total"
+          />
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -99,27 +99,33 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
         </button>
       </p>
 
-      <HandsListItem
-        {...props}
-        action="Action"
-        betMultiplier="Bet multiplier"
-        cards="Cards"
-        isHeader={true}
-        label="Score"
-        probability="Probability"
-      ></HandsListItem>
+      <table style={{ width: '100%' }}>
+        <thead>
+          <HandsListItem
+            {...props}
+            action="Action"
+            betMultiplier="Bet multiplier"
+            cards="Cards"
+            isHeader={true}
+            label="Score"
+            probability="Probability"
+          />
+        </thead>
 
-      {paginatedHands.map((hand, index) => (
-        <HandsListItem
-          {...props}
-          key={`${currentPage}-${index}-${hand.label}`}
-          action={hand.action}
-          betMultiplier={toDecimal(hand.betMultiplier)}
-          cards={serializeCards(hand, ', ')}
-          label={hand.label}
-          probability={toPercentage(hand.probability)}
-        ></HandsListItem>
-      ))}
+        <tbody>
+          {paginatedHands.map((hand, index) => (
+            <HandsListItem
+              {...props}
+              key={`${currentPage}-${index}-${hand.label}`}
+              action={hand.action}
+              betMultiplier={toDecimal(hand.betMultiplier)}
+              cards={serializeCards(hand, ', ')}
+              label={hand.label}
+              probability={toPercentage(hand.probability)}
+            />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

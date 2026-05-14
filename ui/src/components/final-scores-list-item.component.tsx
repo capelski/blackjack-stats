@@ -16,7 +16,7 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
   };
 
   return (
-    <div
+    <tr
       className="combination"
       style={{
         display: 'grid',
@@ -25,19 +25,19 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
         padding: '8px 0',
       }}
     >
-      <span style={columnStyle} className="score">
+      <td style={columnStyle} className="score">
         {props.score}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="probability">
+      <td style={columnStyle} className="probability">
         {props.probability}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="hands">
+      <td style={columnStyle} className="hands">
         {Array.isArray(props.hands) ? props.hands.length : props.hands}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="view">
+      <td style={columnStyle} className="view">
         {Array.isArray(props.hands) && (
           <FinalScoresListModal
             hands={props.hands}
@@ -45,7 +45,7 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
             showBetMultiplier={props.showBetMultiplier}
           />
         )}
-      </span>
-    </div>
+      </td>
+    </tr>
   );
 };

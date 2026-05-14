@@ -10,32 +10,38 @@ export const ResolvedHandsList: React.FC = () => {
 
   return (
     <div className="hand-actions-list">
-      <ResolvedHandsListItem
-        actionRows={[{ action: 'Action', win: 'Win', lose: 'Lose', push: 'Push', roi: 'Roi' }]}
-        decision="Decision"
-        isHeader={true}
-        score="Score"
-      />
-
-      {actionableResolvedHands.map(resolvedHand => {
-        const consequences = Object.values(resolvedHand.consequences);
-
-        return (
+      <table style={{ width: '100%' }}>
+        <thead>
           <ResolvedHandsListItem
-            actionRows={consequences.map(consequence => ({
-              action: consequence.action,
-              win: toPercentage(consequence.outcomes.win),
-              lose: toPercentage(consequence.outcomes.lose),
-              push: toPercentage(consequence.outcomes.push),
-              roi: toDecimal(getRoi(consequence.edge), 4),
-            }))}
-            decision={resolvedHand.action}
-            isDecisionOptimal={resolvedHand.action === resolvedHand.optimalConsequence.action}
-            key={resolvedHand.label}
-            score={resolvedHand.label}
+            actionRows={[{ action: 'Action', win: 'Win', lose: 'Lose', push: 'Push', roi: 'Roi' }]}
+            decision="Decision"
+            isHeader={true}
+            score="Score"
           />
-        );
-      })}
+        </thead>
+
+        <tbody>
+          {actionableResolvedHands.map(resolvedHand => {
+            const consequences = Object.values(resolvedHand.consequences);
+
+            return (
+              <ResolvedHandsListItem
+                actionRows={consequences.map(consequence => ({
+                  action: consequence.action,
+                  win: toPercentage(consequence.outcomes.win),
+                  lose: toPercentage(consequence.outcomes.lose),
+                  push: toPercentage(consequence.outcomes.push),
+                  roi: toDecimal(getRoi(consequence.edge), 4),
+                }))}
+                decision={resolvedHand.action}
+                isDecisionOptimal={resolvedHand.action === resolvedHand.optimalConsequence.action}
+                key={resolvedHand.label}
+                score={resolvedHand.label}
+              />
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

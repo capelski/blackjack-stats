@@ -25,17 +25,17 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
   };
 
   return (
-    <div
+    <tr
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(5, 1fr)',
       }}
     >
-      <div style={cellStyle}>
+      <td style={cellStyle}>
         {props.expectedResult ? effectiveScoreToLabel(props.expectedResult.score) : 'Score'}
-      </div>
+      </td>
 
-      <div style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Win')) }}>
+      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Win')) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
@@ -48,9 +48,9 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         ) : (
           '% Win'
         )}
-      </div>
+      </td>
 
-      <div style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Push')) }}>
+      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Push')) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
@@ -63,9 +63,9 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         ) : (
           '% Push'
         )}
-      </div>
+      </td>
 
-      <div style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Lose')) }}>
+      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Lose')) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
@@ -78,9 +78,9 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         ) : (
           '% Lose'
         )}
-      </div>
+      </td>
 
-      <div style={cellStyle}>
+      <td style={cellStyle}>
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.edgeByBetMultiplier}
@@ -89,8 +89,8 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         ) : (
           'ROI'
         )}
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 };
 
@@ -98,17 +98,21 @@ export const ExpectedResultsList: React.FC = () => {
   const { strategy } = useStrategyContext();
 
   return (
-    <div>
-      <ExpectedResultsListRow isHeader={true} />
+    <table style={{ width: '100%' }}>
+      <thead>
+        <ExpectedResultsListRow isHeader={true} />
+      </thead>
 
-      {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
-        return (
-          <ExpectedResultsListRow
-            key={playerScore}
-            expectedResult={strategy.expectedResults.breakdown[playerScore]}
-          />
-        );
-      })}
-    </div>
+      <tbody>
+        {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
+          return (
+            <ExpectedResultsListRow
+              key={playerScore}
+              expectedResult={strategy.expectedResults.breakdown[playerScore]}
+            />
+          );
+        })}
+      </tbody>
+    </table>
   );
 };

@@ -22,23 +22,23 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
   };
 
   return (
-    <div
+    <tr
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${dealerFinalScores.length + 2}, 1fr)`,
       }}
     >
-      <div style={cellStyle}>{props.firstCell}</div>
+      <td style={cellStyle}>{props.firstCell}</td>
       {dealerFinalScores.map(dealerScore => {
         const { node, style } = props.dealerScoreToCell(dealerScore);
         return (
-          <div style={{ ...cellStyle, ...style }} key={dealerScore.score}>
+          <td style={{ ...cellStyle, ...style }} key={dealerScore.score}>
             {node}
-          </div>
+          </td>
         );
       })}
-      <div style={cellStyle}>{props.lastCell}</div>
-    </div>
+      <td style={cellStyle}>{props.lastCell}</td>
+    </tr>
   );
 };
 
@@ -46,49 +46,53 @@ export const ExpectedResultsMatrix: React.FC = () => {
   const { strategy } = useStrategyContext();
 
   return (
-    <div>
-      <ExpectedResultsMatrixRow
-        firstCell="Player \ Dealer"
-        dealerScoreToCell={dealerScore => ({ node: effectiveScoreToLabel(dealerScore.score) })}
-        lastCell="Total"
-        isHeader={true}
-      />
+    <table style={{ width: '100%' }}>
+      <thead>
+        <ExpectedResultsMatrixRow
+          firstCell="Player \ Dealer"
+          dealerScoreToCell={dealerScore => ({ node: effectiveScoreToLabel(dealerScore.score) })}
+          lastCell="Total"
+          isHeader={true}
+        />
+      </thead>
 
-      {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
-        const expectedResult = strategy.expectedResults.breakdown[playerScore];
+      <tbody>
+        {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
+          const expectedResult = strategy.expectedResults.breakdown[playerScore];
 
-        return (
-          <ExpectedResultsMatrixRow
-            key={playerScore}
-            firstCell={effectiveScoreToLabel(playerScore)}
-            dealerScoreToCell={dealerScore => {
-              const finalComparison = expectedResult.finalComparisons[dealerScore.score];
+          return (
+            <ExpectedResultsMatrixRow
+              key={playerScore}
+              firstCell={effectiveScoreToLabel(playerScore)}
+              dealerScoreToCell={dealerScore => {
+                const finalComparison = expectedResult.finalComparisons[dealerScore.score];
 
-              return {
-                style: resultToStyles(finalComparison.result),
-                node: (
-                  <BetMultipliersCell
-                    betMultiplierMap={expectedResult.probabilityByBetMultiplier}
-                    transform={value => toPercentage(value * finalComparison.probability)}
-                  />
-                ),
-              };
-            }}
-            lastCell={
-              <BetMultipliersCell
-                betMultiplierMap={expectedResult.probabilityByBetMultiplier}
-                transform={value => toPercentage(value * expectedResult.probability)}
-              />
-            }
-          />
-        );
-      })}
+                return {
+                  style: resultToStyles(finalComparison.result),
+                  node: (
+                    <BetMultipliersCell
+                      betMultiplierMap={expectedResult.probabilityByBetMultiplier}
+                      transform={value => toPercentage(value * finalComparison.probability)}
+                    />
+                  ),
+                };
+              }}
+              lastCell={
+                <BetMultipliersCell
+                  betMultiplierMap={expectedResult.probabilityByBetMultiplier}
+                  transform={value => toPercentage(value * expectedResult.probability)}
+                />
+              }
+            />
+          );
+        })}
 
-      <ExpectedResultsMatrixRow
-        firstCell="Total"
-        dealerScoreToCell={dealerScore => ({ node: toPercentage(dealerScore.probability) })}
-        lastCell={toPercentage(strategy.expectedResults.probability)}
-      />
-    </div>
+        <ExpectedResultsMatrixRow
+          firstCell="Total"
+          dealerScoreToCell={dealerScore => ({ node: toPercentage(dealerScore.probability) })}
+          lastCell={toPercentage(strategy.expectedResults.probability)}
+        />
+      </tbody>
+    </table>
   );
 };

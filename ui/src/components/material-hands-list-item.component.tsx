@@ -26,7 +26,7 @@ export const HandsListItem: React.FC<HandsListItemProps> = props => {
   };
 
   return (
-    <div
+    <tr
       className="combination"
       style={{
         display: 'grid',
@@ -35,32 +35,32 @@ export const HandsListItem: React.FC<HandsListItemProps> = props => {
         padding: '8px 0',
       }}
     >
-      <span style={columnStyle} className="cards">
+      <td style={columnStyle} className="cards">
         {props.cards}
-      </span>
+      </td>
 
       {!props.hideLabel && (
-        <span style={columnStyle} className="score">
+        <td style={columnStyle} className="score">
           {props.label}
-        </span>
+        </td>
       )}
 
-      <span style={columnStyle} className="probability">
+      <td style={columnStyle} className="probability">
         {props.probability}
-      </span>
+      </td>
 
       {props.showBetMultiplier && (
-        <span style={columnStyle} className="bet-size">
+        <td style={columnStyle} className="bet-size">
           {props.betMultiplier}
           {props.isHeader ? '' : 'x'}
-        </span>
+        </td>
       )}
 
       {!props.hideAction && (
-        <span style={columnStyle} className="action">
+        <td style={columnStyle} className="action">
           {props.action}
-        </span>
+        </td>
       )}
-    </div>
+    </tr>
   );
 };

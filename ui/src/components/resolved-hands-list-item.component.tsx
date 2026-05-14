@@ -21,7 +21,7 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
   };
 
   return (
-    <div
+    <tr
       style={{
         display: 'grid',
         gap: '16px',
@@ -29,43 +29,43 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
         padding: '8px 0',
       }}
     >
-      <span style={columnStyle} className="score">
+      <td style={columnStyle} className="score">
         {props.score}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="decision">
+      <td style={columnStyle} className="decision">
         {props.decision} {!props.isDecisionOptimal && !props.isHeader ? ' ⚠️' : ''}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="action">
+      <td style={columnStyle} className="action">
         {props.actionRows.map(({ action }) => (
           <div key={action}>{action}</div>
         ))}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="win">
+      <td style={columnStyle} className="win">
         {props.actionRows.map(({ action, win }) => (
           <div key={action}>{win}</div>
         ))}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="push">
+      <td style={columnStyle} className="push">
         {props.actionRows.map(({ action, push }) => (
           <div key={action}>{push}</div>
         ))}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="lose">
+      <td style={columnStyle} className="lose">
         {props.actionRows.map(({ action, lose }) => (
           <div key={action}>{lose}</div>
         ))}
-      </span>
+      </td>
 
-      <span style={columnStyle} className="roi">
+      <td style={columnStyle} className="roi">
         {props.actionRows.map(({ action, roi }) => (
           <div key={action}>{roi}</div>
         ))}
-      </span>
-    </div>
+      </td>
+    </tr>
   );
 };
