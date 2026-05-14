@@ -1,24 +1,12 @@
+import { getFinalScoresTotals } from '../logic/final-scores-list.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
 import { useStrategyContext } from '../strategy.context';
 import { FinalScoresListItem } from './final-scores-list-item.component';
 
-type FinalScoresAggregation = {
-  totalHands: number;
-  totalProbability: number;
-};
-
 export const FinalScoresList: React.FC = () => {
   const { strategy, showBetMultiplier } = useStrategyContext();
-
-  const { totalHands, totalProbability } = strategy.finalScores.reduce<FinalScoresAggregation>(
-    (reduced, finalScore) => {
-      reduced.totalHands += Array.isArray(finalScore.hands) ? finalScore.hands.length : 0;
-      reduced.totalProbability += finalScore.probability;
-      return reduced;
-    },
-    { totalHands: 0, totalProbability: 0 },
-  );
+  const { totalHands, totalProbability } = getFinalScoresTotals(strategy.finalScores);
 
   return (
     <div className="final-scores-list">

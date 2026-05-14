@@ -84,7 +84,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.edgeByBetMultiplier}
-            transform={number => toDecimal(getRoi(number))}
+            transform={number => toDecimal(getRoi(number), 4)}
           />
         ) : (
           'ROI'

@@ -27,7 +27,7 @@ export const ResolvedHandsList: React.FC = () => {
               win: toPercentage(consequence.outcomes.win),
               lose: toPercentage(consequence.outcomes.lose),
               push: toPercentage(consequence.outcomes.push),
-              roi: toDecimal(getRoi(consequence.edge)),
+              roi: toDecimal(getRoi(consequence.edge), 4),
             }))}
             decision={resolvedHand.action}
             isDecisionOptimal={resolvedHand.action === resolvedHand.optimalConsequence.action}

@@ -29,6 +29,19 @@ export const getFinalScoresList = (hands: MaterialHand[]): FinalScore[] => {
   return sortedKeys.map(key => finalScoresMap[key]);
 };
 
+export const getFinalScoresTotals = (
+  finalScores: FinalScore[],
+): { totalHands: number; totalProbability: number } => {
+  return finalScores.reduce(
+    (reduced, finalScore) => {
+      reduced.totalHands += Array.isArray(finalScore.hands) ? finalScore.hands.length : 0;
+      reduced.totalProbability += finalScore.probability;
+      return reduced;
+    },
+    { totalHands: 0, totalProbability: 0 },
+  );
+};
+
 export const getProbabilityByBetMultiplier = (finalScore: FinalScore): BetMultiplierMap => {
   const probabilityByBetMultiplier: BetMultiplierMap = {};
 
