@@ -9,10 +9,17 @@ export type ActionRow = {
 export type ResolvedHandsListItemProps = {
   actionRows: ActionRow[];
   decision: string;
-  isDecisionOptimal?: boolean;
-  isHeader?: boolean;
   score: string;
-};
+} & (
+  | {
+      isHeader: true;
+      optimalDecision?: undefined;
+    }
+  | {
+      isHeader?: false;
+      optimalDecision: string;
+    }
+);
 
 export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props => {
   const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr', '1fr', '1fr', '1fr'];
@@ -34,12 +41,19 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
       </td>
 
       <td style={columnStyle} className="decision">
-        {props.decision} {!props.isDecisionOptimal && !props.isHeader ? ' ⚠️' : ''}
+        {props.decision} {!props.isHeader && props.decision !== props.optimalDecision ? ' ⚠️' : ''}
       </td>
 
       <td style={columnStyle} className="action">
         {props.actionRows.map(({ action }) => (
-          <div key={action}>{action}</div>
+          <div
+            style={{
+              fontWeight: props.isHeader || action === props.optimalDecision ? 'bold' : 'normal',
+            }}
+            key={action}
+          >
+            {action}
+          </div>
         ))}
       </td>
 

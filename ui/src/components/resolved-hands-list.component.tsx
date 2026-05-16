@@ -34,8 +34,8 @@ export const ResolvedHandsList: React.FC = () => {
                   roi: toDecimal(getRoi(consequence.edge), 4),
                 }))}
                 decision={resolvedHand.action}
-                isDecisionOptimal={resolvedHand.action === resolvedHand.optimalConsequence.action}
                 key={resolvedHand.label}
+                optimalDecision={resolvedHand.optimalConsequence.action}
                 score={resolvedHand.label}
               />
             );
