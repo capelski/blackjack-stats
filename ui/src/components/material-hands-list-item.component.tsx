@@ -1,6 +1,6 @@
 export type HandsListProps = {
   hideAction?: boolean;
-  hideLabel?: boolean;
+  hideScore?: boolean;
   showBetMultiplier?: boolean;
 };
 
@@ -8,7 +8,7 @@ export type HandsListItemProps = HandsListProps & {
   action: string;
   betMultiplier: string;
   cards: string;
-  label: string;
+  score: string;
   isHeader?: boolean;
   probability: string;
 };
@@ -16,7 +16,7 @@ export type HandsListItemProps = HandsListProps & {
 export const HandsListItem: React.FC<HandsListItemProps> = props => {
   const gridTemplateColumns = [
     '3fr',
-    ...(props.hideLabel ? [] : ['1fr']),
+    ...(props.hideScore ? [] : ['1fr']),
     '1fr',
     ...(props.showBetMultiplier ? ['1fr'] : []),
     ...(props.hideAction ? [] : ['1fr']),
@@ -39,9 +39,9 @@ export const HandsListItem: React.FC<HandsListItemProps> = props => {
         {props.cards}
       </td>
 
-      {!props.hideLabel && (
+      {!props.hideScore && (
         <td style={columnStyle} className="score">
-          {props.label}
+          {props.score}
         </td>
       )}
 

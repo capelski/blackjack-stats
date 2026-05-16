@@ -3,4 +3,5 @@ export type HandBase = {
   effectiveScore: number;
   isPostSplit: boolean;
   label: string;
+  scores: number[];
 };

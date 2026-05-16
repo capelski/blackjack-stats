@@ -43,14 +43,7 @@ export const getNextLabel = (
     return `${splitSymbol}${splitScoresSeparator}${splitSymbol}`;
   }
 
-  const score = getEffectiveScore(scores);
-
-  const label =
-    score === bustScore
-      ? bustLabel
-      : score === blackjackScore
-      ? blackjackLabel
-      : scores.join(softScoresSeparator);
+  const label = scoresToLabel(scores);
 
   return `${label}${
     isPostSplit ? ` (${postSplitSymbol}${isPostSplitAces && !rules.hitSplitAces ? ',A' : ''})` : ''
@@ -86,4 +79,14 @@ export const getNextLabelAndScores = (
   });
 
   return { label, scores };
+};
+
+export const scoresToLabel = (scores: number[]): string => {
+  const score = getEffectiveScore(scores);
+
+  return score === bustScore
+    ? bustLabel
+    : score === blackjackScore
+    ? blackjackLabel
+    : scores.join(softScoresSeparator);
 };

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { scoresToLabel } from '../logic/labels.logic';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { useStrategyContext } from '../strategy.context';
@@ -107,8 +108,8 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
             betMultiplier="Bet multiplier"
             cards="Cards"
             isHeader={true}
-            label="Score"
             probability="Probability"
+            score="Score"
           />
         </thead>
 
@@ -120,8 +121,8 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
               action={hand.action}
               betMultiplier={toDecimal(hand.betMultiplier)}
               cards={serializeCards(hand, ', ')}
-              label={hand.label}
               probability={toPercentage(hand.probability)}
+              score={scoresToLabel(hand.scores)}
             />
           ))}
         </tbody>

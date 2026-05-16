@@ -40,7 +40,7 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
         <MaterialHandsListCore
           hands={props.hands}
           hideAction={true}
-          hideLabel={true}
+          hideScore={true}
           showBetMultiplier={props.showBetMultiplier}
         />
       </Modal>
