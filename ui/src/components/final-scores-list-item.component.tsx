@@ -29,12 +29,12 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
         {props.score}
       </td>
 
-      <td style={columnStyle} className="probability">
-        {props.probability}
-      </td>
-
       <td style={columnStyle} className="hands">
         {Array.isArray(props.hands) ? props.hands.length : props.hands}
+      </td>
+
+      <td style={columnStyle} className="probability">
+        {props.probability}
       </td>
 
       <td style={columnStyle} className="view">
