@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { getRoi } from '../logic/edge.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
-import { Result } from '../models/result.model';
+import { lose, push, Result, win } from '../models/result.model';
 import { useStrategyContext } from '../strategy.context';
 
 type ExpectedResultsSummaryCardProps = {
@@ -37,15 +37,15 @@ export const ExpectedResultsSummary: React.FC = () => {
       style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}
     >
       <ExpectedResultsSummaryCard
-        discriminator="win"
+        discriminator={win}
         value={toPercentage(strategy.expectedResults.outcomes.win)}
       />
       <ExpectedResultsSummaryCard
-        discriminator="push"
+        discriminator={push}
         value={toPercentage(strategy.expectedResults.outcomes.push)}
       />
       <ExpectedResultsSummaryCard
-        discriminator="lose"
+        discriminator={lose}
         value={toPercentage(strategy.expectedResults.outcomes.lose)}
       />
       <ExpectedResultsSummaryCard
