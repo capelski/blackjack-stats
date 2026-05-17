@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { supportedLanguages } from '../../constants';
 import './App.css';
 import { LanguageSelector } from './components/language-selector.component';
-import { defaultLanguage, supportedLanguages } from './i18n';
+import { defaultLanguage } from './i18n';
 import { optimalRoiRoute, standThresholdRoute } from './models/routes.model';
 import { getLocalizedRoute, getNavLinkStyle, getStrategyPageNestedRoutes } from './nav-utils';
 import { OptimalRoiPage } from './pages/optimal-roi.page';
