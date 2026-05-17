@@ -4,6 +4,7 @@ import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
+import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { FinalScore } from '../types/final-score.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
@@ -45,6 +46,7 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
 
 export const ExpectedResultsMatrix: React.FC = () => {
   const { t } = useTranslation();
+  const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
   return (
@@ -74,7 +76,9 @@ export const ExpectedResultsMatrix: React.FC = () => {
                   node: (
                     <BetMultipliersCell
                       betMultiplierMap={expectedResult.probabilityByBetMultiplier}
-                      transform={value => toPercentage(value * finalComparison.probability)}
+                      transform={value =>
+                        toPercentage(value * finalComparison.probability, decimals)
+                      }
                     />
                   ),
                 };
@@ -82,7 +86,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
               lastCell={
                 <BetMultipliersCell
                   betMultiplierMap={expectedResult.probabilityByBetMultiplier}
-                  transform={value => toPercentage(value * expectedResult.probability)}
+                  transform={value => toPercentage(value * expectedResult.probability, decimals)}
                 />
               }
             />
@@ -91,8 +95,10 @@ export const ExpectedResultsMatrix: React.FC = () => {
 
         <ExpectedResultsMatrixRow
           firstCell={t('commons.total')}
-          dealerScoreToCell={dealerScore => ({ node: toPercentage(dealerScore.probability) })}
-          lastCell={toPercentage(strategy.expectedResults.probability)}
+          dealerScoreToCell={dealerScore => ({
+            node: toPercentage(dealerScore.probability, decimals),
+          })}
+          lastCell={toPercentage(strategy.expectedResults.probability, decimals)}
         />
       </tbody>
     </table>

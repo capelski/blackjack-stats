@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { scoresToLabel } from '../logic/labels.logic';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
+import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { MaterialHand } from '../types/material-hand.type';
 import { HandsListItem, HandsListProps } from './material-hands-list-item.component';
@@ -16,6 +17,7 @@ export type MaterialHandsListCoreProps = HandsListProps & {
 
 export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props => {
   const { t } = useTranslation();
+  const { decimals } = useSettingsContext();
   const { computing } = useStrategyContext();
 
   const [cardsFilter, setCardsFilter] = useState('');
@@ -123,9 +125,9 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
               {...props}
               key={`${currentPage}-${index}-${hand.label}`}
               action={hand.action}
-              betMultiplier={toDecimal(hand.betMultiplier)}
+              betMultiplier={toDecimal(hand.betMultiplier, decimals)}
               cards={serializeCards(hand, ', ')}
-              probability={toPercentage(hand.probability)}
+              probability={toPercentage(hand.probability, decimals)}
               score={scoresToLabel(hand.scores)}
             />
           ))}

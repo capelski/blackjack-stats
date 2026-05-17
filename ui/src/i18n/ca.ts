@@ -1,6 +1,5 @@
 export const ca = {
   language: {
-    label: 'Idioma',
     ca: 'Català',
     en: 'Anglès',
   },
@@ -20,6 +19,7 @@ export const ca = {
     dealer: 'Crupier',
     total: 'Total',
     probability: 'Probabilitat',
+    decimals: '{{count}} decimals',
   },
   actions: {
     double: 'Doblar',

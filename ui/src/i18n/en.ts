@@ -1,6 +1,5 @@
 export const en = {
   language: {
-    label: 'Language',
     en: 'English',
     ca: 'Catalan',
   },
@@ -20,6 +19,7 @@ export const en = {
     dealer: 'Dealer',
     total: 'Total',
     probability: 'Probability',
+    decimals: '{{count}} decimals',
   },
   actions: {
     double: 'Double',

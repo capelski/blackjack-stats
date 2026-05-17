@@ -2,11 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { getRoi } from '../logic/edge.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { getActionableResolvedHands } from '../logic/resolved-hands.logic';
+import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
 
 export const ResolvedHandsList: React.FC = () => {
   const { t } = useTranslation();
+  const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
   const actionableResolvedHands = getActionableResolvedHands(strategy.resolvedHands);
 
@@ -38,10 +40,10 @@ export const ResolvedHandsList: React.FC = () => {
               <ResolvedHandsListItem
                 actionRows={consequences.map(consequence => ({
                   action: consequence.action,
-                  win: toPercentage(consequence.outcomes.win),
-                  lose: toPercentage(consequence.outcomes.lose),
-                  push: toPercentage(consequence.outcomes.push),
-                  roi: toDecimal(getRoi(consequence.edge), 4),
+                  win: toPercentage(consequence.outcomes.win, decimals),
+                  lose: toPercentage(consequence.outcomes.lose, decimals),
+                  push: toPercentage(consequence.outcomes.push, decimals),
+                  roi: toDecimal(getRoi(consequence.edge), decimals),
                 }))}
                 decision={resolvedHand.action}
                 key={resolvedHand.label}

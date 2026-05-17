@@ -27,8 +27,7 @@ export const LanguageSelector: React.FC = () => {
     <select
       value={i18n.language}
       onChange={e => handleLanguageChange(e.target.value as Language)}
-      aria-label={t('language.label')}
-      style={{ marginLeft: 'auto' }}
+      style={{ marginRight: 8 }}
     >
       {supportedLanguages.map(language => (
         <option key={language} value={language}>

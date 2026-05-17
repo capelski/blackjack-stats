@@ -3,6 +3,7 @@ import { getRoi } from '../logic/edge.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { lose, push, Result, win } from '../models/result.model';
+import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 
 type ExpectedResultsSummaryCardProps = {
@@ -29,6 +30,7 @@ const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = pr
 };
 
 export const ExpectedResultsSummary: React.FC = () => {
+  const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
   return (
@@ -38,19 +40,19 @@ export const ExpectedResultsSummary: React.FC = () => {
     >
       <ExpectedResultsSummaryCard
         discriminator={win}
-        value={toPercentage(strategy.expectedResults.outcomes.win)}
+        value={toPercentage(strategy.expectedResults.outcomes.win, decimals)}
       />
       <ExpectedResultsSummaryCard
         discriminator={push}
-        value={toPercentage(strategy.expectedResults.outcomes.push)}
+        value={toPercentage(strategy.expectedResults.outcomes.push, decimals)}
       />
       <ExpectedResultsSummaryCard
         discriminator={lose}
-        value={toPercentage(strategy.expectedResults.outcomes.lose)}
+        value={toPercentage(strategy.expectedResults.outcomes.lose, decimals)}
       />
       <ExpectedResultsSummaryCard
         discriminator="roi"
-        value={toDecimal(getRoi(strategy.expectedResults.edge), 4)}
+        value={toDecimal(getRoi(strategy.expectedResults.edge), decimals)}
       />
     </div>
   );

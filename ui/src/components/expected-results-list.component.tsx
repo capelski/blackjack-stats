@@ -5,6 +5,7 @@ import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { lose, push, win } from '../models/result.model';
+import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { ExpectedResult } from '../types/expected-result.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
@@ -21,6 +22,8 @@ type ExpectedResultsListRowProps =
 
 const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
   const { t } = useTranslation();
+  const { decimals } = useSettingsContext();
+
   const cellStyle: CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : undefined,
     padding: 8,
@@ -47,6 +50,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
             transform={number =>
               toPercentage(
                 number * props.expectedResult.probability * props.expectedResult.outcomes.win,
+                decimals,
               )
             }
           />
@@ -62,6 +66,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
             transform={number =>
               toPercentage(
                 number * props.expectedResult.probability * props.expectedResult.outcomes.push,
+                decimals,
               )
             }
           />
@@ -77,6 +82,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
             transform={number =>
               toPercentage(
                 number * props.expectedResult.probability * props.expectedResult.outcomes.lose,
+                decimals,
               )
             }
           />
@@ -89,7 +95,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.edgeByBetMultiplier}
-            transform={number => toDecimal(getRoi(number), 4)}
+            transform={number => toDecimal(getRoi(number), decimals)}
           />
         ) : (
           t('commons.roi')
