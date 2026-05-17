@@ -33,7 +33,7 @@ export const ca = {
     hands: 'Mans',
     finalScores: 'Puntuacions finals',
     expectedResults: 'Resultats esperats',
-    handActions: 'Accions de mà',
+    handActions: 'Accions',
   },
   expectedResults: {
     matrix: 'Matriu',
