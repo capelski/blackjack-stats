@@ -1,8 +1,8 @@
 import { double, hit, split, stand } from '../models/action.model';
 import { cards, cardsNumber } from '../models/cards.model';
-import { end } from '../models/hand-status.model';
+import { bust, end } from '../models/hand-status.model';
 import { postSplitSymbol } from '../models/labels.model';
-import { blackjackScore } from '../models/scores.model';
+import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { HandResolutionMap } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/material-hand.type';
@@ -94,7 +94,11 @@ const getNextMaterialHand = (
     label: nextLabel,
     score: nextEffectiveScore,
   });
-  const nextAction = nextIsActionable ? handResolutionMap[nextLabel] : end;
+  const nextAction = nextIsActionable
+    ? handResolutionMap[nextLabel]
+    : nextEffectiveScore === bustScore
+    ? bust
+    : end;
 
   if (!nextAction) {
     throw new Error(`No action was defined for hand ${nextLabel}`);
