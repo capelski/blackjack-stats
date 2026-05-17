@@ -22,12 +22,12 @@ export const ca = {
     probability: 'Probabilitat',
   },
   actions: {
-    Double: 'Doblar',
-    Hit: 'Demanar',
-    Split: 'Dividir',
-    Stand: 'Plantar',
-    Bust: 'Eliminat',
-    End: 'Fi',
+    double: 'Doblar',
+    hit: 'Demanar',
+    split: 'Dividir',
+    stand: 'Plantar',
+    bust: 'Eliminat',
+    end: 'Fi',
   },
   strategyLayout: {
     hands: 'Mans',

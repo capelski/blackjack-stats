@@ -22,12 +22,12 @@ export const en = {
     probability: 'Probability',
   },
   actions: {
-    Double: 'Double',
-    Hit: 'Hit',
-    Split: 'Split',
-    Stand: 'Stand',
-    Bust: 'Bust',
-    End: 'End',
+    double: 'Double',
+    hit: 'Hit',
+    split: 'Split',
+    stand: 'Stand',
+    bust: 'Bust',
+    end: 'End',
   },
   strategyLayout: {
     hands: 'Hands',
