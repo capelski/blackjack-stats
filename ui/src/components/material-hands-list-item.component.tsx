@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 export type HandsListProps = {
   hideAction?: boolean;
   hideScore?: boolean;
@@ -14,6 +16,8 @@ export type HandsListItemProps = HandsListProps & {
 };
 
 export const HandsListItem: React.FC<HandsListItemProps> = props => {
+  const { t } = useTranslation();
+
   const gridTemplateColumns = [
     '3fr',
     ...(props.hideScore ? [] : ['1fr']),
@@ -58,7 +62,7 @@ export const HandsListItem: React.FC<HandsListItemProps> = props => {
 
       {!props.hideAction && (
         <td style={columnStyle} className="action">
-          {props.action}
+          {props.isHeader ? props.action : t(`actions.${props.action}`)}
         </td>
       )}
     </tr>

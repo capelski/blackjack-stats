@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckboxComponent } from '../components/checkbox.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { getStrategy } from '../logic/strategy.logic';
@@ -12,6 +13,7 @@ const optimalRoiHandResolver: HandResolver = hand => hand.optimalConsequence.act
 const defaultRules: Rules = {};
 
 export const OptimalRoiPage: React.FC = () => {
+  const { t } = useTranslation();
   const [computing, setComputing] = useState(false);
   const [rules, setRules] = useState<Rules>(defaultRules);
   const [strategy, setStrategy] = useState<Strategy>(undefined!);
@@ -38,35 +40,35 @@ export const OptimalRoiPage: React.FC = () => {
     <StrategyContext.Provider
       value={{ computing, showBetMultiplier: !!rules.doubling || !!rules.splitting, strategy }}
     >
-      <StrategyLayoutComponent title="Optimal ROI">
+      <StrategyLayoutComponent title={t('titles.optimalRoi')}>
         <CheckboxComponent
           checked={!!rules.doubling}
           disabled={computing}
-          label="Doubling"
+          label={t('rules.doubling')}
           onChange={checked => updateRules({ ...rules, doubling: checked })}
         />
         <CheckboxComponent
           checked={!!rules.splitting}
           disabled={computing}
-          label="Splitting"
+          label={t('rules.splitting')}
           onChange={checked => updateRules({ ...rules, splitting: checked })}
         />
         <CheckboxComponent
           checked={!!rules.doublingAfterSplit}
           disabled={computing || !rules.doubling || !rules.splitting}
-          label="Doubling After Split"
+          label={t('rules.doublingAfterSplit')}
           onChange={checked => updateRules({ ...rules, doublingAfterSplit: checked })}
         />
         <CheckboxComponent
           checked={!!rules.hitSplitAces}
           disabled={computing || !rules.splitting}
-          label="Hit Split Aces"
+          label={t('rules.hitSplitAces')}
           onChange={checked => updateRules({ ...rules, hitSplitAces: checked })}
         />
         <CheckboxComponent
           checked={!!rules.blackjackAfterSplit}
           disabled={computing || !rules.splitting}
-          label="Blackjack After Split"
+          label={t('rules.blackjackAfterSplit')}
           onChange={checked => updateRules({ ...rules, blackjackAfterSplit: checked })}
         />
       </StrategyLayoutComponent>

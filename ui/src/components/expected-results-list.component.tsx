@@ -1,8 +1,10 @@
 import React, { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getRoi } from '../logic/edge.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
+import { lose, push, win } from '../models/result.model';
 import { useStrategyContext } from '../strategy.context';
 import { ExpectedResult } from '../types/expected-result.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
@@ -18,6 +20,7 @@ type ExpectedResultsListRowProps =
     };
 
 const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
+  const { t } = useTranslation();
   const cellStyle: CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : undefined,
     padding: 8,
@@ -32,10 +35,12 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
       }}
     >
       <td style={cellStyle}>
-        {props.expectedResult ? effectiveScoreToLabel(props.expectedResult.score) : 'Score'}
+        {props.expectedResult
+          ? effectiveScoreToLabel(props.expectedResult.score)
+          : t('commons.score')}
       </td>
 
-      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Win')) }}>
+      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(win)) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
@@ -46,11 +51,11 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
             }
           />
         ) : (
-          '% Win'
+          t('commons.win')
         )}
       </td>
 
-      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Push')) }}>
+      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(push)) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
@@ -61,11 +66,11 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
             }
           />
         ) : (
-          '% Push'
+          t('commons.push')
         )}
       </td>
 
-      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles('Lose')) }}>
+      <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(lose)) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
@@ -76,7 +81,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
             }
           />
         ) : (
-          '% Lose'
+          t('commons.lose')
         )}
       </td>
 
@@ -87,7 +92,7 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
             transform={number => toDecimal(getRoi(number), 4)}
           />
         ) : (
-          'ROI'
+          t('commons.roi')
         )}
       </td>
     </tr>

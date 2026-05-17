@@ -1,4 +1,5 @@
 import { PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router-dom';
 import {
   expectedResultsRoute,
@@ -14,6 +15,7 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
 }>;
 
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
+  const { t } = useTranslation();
   const { computing, strategy } = useStrategyContext();
 
   return (
@@ -43,16 +45,16 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
 
         <nav className="nested-navbar">
           <NavLink to={materialHandsRoute} style={getNavLinkStyle}>
-            Hands
+            {t('strategyLayout.hands')}
           </NavLink>
           <NavLink to={finalScoresRoute} style={getNavLinkStyle}>
-            Final Scores
+            {t('strategyLayout.finalScores')}
           </NavLink>
           <NavLink to={expectedResultsRoute} style={getNavLinkStyle}>
-            Expected Results
+            {t('strategyLayout.expectedResults')}
           </NavLink>
           <NavLink to={resolvedHandsRoute} style={getNavLinkStyle}>
-            Hand Actions
+            {t('strategyLayout.handActions')}
           </NavLink>
         </nav>
 

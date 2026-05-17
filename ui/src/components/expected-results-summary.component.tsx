@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { getRoi } from '../logic/edge.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
@@ -5,21 +6,23 @@ import { Result } from '../models/result.model';
 import { useStrategyContext } from '../strategy.context';
 
 type ExpectedResultsSummaryCardProps = {
-  title: 'Win' | 'Push' | 'Lose' | 'ROI';
+  discriminator: Result | 'roi';
   value: string;
 };
 
 const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = props => {
+  const { t } = useTranslation();
+
   return (
     <div
       style={{
-        ...(resultToStyles(props.title as Result) ?? { border: '1px solid #ccc' }),
+        ...(resultToStyles(props.discriminator as Result) ?? { border: '1px solid #ccc' }),
         textAlign: 'center',
         margin: 8,
         borderRadius: '0.5rem',
       }}
     >
-      <h3>{props.title}</h3>
+      <h3>{t(`commons.${props.discriminator}`)}</h3>
       <p>{props.value}</p>
     </div>
   );
@@ -34,19 +37,19 @@ export const ExpectedResultsSummary: React.FC = () => {
       style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}
     >
       <ExpectedResultsSummaryCard
-        title="Win"
+        discriminator="win"
         value={toPercentage(strategy.expectedResults.outcomes.win)}
       />
       <ExpectedResultsSummaryCard
-        title="Push"
+        discriminator="push"
         value={toPercentage(strategy.expectedResults.outcomes.push)}
       />
       <ExpectedResultsSummaryCard
-        title="Lose"
+        discriminator="lose"
         value={toPercentage(strategy.expectedResults.outcomes.lose)}
       />
       <ExpectedResultsSummaryCard
-        title="ROI"
+        discriminator="roi"
         value={toDecimal(getRoi(strategy.expectedResults.edge), 4)}
       />
     </div>

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { scoresToLabel } from '../logic/labels.logic';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
@@ -14,6 +15,7 @@ export type MaterialHandsListCoreProps = HandsListProps & {
 };
 
 export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props => {
+  const { t } = useTranslation();
   const { computing } = useStrategyContext();
 
   const [cardsFilter, setCardsFilter] = useState('');
@@ -60,13 +62,13 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
   return (
     <div className="hands-list">
       <p>
-        Cards filter
+        {t('materialHandsList.cardsFilter')}
         <input
           disabled={computing}
           type="text"
           value={cardsFilter}
           onChange={event => updateCardsFilter(event.target.value)}
-          placeholder="Example: A,A"
+          placeholder={t('materialHandsList.cardsFilterPlaceholder')}
           style={{ marginLeft: 8 }}
         />
         {props.nonFinalHandsControl && (
@@ -78,25 +80,27 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
               style={{ marginLeft: 16 }}
               disabled={computing}
             />
-            <span>Non-final hands</span>
+            <span>{t('materialHandsList.nonFinalHands')}</span>
           </React.Fragment>
         )}
       </p>
 
-      <p>Number of hands: {filteredHands.length}</p>
+      <p>
+        {t('materialHandsList.numberOfHands')}: {filteredHands.length}
+      </p>
 
       <p>
         <button disabled={computing || currentPage === 1} onClick={() => setPage(currentPage - 1)}>
-          Previous
+          {t('materialHandsList.previous')}
         </button>
         <span style={{ margin: '0 12px' }}>
-          Page {currentPage} of {pages}
+          {t('materialHandsList.page', { current: currentPage, total: pages })}
         </span>
         <button
           disabled={computing || currentPage === pages}
           onClick={() => setPage(currentPage + 1)}
         >
-          Next
+          {t('materialHandsList.next')}
         </button>
       </p>
 
@@ -104,12 +108,12 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
         <thead>
           <HandsListItem
             {...props}
-            action="Action"
-            betMultiplier="Bet multiplier"
-            cards="Cards"
+            action={t('commons.action')}
+            betMultiplier={t('materialHandsList.betMultiplier')}
+            cards={t('materialHandsList.cards')}
             isHeader={true}
-            probability="Probability"
-            score="Score"
+            probability={t('commons.probability')}
+            score={t('commons.score')}
           />
         </thead>
 

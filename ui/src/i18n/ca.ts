@@ -1,0 +1,68 @@
+export const ca = {
+  language: {
+    label: 'Idioma',
+    ca: 'Català',
+    en: 'Anglès',
+  },
+  titles: {
+    standThreshold: 'Límit de plantar',
+    optimalRoi: 'Roi òptim',
+  },
+  commons: {
+    action: 'Acció',
+    win: 'Victòria',
+    lose: 'Derrota',
+    push: 'Empat',
+    roi: 'Roi',
+    decision: 'Decisió',
+    score: 'Puntuació',
+    player: 'Jugador',
+    dealer: 'Crupier',
+    total: 'Total',
+    probability: 'Probabilitat',
+  },
+  actions: {
+    Double: 'Doblar',
+    Hit: 'Demanar',
+    Split: 'Dividir',
+    Stand: 'Plantar',
+    Bust: 'Eliminat',
+    End: 'Fi',
+  },
+  strategyLayout: {
+    hands: 'Mans',
+    finalScores: 'Puntuacions finals',
+    expectedResults: 'Resultats esperats',
+    handActions: 'Accions de mà',
+  },
+  expectedResults: {
+    matrix: 'Matriu',
+    list: 'Llista',
+  },
+  finalScoresList: {
+    numberOfFinalScores: 'Nombre de puntuacions finals',
+    hands: 'Mans',
+    view: 'Veure',
+  },
+  materialHandsList: {
+    cardsFilter: 'Filtre de cartes',
+    cardsFilterPlaceholder: 'Exemple: A,A',
+    nonFinalHands: 'Mans no finals',
+    numberOfHands: 'Nombre de mans',
+    previous: 'Anterior',
+    page: 'Pàgina {{current}} de {{total}}',
+    next: 'Següent',
+    betMultiplier: "Multiplicador d'aposta",
+    cards: 'Cartes',
+  },
+  rules: {
+    doubling: 'Doblar',
+    splitting: 'Dividir',
+    doublingAfterSplit: 'Doblar després de dividir',
+    hitSplitAces: 'Demanar carta després de dividir asos',
+    blackjackAfterSplit: 'Blackjack després de dividir',
+  },
+  standThresholdControl: {
+    label: 'Límit de plantar',
+  },
+};

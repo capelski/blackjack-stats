@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 type StandThresholdSliderProps = {
   disabled?: boolean;
@@ -14,6 +15,7 @@ export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
   onChange,
   value,
 }: StandThresholdSliderProps) => {
+  const { t } = useTranslation();
   const buttonStyle: React.CSSProperties = {
     cursor: disabled ? 'not-allowed' : 'pointer',
     margin: '0 5px',
@@ -27,7 +29,7 @@ export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
 
   return (
     <React.Fragment>
-      <label>Stand threshold:</label>
+      <label>{t('standThresholdControl.label')}:</label>
       <button
         disabled={disabled || value <= minValue}
         onClick={() => updateValue(value - 1)}

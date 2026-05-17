@@ -25,19 +25,13 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
         padding: '8px 0',
       }}
     >
-      <td style={columnStyle} className="score">
-        {props.score}
-      </td>
+      <td style={columnStyle}>{props.score}</td>
 
-      <td style={columnStyle} className="hands">
-        {Array.isArray(props.hands) ? props.hands.length : props.hands}
-      </td>
+      <td style={columnStyle}>{Array.isArray(props.hands) ? props.hands.length : props.hands}</td>
 
-      <td style={columnStyle} className="probability">
-        {props.probability}
-      </td>
+      <td style={columnStyle}>{props.probability}</td>
 
-      <td style={columnStyle} className="view">
+      <td style={columnStyle}>
         {Array.isArray(props.hands) && (
           <FinalScoresListModal
             hands={props.hands}

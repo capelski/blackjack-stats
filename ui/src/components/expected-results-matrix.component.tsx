@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
@@ -43,15 +44,16 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
 };
 
 export const ExpectedResultsMatrix: React.FC = () => {
+  const { t } = useTranslation();
   const { strategy } = useStrategyContext();
 
   return (
     <table style={{ width: '100%' }}>
       <thead>
         <ExpectedResultsMatrixRow
-          firstCell="Player \ Dealer"
+          firstCell={`${t('commons.player')} \\ ${t('commons.dealer')}`}
           dealerScoreToCell={dealerScore => ({ node: effectiveScoreToLabel(dealerScore.score) })}
-          lastCell="Total"
+          lastCell={t('commons.total')}
           isHeader={true}
         />
       </thead>
@@ -88,7 +90,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
         })}
 
         <ExpectedResultsMatrixRow
-          firstCell="Total"
+          firstCell={t('commons.total')}
           dealerScoreToCell={dealerScore => ({ node: toPercentage(dealerScore.probability) })}
           lastCell={toPercentage(strategy.expectedResults.probability)}
         />

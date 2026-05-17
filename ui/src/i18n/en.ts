@@ -1,0 +1,68 @@
+export const en = {
+  language: {
+    label: 'Language',
+    en: 'English',
+    ca: 'Catalan',
+  },
+  titles: {
+    standThreshold: 'Stand threshold',
+    optimalRoi: 'Optimal Roi',
+  },
+  commons: {
+    action: 'Action',
+    win: 'Win',
+    lose: 'Lose',
+    push: 'Push',
+    roi: 'Roi',
+    decision: 'Decision',
+    score: 'Score',
+    player: 'Player',
+    dealer: 'Dealer',
+    total: 'Total',
+    probability: 'Probability',
+  },
+  actions: {
+    Double: 'Double',
+    Hit: 'Hit',
+    Split: 'Split',
+    Stand: 'Stand',
+    Bust: 'Bust',
+    End: 'End',
+  },
+  strategyLayout: {
+    hands: 'Hands',
+    finalScores: 'Final Scores',
+    expectedResults: 'Expected Results',
+    handActions: 'Hand Actions',
+  },
+  expectedResults: {
+    matrix: 'Matrix',
+    list: 'List',
+  },
+  finalScoresList: {
+    numberOfFinalScores: 'Number of final scores',
+    hands: 'Hands',
+    view: 'View',
+  },
+  materialHandsList: {
+    cardsFilter: 'Cards filter',
+    cardsFilterPlaceholder: 'Example: A,A',
+    nonFinalHands: 'Non-final hands',
+    numberOfHands: 'Number of hands',
+    previous: 'Previous',
+    page: 'Page {{current}} of {{total}}',
+    next: 'Next',
+    betMultiplier: 'Bet multiplier',
+    cards: 'Cards',
+  },
+  rules: {
+    doubling: 'Doubling',
+    splitting: 'Splitting',
+    doublingAfterSplit: 'Doubling After Split',
+    hitSplitAces: 'Hit Split Aces',
+    blackjackAfterSplit: 'Blackjack After Split',
+  },
+  standThresholdControl: {
+    label: 'Stand threshold',
+  },
+};

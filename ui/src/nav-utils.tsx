@@ -15,6 +15,10 @@ import {
   resolvedHandsRoute,
 } from './models/routes.model';
 
+export const getLocalizedRoute = (language: string, route: string) => {
+  return `/${language}/${route}`;
+};
+
 export const getNavLinkStyle: (props: NavLinkRenderProps) => React.CSSProperties = ({
   isActive,
 }): React.CSSProperties => ({
@@ -36,4 +40,14 @@ export const getStrategyPageNestedRoutes = () => {
       <Route path={resolvedHandsRoute} element={<ResolvedHandsList />} />
     </React.Fragment>
   );
+};
+
+export const splitPathname = (pathname: string) => {
+  const [language, ...route] = pathname.split('/').filter(Boolean);
+  return { language, route: route.join('/') };
+};
+
+export const translateLocalizedRoute = (pathname: string, language: string) => {
+  const { route } = splitPathname(pathname);
+  return `/${language}/${route}`;
 };

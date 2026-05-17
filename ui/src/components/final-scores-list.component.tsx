@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { getFinalScoresTotals } from '../logic/final-scores-list.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
@@ -5,20 +6,23 @@ import { useStrategyContext } from '../strategy.context';
 import { FinalScoresListItem } from './final-scores-list-item.component';
 
 export const FinalScoresList: React.FC = () => {
+  const { t } = useTranslation();
   const { strategy, showBetMultiplier } = useStrategyContext();
   const { totalHands, totalProbability } = getFinalScoresTotals(strategy.finalScores);
 
   return (
     <div className="final-scores-list">
-      <p>Number of final scores: {strategy.finalScores.length}</p>
+      <p>
+        {t('finalScoresList.numberOfFinalScores')}: {strategy.finalScores.length}
+      </p>
 
       <table style={{ width: '100%' }}>
         <thead>
           <FinalScoresListItem
-            hands="Hands"
+            hands={t('finalScoresList.hands')}
             isHeader={true}
-            probability="Probability"
-            score="Score"
+            probability={t('commons.probability')}
+            score={t('commons.score')}
           />
         </thead>
 
@@ -37,7 +41,7 @@ export const FinalScoresList: React.FC = () => {
             hands={String(totalHands)}
             isHeader={true}
             probability={toPercentage(totalProbability)}
-            score="Total"
+            score={t('commons.total')}
           />
         </tbody>
       </table>

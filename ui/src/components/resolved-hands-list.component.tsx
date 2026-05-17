@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { getRoi } from '../logic/edge.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { getActionableResolvedHands } from '../logic/resolved-hands.logic';
@@ -5,6 +6,7 @@ import { useStrategyContext } from '../strategy.context';
 import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
 
 export const ResolvedHandsList: React.FC = () => {
+  const { t } = useTranslation();
   const { strategy } = useStrategyContext();
   const actionableResolvedHands = getActionableResolvedHands(strategy.resolvedHands);
 
@@ -13,10 +15,18 @@ export const ResolvedHandsList: React.FC = () => {
       <table style={{ width: '100%' }}>
         <thead>
           <ResolvedHandsListItem
-            actionRows={[{ action: 'Action', win: 'Win', lose: 'Lose', push: 'Push', roi: 'Roi' }]}
-            decision="Decision"
+            actionRows={[
+              {
+                action: t('commons.action'),
+                win: t('commons.win'),
+                lose: t('commons.lose'),
+                push: t('commons.push'),
+                roi: t('commons.roi'),
+              },
+            ]}
+            decision={t('commons.decision')}
             isHeader={true}
-            score="Score"
+            score={t('commons.score')}
           />
         </thead>
 

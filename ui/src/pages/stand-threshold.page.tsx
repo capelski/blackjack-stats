@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StandThresholdControl } from '../components/stand-threshold-control.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { getStrategy } from '../logic/strategy.logic';
@@ -10,6 +11,7 @@ import { Strategy } from '../types/strategy.type';
 const defaultStandThreshold = 17;
 
 export const StandThresholdPage: React.FC = () => {
+  const { t } = useTranslation();
   const [computing, setComputing] = useState(false);
   const [standThreshold, setStandThreshold] = useState(defaultStandThreshold);
   const [strategy, setStrategy] = useState<Strategy>(undefined!);
@@ -37,7 +39,7 @@ export const StandThresholdPage: React.FC = () => {
 
   return (
     <StrategyContext.Provider value={{ computing, showBetMultiplier: false, strategy }}>
-      <StrategyLayoutComponent title="Stand threshold">
+      <StrategyLayoutComponent title={t('titles.standThreshold')}>
         <StandThresholdControl
           disabled={computing}
           onChange={updateStandThreshold}

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 export type ActionRow = {
   action: string;
   lose: string;
@@ -22,6 +24,8 @@ export type ResolvedHandsListItemProps = {
 );
 
 export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props => {
+  const { t } = useTranslation();
+
   const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr', '1fr', '1fr', '1fr'];
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
@@ -41,7 +45,11 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
       </td>
 
       <td style={columnStyle} className="decision">
-        {props.decision} {!props.isHeader && props.decision !== props.optimalDecision ? ' ⚠️' : ''}
+        {props.isHeader
+          ? props.decision
+          : `${t(`actions.${props.decision}`)}${
+              props.decision === props.optimalDecision ? '' : ' ⚠️'
+            }`}
       </td>
 
       <td style={columnStyle} className="action">
@@ -52,30 +60,30 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
             }}
             key={action}
           >
-            {action}
+            {props.isHeader ? action : t(`actions.${action}`)}
           </div>
         ))}
       </td>
 
-      <td style={columnStyle} className="win">
+      <td style={columnStyle}>
         {props.actionRows.map(({ action, win }) => (
           <div key={action}>{win}</div>
         ))}
       </td>
 
-      <td style={columnStyle} className="push">
+      <td style={columnStyle}>
         {props.actionRows.map(({ action, push }) => (
           <div key={action}>{push}</div>
         ))}
       </td>
 
-      <td style={columnStyle} className="lose">
+      <td style={columnStyle}>
         {props.actionRows.map(({ action, lose }) => (
           <div key={action}>{lose}</div>
         ))}
       </td>
 
-      <td style={columnStyle} className="roi">
+      <td style={columnStyle}>
         {props.actionRows.map(({ action, roi }) => (
           <div key={action}>{roi}</div>
         ))}

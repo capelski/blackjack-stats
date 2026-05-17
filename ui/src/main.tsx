@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { BrowserRouter, StaticRouter } from 'react-router-dom';
 import { publicPath } from '../../constants';
 import App from './App.tsx';
+import './i18n/index';
 import './index.css';
 
 const mountApp = () => {

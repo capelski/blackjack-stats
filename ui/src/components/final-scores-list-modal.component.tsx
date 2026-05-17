@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from 'react-modal';
 import { MaterialHand } from '../types/material-hand.type';
 import { MaterialHandsListCore } from './material-hands-list-core.component';
@@ -10,6 +11,7 @@ type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
 };
 
 export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onClose = () => {
@@ -33,7 +35,7 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
 
   return (
     <span>
-      <button onClick={() => setIsModalOpen(true)}>View</button>
+      <button onClick={() => setIsModalOpen(true)}>{t('finalScoresList.view')}</button>
 
       <Modal isOpen={isModalOpen} onRequestClose={onClose}>
         <h3>{props.score}</h3>
