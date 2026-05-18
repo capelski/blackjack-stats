@@ -54,7 +54,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
             {t('strategyLayout.expectedResults')}
           </NavLink>
           <NavLink to={resolvedHandsRoute} style={getNavLinkStyle}>
-            {t('strategyLayout.handActions')}
+            {t('strategyLayout.actionsAnalysis')}
           </NavLink>
         </nav>
 

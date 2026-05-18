@@ -31,9 +31,9 @@ export const en = {
   },
   strategyLayout: {
     hands: 'Hands',
-    finalScores: 'Final Scores',
-    expectedResults: 'Expected Results',
-    handActions: 'Hand Actions',
+    finalScores: 'Final scores',
+    expectedResults: 'Expected results',
+    actionsAnalysis: 'Actions analysis',
   },
   expectedResults: {
     matrix: 'Matrix',
