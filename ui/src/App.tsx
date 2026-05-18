@@ -6,9 +6,9 @@ import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
 import { defaultLanguage } from './i18n';
-import { optimalRoiRoute, standThresholdRoute } from './models/routes.model';
+import { optimalActionsRoute, standThresholdRoute } from './models/routes.model';
 import { getLocalizedRoute, getNavLinkStyle, getStrategyPageNestedRoutes } from './nav-utils';
-import { OptimalRoiPage } from './pages/optimal-roi.page';
+import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
 import { SettingsContext } from './settings.context';
 
@@ -22,8 +22,8 @@ function App() {
         <NavLink to={getLocalizedRoute(i18n.language, standThresholdRoute)} style={getNavLinkStyle}>
           {t('titles.standThreshold')}
         </NavLink>
-        <NavLink to={getLocalizedRoute(i18n.language, optimalRoiRoute)} style={getNavLinkStyle}>
-          {t('titles.optimalRoi')}
+        <NavLink to={getLocalizedRoute(i18n.language, optimalActionsRoute)} style={getNavLinkStyle}>
+          {t('titles.optimalActions')}
         </NavLink>
         <LanguageSelector />
         <DecimalsSelector decimals={decimals} onDecimalsChange={setDecimals} />
@@ -36,7 +36,7 @@ function App() {
               <Route path={standThresholdRoute} element={<StandThresholdPage />}>
                 {getStrategyPageNestedRoutes()}
               </Route>
-              <Route path={optimalRoiRoute} element={<OptimalRoiPage />}>
+              <Route path={optimalActionsRoute} element={<OptimalActionsPage />}>
                 {getStrategyPageNestedRoutes()}
               </Route>
               <Route index element={<Navigate to={standThresholdRoute} replace />} />

@@ -5,14 +5,14 @@ export const en = {
   },
   titles: {
     standThreshold: 'Stand threshold',
-    optimalRoi: 'Optimal Roi',
+    optimalActions: 'Optimal actions',
   },
   commons: {
     action: 'Action',
     win: 'Win',
     lose: 'Lose',
     push: 'Push',
-    roi: 'Roi',
+    edge: 'Edge',
     decision: 'Decision',
     score: 'Score',
     player: 'Player',
@@ -38,6 +38,7 @@ export const en = {
   expectedResults: {
     matrix: 'Matrix',
     list: 'List',
+    bankruptIn: 'Bankrupt in {{rounds}} rounds',
   },
   finalScoresList: {
     numberOfFinalScores: 'Number of final scores',

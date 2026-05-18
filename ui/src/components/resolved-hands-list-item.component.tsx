@@ -4,7 +4,7 @@ export type ActionRow = {
   action: string;
   lose: string;
   push: string;
-  roi: string;
+  edge: string;
   win: string;
 };
 
@@ -84,8 +84,8 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
       </td>
 
       <td style={columnStyle}>
-        {props.actionRows.map(({ action, roi }) => (
-          <div key={action}>{roi}</div>
+        {props.actionRows.map(({ action, edge }) => (
+          <div key={action}>{edge}</div>
         ))}
       </td>
     </tr>

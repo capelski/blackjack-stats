@@ -6,7 +6,7 @@ import { Rules } from '../types/rules.type';
 import { getFinalScoresList, getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { effectiveScoreToLabel } from './labels.logic';
 import {
-  getMaterialHandsForOptimalRoi,
+  getMaterialHandsForOptimalActions,
   getMaterialHandsForStandThreshold,
 } from './material-hands.steps';
 import { parseScore } from './result.steps';
@@ -23,8 +23,8 @@ export const getFinalScoresListForStandThreshold = (rules: Rules, threshold: num
   return getFinalScoresList(hands);
 };
 
-export const getFinalScoresListForOptimalRoi = (rules: Rules) => {
-  const hands = getMaterialHandsForOptimalRoi(rules);
+export const getFinalScoresListForOptimalActions = (rules: Rules) => {
+  const hands = getMaterialHandsForOptimalActions(rules);
   return getFinalScoresList(hands);
 };
 
@@ -36,6 +36,38 @@ export const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): stri
     .join(',');
 };
 
+Given('the final score {string} of a hand resolver with a stand threshold of {int}', function(
+  this: FinalScoresListWorld,
+  scoreLabel: string,
+  threshold: number,
+) {
+  const hands = getMaterialHandsForStandThreshold(this.rules, threshold);
+  this.list = getFinalScoresList(hands);
+  const score = parseScore(scoreLabel);
+  const finalScore = this.list.find(item => item.score === score);
+
+  if (!finalScore) {
+    throw new Error(`Could not find final score for label "${scoreLabel}"`);
+  }
+
+  this.currentFinalScore = finalScore;
+});
+
+Given('the final score {string} of a hand resolver for optimal actions', function(
+  this: FinalScoresListWorld,
+  scoreLabel: string,
+) {
+  this.list = getFinalScoresListForOptimalActions(this.rules);
+  const score = parseScore(scoreLabel);
+  const finalScore = this.list.find(item => item.score === score);
+
+  if (!finalScore) {
+    throw new Error(`Could not find final score for label "${scoreLabel}"`);
+  }
+
+  this.currentFinalScore = finalScore;
+});
+
 When('getting the final scores list of a hand resolver with a stand threshold of {int}', function(
   this: FinalScoresListWorld,
   threshold: number,
@@ -43,10 +75,10 @@ When('getting the final scores list of a hand resolver with a stand threshold of
   this.list = getFinalScoresListForStandThreshold(this.rules, threshold);
 });
 
-When('getting the final scores list of a hand resolver for optimal roi', function(
+When('getting the final scores list of a hand resolver for optimal actions', function(
   this: FinalScoresListWorld,
 ) {
-  this.list = getFinalScoresListForOptimalRoi(this.rules);
+  this.list = getFinalScoresListForOptimalActions(this.rules);
 });
 
 Then('the returned final scores list contains {int} elements', function(
@@ -82,38 +114,6 @@ Then('the final score {int} has cards {string}, probability {string} and {string
   assert.strictEqual(effectiveScoreToLabel(item.score), expectedScore);
   assert.strictEqual(String(item.probability), expectedProbability);
   assert.strictEqual(String(item.hands.length), expectedHands);
-});
-
-Given('the final score {string} of a hand resolver with a stand threshold of {int}', function(
-  this: FinalScoresListWorld,
-  scoreLabel: string,
-  threshold: number,
-) {
-  const hands = getMaterialHandsForStandThreshold(this.rules, threshold);
-  this.list = getFinalScoresList(hands);
-  const score = parseScore(scoreLabel);
-  const finalScore = this.list.find(item => item.score === score);
-
-  if (!finalScore) {
-    throw new Error(`Could not find final score for label "${scoreLabel}"`);
-  }
-
-  this.currentFinalScore = finalScore;
-});
-
-Given('the final score {string} of a hand resolver for optimal roi with doubling', function(
-  this: FinalScoresListWorld,
-  scoreLabel: string,
-) {
-  this.list = getFinalScoresListForOptimalRoi({ doubling: true });
-  const score = parseScore(scoreLabel);
-  const finalScore = this.list.find(item => item.score === score);
-
-  if (!finalScore) {
-    throw new Error(`Could not find final score for label "${scoreLabel}"`);
-  }
-
-  this.currentFinalScore = finalScore;
 });
 
 When('getting the probability by bet multiplier', function(this: FinalScoresListWorld) {

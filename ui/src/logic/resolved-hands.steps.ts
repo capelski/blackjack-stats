@@ -16,7 +16,7 @@ const getResolvedHandsForStandThreshold = (threshold: number): ResolvedHand[] =>
   return getResolvedHands({}, handResolver).resolvedHands;
 };
 
-const getResolvedHandsForOptimalRoi = (rules: Rules = {}): ResolvedHand[] => {
+const getResolvedHandsForOptimalActions = (rules: Rules = {}): ResolvedHand[] => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
   return getResolvedHands(rules, handResolver).resolvedHands;
 };
@@ -28,10 +28,10 @@ When('getting the resolved hands of a hand resolver with a stand threshold of {i
   this.list = getResolvedHandsForStandThreshold(threshold);
 });
 
-When('getting the resolved hands of a hand resolver for optimal roi', function(
+When('getting the resolved hands of a hand resolver for optimal actions', function(
   this: ResolvedHandsWorld,
 ) {
-  this.list = getResolvedHandsForOptimalRoi(this.rules);
+  this.list = getResolvedHandsForOptimalActions(this.rules);
 });
 
 Then('{int} resolved hands are returned', function(this: ResolvedHandsWorld, count: number) {

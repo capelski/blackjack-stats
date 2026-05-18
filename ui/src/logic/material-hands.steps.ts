@@ -18,7 +18,7 @@ export const getMaterialHandsForStandThreshold = (rules: Rules, threshold: numbe
   return getMaterialHands(rules, handResolutionMap);
 };
 
-export const getMaterialHandsForOptimalRoi = (rules: Rules) => {
+export const getMaterialHandsForOptimalActions = (rules: Rules) => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
   const { handResolutionMap } = getResolvedHands(rules, handResolver);
   return getMaterialHands(rules, handResolutionMap);
@@ -31,10 +31,10 @@ When('getting the material hands of a hand resolver with a stand threshold of {i
   this.list = getMaterialHandsForStandThreshold(this.rules, threshold);
 });
 
-When('getting the material hands of a hand resolver for optimal roi', function(
+When('getting the material hands of a hand resolver for optimal actions', function(
   this: MaterialHandsWorld,
 ) {
-  this.list = getMaterialHandsForOptimalRoi(this.rules);
+  this.list = getMaterialHandsForOptimalActions(this.rules);
 });
 
 Then('{int} material hands are returned', function(this: MaterialHandsWorld, count: number) {

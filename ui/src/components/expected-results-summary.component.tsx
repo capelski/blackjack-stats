@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { getRoi } from '../logic/edge.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { lose, push, Result, win } from '../models/result.model';
@@ -7,7 +6,8 @@ import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 
 type ExpectedResultsSummaryCardProps = {
-  discriminator: Result | 'roi';
+  discriminator: Result | 'edge';
+  subtitle?: string;
   value: string;
 };
 
@@ -24,12 +24,16 @@ const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = pr
       }}
     >
       <h3>{t(`commons.${props.discriminator}`)}</h3>
-      <p>{props.value}</p>
+      <p>
+        {props.value}
+        {props.subtitle && <div style={{ fontStyle: 'italic' }}>{props.subtitle}</div>}
+      </p>
     </div>
   );
 };
 
 export const ExpectedResultsSummary: React.FC = () => {
+  const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
@@ -51,8 +55,11 @@ export const ExpectedResultsSummary: React.FC = () => {
         value={toPercentage(strategy.expectedResults.outcomes.lose, decimals)}
       />
       <ExpectedResultsSummaryCard
-        discriminator="roi"
-        value={toDecimal(getRoi(strategy.expectedResults.edge), decimals)}
+        discriminator="edge"
+        subtitle={t('expectedResults.bankruptIn', {
+          rounds: toDecimal(1 / -strategy.expectedResults.edge, decimals),
+        })}
+        value={toPercentage(strategy.expectedResults.edge, decimals)}
       />
     </div>
   );

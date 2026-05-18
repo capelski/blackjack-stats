@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { getRoi } from '../logic/edge.logic';
-import { toDecimal, toPercentage } from '../logic/numbers.logic';
+import { toPercentage } from '../logic/numbers.logic';
 import { getActionableResolvedHands } from '../logic/resolved-hands.logic';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
@@ -23,7 +22,7 @@ export const ResolvedHandsList: React.FC = () => {
                 win: t('commons.win'),
                 lose: t('commons.lose'),
                 push: t('commons.push'),
-                roi: t('commons.roi'),
+                edge: t('commons.edge'),
               },
             ]}
             decision={t('commons.decision')}
@@ -43,7 +42,7 @@ export const ResolvedHandsList: React.FC = () => {
                   win: toPercentage(consequence.outcomes.win, decimals),
                   lose: toPercentage(consequence.outcomes.lose, decimals),
                   push: toPercentage(consequence.outcomes.push, decimals),
-                  roi: toDecimal(getRoi(consequence.edge), decimals),
+                  edge: toPercentage(consequence.edge, decimals),
                 }))}
                 decision={resolvedHand.action}
                 key={resolvedHand.label}

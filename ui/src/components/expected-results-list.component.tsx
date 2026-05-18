@@ -1,8 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getRoi } from '../logic/edge.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
-import { getSortedNumericKeys, toDecimal, toPercentage } from '../logic/numbers.logic';
+import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { lose, push, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
@@ -95,10 +94,10 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.edgeByBetMultiplier}
-            transform={number => toDecimal(getRoi(number), decimals)}
+            transform={number => toPercentage(number, decimals)}
           />
         ) : (
-          t('commons.roi')
+          t('commons.edge')
         )}
       </td>
     </tr>

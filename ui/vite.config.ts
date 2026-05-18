@@ -11,11 +11,11 @@ const allRoutes = supportedLanguages
       '/stand-threshold/expected-results/matrix',
       '/stand-threshold/expected-results/list',
       '/stand-threshold/hand-actions',
-      '/optimal-roi/hands',
-      '/optimal-roi/final-scores',
-      '/optimal-roi/expected-results/matrix',
-      '/optimal-roi/expected-results/list',
-      '/optimal-roi/hand-actions',
+      '/optimal-actions/hands',
+      '/optimal-actions/final-scores',
+      '/optimal-actions/expected-results/matrix',
+      '/optimal-actions/expected-results/list',
+      '/optimal-actions/hand-actions',
     ].map(route => `/${language}${route}`);
   })
   .flat();

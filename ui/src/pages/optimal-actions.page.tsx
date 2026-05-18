@@ -8,11 +8,11 @@ import { HandResolver } from '../types/hand-resolution.type';
 import { Rules } from '../types/rules.type';
 import { Strategy } from '../types/strategy.type';
 
-const optimalRoiHandResolver: HandResolver = hand => hand.optimalConsequence.action;
+const optimalActionsHandResolver: HandResolver = hand => hand.optimalConsequence.action;
 
 const defaultRules: Rules = {};
 
-export const OptimalRoiPage: React.FC = () => {
+export const OptimalActionsPage: React.FC = () => {
   const { t } = useTranslation();
   const [computing, setComputing] = useState(false);
   const [rules, setRules] = useState<Rules>(defaultRules);
@@ -21,7 +21,7 @@ export const OptimalRoiPage: React.FC = () => {
   const computeStrategy = async (rules: Rules) => {
     setComputing(true);
 
-    const strategy = await getStrategy(rules, optimalRoiHandResolver);
+    const strategy = await getStrategy(rules, optimalActionsHandResolver);
     setStrategy(strategy);
     setComputing(false);
   };
@@ -40,7 +40,7 @@ export const OptimalRoiPage: React.FC = () => {
     <StrategyContext.Provider
       value={{ computing, showBetMultiplier: !!rules.doubling || !!rules.splitting, strategy }}
     >
-      <StrategyLayoutComponent title={t('titles.optimalRoi')}>
+      <StrategyLayoutComponent title={t('titles.optimalActions')}>
         <CheckboxComponent
           checked={!!rules.doubling}
           disabled={computing}

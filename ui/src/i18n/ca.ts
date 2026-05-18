@@ -5,14 +5,14 @@ export const ca = {
   },
   titles: {
     standThreshold: 'Límit de plantar',
-    optimalRoi: 'Roi òptim',
+    optimalActions: 'Accions òptimes',
   },
   commons: {
     action: 'Acció',
     win: 'Victòria',
     lose: 'Derrota',
     push: 'Empat',
-    roi: 'Roi',
+    edge: 'Avantatge',
     decision: 'Decisió',
     score: 'Puntuació',
     player: 'Jugador',
@@ -38,6 +38,7 @@ export const ca = {
   expectedResults: {
     matrix: 'Matriu',
     list: 'Llista',
+    bankruptIn: 'Bancarrota en {{rounds}} rondes',
   },
   finalScoresList: {
     numberOfFinalScores: 'Nombre de puntuacions finals',

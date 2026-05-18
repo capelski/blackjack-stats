@@ -4,7 +4,7 @@ import { Rules } from '../types/rules.type';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import {
-  getFinalScoresListForOptimalRoi,
+  getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
 import { parseScore } from './result.steps';
@@ -27,8 +27,8 @@ const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalSco
 };
 
 const getFinalScoresFromResolver = (rules: Rules, resolver: string): FinalScore[] => {
-  if (resolver === 'Optimal ROI') {
-    return getFinalScoresListForOptimalRoi(rules);
+  if (resolver === 'Optimal actions') {
+    return getFinalScoresListForOptimalActions(rules);
   }
 
   const thresholdMatch = resolver.match(/^(\d+) stand threshold$/);
