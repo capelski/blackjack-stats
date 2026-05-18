@@ -1,33 +1,39 @@
 import { PropsWithChildren, useEffect } from 'react';
 import Modal from 'react-modal';
+import { useSearchParams } from 'react-router-dom';
+
+export const modalQueryParamName = 'modal-id';
 
 export type BaseModalProps = PropsWithChildren<{
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
+  id: string;
 }>;
 
 export const BaseModal: React.FC<BaseModalProps> = props => {
-  const onClose = () => {
-    props.setIsModalOpen(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isModalOpen = searchParams.get(modalQueryParamName) === props.id;
+
+  const closeModal = () => {
+    searchParams.delete(modalQueryParamName);
+    setSearchParams(searchParams);
   };
 
   useEffect(() => {
-    if (!props.isModalOpen) {
+    if (!isModalOpen) {
       return;
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose();
+        closeModal();
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [props.isModalOpen]);
+  }, [searchParams]);
 
   return (
-    <Modal isOpen={props.isModalOpen} onRequestClose={onClose}>
+    <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
       {props.children}
     </Modal>
   );

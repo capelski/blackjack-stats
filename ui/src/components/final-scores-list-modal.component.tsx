@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { MaterialHand } from '../types/material-hand.type';
 import { MaterialHandsListCore } from './material-hands-list-core.component';
 import { HandsListProps } from './material-hands-list-item.component';
-import { BaseModal } from './modal.component';
+import { BaseModal, modalQueryParamName } from './modal.component';
 
 type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
   hands: MaterialHand[];
@@ -12,13 +12,18 @@ type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
 
 export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props => {
   const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [, setSearchParams] = useSearchParams();
+
+  const modalId = props.score;
+  const openModal = () => {
+    setSearchParams({ [modalQueryParamName]: modalId });
+  };
 
   return (
     <span>
-      <button onClick={() => setIsModalOpen(true)}>{t('finalScoresList.view')}</button>
+      <button onClick={openModal}>{t('finalScoresList.view')}</button>
 
-      <BaseModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
+      <BaseModal id={modalId}>
         <h3>{props.score}</h3>
         <MaterialHandsListCore
           hands={props.hands}

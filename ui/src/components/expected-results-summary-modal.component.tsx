@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, YAxis } from 'recharts';
 import { toDecimal } from '../logic/numbers.logic';
 import { useSettingsContext } from '../settings.context';
-import { BaseModal } from './modal.component';
+import { BaseModal, modalQueryParamName } from './modal.component';
 
 function getRandomOutcome(limit: number): number {
   const num = Math.random();
@@ -29,8 +30,8 @@ type ExpectedResultsSummaryModalProps = {
 export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalProps> = props => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
+  const [, setSearchParams] = useSearchParams();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [randomResults, setRandomResults] = useState<number[]>([]);
   const [roundsNumber, setRoundsNumber] = useState(100);
   const [startingPot, setStartingPot] = useState<number>(5);
@@ -42,12 +43,17 @@ export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalPr
     value,
   }));
 
+  const modalId = 'simulations';
+  const openModal = () => {
+    setSearchParams({ [modalQueryParamName]: modalId });
+  };
+
   return (
     <span>
-      <span style={{ cursor: 'pointer' }} onClick={() => setIsModalOpen(true)}>
+      <span style={{ cursor: 'pointer' }} onClick={openModal}>
         ℹ️
       </span>
-      <BaseModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
+      <BaseModal id={modalId}>
         <div
           style={{
             display: 'flex',
