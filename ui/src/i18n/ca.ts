@@ -42,6 +42,12 @@ export const ca = {
     bankruptcyBody: "= {{rounds}} vegades la quantitat inicial d'apostes al pot",
     bankruptcyExample: 'Un pot inicial de 5 apostes pot esperar durar {{rounds}} rondes',
     xRounds: '{{rounds}}x rondes',
+    simulation: {
+      startingPot: 'Pot inicial',
+      rounds: 'Rondes',
+      simulate: 'Simular',
+      finalPot: 'Pot final',
+    },
   },
   finalScoresList: {
     numberOfFinalScores: 'Nombre de puntuacions finals',

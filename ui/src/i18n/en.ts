@@ -42,6 +42,12 @@ export const en = {
     bankruptcyBody: '= {{rounds}} times the amount of bets in the initial pot',
     bankruptcyExample: 'An initial pot of 5 bets can expect to last {{rounds}} rounds',
     xRounds: '{{rounds}}x rounds',
+    simulation: {
+      startingPot: 'Starting pot',
+      rounds: 'Rounds',
+      simulate: 'Simulate',
+      finalPot: 'Final pot',
+    },
   },
   finalScoresList: {
     numberOfFinalScores: 'Number of final scores',
