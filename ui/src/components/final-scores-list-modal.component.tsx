@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Modal from 'react-modal';
 import { MaterialHand } from '../types/material-hand.type';
 import { MaterialHandsListCore } from './material-hands-list-core.component';
 import { HandsListProps } from './material-hands-list-item.component';
+import { BaseModal } from './modal.component';
 
 type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
   hands: MaterialHand[];
@@ -14,30 +14,11 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onClose = () => {
-    setIsModalOpen(false);
-  };
-
-  useEffect(() => {
-    if (!isModalOpen) {
-      return;
-    }
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isModalOpen]);
-
   return (
     <span>
       <button onClick={() => setIsModalOpen(true)}>{t('finalScoresList.view')}</button>
 
-      <Modal isOpen={isModalOpen} onRequestClose={onClose}>
+      <BaseModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
         <h3>{props.score}</h3>
         <MaterialHandsListCore
           hands={props.hands}
@@ -45,7 +26,7 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
           hideScore={true}
           showBetMultiplier={props.showBetMultiplier}
         />
-      </Modal>
+      </BaseModal>
     </span>
   );
 };
