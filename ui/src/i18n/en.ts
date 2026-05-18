@@ -38,7 +38,10 @@ export const en = {
   expectedResults: {
     matrix: 'Matrix',
     list: 'List',
-    bankruptIn: 'Bankrupt in {{rounds}} rounds',
+    bankruptcyTitle: 'Rounds to bankruptcy',
+    bankruptcyBody: '= {{rounds}} times the amount of bets in the initial pot',
+    bankruptcyExample: 'An initial pot of 5 bets can expect to last {{rounds}} rounds',
+    xRounds: '{{rounds}}x rounds',
   },
   finalScoresList: {
     numberOfFinalScores: 'Number of final scores',
