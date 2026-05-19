@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import { supportedLanguages } from '../../constants';
+import { optimalActionsRoute, standThresholdRoute, supportedLanguages } from '../../constants';
 import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
 import { defaultLanguage } from './i18n';
-import { optimalActionsRoute, standThresholdRoute } from './models/routes.model';
 import { getLocalizedRoute, getNavLinkStyle, getStrategyPageNestedRoutes } from './nav-utils';
 import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
