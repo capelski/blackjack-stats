@@ -3,6 +3,7 @@ import { FinalScoresListModal } from './final-scores-list-modal.component';
 import { HandsListProps } from './material-hands-list-item.component';
 
 export type FinalScoresListItemProps = Pick<HandsListProps, 'showBetMultiplier'> & {
+  combinations: string;
   hands: string | MaterialHand[];
   isHeader?: boolean;
   probability: string;
@@ -10,7 +11,7 @@ export type FinalScoresListItemProps = Pick<HandsListProps, 'showBetMultiplier'>
 };
 
 export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => {
-  const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr'];
+  const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr', '1fr'];
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
   };
@@ -27,9 +28,7 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
     >
       <td style={columnStyle}>{props.score}</td>
 
-      <td style={columnStyle}>{Array.isArray(props.hands) ? props.hands.length : props.hands}</td>
-
-      <td style={columnStyle}>{props.probability}</td>
+      <td style={columnStyle}>{props.combinations}</td>
 
       <td style={columnStyle}>
         {Array.isArray(props.hands) && (
@@ -40,6 +39,10 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = props => 
           />
         )}
       </td>
+
+      <td style={columnStyle}>{Array.isArray(props.hands) ? props.hands.length : props.hands}</td>
+
+      <td style={columnStyle}>{props.probability}</td>
     </tr>
   );
 };

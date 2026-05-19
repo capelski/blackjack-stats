@@ -52,7 +52,8 @@ export const ca = {
   finalScoresList: {
     numberOfFinalScores: 'Nombre de puntuacions finals',
     hands: 'Mans',
-    view: 'Veure',
+    viewAll: 'Veure totes',
+    combinations: 'Combinacions',
   },
   materialHandsList: {
     cardsFilter: 'Filtre de cartes',

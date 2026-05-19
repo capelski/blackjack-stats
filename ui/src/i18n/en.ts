@@ -52,7 +52,8 @@ export const en = {
   finalScoresList: {
     numberOfFinalScores: 'Number of final scores',
     hands: 'Hands',
-    view: 'View',
+    viewAll: 'View all',
+    combinations: 'Combinations',
   },
   materialHandsList: {
     cardsFilter: 'Cards filter',

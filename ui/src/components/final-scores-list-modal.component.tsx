@@ -21,7 +21,7 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
 
   return (
     <span>
-      <button onClick={openModal}>{t('finalScoresList.view')}</button>
+      <button onClick={openModal}>{t('finalScoresList.viewAll')}</button>
 
       <BaseModal id={modalId}>
         <h3>{props.score}</h3>

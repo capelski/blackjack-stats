@@ -21,6 +21,7 @@ export const FinalScoresList: React.FC = () => {
       <table style={{ width: '100%' }}>
         <thead>
           <FinalScoresListItem
+            combinations={t('finalScoresList.combinations')}
             hands={t('finalScoresList.hands')}
             isHeader={true}
             probability={t('commons.probability')}
@@ -29,17 +30,31 @@ export const FinalScoresList: React.FC = () => {
         </thead>
 
         <tbody>
-          {strategy.finalScores.map((finalScore, index) => (
-            <FinalScoresListItem
-              hands={finalScore.hands}
-              key={index}
-              probability={toPercentage(finalScore.probability, decimals)}
-              score={effectiveScoreToLabel(finalScore.score)}
-              showBetMultiplier={showBetMultiplier}
-            />
-          ))}
+          {strategy.finalScores.map((finalScore, index) => {
+            const sliceLimit = 10;
+            const sampleHands = finalScore.hands
+              .sort((a, b) => a.cards.length - b.cards.length)
+              .slice(0, sliceLimit)
+              .filter(h => h.cards)
+              .map(h => h.cards.map(c => c.symbol).join(','))
+              .join(' / ');
+            const combinations =
+              finalScore.hands.length > sliceLimit ? `${sampleHands}...` : sampleHands;
+
+            return (
+              <FinalScoresListItem
+                hands={finalScore.hands}
+                key={index}
+                probability={toPercentage(finalScore.probability, decimals)}
+                score={effectiveScoreToLabel(finalScore.score)}
+                combinations={combinations}
+                showBetMultiplier={showBetMultiplier}
+              />
+            );
+          })}
 
           <FinalScoresListItem
+            combinations=""
             hands={String(totalHands)}
             isHeader={true}
             probability={toPercentage(totalProbability, decimals)}
