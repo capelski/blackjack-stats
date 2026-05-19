@@ -19,6 +19,7 @@ export const ca = {
     dealer: 'Crupier',
     total: 'Total',
     probability: 'Probabilitat',
+    result: 'Resultat',
     decimals: '{{count}} decimals',
   },
   actions: {

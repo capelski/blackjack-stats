@@ -19,6 +19,7 @@ export const en = {
     dealer: 'Dealer',
     total: 'Total',
     probability: 'Probability',
+    result: 'Result',
     decimals: '{{count}} decimals',
   },
   actions: {
