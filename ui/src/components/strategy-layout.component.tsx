@@ -24,7 +24,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
 
       {props.children}
 
-      <div style={{ position: resolvedHandsRoute ? 'relative' : 'static' }}>
+      <div style={{ position: 'relative' }}>
         {(computing || !strategy) && (
           <div
             style={{
