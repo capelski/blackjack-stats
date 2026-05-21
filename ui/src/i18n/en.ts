@@ -64,6 +64,7 @@ export const en = {
     previous: 'Previous',
     page: 'Page {{current}} of {{total}}',
     next: 'Next',
+    download: 'Download',
     betMultiplier: 'Bet multiplier',
     cards: 'Cards',
   },

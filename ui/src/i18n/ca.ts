@@ -64,6 +64,7 @@ export const ca = {
     previous: 'Anterior',
     page: 'Pàgina {{current}} de {{total}}',
     next: 'Següent',
+    download: 'Descarregar',
     betMultiplier: "Multiplicador d'aposta",
     cards: 'Cartes',
   },

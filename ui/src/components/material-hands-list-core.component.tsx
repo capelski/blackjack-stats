@@ -10,6 +10,54 @@ import { HandsListItem, HandsListProps } from './material-hands-list-item.compon
 
 const pageSize = 50;
 
+const escapeCsvValue = (value: string | number): string | number => {
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  if (value.includes('"') || value.includes(',') || value.includes('\n')) {
+    return `"${value.replaceAll('"', '""')}"`;
+  }
+
+  return value;
+};
+
+type DownloadCsvOptions = {
+  hands: MaterialHand[];
+  t: (key: string) => string;
+};
+
+const downloadCsv = ({ hands, t }: DownloadCsvOptions): void => {
+  const headers = [
+    t('materialHandsList.cards'),
+    t('commons.score'),
+    t('commons.probability'),
+    t('materialHandsList.betMultiplier'),
+    t('commons.action'),
+  ];
+
+  const rows = hands.map(hand => {
+    const row = [
+      serializeCards(hand, ', '),
+      scoresToLabel(hand.scores),
+      hand.probability,
+      hand.betMultiplier,
+      t(`actions.${hand.action}`),
+    ];
+
+    return row.map(escapeCsvValue).join(',');
+  });
+
+  const csv = `${headers.map(escapeCsvValue).join(',')}\n${rows.join('\n')}`;
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'hands.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
 export type MaterialHandsListCoreProps = HandsListProps & {
   hands: MaterialHand[];
   nonFinalHandsControl?: boolean;
@@ -95,14 +143,24 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
         <button disabled={computing || currentPage === 1} onClick={() => setPage(currentPage - 1)}>
           {t('materialHandsList.previous')}
         </button>
-        <span style={{ margin: '0 12px' }}>
+
+        <span style={{ margin: '0 8px' }}>
           {t('materialHandsList.page', { current: currentPage, total: pages })}
         </span>
+
         <button
           disabled={computing || currentPage === pages}
           onClick={() => setPage(currentPage + 1)}
         >
           {t('materialHandsList.next')}
+        </button>
+
+        <button
+          disabled={computing}
+          onClick={() => downloadCsv({ hands: props.hands, t: key => t(key) })}
+          style={{ marginLeft: 8 }}
+        >
+          💾 {t('materialHandsList.download')}
         </button>
       </p>
 
