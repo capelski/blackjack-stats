@@ -36,13 +36,27 @@ function App() {
     setSearchParams(nextSearchParams);
   };
 
+  const search = searchParams.toString();
+
   return (
     <div className="app">
       <nav className="navbar">
-        <NavLink to={getLocalizedRoute(i18n.language, standThresholdRoute)} style={getNavLinkStyle}>
+        <NavLink
+          to={{
+            pathname: getLocalizedRoute(i18n.language, standThresholdRoute),
+            search,
+          }}
+          style={getNavLinkStyle}
+        >
           {t('titles.standThreshold')}
         </NavLink>
-        <NavLink to={getLocalizedRoute(i18n.language, optimalActionsRoute)} style={getNavLinkStyle}>
+        <NavLink
+          to={{
+            pathname: getLocalizedRoute(i18n.language, optimalActionsRoute),
+            search,
+          }}
+          style={getNavLinkStyle}
+        >
           {t('titles.optimalActions')}
         </NavLink>
         <LanguageSelector />

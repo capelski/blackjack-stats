@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useSearchParams } from 'react-router-dom';
 import {
   expectedResultsRoute,
   finalScoresRoute,
@@ -17,6 +17,8 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
   const { t } = useTranslation();
   const { computing, strategy } = useStrategyContext();
+  const [searchParams] = useSearchParams();
+  const search = searchParams.toString();
 
   return (
     <div>
@@ -44,16 +46,16 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
         )}
 
         <nav className="nested-navbar">
-          <NavLink to={materialHandsRoute} style={getNavLinkStyle}>
+          <NavLink to={{ pathname: materialHandsRoute, search }} style={getNavLinkStyle}>
             {t('strategyLayout.hands')}
           </NavLink>
-          <NavLink to={finalScoresRoute} style={getNavLinkStyle}>
+          <NavLink to={{ pathname: finalScoresRoute, search }} style={getNavLinkStyle}>
             {t('strategyLayout.finalScores')}
           </NavLink>
-          <NavLink to={expectedResultsRoute} style={getNavLinkStyle}>
+          <NavLink to={{ pathname: expectedResultsRoute, search }} style={getNavLinkStyle}>
             {t('strategyLayout.expectedResults')}
           </NavLink>
-          <NavLink to={resolvedHandsRoute} style={getNavLinkStyle}>
+          <NavLink to={{ pathname: resolvedHandsRoute, search }} style={getNavLinkStyle}>
             {t('strategyLayout.actionsAnalysis')}
           </NavLink>
         </nav>
