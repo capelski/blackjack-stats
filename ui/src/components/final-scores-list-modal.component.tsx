@@ -12,11 +12,13 @@ type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
 
 export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props => {
   const { t } = useTranslation();
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const modalId = props.score;
   const openModal = () => {
-    setSearchParams({ [modalQueryParamName]: modalId });
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set(modalQueryParamName, modalId);
+    setSearchParams(nextSearchParams);
   };
 
   return (

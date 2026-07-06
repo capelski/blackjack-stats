@@ -30,7 +30,7 @@ type ExpectedResultsSummaryModalProps = {
 export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalProps> = props => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [randomResults, setRandomResults] = useState<number[]>([]);
   const [roundsNumber, setRoundsNumber] = useState(100);
@@ -45,7 +45,9 @@ export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalPr
 
   const modalId = 'simulations';
   const openModal = () => {
-    setSearchParams({ [modalQueryParamName]: modalId });
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set(modalQueryParamName, modalId);
+    setSearchParams(nextSearchParams);
   };
 
   return (

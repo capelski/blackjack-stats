@@ -71,13 +71,15 @@ export const ExpectedResultsMatrix: React.FC = () => {
   const toggleMode = (nextMode: Mode) => {
     setMode(nextMode);
 
+    const nextSearchParams = new URLSearchParams(searchParams);
+
     if (nextMode === probability) {
-      searchParams.delete('mode');
+      nextSearchParams.delete('mode');
     } else {
-      searchParams.set('mode', nextMode);
+      nextSearchParams.set('mode', nextMode);
     }
 
-    setSearchParams(searchParams);
+    setSearchParams(nextSearchParams);
   };
 
   useEffect(() => {

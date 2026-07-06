@@ -13,8 +13,9 @@ export const BaseModal: React.FC<BaseModalProps> = props => {
   const isModalOpen = searchParams.get(modalQueryParamName) === props.id;
 
   const closeModal = () => {
-    searchParams.delete(modalQueryParamName);
-    setSearchParams(searchParams);
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete(modalQueryParamName);
+    setSearchParams(nextSearchParams);
   };
 
   useEffect(() => {

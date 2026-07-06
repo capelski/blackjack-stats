@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes, useSearchParams } from 'react-router-dom';
 import { optimalActionsRoute, standThresholdRoute, supportedLanguages } from '../../constants';
 import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
@@ -14,40 +14,26 @@ import { SettingsContext } from './settings.context';
 const defaultStandThreshold = 17;
 const standThresholdParam = 't';
 
-const getStandThresholdFromQueryString = (): number => {
-  if (typeof window === 'undefined') {
-    return defaultStandThreshold;
-  }
-
-  const params = new URLSearchParams(window.location.search);
-  const queryValue = params.get(standThresholdParam);
-  if (queryValue === null) {
-    return defaultStandThreshold;
-  }
-
-  const threshold = Number(queryValue);
-
-  return Number.isInteger(threshold) ? threshold : defaultStandThreshold;
-};
-
-const updateStandThresholdInQueryString = (threshold: number): void => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  const url = new URL(window.location.href);
-  url.searchParams.set(standThresholdParam, threshold.toString());
-  window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
-};
-
 function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
-  const [standThreshold, setStandThreshold] = useState(getStandThresholdFromQueryString);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [standThreshold, setStandThreshold] = useState(() => {
+    const queryValue = searchParams.get(standThresholdParam);
+    if (queryValue === null) {
+      return defaultStandThreshold;
+    }
+
+    const threshold = Number(queryValue);
+
+    return Number.isInteger(threshold) ? threshold : defaultStandThreshold;
+  });
 
   const updateStandThreshold = (newValue: number) => {
     setStandThreshold(newValue);
-    updateStandThresholdInQueryString(newValue);
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set(standThresholdParam, String(newValue));
+    setSearchParams(nextSearchParams);
   };
 
   return (
