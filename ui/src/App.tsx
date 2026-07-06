@@ -14,6 +14,7 @@ import { SettingsContext } from './settings.context';
 function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
+  const [standThreshold, setStandThreshold] = useState(17);
 
   return (
     <div className="app">
@@ -32,7 +33,15 @@ function App() {
         <Routes>
           {supportedLanguages.map(language => (
             <Route key={language} path={language}>
-              <Route path={standThresholdRoute} element={<StandThresholdPage />}>
+              <Route
+                path={standThresholdRoute}
+                element={
+                  <StandThresholdPage
+                    standThreshold={standThreshold}
+                    setStandThreshold={setStandThreshold}
+                  />
+                }
+              >
                 {getStrategyPageNestedRoutes()}
               </Route>
               <Route path={optimalActionsRoute} element={<OptimalActionsPage />}>

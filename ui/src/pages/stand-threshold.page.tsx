@@ -8,12 +8,14 @@ import { StrategyContext } from '../strategy.context';
 import { HandResolver } from '../types/hand-resolution.type';
 import { Strategy } from '../types/strategy.type';
 
-const defaultStandThreshold = 17;
+export type StandThresholdPageProps = {
+  standThreshold: number;
+  setStandThreshold: (standThreshold: number) => void;
+};
 
-export const StandThresholdPage: React.FC = () => {
+export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
   const { t } = useTranslation();
   const [computing, setComputing] = useState(false);
-  const [standThreshold, setStandThreshold] = useState(defaultStandThreshold);
   const [strategy, setStrategy] = useState<Strategy>(undefined!);
 
   const computeStrategy = async (threshold: number) => {
@@ -27,23 +29,18 @@ export const StandThresholdPage: React.FC = () => {
     setComputing(false);
   };
 
-  const updateStandThreshold = (newValue: number) => {
-    setStandThreshold(newValue);
-    return computeStrategy(newValue);
-  };
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    computeStrategy(defaultStandThreshold);
-  }, []);
+    computeStrategy(props.standThreshold);
+  }, [props.standThreshold]);
 
   return (
     <StrategyContext.Provider value={{ computing, showBetMultiplier: false, strategy }}>
       <StrategyLayoutComponent title={t('titles.standThreshold')}>
         <StandThresholdControl
           disabled={computing}
-          onChange={updateStandThreshold}
-          value={standThreshold}
+          onChange={props.setStandThreshold}
+          value={props.standThreshold}
         />
       </StrategyLayoutComponent>
     </StrategyContext.Provider>
