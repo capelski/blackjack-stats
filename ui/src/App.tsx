@@ -62,15 +62,31 @@ function App() {
                   />
                 }
               >
-                {getStrategyPageNestedRoutes()}
+                {getStrategyPageNestedRoutes(searchParams)}
               </Route>
               <Route path={optimalActionsRoute} element={<OptimalActionsPage />}>
-                {getStrategyPageNestedRoutes()}
+                {getStrategyPageNestedRoutes(searchParams)}
               </Route>
-              <Route index element={<Navigate to={standThresholdRoute} replace />} />
+              <Route
+                index
+                element={
+                  <Navigate
+                    to={{ pathname: standThresholdRoute, search: searchParams.toString() }}
+                    replace
+                  />
+                }
+              />
             </Route>
           ))}
-          <Route index element={<Navigate to={defaultLanguage} replace />} />
+          <Route
+            index
+            element={
+              <Navigate
+                to={{ pathname: defaultLanguage, search: searchParams.toString() }}
+                replace
+              />
+            }
+          />
         </Routes>
       </SettingsContext.Provider>
     </div>

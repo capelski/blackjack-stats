@@ -26,14 +26,27 @@ export const getNavLinkStyle: (props: NavLinkRenderProps) => React.CSSProperties
   fontWeight: isActive ? 'bold' : 'normal',
 });
 
-export const getStrategyPageNestedRoutes = () => {
+export const getStrategyPageNestedRoutes = (search: URLSearchParams) => {
   return (
     <React.Fragment>
-      <Route index element={<Navigate to={materialHandsRoute} replace />} />
+      <Route
+        index
+        element={
+          <Navigate to={{ pathname: materialHandsRoute, search: search.toString() }} replace />
+        }
+      />
       <Route path={materialHandsRoute} element={<MaterialHandsList />} />
       <Route path={finalScoresRoute} element={<FinalScoresList />} />
       <Route path={expectedResultsRoute} element={<ExpectedResults />}>
-        <Route index element={<Navigate to={expectedResultsMatrixRoute} replace />} />
+        <Route
+          index
+          element={
+            <Navigate
+              to={{ pathname: expectedResultsMatrixRoute, search: search.toString() }}
+              replace
+            />
+          }
+        />
         <Route path={expectedResultsMatrixRoute} element={<ExpectedResultsMatrix />} />
         <Route path={expectedResultsListRoute} element={<ExpectedResultsList />} />
       </Route>
