@@ -25,7 +25,6 @@ export const getExpectedResult = (
 
   let edge = 0;
   let probability = 0;
-  const edgeByBetMultiplier: BetMultiplierMap = {};
 
   for (const finalComparison of Object.values(finalComparisons)) {
     const absoluteProbability = finalComparison.probability / playerScore.probability;
@@ -37,15 +36,6 @@ export const getExpectedResult = (
     );
     edge += finalComparison.edge * absoluteProbability;
     probability += finalComparison.probability;
-
-    for (const betMultiplier of getSortedNumericKeys(finalComparison.edgeByBetMultiplier)) {
-      if (!edgeByBetMultiplier[betMultiplier]) {
-        edgeByBetMultiplier[betMultiplier] = 0;
-      }
-
-      edgeByBetMultiplier[betMultiplier] +=
-        finalComparison.edgeByBetMultiplier[betMultiplier] * absoluteProbability;
-    }
   }
 
   const expectedResult: ExpectedResult = {
@@ -55,7 +45,6 @@ export const getExpectedResult = (
     outcomes,
     outcomesByBetMultiplier,
     edge,
-    edgeByBetMultiplier,
     score: playerScore.score,
   };
 

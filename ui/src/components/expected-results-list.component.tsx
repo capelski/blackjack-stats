@@ -77,8 +77,8 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
 
       <td style={cellStyle}>
         {props.expectedResult
-          ? toPercentage(props.expectedResult.edge * props.expectedResult.probability, decimals)
-          : t('commons.edge')}
+          ? toPercentage(props.expectedResult.probability, decimals)
+          : t('commons.total')}
       </td>
     </tr>
   );

@@ -10,7 +10,6 @@ export type ExpectedResult = {
   outcomes: Outcomes;
   outcomesByBetMultiplier: OutcomesByBetMultiplierMap;
   edge: number;
-  edgeByBetMultiplier: BetMultiplierMap;
 };
 
 export type ExpectedResultsMap = {
