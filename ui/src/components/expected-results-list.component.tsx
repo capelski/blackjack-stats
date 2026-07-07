@@ -45,13 +45,8 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(win)) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
-            betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
-            transform={number =>
-              toPercentage(
-                number * props.expectedResult.probability * props.expectedResult.outcomes.win,
-                decimals,
-              )
-            }
+            betMultiplierMap={props.expectedResult.outcomesByBetMultiplier.win}
+            transform={number => toPercentage(number * props.expectedResult.probability, decimals)}
           />
         ) : (
           t('commons.win')
@@ -61,13 +56,8 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(push)) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
-            betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
-            transform={number =>
-              toPercentage(
-                number * props.expectedResult.probability * props.expectedResult.outcomes.push,
-                decimals,
-              )
-            }
+            betMultiplierMap={props.expectedResult.outcomesByBetMultiplier.push}
+            transform={number => toPercentage(number * props.expectedResult.probability, decimals)}
           />
         ) : (
           t('commons.push')
@@ -77,13 +67,8 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(lose)) }}>
         {props.expectedResult ? (
           <BetMultipliersCell
-            betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
-            transform={number =>
-              toPercentage(
-                number * props.expectedResult.probability * props.expectedResult.outcomes.lose,
-                decimals,
-              )
-            }
+            betMultiplierMap={props.expectedResult.outcomesByBetMultiplier.lose}
+            transform={number => toPercentage(number * props.expectedResult.probability, decimals)}
           />
         ) : (
           t('commons.lose')
@@ -91,14 +76,9 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
       </td>
 
       <td style={cellStyle}>
-        {props.expectedResult ? (
-          <BetMultipliersCell
-            betMultiplierMap={props.expectedResult.edgeByBetMultiplier}
-            transform={number => toPercentage(number, decimals)}
-          />
-        ) : (
-          t('commons.edge')
-        )}
+        {props.expectedResult
+          ? toPercentage(props.expectedResult.edge * props.expectedResult.probability, decimals)
+          : t('commons.edge')}
       </td>
     </tr>
   );

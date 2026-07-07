@@ -1,11 +1,11 @@
-import { lose, push, win } from '../models/result.model';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalComparison, FinalComparisonsMap } from '../types/final-comparison.type';
 import { FinalScore, FinalScoreBase } from '../types/final-score.type';
+import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getEdge } from './edge.logic';
 import { getSortedNumericKeys } from './numbers.logic';
-import { createOutcomes } from './outcomes.logic';
+import { createOutcomes, createOutcomesByBetMultiplier } from './outcomes.logic';
 import { getResult } from './result.logic';
 
 export const getFinalComparison = (
@@ -16,11 +16,10 @@ export const getFinalComparison = (
   const probability = playerScore.probability * dealerScore.probability;
 
   const result = getResult(playerScore.score, dealerScore.score);
-  const outcomes = createOutcomes({
-    lose: result === lose ? 1 : 0,
-    push: result === push ? 1 : 0,
-    win: result === win ? 1 : 0,
-  });
+  const outcomes = createOutcomes({ [result]: 1 });
+  const outcomesByBetMultiplier: OutcomesByBetMultiplierMap = createOutcomesByBetMultiplier(
+    getSortedNumericKeys(probabilityByBetMultiplier),
+  );
 
   let edge = 0;
   const edgeByBetMultiplier: BetMultiplierMap = {};
@@ -28,12 +27,14 @@ export const getFinalComparison = (
   for (const betMultiplier of getSortedNumericKeys(probabilityByBetMultiplier)) {
     edgeByBetMultiplier[betMultiplier] = getEdge(outcomes, betMultiplier);
     edge += edgeByBetMultiplier[betMultiplier] * probabilityByBetMultiplier[betMultiplier];
+    outcomesByBetMultiplier[result][betMultiplier] = probabilityByBetMultiplier[betMultiplier];
   }
 
   const finalComparison: FinalComparison = {
     probability,
     result,
     outcomes,
+    outcomesByBetMultiplier,
     edge,
     edgeByBetMultiplier,
   };

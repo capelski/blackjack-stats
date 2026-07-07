@@ -9,17 +9,21 @@ export type BetMultipliersCellProps = {
 };
 
 export const BetMultipliersCell: React.FC<BetMultipliersCellProps> = props => {
+  const keys = getSortedNumericKeys(props.betMultiplierMap);
+
   return (
     <React.Fragment>
-      {getSortedNumericKeys(props.betMultiplierMap).map(betMultiplier => {
+      {keys.map(betMultiplier => {
         const betMultiplierProbability = props.betMultiplierMap[betMultiplier];
         const transformedValue = props.transform(betMultiplierProbability);
 
         return (
           <div key={betMultiplier}>
-            {betMultiplier <= blackjackMultiplier
-              ? transformedValue
-              : `${betMultiplier}x: ${transformedValue}`}
+            {betMultiplier > blackjackMultiplier
+              ? `${betMultiplier}x: ${transformedValue}`
+              : betMultiplier === blackjackMultiplier && keys.length > 1
+              ? `BJ: ${transformedValue}`
+              : transformedValue}
           </div>
         );
       })}

@@ -5,6 +5,7 @@ import { resultToStyles } from '../logic/result.logic';
 import { lose, push, Result, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
+import { BetMultipliersCell } from './bet-multipliers-cell.component';
 import { ExpectedResultsSummaryModal } from './expected-results-summary-modal.component';
 
 type ExpectedResultsSummaryCardProps = PropsWithChildren<{
@@ -40,13 +41,22 @@ export const ExpectedResultsSummary: React.FC = () => {
       style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}
     >
       <ExpectedResultsSummaryCard discriminator={win}>
-        {toPercentage(strategy.expectedResults.outcomes.win, decimals)}
+        <BetMultipliersCell
+          betMultiplierMap={strategy.expectedResults.outcomesByBetMultiplier.win}
+          transform={number => toPercentage(number, decimals)}
+        />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator={push}>
-        {toPercentage(strategy.expectedResults.outcomes.push, decimals)}
+        <BetMultipliersCell
+          betMultiplierMap={strategy.expectedResults.outcomesByBetMultiplier.push}
+          transform={number => toPercentage(number, decimals)}
+        />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator={lose}>
-        {toPercentage(strategy.expectedResults.outcomes.lose, decimals)}
+        <BetMultipliersCell
+          betMultiplierMap={strategy.expectedResults.outcomesByBetMultiplier.lose}
+          transform={number => toPercentage(number, decimals)}
+        />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator="edge">
         {toPercentage(strategy.expectedResults.edge, decimals)}
