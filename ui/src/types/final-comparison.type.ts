@@ -6,7 +6,6 @@ export type FinalComparison = {
   result: Result;
   outcomes: Outcomes;
   outcomesByBetMultiplier: OutcomesByBetMultiplierMap;
-  edge: number;
 };
 
 export type FinalComparisonsMap = {

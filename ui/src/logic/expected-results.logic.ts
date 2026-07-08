@@ -2,6 +2,7 @@ import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
 import { FinalScore, FinalScoreBase } from '../types/final-score.type';
 import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
+import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { getSortedNumericKeys } from './numbers.logic';
@@ -34,7 +35,7 @@ export const getExpectedResult = (
       finalComparison.outcomesByBetMultiplier,
       absoluteProbability,
     );
-    edge += finalComparison.edge * absoluteProbability;
+    edge += getEdge(finalComparison.outcomesByBetMultiplier) * absoluteProbability;
     probability += finalComparison.probability;
   }
 
