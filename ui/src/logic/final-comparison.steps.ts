@@ -6,6 +6,7 @@ import { getFinalComparison } from './final-comparison.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import {
   formatProbabilityByBetMultiplier,
+  getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
 import { parseScore } from './result.steps';
@@ -40,6 +41,10 @@ Given('a player hand resolver with a stand threshold of {int}', function(
   this.playerFinalScores = getFinalScoresListForStandThreshold(this.rules, threshold);
 });
 
+Given('a player hand resolver for optimal actions', function(this: FinalComparisonWorld) {
+  this.playerFinalScores = getFinalScoresListForOptimalActions(this.rules);
+});
+
 When(
   'getting the final comparison of a player score of {string} and a dealer score of {string}',
   function(this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
@@ -70,28 +75,19 @@ Then('the final comparison probability equals {string}', function(
   );
 });
 
-Then('the final comparison edge by bet multiplier equals {string}', function(
+Then('the final comparison outcomes equal {string}', function(
   this: FinalComparisonWorld,
   expected: string,
 ) {
-  assertEqual(
-    formatProbabilityByBetMultiplier(this.comparison.edgeByBetMultiplier),
-    expected,
-    'Final comparison edge by bet multiplier mismatch',
+  const formattedWin = formatProbabilityByBetMultiplier(
+    this.comparison.outcomesByBetMultiplier.win,
   );
-});
-
-Then('the final comparison outcomes equals {string}', function(
-  this: FinalComparisonWorld,
-  expected: string,
-) {
-  const actual = `win=${this.comparison.outcomes.win},push=${this.comparison.outcomes.push},lose=${this.comparison.outcomes.lose}`;
+  const formattedPush = formatProbabilityByBetMultiplier(
+    this.comparison.outcomesByBetMultiplier.push,
+  );
+  const formattedLose = formatProbabilityByBetMultiplier(
+    this.comparison.outcomesByBetMultiplier.lose,
+  );
+  const actual = `win: ${formattedWin} / push: ${formattedPush} / lose: ${formattedLose}`;
   assertEqual(actual, expected, 'Final comparison outcomes mismatch');
-});
-
-Then('the final comparison edge equals {string}', function(
-  this: FinalComparisonWorld,
-  expectedEdge: string,
-) {
-  assertEqual(String(this.comparison.edge), expectedEdge, 'Final comparison edge mismatch');
 });

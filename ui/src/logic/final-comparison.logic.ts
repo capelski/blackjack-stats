@@ -21,14 +21,10 @@ export const getFinalComparison = (
     getSortedNumericKeys(probabilityByBetMultiplier),
   );
 
-  let edge = 0;
-  const edgeByBetMultiplier: BetMultiplierMap = {};
-
   for (const betMultiplier of getSortedNumericKeys(probabilityByBetMultiplier)) {
-    edgeByBetMultiplier[betMultiplier] = getEdge(outcomes, betMultiplier);
-    edge += edgeByBetMultiplier[betMultiplier] * probabilityByBetMultiplier[betMultiplier];
     outcomesByBetMultiplier[result][betMultiplier] = probabilityByBetMultiplier[betMultiplier];
   }
+  const edge = getEdge(outcomesByBetMultiplier);
 
   const finalComparison: FinalComparison = {
     probability,
@@ -36,7 +32,6 @@ export const getFinalComparison = (
     outcomes,
     outcomesByBetMultiplier,
     edge,
-    edgeByBetMultiplier,
   };
 
   return finalComparison;
