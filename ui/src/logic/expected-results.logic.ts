@@ -1,11 +1,9 @@
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
 import { FinalScore, FinalScoreBase } from '../types/final-score.type';
-import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
-import { getSortedNumericKeys } from './numbers.logic';
 import {
   createOutcomes,
   createOutcomesByBetMultiplier,
@@ -20,9 +18,7 @@ export const getExpectedResult = (
   const finalComparisons = getFinalComparisons(playerScore, probabilityByBetMultiplier);
 
   const outcomes = createOutcomes();
-  const outcomesByBetMultiplier: OutcomesByBetMultiplierMap = createOutcomesByBetMultiplier(
-    getSortedNumericKeys(probabilityByBetMultiplier),
-  );
+  const outcomesByBetMultiplier = createOutcomesByBetMultiplier(probabilityByBetMultiplier);
 
   let edge = 0;
   let probability = 0;
@@ -61,7 +57,7 @@ export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults =
   }
 
   const outcomes = createOutcomes();
-  const outcomesByBetMultiplier: OutcomesByBetMultiplierMap = createOutcomesByBetMultiplier([]);
+  const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});
   let edge = 0;
   let probability = 0;
 
