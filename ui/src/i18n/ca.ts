@@ -38,7 +38,7 @@ export const ca = {
   },
   expectedResults: {
     matrix: 'Matriu',
-    list: 'Llista',
+    grouped: 'Agrupats',
     bankruptcyTitle: 'Rondes fins a la bancarrota',
     bankruptcyBody: "= {{rounds}} vegades la quantitat inicial d'apostes al pot",
     bankruptcyExample: 'Un pot inicial de 5 apostes pot esperar durar {{rounds}} rondes',

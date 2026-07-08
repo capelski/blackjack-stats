@@ -9,7 +9,7 @@ import { useStrategyContext } from '../strategy.context';
 import { ExpectedResult } from '../types/expected-result.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
 
-type ExpectedResultsListRowProps =
+type ExpectedResultsGroupedRowProps =
   | {
       expectedResult?: undefined;
       isHeader: true;
@@ -19,7 +19,7 @@ type ExpectedResultsListRowProps =
       isHeader?: false;
     };
 
-const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
+const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = props => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
 
@@ -84,19 +84,19 @@ const ExpectedResultsListRow: React.FC<ExpectedResultsListRowProps> = props => {
   );
 };
 
-export const ExpectedResultsList: React.FC = () => {
+export const ExpectedResultsGrouped: React.FC = () => {
   const { strategy } = useStrategyContext();
 
   return (
     <table style={{ width: '100%' }}>
       <thead>
-        <ExpectedResultsListRow isHeader={true} />
+        <ExpectedResultsGroupedRow isHeader={true} />
       </thead>
 
       <tbody>
         {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
           return (
-            <ExpectedResultsListRow
+            <ExpectedResultsGroupedRow
               key={playerScore}
               expectedResult={strategy.expectedResults.breakdown[playerScore]}
             />

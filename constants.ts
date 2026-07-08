@@ -3,7 +3,7 @@ export const publicPath = '/blackjack-stats/';
 export const supportedLanguages = ['ca', 'en'] as const;
 
 export const expectedResultsRoute = 'results';
-export const expectedResultsListRoute = 'list';
+export const expectedResultsGroupedRoute = 'grouped';
 export const expectedResultsMatrixRoute = 'matrix';
 export const finalScoresRoute = 'scores';
 export const materialHandsRoute = 'hands';

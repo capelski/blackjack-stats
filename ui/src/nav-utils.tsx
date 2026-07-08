@@ -1,14 +1,14 @@
 import React from 'react';
 import { Navigate, NavLinkRenderProps, Route } from 'react-router-dom';
 import {
-  expectedResultsListRoute,
+  expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
   expectedResultsRoute,
   finalScoresRoute,
   materialHandsRoute,
   resolvedHandsRoute,
 } from '../../constants';
-import { ExpectedResultsList } from './components/expected-results-list.component';
+import { ExpectedResultsGrouped } from './components/expected-results-grouped.component';
 import { ExpectedResultsMatrix } from './components/expected-results-matrix.component';
 import { ExpectedResults } from './components/expected-results.component';
 import { FinalScoresList } from './components/final-scores-list.component';
@@ -48,7 +48,7 @@ export const getStrategyPageNestedRoutes = (search: URLSearchParams) => {
           }
         />
         <Route path={expectedResultsMatrixRoute} element={<ExpectedResultsMatrix />} />
-        <Route path={expectedResultsListRoute} element={<ExpectedResultsList />} />
+        <Route path={expectedResultsGroupedRoute} element={<ExpectedResultsGrouped />} />
       </Route>
       <Route path={resolvedHandsRoute} element={<ResolvedHandsList />} />
     </React.Fragment>

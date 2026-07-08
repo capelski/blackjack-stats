@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { vitePrerenderPlugin } from 'vite-prerender-plugin';
 import {
-  expectedResultsListRoute,
+  expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
   expectedResultsRoute,
   finalScoresRoute,
@@ -21,7 +21,7 @@ const allRoutes = supportedLanguages
         return [
           materialHandsRoute,
           finalScoresRoute,
-          `${expectedResultsRoute}/${expectedResultsListRoute}`,
+          `${expectedResultsRoute}/${expectedResultsGroupedRoute}`,
           `${expectedResultsRoute}/${expectedResultsMatrixRoute}`,
           resolvedHandsRoute,
         ].map(route => `/${language}/${page}/${route}`);
