@@ -145,12 +145,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
                             : '🔴',
                       };
                 }}
-                lastCell={
-                  <BetMultipliersCell
-                    betMultiplierMap={expectedResult.probabilityByBetMultiplier}
-                    transform={value => toPercentage(value * expectedResult.probability, decimals)}
-                  />
-                }
+                lastCell={toPercentage(expectedResult.probability, decimals)}
                 mode={mode}
               />
             );
