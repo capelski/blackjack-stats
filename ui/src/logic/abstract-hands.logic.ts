@@ -123,8 +123,8 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
                 { label: '1/11 (S,A)', scores: [1, 11], isSingleCard: true, ...postSplitAces },
               ]),
           /** Single card post-split hands */
-          { label: '3 (S)', scores: [3], ...postSplit },
-          { label: '2 (S)', scores: [2], ...postSplit },
+          { label: '3 (S)', scores: [3], isSingleCard: true, ...postSplit },
+          { label: '2 (S)', scores: [2], isSingleCard: true, ...postSplit },
           /** Split hands */
           {
             label: 'A,A',
