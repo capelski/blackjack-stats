@@ -25,7 +25,7 @@ const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = pr
       }}
     >
       <h3>{t(`commons.${props.discriminator}`)}</h3>
-      <p>{props.children}</p>
+      <div style={{ marginBottom: 8, marginTop: 8 }}>{props.children}</div>
     </div>
   );
 };
