@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type ActionRow = {
@@ -33,62 +33,53 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
   };
 
   return (
-    <tr
-      style={{
-        display: 'grid',
-        gap: '16px',
-        gridTemplateColumns: gridTemplateColumns.join(' '),
-        padding: '8px 0',
-      }}
-    >
-      <td style={columnStyle} className="score">
-        {props.score}
-      </td>
-
-      <td style={columnStyle} className="decision">
-        {props.isHeader
-          ? props.decision
-          : `${t(`actions.${props.decision}`)}${
-              props.decision === props.optimalDecision ? '' : ' ⚠️'
-            }`}
-      </td>
-
-      <td style={columnStyle} className="action">
-        {props.actionRows.map(({ action }) => (
-          <div
+    <React.Fragment>
+      {props.actionRows.map((actionRow, index) => {
+        const isFirstActionRow = index === 0;
+        return (
+          <tr
             style={{
-              fontWeight: props.isHeader || action === props.optimalDecision ? 'bold' : 'normal',
+              display: 'grid',
+              gap: '16px',
+              gridTemplateColumns: gridTemplateColumns.join(' '),
+              padding: '8px 0',
             }}
-            key={action}
           >
-            {props.isHeader ? action : t(`actions.${action}`)}
-          </div>
-        ))}
-      </td>
+            <td style={columnStyle} className="score">
+              {isFirstActionRow ? props.score : ''}
+            </td>
 
-      <td style={columnStyle}>
-        {props.actionRows.map(({ action, win }) => (
-          <div key={action}>{win}</div>
-        ))}
-      </td>
+            <td style={columnStyle} className="decision">
+              {props.isHeader
+                ? props.decision
+                : isFirstActionRow
+                ? `${t(`actions.${props.decision}`)}${
+                    props.decision === props.optimalDecision ? '' : ' ⚠️'
+                  }`
+                : ''}
+            </td>
 
-      <td style={columnStyle}>
-        {props.actionRows.map(({ action, push }) => (
-          <div key={action}>{push}</div>
-        ))}
-      </td>
+            <td
+              style={{
+                ...columnStyle,
+                fontWeight:
+                  props.isHeader || actionRow.action === props.optimalDecision ? 'bold' : 'normal',
+              }}
+              className="action"
+            >
+              {props.isHeader ? actionRow.action : t(`actions.${actionRow.action}`)}
+            </td>
 
-      <td style={columnStyle}>
-        {props.actionRows.map(({ action, lose }) => (
-          <div key={action}>{lose}</div>
-        ))}
-      </td>
+            <td style={columnStyle}>{actionRow.win}</td>
 
-      <td style={columnStyle}>
-        {props.actionRows.map(({ action, edge }) => (
-          <div key={action}>{edge}</div>
-        ))}
-      </td>
-    </tr>
+            <td style={columnStyle}>{actionRow.push}</td>
+
+            <td style={columnStyle}>{actionRow.lose}</td>
+
+            <td style={columnStyle}>{actionRow.edge}</td>
+          </tr>
+        );
+      })}
+    </React.Fragment>
   );
 };
