@@ -38,6 +38,7 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
         const isFirstActionRow = index === 0;
         return (
           <tr
+            key={actionRow.action}
             style={{
               display: 'grid',
               gap: '16px',
