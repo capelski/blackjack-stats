@@ -7,7 +7,7 @@ import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { getNextLabel, getNextLabelAndScores } from './labels.logic';
-import { createOutcomes, increaseOutcomes } from './outcomes.logic';
+import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
 import { getEffectiveScore, getScoresFromScores } from './scores.logic';
 
 export const getDoubleConsequence = (
@@ -18,7 +18,7 @@ export const getDoubleConsequence = (
   const doubleConsequence: Consequence = {
     action: double,
     finalProbabilities: {},
-    outcomes: createOutcomes(),
+    outcomesByBetMultiplier: createOutcomesByBetMultiplier({}),
     edge: 0,
   };
 
@@ -41,7 +41,11 @@ export const getDoubleConsequence = (
       standConsequence.finalProbabilities,
       weight,
     );
-    increaseOutcomes(doubleConsequence.outcomes, standConsequence.outcomes, weight);
+    increaseOutcomesByBetMultiplier(
+      doubleConsequence.outcomesByBetMultiplier,
+      standConsequence.outcomesByBetMultiplier,
+      weight,
+    );
     doubleConsequence.edge += standConsequence.edge * weight;
   }
 
@@ -80,7 +84,7 @@ export const getHitConsequenceCore = (nextConsequences: Consequence[]): Conseque
   const hitConsequence: Consequence = {
     action: hit,
     finalProbabilities: {},
-    outcomes: createOutcomes(),
+    outcomesByBetMultiplier: createOutcomesByBetMultiplier({}),
     edge: 0,
   };
 
@@ -92,7 +96,11 @@ export const getHitConsequenceCore = (nextConsequences: Consequence[]): Conseque
       nextConsequence.finalProbabilities,
       weight,
     );
-    increaseOutcomes(hitConsequence.outcomes, nextConsequence.outcomes, weight);
+    increaseOutcomesByBetMultiplier(
+      hitConsequence.outcomesByBetMultiplier,
+      nextConsequence.outcomesByBetMultiplier,
+      weight,
+    );
     hitConsequence.edge += nextConsequence.edge * weight;
   }
 
@@ -143,12 +151,12 @@ export const getSplitConsequence = (
   const nextResolvedHand = futureResolvedHandsMap[postSplitLabel];
   const nextConsequence = nextResolvedHand.consequences[nextResolvedHand.action]!;
 
-  const { edge, finalProbabilities, outcomes } = nextConsequence;
+  const { edge, finalProbabilities, outcomesByBetMultiplier } = nextConsequence;
 
   const splitConsequence: Consequence = {
     action: split,
     finalProbabilities,
-    outcomes,
+    outcomesByBetMultiplier,
     edge,
   };
 
@@ -165,7 +173,7 @@ export const getStandConsequence = (score: number, betMultiplier: number): Conse
   return {
     finalProbabilities: { [score]: 1 },
     action: stand,
-    outcomes: expectedResult.outcomes,
+    outcomesByBetMultiplier: expectedResult.outcomesByBetMultiplier,
     edge: expectedResult.edge,
   };
 };

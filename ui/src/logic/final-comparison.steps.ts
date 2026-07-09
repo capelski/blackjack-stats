@@ -1,6 +1,7 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
+import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
@@ -32,6 +33,40 @@ const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalSco
   }
 
   return finalScore!;
+};
+
+export const formatOutcomesByBetMultiplier = (outcomes: OutcomesByBetMultiplierMap): string => {
+  const formattedWin = formatProbabilityByBetMultiplier(outcomes.win);
+  const formattedPush = formatProbabilityByBetMultiplier(outcomes.push);
+  const formattedLose = formatProbabilityByBetMultiplier(outcomes.lose);
+
+  return `win: ${formattedWin} / push: ${formattedPush} / lose: ${formattedLose}`;
+};
+
+export const parseOutcomesByBetMultiplier = (
+  outcomesString: string,
+): OutcomesByBetMultiplierMap => {
+  const outcomes: OutcomesByBetMultiplierMap = {
+    win: {},
+    push: {},
+    lose: {},
+  };
+
+  const outcomeParts = outcomesString.split('/').map(part => part.trim());
+
+  for (const part of outcomeParts) {
+    const [outcomeType, multipliersString] = part.split(':').map(p => p.trim());
+    const multipliers = multipliersString.split(',').map(m => m.trim());
+
+    for (const multiplier of multipliers) {
+      const [betMultiplier, probability] = multiplier.split('=').map(p => p.trim());
+      outcomes[outcomeType as keyof OutcomesByBetMultiplierMap][
+        parseFloat(betMultiplier)
+      ] = parseFloat(probability);
+    }
+  }
+
+  return outcomes;
 };
 
 Given('a player hand resolver with a stand threshold of {int}', function(
@@ -79,15 +114,6 @@ Then('the final comparison outcomes equal {string}', function(
   this: FinalComparisonWorld,
   expected: string,
 ) {
-  const formattedWin = formatProbabilityByBetMultiplier(
-    this.comparison.outcomesByBetMultiplier.win,
-  );
-  const formattedPush = formatProbabilityByBetMultiplier(
-    this.comparison.outcomesByBetMultiplier.push,
-  );
-  const formattedLose = formatProbabilityByBetMultiplier(
-    this.comparison.outcomesByBetMultiplier.lose,
-  );
-  const actual = `win: ${formattedWin} / push: ${formattedPush} / lose: ${formattedLose}`;
+  const actual = formatOutcomesByBetMultiplier(this.comparison.outcomesByBetMultiplier);
   assertEqual(actual, expected, 'Final comparison outcomes mismatch');
 });

@@ -1,13 +1,7 @@
 import { Result } from '../models/result.model';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
-import { Outcomes, OutcomesByBetMultiplierMap } from '../types/outcomes.type';
+import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { getSortedNumericKeys } from './numbers.logic';
-
-export const createOutcomes = (partial?: Partial<Outcomes>): Outcomes => ({
-  lose: partial?.lose ?? 0,
-  push: partial?.push ?? 0,
-  win: partial?.win ?? 0,
-});
 
 export const createOutcomesByBetMultiplier = (
   probabilityByBetMultiplier: BetMultiplierMap,
@@ -28,12 +22,6 @@ export const createOutcomesByBetMultiplier = (
     push: getMap('push'),
     win: getMap('win'),
   };
-};
-
-export const increaseOutcomes = (outcomes: Outcomes, toAdd: Outcomes, weight = 1): void => {
-  outcomes.lose += toAdd.lose * weight;
-  outcomes.push += toAdd.push * weight;
-  outcomes.win += toAdd.win * weight;
 };
 
 export const increaseOutcomesByBetMultiplier = (

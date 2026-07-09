@@ -4,6 +4,7 @@ import { Rules } from '../types/rules.type';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import {
+  formatProbabilityByBetMultiplier,
   getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
@@ -51,9 +52,21 @@ Then('the following individual expected result scenarios are considered', functi
     const result = getExpectedResult(finalScore, probabilityByBetMultiplier);
 
     assertEqual(String(result.probability), row['Probability'].trim(), 'Probability mismatch');
-    assertEqual(String(result.outcomes.win), row['Win'].trim(), 'Win mismatch');
-    assertEqual(String(result.outcomes.push), row['Push'].trim(), 'Push mismatch');
-    assertEqual(String(result.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
+    assertEqual(
+      formatProbabilityByBetMultiplier(result.outcomesByBetMultiplier.win),
+      row['Win'].trim(),
+      'Win mismatch',
+    );
+    assertEqual(
+      formatProbabilityByBetMultiplier(result.outcomesByBetMultiplier.push),
+      row['Push'].trim(),
+      'Push mismatch',
+    );
+    assertEqual(
+      formatProbabilityByBetMultiplier(result.outcomesByBetMultiplier.lose),
+      row['Lose'].trim(),
+      'Lose mismatch',
+    );
     assertEqual(String(result.edge), row['Edge'].trim(), 'Edge mismatch');
   }
 });
@@ -66,9 +79,21 @@ Then('the following overall expected results scenarios are considered', function
     const results = getExpectedResults(finalScores);
 
     assertEqual(String(results.probability), row['Probability'].trim(), 'Probability mismatch');
-    assertEqual(String(results.outcomes.win), row['Win'].trim(), 'Win mismatch');
-    assertEqual(String(results.outcomes.push), row['Push'].trim(), 'Push mismatch');
-    assertEqual(String(results.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
+    assertEqual(
+      formatProbabilityByBetMultiplier(results.outcomesByBetMultiplier.win),
+      row['Win'].trim(),
+      'Win mismatch',
+    );
+    assertEqual(
+      formatProbabilityByBetMultiplier(results.outcomesByBetMultiplier.push),
+      row['Push'].trim(),
+      'Push mismatch',
+    );
+    assertEqual(
+      formatProbabilityByBetMultiplier(results.outcomesByBetMultiplier.lose),
+      row['Lose'].trim(),
+      'Lose mismatch',
+    );
     assertEqual(String(results.edge), row['Edge'].trim(), 'Edge mismatch');
   }
 });

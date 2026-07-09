@@ -9,6 +9,10 @@ import {
   getHitConsequenceCore,
   getStandConsequence,
 } from './consequence.logic';
+import {
+  formatOutcomesByBetMultiplier,
+  parseOutcomesByBetMultiplier,
+} from './final-comparison.steps';
 import { effectiveScoreToLabel } from './labels.logic';
 import { parseScore } from './result.steps';
 
@@ -42,7 +46,7 @@ Given('getting the consequences of hitting with this list of next consequences',
   const nextConsequences = table.hashes().map<Consequence>(row => ({
     action: stand,
     finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
-    outcomes: parseOutcomes(row['Outcomes'].trim()),
+    outcomesByBetMultiplier: parseOutcomesByBetMultiplier(row['Outcomes'].trim()),
     edge: parseFloat(row['Edge'].trim()),
   }));
   this.consequence = getHitConsequenceCore(nextConsequences);
@@ -74,7 +78,7 @@ Then('the consequence outcomes equals {string}', function(
   this: ConsequenceWorld,
   expected: string,
 ) {
-  const actual = `win=${this.consequence.outcomes.win},push=${this.consequence.outcomes.push},lose=${this.consequence.outcomes.lose}`;
+  const actual = formatOutcomesByBetMultiplier(this.consequence.outcomesByBetMultiplier);
   assert.strictEqual(actual, expected);
 });
 
@@ -92,14 +96,4 @@ const parseFinalProbabilities = (value: string): FinalProbabilities => {
       return [parseScore(scoreLabel.trim()), parseFloat(probability)];
     }),
   );
-};
-
-const parseOutcomes = (value: string) => {
-  const entries = Object.fromEntries(
-    value.split(',').map(entry => {
-      const [key, val] = entry.split('=');
-      return [key.trim(), parseFloat(val)];
-    }),
-  );
-  return { win: entries['win'], push: entries['push'], lose: entries['lose'] };
 };

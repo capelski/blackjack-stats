@@ -4,12 +4,7 @@ import { FinalScore, FinalScoreBase } from '../types/final-score.type';
 import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
 import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
-import {
-  createOutcomes,
-  createOutcomesByBetMultiplier,
-  increaseOutcomes,
-  increaseOutcomesByBetMultiplier,
-} from './outcomes.logic';
+import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
 
 export const getExpectedResult = (
   playerScore: FinalScoreBase,
@@ -17,7 +12,6 @@ export const getExpectedResult = (
 ): ExpectedResult => {
   const finalComparisons = getFinalComparisons(playerScore, probabilityByBetMultiplier);
 
-  const outcomes = createOutcomes();
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier(probabilityByBetMultiplier);
 
   let edge = 0;
@@ -25,7 +19,6 @@ export const getExpectedResult = (
 
   for (const finalComparison of Object.values(finalComparisons)) {
     const absoluteProbability = finalComparison.probability / playerScore.probability;
-    increaseOutcomes(outcomes, finalComparison.outcomes, absoluteProbability);
     increaseOutcomesByBetMultiplier(
       outcomesByBetMultiplier,
       finalComparison.outcomesByBetMultiplier,
@@ -39,7 +32,6 @@ export const getExpectedResult = (
     finalComparisons,
     probability,
     probabilityByBetMultiplier,
-    outcomes,
     outcomesByBetMultiplier,
     edge,
     score: playerScore.score,
@@ -56,13 +48,11 @@ export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults =
     breakdown[playerScore.score] = getExpectedResult(playerScore, probabilityByBetMultiplier);
   }
 
-  const outcomes = createOutcomes();
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});
   let edge = 0;
   let probability = 0;
 
   for (const expectedResult of Object.values(breakdown)) {
-    increaseOutcomes(outcomes, expectedResult.outcomes, expectedResult.probability);
     increaseOutcomesByBetMultiplier(
       outcomesByBetMultiplier,
       expectedResult.outcomesByBetMultiplier,
@@ -75,7 +65,6 @@ export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults =
   const expectedResults: ExpectedResults = {
     breakdown,
     probability,
-    outcomes,
     outcomesByBetMultiplier,
     edge,
   };

@@ -3,6 +3,7 @@ import { toPercentage } from '../logic/numbers.logic';
 import { getActionableResolvedHands } from '../logic/resolved-hands.logic';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
+import { BetMultipliersCell } from './bet-multipliers-cell.component';
 import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
 
 export const ResolvedHandsList: React.FC = () => {
@@ -39,10 +40,25 @@ export const ResolvedHandsList: React.FC = () => {
               <ResolvedHandsListItem
                 actionRows={consequences.map(consequence => ({
                   action: consequence.action,
-                  win: toPercentage(consequence.outcomes.win, decimals),
-                  lose: toPercentage(consequence.outcomes.lose, decimals),
-                  push: toPercentage(consequence.outcomes.push, decimals),
                   edge: toPercentage(consequence.edge, decimals),
+                  lose: (
+                    <BetMultipliersCell
+                      betMultiplierMap={consequence.outcomesByBetMultiplier.lose}
+                      transform={number => toPercentage(number, decimals)}
+                    />
+                  ),
+                  push: (
+                    <BetMultipliersCell
+                      betMultiplierMap={consequence.outcomesByBetMultiplier.push}
+                      transform={number => toPercentage(number, decimals)}
+                    />
+                  ),
+                  win: (
+                    <BetMultipliersCell
+                      betMultiplierMap={consequence.outcomesByBetMultiplier.win}
+                      transform={number => toPercentage(number, decimals)}
+                    />
+                  ),
                 }))}
                 decision={resolvedHand.action}
                 key={resolvedHand.label}

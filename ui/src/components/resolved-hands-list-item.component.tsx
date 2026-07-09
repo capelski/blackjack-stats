@@ -1,11 +1,12 @@
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type ActionRow = {
   action: string;
-  lose: string;
-  push: string;
   edge: string;
-  win: string;
+  lose: ReactNode;
+  push: ReactNode;
+  win: ReactNode;
 };
 
 export type ResolvedHandsListItemProps = {

@@ -4,6 +4,7 @@ import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
+import { formatProbabilityByBetMultiplier } from './final-scores-list.steps';
 import { getResolvedHands } from './resolved-hands.logic';
 import { RulesWorld } from './rules.steps';
 
@@ -55,9 +56,18 @@ const assertHandWithBreakdown = (
       throw new Error(`No consequence found for action "${rowAction}" on hand "${hand.label}"`);
     }
 
-    assert.strictEqual(String(consequence.outcomes.win), row['Win'].trim());
-    assert.strictEqual(String(consequence.outcomes.push), row['Push'].trim());
-    assert.strictEqual(String(consequence.outcomes.lose), row['Lose'].trim());
+    assert.strictEqual(
+      formatProbabilityByBetMultiplier(consequence.outcomesByBetMultiplier.win),
+      row['Win'].trim(),
+    );
+    assert.strictEqual(
+      formatProbabilityByBetMultiplier(consequence.outcomesByBetMultiplier.push),
+      row['Push'].trim(),
+    );
+    assert.strictEqual(
+      formatProbabilityByBetMultiplier(consequence.outcomesByBetMultiplier.lose),
+      row['Lose'].trim(),
+    );
     assert.strictEqual(String(consequence.edge), row['Edge'].trim());
   }
 };
