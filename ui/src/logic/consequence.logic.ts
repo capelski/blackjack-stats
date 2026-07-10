@@ -1,5 +1,6 @@
 import { double, hit, split, stand } from '../models/action.model';
 import { cards } from '../models/cards.model';
+import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
 import { ResolvedHandsMap } from '../types/resolved-hand.type';
@@ -29,6 +30,7 @@ export const getDoubleConsequence = (
       allScores: [scores, card.scores],
       // The player will never have two cards after doubling
       hasTwoCards: false,
+      // The player will never get a blackjack after doubling
       isPostSplit: false,
     });
     const nextEffectiveScore = getEffectiveScore(nextScores);
@@ -53,27 +55,26 @@ export const getDoubleConsequence = (
 };
 
 export type HitConsequenceParameters = {
-  isPostSplit: boolean;
-  isPostSplitAces: boolean;
-  isSingleCard: boolean;
-  scores: number[];
-  splitSymbol?: string;
+  isPostSplit: AbstractHand['isPostSplit'];
+  isPostSplitAces: AbstractHand['isPostSplitAces'];
+  isSingleCard: AbstractHand['isSingleCard'];
+  scores: AbstractHand['scores'];
 };
 
 export const getHitConsequence = (
   rules: Rules,
   futureResolvedHandsMap: ResolvedHandsMap,
-  { isPostSplit, isPostSplitAces, isSingleCard, scores, splitSymbol }: HitConsequenceParameters,
+  { isPostSplit, isPostSplitAces, isSingleCard, scores }: HitConsequenceParameters,
 ): Consequence => {
   const nextConsequences = cards.map(card => {
+    const hasTwoCards = isSingleCard; // When hitting a hand with a single card (i.e. after splitting), the player will have two cards
     const nextResolvedHand = getNextResolvedHand(rules, futureResolvedHandsMap, {
       allScores: [scores, card.scores],
-      // When hitting a hand with a single card (i.e. after splitting), the player will have two cards
-      hasTwoCards: isSingleCard,
+      hasTwoCards,
       isPostSplit,
       isPostSplitAces,
-      splitSymbol,
     });
+
     return nextResolvedHand.consequences[nextResolvedHand.action]!;
   });
 
@@ -112,21 +113,21 @@ type NextResolvedHandParameters = {
   hasTwoCards: boolean;
   isPostSplit: boolean;
   isPostSplitAces: boolean;
-  splitSymbol?: string;
 };
 
 const getNextResolvedHand = (
   rules: Rules,
   futureResolvedHandsMap: ResolvedHandsMap,
-  { allScores, hasTwoCards, isPostSplit, isPostSplitAces, splitSymbol }: NextResolvedHandParameters,
+  { allScores, hasTwoCards, isPostSplit, isPostSplitAces }: NextResolvedHandParameters,
 ) => {
+  const splitSymbol = undefined; // The player will never get to a split hand after hitting
+
   const { label } = getNextLabelAndScores(rules, {
     allScores,
     hasTwoCards,
     isPostSplit,
     isPostSplitAces,
-    // The player will never get to a split hand after hitting
-    splitSymbol: undefined,
+    splitSymbol,
   });
   const nextResolvedHand = futureResolvedHandsMap[label];
 
