@@ -11,7 +11,8 @@ export const toDecimal = (value: number, decimals: number) => {
 export function toPercentage(probability: number, decimals: number): string {
   const percentage = probability * 100;
 
-  if (percentage === 0 || Math.abs(percentage) >= 0.0001) {
+  const threshold = 1 / Math.pow(10, decimals);
+  if (percentage === 0 || Math.abs(percentage) >= threshold) {
     return `${percentage.toFixed(decimals)}%`;
   }
 
