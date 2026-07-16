@@ -17,7 +17,7 @@ Feature: Final scores list
     Given doubling is allowed
     And the final score "17" of a hand resolver for optimal actions
     When getting the probability by bet multiplier
-    Then the returned probabilities are "1=0.9267418149722098,2=0.07325818502779068"
+    Then the returned probabilities are "1=0.9389626131361736,2=0.06103738686382643"
 
   Scenario: Final scores for stand threshold
     When getting the final scores list of a hand resolver with a stand threshold of 17
@@ -35,8 +35,8 @@ Feature: Final scores list
     Given doubling is allowed
     When getting the final scores list of a hand resolver for optimal actions
     Then the returned final scores list contains 12 elements
-    And the final score 1 has score "12", probability "0.008169993882086491" and "87" hands
-    And the final score 12 has cards "22+", probability "0.12723858582229794" and "6576" hands
+    And the final score 1 has score "12", probability "0.006827492034592626" and "15" hands
+    And the final score 12 has cards "22+", probability "0.12892633734836892" and "9312" hands
 
   Scenario: Final scores for optimal actions with splitting
     Given splitting is allowed
@@ -58,8 +58,8 @@ Feature: Final scores list
     And splitting is allowed
     When getting the final scores list of a hand resolver for optimal actions
     Then the returned final scores list contains 12 elements
-    And the final score 1 has score "12", probability "0.008625160017726001" and "88" hands
-    And the final score 12 has cards "22+", probability "0.1268783314136255" and "5365" hands
+    And the final score 1 has score "12", probability "0.007282658170232134" and "16" hands
+    And the final score 12 has cards "22+", probability "0.12856608293969646" and "8101" hands
 
   Scenario: Final scores for optimal actions with doubling after splitting
     Given doubling is allowed
@@ -67,8 +67,8 @@ Feature: Final scores list
     And doubling after splitting is allowed
     When getting the final scores list of a hand resolver for optimal actions
     Then the returned final scores list contains 12 elements
-    And the final score 1 has score "12", probability "0.008695185577055155" and "90" hands
-    And the final score 12 has cards "22+", probability "0.1267902974605682" and "5289" hands
+    And the final score 1 has score "12", probability "0.0073526837295612895" and "18" hands
+    And the final score 12 has cards "22+", probability "0.12847804898663914" and "8025" hands
 
   Scenario: Final scores for optimal actions with blackjack after split
     Given splitting is allowed

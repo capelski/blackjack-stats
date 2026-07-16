@@ -36,5 +36,13 @@ Feature: Final comparison
     And a player hand resolver for optimal actions
     When getting the final comparison of a player score of "19" and a dealer score of "18"
     Then the final comparison result equals "win"
-    And the final comparison probability equals "0.01586594820427803"
-    And the final comparison outcomes equal "win: 1=0.9281676062298598,2=0.07183239377014092 / push: 1=0,2=0 / lose: 1=0,2=0"
+    And the final comparison probability equals "0.015912575132117697"
+    And the final comparison outcomes equal "win: 1=0.9401470755662793,2=0.059852924433720936 / push: 1=0,2=0 / lose: 1=0,2=0"
+
+  Scenario: Final comparison with splitting
+    Given splitting is allowed
+    And a player hand resolver for optimal actions
+    When getting the final comparison of a player score of "19" and a dealer score of "18"
+    Then the final comparison result equals "win"
+    And the final comparison probability equals "0.016180928039809205"
+    And the final comparison outcomes equal "win: 1=0.9904209739350871,2=0.009579026064913003 / push: 1=0,2=0 / lose: 1=0,2=0"

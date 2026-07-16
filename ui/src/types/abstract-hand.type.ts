@@ -1,24 +1,33 @@
+import {
+  initialPair,
+  postASplitPair,
+  postSplitPair,
+  splittablePair,
+  threeOrMoreCards,
+} from '../models/hand-category.model';
+import { Card } from './card.type';
 import { HandBase } from './hand-base.type';
 
-/** Properties of a hand that are relevant to compute expected results and final scores.
+/** Properties of a hand that are relevant to determine the evolution of the hand.
  * These properties are shared by different combinations of cards that lead to the same results.
  * For example: the abstract hand '12' can be composed of '10+2', '9+3', '8+4', etc.*/
 export type AbstractHand = HandBase & {
   canDouble: boolean;
   canSplit: boolean;
+  example: string;
   isActionable: boolean;
-  /** When splitting is enabled some hands must be hidden in the hand actions list
-   * For example: 4 is displaced by 2,2 */
   isHidden?: boolean;
-  isPostSplitAces: boolean;
-  /** Used to determine whether a hand is a BJ after splitting */
-  isSingleCard: boolean;
-  postSplitLabel?: string;
-};
-
-export type AbstractHandSeed = Pick<AbstractHand, 'isHidden' | 'label' | 'scores'> & {
-  isPostSplit?: boolean;
-  isPostSplitAces?: boolean;
-  isSingleCard?: boolean;
-  postSplitLabel?: string;
-};
+} & (
+    | {
+        category:
+          | typeof threeOrMoreCards
+          | typeof initialPair
+          | typeof postSplitPair
+          | typeof postASplitPair;
+        splitCard?: undefined;
+      }
+    | {
+        category: typeof splittablePair;
+        splitCard: Card;
+      }
+  );

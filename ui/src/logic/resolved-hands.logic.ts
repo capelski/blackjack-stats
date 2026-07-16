@@ -6,6 +6,7 @@ import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/resolved-
 import { Rules } from '../types/rules.type';
 import { getAbstractHands } from './abstract-hands.logic';
 import {
+  FutureHandsConsequenceParameters,
   getDoubleConsequence,
   getHitConsequence,
   getSplitConsequence,
@@ -24,22 +25,24 @@ export const getResolvedHands = (
 
   for (const abstractHand of abstractHands) {
     const consequences: ConsequencesMap = {
-      [stand]: getStandConsequence(abstractHand.effectiveScore, abstractHand.betMultiplier),
+      [stand]: getStandConsequence(abstractHand),
     };
 
     if (abstractHand.isActionable) {
-      consequences[hit] = getHitConsequence(rules, resolvedHandsMap, abstractHand);
+      const parameters: FutureHandsConsequenceParameters = [
+        abstractHand,
+        rules,
+        abstractHands,
+        resolvedHandsMap,
+      ];
+      consequences[hit] = getHitConsequence(...parameters);
 
       if (abstractHand.canDouble) {
-        consequences[double] = getDoubleConsequence(
-          rules,
-          abstractHand.scores,
-          abstractHand.betMultiplier,
-        );
+        consequences[double] = getDoubleConsequence(...parameters);
       }
 
-      if (abstractHand.canSplit && abstractHand.postSplitLabel) {
-        consequences[split] = getSplitConsequence(abstractHand.postSplitLabel, resolvedHandsMap);
+      if (abstractHand.canSplit) {
+        consequences[split] = getSplitConsequence(...parameters);
       }
     }
 

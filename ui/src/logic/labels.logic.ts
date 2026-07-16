@@ -1,14 +1,22 @@
+import { double, hit, split } from '../models/action.model';
+import {
+  HandCategory,
+  postASplitPair,
+  postSplitPair,
+  splittablePair,
+  threeOrMoreCards,
+} from '../models/hand-category.model';
 import {
   blackjackLabel,
   bustLabel,
-  postSplitSymbol,
   softScoresSeparator,
   splitScoresSeparator,
 } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
+import { AbstractHand } from '../types/abstract-hand.type';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
-import { getEffectiveScore, getScoresFromScores } from './scores.logic';
+import { getEffectiveScore, getNextScores } from './scores.logic';
 
 export const effectiveScoreToLabel = (effectiveScore: number): string => {
   if (effectiveScore === bustScore) {
@@ -22,63 +30,62 @@ export const effectiveScoreToLabel = (effectiveScore: number): string => {
   return String(effectiveScore);
 };
 
-export type LabelFromCardsParameters = {
-  cards: Card[];
-  isPostSplit: boolean;
-  isPostSplitAces: boolean;
-};
-
-export type NextLabelParameters = {
-  isPostSplit: boolean;
-  isPostSplitAces: boolean;
-  scores: number[];
-  splitSymbol: string | undefined;
-};
-
-export const getNextLabel = (
-  rules: Rules,
-  { isPostSplit, isPostSplitAces, scores, splitSymbol }: NextLabelParameters,
-) => {
-  if (splitSymbol) {
-    return `${splitSymbol}${splitScoresSeparator}${splitSymbol}`;
+export const getHandLabel = (scores: number[], category: HandCategory, symbol?: string) => {
+  if (category === splittablePair && symbol) {
+    return `${symbol}${splitScoresSeparator}${symbol}`;
   }
 
-  const label = scoresToLabel(scores);
+  const scoresString = scoresToLabel(scores);
+  const discriminator =
+    category === postASplitPair
+      ? 'A'
+      : category === postSplitPair
+      ? 'S'
+      : category === threeOrMoreCards
+      ? '3+'
+      : '';
 
-  return `${label}${
-    isPostSplit ? ` (${postSplitSymbol}${isPostSplitAces && !rules.hitSplitAces ? ',A' : ''})` : ''
-  }`;
+  return `${scoresString}${discriminator ? ` (${discriminator})` : ''}`;
 };
 
-export type NextLabelAndScoresParameters = Omit<NextLabelParameters, 'scores'> & {
-  allScores: number[][];
-  hasTwoCards: boolean;
-  splitSymbol: string | undefined;
-};
-
-export const getNextLabelAndScores = (
+export const getNextHandLabel = (
+  absHands: AbstractHand[],
   rules: Rules,
-  {
-    allScores,
-    hasTwoCards,
-    isPostSplit,
-    isPostSplitAces,
-    splitSymbol,
-  }: NextLabelAndScoresParameters,
-) => {
-  const scores = getScoresFromScores(rules, {
-    allScores,
-    hasTwoCards,
-    isPostSplit,
-  });
-  const label = getNextLabel(rules, {
-    isPostSplit,
-    isPostSplitAces,
-    scores,
-    splitSymbol,
-  });
+  currentLabel: string,
+  nextAction: typeof split | typeof double | typeof hit,
+  nextCard: Card,
+): string => {
+  const currentAbstractHand = absHands.find(x => x.label === currentLabel);
+  if (!currentAbstractHand) {
+    throw new Error(`Cannot find an abstract hand with label "${currentLabel}"`);
+  }
 
-  return { label, scores };
+  if (nextAction === split && currentAbstractHand.category !== splittablePair) {
+    throw new Error(`Cannot split a "${currentAbstractHand.category}" hand`);
+  }
+
+  if (nextAction === split && currentAbstractHand.category === splittablePair) {
+    const isAcesSplit = currentAbstractHand.splitCard.symbol === 'A';
+    const nextCategory = isAcesSplit ? postASplitPair : postSplitPair;
+
+    const nextScores = getNextScores(
+      currentAbstractHand.splitCard.scores,
+      nextCard.scores,
+      nextCategory,
+      rules,
+    );
+
+    return getHandLabel(nextScores, nextCategory);
+  }
+
+  const nextScores = getNextScores(
+    currentAbstractHand.scores,
+    nextCard.scores,
+    threeOrMoreCards,
+    rules,
+  );
+
+  return getHandLabel(nextScores, threeOrMoreCards);
 };
 
 export const scoresToLabel = (scores: number[]): string => {

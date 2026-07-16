@@ -4,18 +4,17 @@ Feature: Rules
 
   Scenario: Actionable
     Then the following actionable scenarios are considered
-      | Label      | Score  | Rules                                    | Is post double | Is post split | Is post split aces | Result |
-      | 22+        | 22     | {}                                       | -              | -             | -                  | false  |
-      | BJ         | 21.5   | {}                                       | -              | -             | -                  | false  |
-      | 21         | 21     | {}                                       | -              | -             | -                  | false  |
-      | 11/21      | 21     | {}                                       | -              | -             | -                  | false  |
-      | 20         | 20     | {}                                       | false          | false         | -                  | true   |
-      | 20         | 20     | {"doubling": true}                       | true           | false         | -                  | false  |
-      | 20         | 20     | {"splitting": true}                      | false          | true          | -                  | true   |
-      | 1/11 (S,A) | 11     | {"splitting": true}                      | false          | true          | true               | true   |
-      | 11 (S,A)   | 11     | {"splitting": true}                      | false          | true          | true               | false  |
-      | 4/14 (S,A) | 14     | {"splitting": true}                      | false          | true          | true               | false  |
-      | 4/14 (S)   | 14     | {"splitting": true, "hitSplitAces":true} | false          | true          | true               | true   |
+      | Score  | Rules                                    | Is post double | Is post split | Is post split aces | Result |
+      | 22     | {}                                       | -              | -             | -                  | false  |
+      | 21.5   | {}                                       | -              | -             | -                  | false  |
+      | 21     | {}                                       | -              | -             | -                  | false  |
+      | 21     | {}                                       | -              | -             | -                  | false  |
+      | 20     | {}                                       | false          | false         | -                  | true   |
+      | 20     | {"doubling": true}                       | true           | false         | -                  | false  |
+      | 20     | {"splitting": true}                      | false          | true          | -                  | true   |
+      | 11     | {"splitting": true}                      | false          | true          | true               | false  |
+      | 14     | {"splitting": true}                      | false          | true          | true               | false  |
+      | 14     | {"splitting": true, "hitSplitAces":true} | false          | true          | true               | true   |
 
   Scenario: Doubling
     Then the following doubling scenarios are considered

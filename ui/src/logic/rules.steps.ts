@@ -33,7 +33,6 @@ Given('doubling after splitting is allowed', function(this: RulesWorld) {
 
 Then('the following actionable scenarios are considered', function(table: DataTable) {
   for (const row of table.hashes()) {
-    const label = row['Label'].trim();
     const score = parseFloat(row['Score'].trim());
     const rules: Rules = JSON.parse(row['Rules'].trim());
     const isPostDouble = row['Is post double'].trim() === 'true';
@@ -42,11 +41,11 @@ Then('the following actionable scenarios are considered', function(table: DataTa
 
     const expected = row['Result'].trim() === 'true';
 
-    const actual = canAction(rules, { isPostDouble, isPostSplit, isPostSplitAces, label, score });
+    const actual = canAction(rules, { isPostDouble, isPostSplit, isPostSplitAces, score });
     assert.strictEqual(
       actual,
       expected,
-      `canAction failed for label=${label}, score=${score}, rules=${row['Rules']}, isPostDouble=${isPostDouble}, isPostSplit=${isPostSplit}`,
+      `canAction failed for score=${score}, rules=${row['Rules']}, isPostDouble=${isPostDouble}, isPostSplit=${isPostSplit}`,
     );
   }
 });

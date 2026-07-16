@@ -19,7 +19,7 @@ Feature: Material hands
   Scenario: Material hands for optimal actions with doubling
     Given doubling is allowed
     When getting the material hands of a hand resolver for optimal actions
-    Then 19006 material hands are returned
+    Then 25558 material hands are returned
     And there is a material hand with cards "5,6", probability "0.00591715976331361", action "double" and bet multiplier "2"
     And there is a material hand with cards "5,6,A", probability "0.0004551661356395085", action "end" and bet multiplier "2"
 
@@ -43,14 +43,14 @@ Feature: Material hands
     Given doubling is allowed
     And splitting is allowed
     When getting the material hands of a hand resolver for optimal actions
-    Then 15743 material hands are returned
+    Then 22295 material hands are returned
 
   Scenario: Material hands for optimal actions with doubling after splitting
     Given doubling is allowed
     And splitting is allowed
     And doubling after splitting is allowed
     When getting the material hands of a hand resolver for optimal actions
-    Then 15561 material hands are returned
+    Then 22113 material hands are returned
     And there is a material post split hand with cards "8,2", probability "0.0004551661356395085", action "double" and bet multiplier "4"
     And there is a material post split hand with cards "8,2,6", probability "0.00003501277966457758", action "end" and bet multiplier "4"
 

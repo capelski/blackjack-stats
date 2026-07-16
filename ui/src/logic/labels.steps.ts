@@ -1,50 +1,47 @@
-import { DataTable, Then } from '@cucumber/cucumber';
+import { Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
+import { double, hit, split } from '../models/action.model';
 import { cards } from '../models/cards.model';
-import { Card } from '../types/card.type';
-import { Rules } from '../types/rules.type';
-import { LabelFromCardsParameters, getNextLabel } from './labels.logic';
-import { canSplit } from './rules.logic';
-import { getScoresFromCards } from './scores.logic';
+import { AbstractHand } from '../types/abstract-hand.type';
+import { getAbstractHands } from './abstract-hands.logic';
+import { getNextHandLabel } from './labels.logic';
+import { RulesWorld } from './rules.steps';
 
-export function parseCards(symbols: string): Card[] {
-  return symbols.split(',').map(symbol => {
-    const card = cards.find(c => c.symbol === symbol);
-    if (!card) throw new Error(`Unknown card symbol: ${symbol}`);
-    return card;
-  });
-}
-
-export const getLabelFromCards = (
-  rules: Rules,
-  { cards, isPostSplit, isPostSplitAces }: LabelFromCardsParameters,
-) => {
-  const scores = getScoresFromCards(rules, { cards, isPostSplit });
-  return getNextLabel(rules, {
-    isPostSplit,
-    isPostSplitAces,
-    scores,
-    splitSymbol: canSplit(rules, { cardSymbols: cards.map(c => c.symbol), isPostSplit })
-      ? cards[0].symbol
-      : undefined,
-  });
+type LabelsWorld = RulesWorld & {
+  currentLabel?: string;
+  list: AbstractHand[];
+  nextLabel?: string;
 };
 
-Then('the following label scenarios are considered', function(table: DataTable) {
-  for (const row of table.hashes()) {
-    const caseName = row['Case name'].trim();
-    const parsedCards = parseCards(row['Cards'].trim());
-    const rules = JSON.parse(row['Rules'].trim());
-    const isPostSplit = row['Is post split'].trim() === 'true';
-    const expectedLabel = row['Label'].trim();
-    const isPostSplitAces = isPostSplit && parsedCards[0].symbol === 'A';
+Given('the hand label {string}', function(this: LabelsWorld, currentLabel: string) {
+  this.list = getAbstractHands(this.rules);
+  this.currentLabel = currentLabel;
+});
 
-    const actual = getLabelFromCards(rules, {
-      cards: parsedCards,
-      isPostSplit,
-      isPostSplitAces,
-    });
+When('hitting with next card {string}', function(this: LabelsWorld, cardSymbol: string) {
+  const nextCard = cards.find(c => c.symbol === cardSymbol);
+  assert.ok(nextCard, `Unknown card symbol "${cardSymbol}"`);
+  assert.ok(this.currentLabel, 'Current abstract hand label has not been set');
 
-    assert.strictEqual(actual, expectedLabel, `Label mismatch for case "${caseName}"`);
-  }
+  this.nextLabel = getNextHandLabel(this.list, this.rules, this.currentLabel!, hit, nextCard!);
+});
+
+When('doubling with next card {string}', function(this: LabelsWorld, cardSymbol: string) {
+  const nextCard = cards.find(c => c.symbol === cardSymbol);
+  assert.ok(nextCard, `Unknown card symbol "${cardSymbol}"`);
+  assert.ok(this.currentLabel, 'Current abstract hand label has not been set');
+
+  this.nextLabel = getNextHandLabel(this.list, this.rules, this.currentLabel!, double, nextCard!);
+});
+
+When('splitting with next card {string}', function(this: LabelsWorld, cardSymbol: string) {
+  const nextCard = cards.find(c => c.symbol === cardSymbol);
+  assert.ok(nextCard, `Unknown card symbol "${cardSymbol}"`);
+  assert.ok(this.currentLabel, 'Current abstract hand label has not been set');
+
+  this.nextLabel = getNextHandLabel(this.list, this.rules, this.currentLabel!, split, nextCard!);
+});
+
+Then('the next hand label is {string}', function(this: LabelsWorld, expectedLabel: string) {
+  assert.strictEqual(this.nextLabel, expectedLabel);
 });

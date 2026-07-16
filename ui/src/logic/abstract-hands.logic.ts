@@ -1,204 +1,230 @@
-import { blackjackScore, bustScore } from '../models/scores.model';
-import { AbstractHand, AbstractHandSeed } from '../types/abstract-hand.type';
+import { cardsMap } from '../models/cards.model';
+import {
+  initialPair,
+  postASplitPair,
+  postSplitPair,
+  splittablePair,
+  threeOrMoreCards,
+} from '../models/hand-category.model';
+import { blackjackScore, bustScore, playerScoreLimit } from '../models/scores.model';
+import { AbstractHand } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
-import { getBetMultiplier } from './bet-multiplier.logic';
-import { getNextLabel } from './labels.logic';
-import { canAction, canDouble, canSplit } from './rules.logic';
+import { getHandLabel } from './labels.logic';
 import { getEffectiveScore } from './scores.logic';
 
-const postSplit = {
-  isHidden: true,
-  isPostSplit: true,
-};
-
-const postSplitAces = {
-  ...postSplit,
-  isPostSplitAces: true,
-};
-
-/** The returned abstract hands are sorted so dependencies to other abstract hands are always resolved.
- * Example: Computing the expected results for '12' requires the expected results for '16' */
+/** The returned abstract hands are sorted so dependencies to other abstract hands are resolved first.
+ * Example: Computing the expected results for "12" requires the expected results for "16 (3+)" */
 export const getAbstractHands = (rules: Rules): AbstractHand[] => {
-  const handSeeds: AbstractHandSeed[] = [
-    /** Regular hands */
-    { label: '22+', scores: [bustScore] },
-    { label: 'BJ', scores: [blackjackScore] },
-    { label: '21', scores: [21] },
-    { label: '11/21', scores: [11, 21] },
-    { label: '20', scores: [20] },
-    { label: '19', scores: [19] },
-    { label: '18', scores: [18] },
-    { label: '17', scores: [17] },
-    { label: '16', scores: [16] },
-    { label: '15', scores: [15] },
-    { label: '14', scores: [14] },
-    { label: '13', scores: [13] },
-    { label: '12', scores: [12] },
-    { label: '11', scores: [11] },
-    { label: '10', scores: [10] },
-    { label: '10/20', scores: [10, 20] },
-    { label: '9', scores: [9] },
-    { label: '9/19', scores: [9, 19] },
-    { label: '8', scores: [8] },
-    { label: '8/18', scores: [8, 18] },
-    { label: '7', scores: [7] },
-    { label: '7/17', scores: [7, 17] },
-    { label: '6', scores: [6] },
-    { label: '6/16', scores: [6, 16] },
-    { label: '5', scores: [5] },
-    { label: '5/15', scores: [5, 15] },
-    { label: '4', scores: [4], isHidden: rules.splitting },
-    { label: '4/14', scores: [4, 14] },
-    { label: '3/13', scores: [3, 13] },
-    { label: '2/12', scores: [2, 12], isHidden: rules.splitting },
-    ...(rules.splitting
-      ? [
-          /** Post-split hands */
-          { label: '22+ (S)', scores: [bustScore], ...postSplit },
-          // BJ (S) can be reached when splitting 10s, but not when splitting Aces
-          { label: 'BJ (S)', scores: [blackjackScore], ...postSplit },
-          { label: '21 (S)', scores: [21], ...postSplit },
-          { label: '11/21 (S)', scores: [11, 21], ...postSplit },
-          { label: '20 (S)', scores: [20], ...postSplit },
-          { label: '19 (S)', scores: [19], ...postSplit },
-          { label: '18 (S)', scores: [18], ...postSplit },
-          { label: '17 (S)', scores: [17], ...postSplit },
-          { label: '16 (S)', scores: [16], ...postSplit },
-          { label: '15 (S)', scores: [15], ...postSplit },
-          { label: '14 (S)', scores: [14], ...postSplit },
-          { label: '13 (S)', scores: [13], ...postSplit },
-          { label: '12 (S)', scores: [12], ...postSplit },
-          { label: '11 (S)', scores: [11], ...postSplit },
-          { label: '10 (S)', scores: [10], ...postSplit },
-          { label: '10/20 (S)', scores: [10, 20], ...postSplit },
-          { label: '9 (S)', scores: [9], ...postSplit },
-          { label: '9/19 (S)', scores: [9, 19], ...postSplit },
-          { label: '8 (S)', scores: [8], ...postSplit },
-          { label: '8/18 (S)', scores: [8, 18], ...postSplit },
-          { label: '7 (S)', scores: [7], ...postSplit },
-          { label: '7/17 (S)', scores: [7, 17], ...postSplit },
-          { label: '6 (S)', scores: [6], ...postSplit },
-          { label: '6/16 (S)', scores: [6, 16], ...postSplit },
-          { label: '5 (S)', scores: [5], ...postSplit },
-          { label: '5/15 (S)', scores: [5, 15], ...postSplit },
-          { label: '4 (S)', scores: [4], ...postSplit },
-          { label: '4/14 (S)', scores: [4, 14], ...postSplit },
-          { label: '3/13 (S)', scores: [3, 13], ...postSplit },
-          { label: '2/12 (S)', scores: [2, 12], ...postSplit },
-          ...(rules.hitSplitAces
-            ? [{ label: '1/11 (S)', scores: [1, 11], isSingleCard: true, ...postSplit }]
-            : [
-                /** Post-split aces hands */
-                { label: '22+ (S,A)', scores: [bustScore], ...postSplitAces },
-                // BJ (S,A) can only be reached when splitting A,A with blackjack after split enabled
-                { label: 'BJ (S,A)', scores: [blackjackScore], ...postSplitAces },
-                { label: '21 (S,A)', scores: [21], ...postSplitAces },
-                { label: '11/21 (S,A)', scores: [11, 21], ...postSplitAces },
-                { label: '20 (S,A)', scores: [20], ...postSplitAces },
-                { label: '19 (S,A)', scores: [19], ...postSplitAces },
-                { label: '18 (S,A)', scores: [18], ...postSplitAces },
-                { label: '17 (S,A)', scores: [17], ...postSplitAces },
-                { label: '16 (S,A)', scores: [16], ...postSplitAces },
-                { label: '15 (S,A)', scores: [15], ...postSplitAces },
-                { label: '14 (S,A)', scores: [14], ...postSplitAces },
-                { label: '13 (S,A)', scores: [13], ...postSplitAces },
-                { label: '12 (S,A)', scores: [12], ...postSplitAces },
-                { label: '11 (S,A)', scores: [11], ...postSplitAces },
-                { label: '10 (S,A)', scores: [10], ...postSplitAces },
-                { label: '10/20 (S,A)', scores: [10, 20], ...postSplitAces },
-                { label: '9 (S,A)', scores: [9], ...postSplitAces },
-                { label: '9/19 (S,A)', scores: [9, 19], ...postSplitAces },
-                { label: '8 (S,A)', scores: [8], ...postSplitAces },
-                { label: '8/18 (S,A)', scores: [8, 18], ...postSplitAces },
-                { label: '7 (S,A)', scores: [7], ...postSplitAces },
-                { label: '7/17 (S,A)', scores: [7, 17], ...postSplitAces },
-                { label: '6 (S,A)', scores: [6], ...postSplitAces },
-                { label: '6/16 (S,A)', scores: [6, 16], ...postSplitAces },
-                { label: '5 (S,A)', scores: [5], ...postSplitAces },
-                { label: '5/15 (S,A)', scores: [5, 15], ...postSplitAces },
-                { label: '4 (S,A)', scores: [4], ...postSplitAces },
-                { label: '4/14 (S,A)', scores: [4, 14], ...postSplitAces },
-                { label: '3/13 (S,A)', scores: [3, 13], ...postSplitAces },
-                { label: '2/12 (S,A)', scores: [2, 12], ...postSplitAces },
-                { label: '1/11 (S,A)', scores: [1, 11], isSingleCard: true, ...postSplitAces },
-              ]),
-          /** Single card post-split hands */
-          { label: '3 (S)', scores: [3], isSingleCard: true, ...postSplit },
-          { label: '2 (S)', scores: [2], isSingleCard: true, ...postSplit },
-          /** Split hands */
-          {
-            label: 'A,A',
-            scores: [2, 12],
-            postSplitLabel: rules.hitSplitAces ? '1/11 (S)' : '1/11 (S,A)',
-          },
-          { label: '2,2', scores: [4], postSplitLabel: '2 (S)' },
-          { label: '3,3', scores: [6], postSplitLabel: '3 (S)' },
-          { label: '4,4', scores: [8], postSplitLabel: '4 (S)' },
-          { label: '5,5', scores: [10], postSplitLabel: '5 (S)' },
-          { label: '6,6', scores: [12], postSplitLabel: '6 (S)' },
-          { label: '7,7', scores: [14], postSplitLabel: '7 (S)' },
-          { label: '8,8', scores: [16], postSplitLabel: '8 (S)' },
-          { label: '9,9', scores: [18], postSplitLabel: '9 (S)' },
-          { label: '10,10', scores: [20], postSplitLabel: '10 (S)' },
-          { label: 'J,J', scores: [20], postSplitLabel: '10 (S)', isHidden: true },
-          { label: 'Q,Q', scores: [20], postSplitLabel: '10 (S)', isHidden: true },
-          { label: 'K,K', scores: [20], postSplitLabel: '10 (S)', isHidden: true },
-        ]
-      : []),
-  ];
-
-  return handSeeds.map<AbstractHand>(seed => {
-    const isPostSplit = !!seed.isPostSplit;
-    const isPostSplitAces = !!seed.isPostSplitAces;
-    const isSingleCard = !!seed.isSingleCard;
-    const effectiveScore = getEffectiveScore(seed.scores);
-    const splitCardSymbol = seed.postSplitLabel && seed.label.split(',')[0];
-
-    /** Check the label logic is consistent with the labels declared above.
-     * The label could be driven for each abstract hand seed, but I find it
-     * easier to reason with an explicit list of labels */
-    validateLabel(rules, seed);
-
-    const isActionable = canAction(rules, {
-      isPostDouble: false,
-      isPostSplit,
-      isPostSplitAces,
-      label: seed.label,
-      score: effectiveScore,
-    });
+  /** "3+ cards" can only transform into "3+ cards", when hitting */
+  const threeOrMoreCardsHands: AbstractHand[] = [
+    { example: '6,7,9', label: '22+ (3+)', scores: [bustScore] },
+    { example: '6,7,8', label: '21 (3+)', scores: [21] },
+    { example: '6,7,7', label: '20 (3+)', scores: [20] },
+    { example: '6,7,6', label: '19 (3+)', scores: [19] },
+    { example: '6,7,5', label: '18 (3+)', scores: [18] },
+    { example: '6,7,4', label: '17 (3+)', scores: [17] },
+    { example: '6,7,3', label: '16 (3+)', scores: [16] },
+    { example: '2,3,J', label: '15 (3+)', scores: [15] },
+    { example: '2,3,9', label: '14 (3+)', scores: [14] },
+    { example: '2,3,8', label: '13 (3+)', scores: [13] },
+    { example: '2,3,7', label: '12 (3+)', scores: [12] },
+    { example: '2,3,6', label: '11 (3+)', scores: [11] },
+    { example: 'A,A,9', label: '11/21 (3+)', scores: [11, 21] },
+    { example: '2,3,5', label: '10 (3+)', scores: [10] },
+    { example: 'A,A,8', label: '10/20 (3+)', scores: [10, 20] },
+    { example: '2,3,4', label: '9 (3+)', scores: [9] },
+    { example: 'A,A,7', label: '9/19 (3+)', scores: [9, 19] },
+    { example: '2,3,3', label: '8 (3+)', scores: [8] },
+    { example: 'A,A,6', label: '8/18 (3+)', scores: [8, 18] },
+    { example: '2,3,2', label: '7 (3+)', scores: [7] },
+    { example: 'A,A,5', label: '7/17 (3+)', scores: [7, 17] },
+    { example: '2,2,2', label: '6 (3+)', scores: [6] },
+    { example: 'A,A,4', label: '6/16 (3+)', scores: [6, 16] },
+    { example: 'A,A,3', label: '5/15 (3+)', scores: [5, 15] },
+    { example: 'A,A,2', label: '4/14 (3+)', scores: [4, 14] },
+    { example: 'A,A,A', label: '3/13 (3+)', scores: [3, 13] },
+  ].map<AbstractHand>(x => {
+    const effectiveScore = getEffectiveScore(x.scores);
 
     return {
-      ...seed,
-      betMultiplier: getBetMultiplier(isPostSplit ? 2 : 1, {
-        isBlackjack: effectiveScore === blackjackScore,
-      }),
-      canDouble: canDouble(rules, { cardsNumber: 2, isPostSplit }),
-      canSplit:
-        !!splitCardSymbol &&
-        canSplit(rules, { cardSymbols: [splitCardSymbol, splitCardSymbol], isPostSplit }),
+      ...x,
+      canDouble: false,
+      canSplit: false,
+      category: threeOrMoreCards,
       effectiveScore,
-      isActionable,
-      isPostSplit,
-      isPostSplitAces,
-      isSingleCard,
+      isActionable: effectiveScore < playerScoreLimit,
+      isHidden: true,
     };
   });
-};
 
-const validateLabel = (rules: Rules, seed: AbstractHandSeed) => {
-  const isPostSplit = !!seed.isPostSplit;
-  const isPostSplitAces = !!seed.isPostSplitAces;
+  /** "Initial pair" can only transform into "3+ cards", when hitting or doubling */
+  const initialPairs: AbstractHand[] = [
+    { example: 'J,A', label: 'BJ', scores: [blackjackScore] },
+    { example: 'J,J', label: '20', scores: [20] },
+    { example: 'J,9', label: '19', scores: [19] },
+    { example: 'J,8', label: '18', scores: [18] },
+    { example: 'J,7', label: '17', scores: [17] },
+    { example: 'J,6', label: '16', scores: [16] },
+    { example: 'J,5', label: '15', scores: [15] },
+    { example: 'J,4', label: '14', scores: [14] },
+    { example: 'J,3', label: '13', scores: [13] },
+    { example: '2,J', label: '12', scores: [12] },
+    { example: '2,9', label: '11', scores: [11] },
+    { example: '2,8', label: '10', scores: [10] },
+    { example: '2,7', label: '9', scores: [9] },
+    { example: '2,6', label: '8', scores: [8] },
+    { example: '2,5', label: '7', scores: [7] },
+    { example: '2,4', label: '6', scores: [6] },
+    { example: '2,3', label: '5', scores: [5] },
+    { example: '2,2', label: '4', scores: [4] },
+    { example: 'A,9', label: '10/20', scores: [10, 20] },
+    { example: 'A,8', label: '9/19', scores: [9, 19] },
+    { example: 'A,7', label: '8/18', scores: [8, 18] },
+    { example: 'A,6', label: '7/17', scores: [7, 17] },
+    { example: 'A,5', label: '6/16', scores: [6, 16] },
+    { example: 'A,4', label: '5/15', scores: [5, 15] },
+    { example: 'A,3', label: '4/14', scores: [4, 14] },
+    { example: 'A,2', label: '3/13', scores: [3, 13] },
+    { example: 'A,A', label: '2/12', scores: [2, 12] },
+  ].map<AbstractHand>(x => {
+    const effectiveScore = getEffectiveScore(x.scores);
 
-  const label = getNextLabel(rules, {
-    scores: seed.scores,
-    isPostSplit,
-    isPostSplitAces,
-    splitSymbol: seed.postSplitLabel && seed.label.split(',')[0],
+    return {
+      ...x,
+      canDouble: !!rules.doubling,
+      canSplit: false,
+      category: initialPair,
+      effectiveScore,
+      isActionable: effectiveScore < playerScoreLimit,
+    };
   });
 
-  if (label !== seed.label) {
-    throw new Error(
-      `Incorrect label "${seed.label}" for hand with scores ${seed.scores}, post-split "${isPostSplit}" and post-split aces "${isPostSplitAces}". Expected "${label}"`,
-    );
+  /** "Post split pair" can only transform into "3+ cards", when hitting or doubling */
+  const postSplitPairs: AbstractHand[] = [
+    ...[
+      rules.blackjackAfterSplit
+        ? { example: 'J,S,A', label: 'BJ (S)', scores: [blackjackScore] }
+        : { example: 'J,S,A', label: '11/21 (S)', scores: [11, 21] },
+    ],
+    { example: 'J,S,J', label: '20 (S)', scores: [20] },
+    { example: 'J,S,9', label: '19 (S)', scores: [19] },
+    { example: 'J,S,8', label: '18 (S)', scores: [18] },
+    { example: 'J,S,7', label: '17 (S)', scores: [17] },
+    { example: 'J,S,6', label: '16 (S)', scores: [16] },
+    { example: 'J,S,5', label: '15 (S)', scores: [15] },
+    { example: 'J,S,4', label: '14 (S)', scores: [14] },
+    { example: 'J,S,3', label: '13 (S)', scores: [13] },
+    { example: '2,S,J', label: '12 (S)', scores: [12] },
+    { example: '2,S,9', label: '11 (S)', scores: [11] },
+    { example: '2,S,8', label: '10 (S)', scores: [10] },
+    { example: '2,S,7', label: '9 (S)', scores: [9] },
+    { example: '2,S,6', label: '8 (S)', scores: [8] },
+    { example: '2,S,5', label: '7 (S)', scores: [7] },
+    { example: '2,S,4', label: '6 (S)', scores: [6] },
+    { example: '2,S,3', label: '5 (S)', scores: [5] },
+    { example: '2,S,2', label: '4 (S)', scores: [4] },
+    { example: '9,S,A', label: '10/20 (S)', scores: [10, 20] },
+    { example: '8,S,A', label: '9/19 (S)', scores: [9, 19] },
+    { example: '7,S,A', label: '8/18 (S)', scores: [8, 18] },
+    { example: '6,S,A', label: '7/17 (S)', scores: [7, 17] },
+    { example: '5,S,A', label: '6/16 (S)', scores: [6, 16] },
+    { example: '4,S,A', label: '5/15 (S)', scores: [5, 15] },
+    { example: '3,S,A', label: '4/14 (S)', scores: [4, 14] },
+    { example: '2,S,A', label: '3/13 (S)', scores: [3, 13] },
+  ].map<AbstractHand>(x => {
+    const effectiveScore = getEffectiveScore(x.scores);
+
+    return {
+      ...x,
+      canDouble: !!rules.doubling && !!rules.doublingAfterSplit,
+      canSplit: false,
+      category: postSplitPair,
+      effectiveScore,
+      isActionable: effectiveScore < playerScoreLimit,
+      isHidden: true,
+    };
+  });
+
+  /** "Post A-split pair" can only transform into "3+ cards", when hitting or doubling */
+  const postASplitPairs: AbstractHand[] = [
+    ...[
+      rules.blackjackAfterSplit
+        ? { example: 'A,S,J', label: 'BJ (A)', scores: [blackjackScore] }
+        : { example: 'A,S,J', label: '11/21 (A)', scores: [11, 21] },
+    ],
+    { example: 'A,S,9', label: '10/20 (A)', scores: [10, 20] },
+    { example: 'A,S,8', label: '9/19 (A)', scores: [9, 19] },
+    { example: 'A,S,7', label: '8/18 (A)', scores: [8, 18] },
+    { example: 'A,S,6', label: '7/17 (A)', scores: [7, 17] },
+    { example: 'A,S,5', label: '6/16 (A)', scores: [6, 16] },
+    { example: 'A,S,4', label: '5/15 (A)', scores: [5, 15] },
+    { example: 'A,S,3', label: '4/14 (A)', scores: [4, 14] },
+    { example: 'A,S,2', label: '3/13 (A)', scores: [3, 13] },
+    { example: 'A,S,A', label: '2/12 (A)', scores: [2, 12] },
+  ].map<AbstractHand>(x => {
+    const effectiveScore = getEffectiveScore(x.scores);
+
+    return {
+      ...x,
+      canDouble: !!rules.hitSplitAces && !!rules.doubling && !!rules.doublingAfterSplit,
+      canSplit: false,
+      category: postASplitPair,
+      effectiveScore,
+      isActionable: !!rules.hitSplitAces,
+      isHidden: true,
+    };
+  });
+
+  /** "Split pair" can transform into:
+   * - "Post split card", when splitting
+   * - "3+ cards", when hitting or doubling
+   **/
+  const splittablePairs: AbstractHand[] = [
+    { example: 'A,A', label: 'A,A', scores: [2, 12], splitCard: cardsMap['A'] },
+    { example: '2,2', label: '2,2', scores: [4], splitCard: cardsMap['2'] },
+    { example: '3,3', label: '3,3', scores: [6], splitCard: cardsMap['3'] },
+    { example: '4,4', label: '4,4', scores: [8], splitCard: cardsMap['4'] },
+    { example: '5,5', label: '5,5', scores: [10], splitCard: cardsMap['5'] },
+    { example: '6,6', label: '6,6', scores: [12], splitCard: cardsMap['6'] },
+    { example: '7,7', label: '7,7', scores: [14], splitCard: cardsMap['7'] },
+    { example: '8,8', label: '8,8', scores: [16], splitCard: cardsMap['8'] },
+    { example: '9,9', label: '9,9', scores: [18], splitCard: cardsMap['9'] },
+    { example: '10,10', label: '10,10', scores: [20], splitCard: cardsMap['10'] },
+    { example: 'J,J', label: 'J,J', scores: [20], isHidden: true, splitCard: cardsMap['J'] },
+    { example: 'Q,Q', label: 'Q,Q', scores: [20], isHidden: true, splitCard: cardsMap['Q'] },
+    { example: 'K,K', label: 'K,K', scores: [20], isHidden: true, splitCard: cardsMap['K'] },
+  ].map<AbstractHand>(x => {
+    const effectiveScore = getEffectiveScore(x.scores);
+
+    return {
+      ...x,
+      canDouble: !!rules.doubling,
+      canSplit: !!rules.splitting,
+      category: splittablePair,
+      effectiveScore,
+      isActionable: true,
+      isHidden: x.isHidden || !rules.splitting,
+    };
+  });
+
+  const abstractHands = [
+    ...threeOrMoreCardsHands,
+    ...initialPairs,
+    ...postSplitPairs,
+    ...postASplitPairs,
+    ...splittablePairs,
+  ];
+
+  // Validate that all example cards produce the right score and label
+  for (const hand of abstractHands) {
+    const label = getHandLabel(hand.scores, hand.category, hand.splitCard?.symbol);
+
+    if (label !== hand.label) {
+      throw new Error(
+        `Incorrect label "${hand.label}" for hand with scores ${hand.scores}, category "${hand.category}" and split card "${hand.splitCard?.symbol}". Expected "${label}"`,
+      );
+    }
   }
+
+  return abstractHands;
 };

@@ -1,178 +1,80 @@
-import { double, hit, split, stand } from '../models/action.model';
+import { Action, double, hit, split, stand } from '../models/action.model';
 import { cards } from '../models/cards.model';
+import { blackjackScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
-import { ResolvedHandsMap } from '../types/resolved-hand.type';
+import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getExpectedResult } from './expected-results.logic';
-import { getNextLabel, getNextLabelAndScores } from './labels.logic';
+import { getNextHandLabel } from './labels.logic';
 import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
-import { getEffectiveScore, getScoresFromScores } from './scores.logic';
+
+export type FutureHandsConsequenceParameters = [
+  AbstractHand,
+  Rules,
+  AbstractHand[],
+  ResolvedHandsMap,
+];
 
 export const getDoubleConsequence = (
-  rules: Rules,
-  scores: number[],
-  betMultiplier: number,
+  ...[abstractHand, rules, abstractHands, futureResolvedHandsMap]: FutureHandsConsequenceParameters
 ): Consequence => {
-  const doubleConsequence: Consequence = {
-    action: double,
-    finalProbabilities: {},
-    outcomesByBetMultiplier: createOutcomesByBetMultiplier({}),
-    edge: 0,
-  };
+  const futureConsequences = getFutureConsequences(
+    abstractHand.label,
+    double,
+    rules,
+    abstractHands,
+    futureResolvedHandsMap,
+    () => stand,
+  );
 
-  const weight = 1 / cards.length;
-
-  for (const card of cards) {
-    const nextScores = getScoresFromScores(rules, {
-      allScores: [scores, card.scores],
-      // The player will never have two cards after doubling
-      hasTwoCards: false,
-      // The player will never get a blackjack after doubling
-      isPostSplit: false,
-    });
-    const nextEffectiveScore = getEffectiveScore(nextScores);
-
-    const nextBetMultiplier = getBetMultiplier(betMultiplier, { isDoubleBet: true });
-    const standConsequence = getStandConsequence(nextEffectiveScore, nextBetMultiplier);
-
-    increaseFinalProbabilities(
-      doubleConsequence.finalProbabilities,
-      standConsequence.finalProbabilities,
-      weight,
-    );
-    increaseOutcomesByBetMultiplier(
-      doubleConsequence.outcomesByBetMultiplier,
-      standConsequence.outcomesByBetMultiplier,
-      weight,
-    );
-    doubleConsequence.edge += standConsequence.edge * weight;
-  }
-
-  return doubleConsequence;
-};
-
-export type HitConsequenceParameters = {
-  isPostSplit: AbstractHand['isPostSplit'];
-  isPostSplitAces: AbstractHand['isPostSplitAces'];
-  isSingleCard: AbstractHand['isSingleCard'];
-  scores: AbstractHand['scores'];
+  return mergeFutureConsequences(futureConsequences, double, 2);
 };
 
 export const getHitConsequence = (
-  rules: Rules,
-  futureResolvedHandsMap: ResolvedHandsMap,
-  { isPostSplit, isPostSplitAces, isSingleCard, scores }: HitConsequenceParameters,
+  ...[abstractHand, rules, abstractHands, futureResolvedHandsMap]: FutureHandsConsequenceParameters
 ): Consequence => {
-  const nextConsequences = cards.map(card => {
-    const hasTwoCards = isSingleCard; // When hitting a hand with a single card (i.e. after splitting), the player will have two cards
-    const nextResolvedHand = getNextResolvedHand(rules, futureResolvedHandsMap, {
-      allScores: [scores, card.scores],
-      hasTwoCards,
-      isPostSplit,
-      isPostSplitAces,
-    });
+  const futureConsequences = getFutureConsequences(
+    abstractHand.label,
+    hit,
+    rules,
+    abstractHands,
+    futureResolvedHandsMap,
+    resolvedHand => resolvedHand.action,
+  );
 
-    return nextResolvedHand.consequences[nextResolvedHand.action]!;
-  });
-
-  return getHitConsequenceCore(nextConsequences);
-};
-
-export const getHitConsequenceCore = (nextConsequences: Consequence[]): Consequence => {
-  const hitConsequence: Consequence = {
-    action: hit,
-    finalProbabilities: {},
-    outcomesByBetMultiplier: createOutcomesByBetMultiplier({}),
-    edge: 0,
-  };
-
-  const weight = 1 / nextConsequences.length;
-
-  for (const nextConsequence of nextConsequences) {
-    increaseFinalProbabilities(
-      hitConsequence.finalProbabilities,
-      nextConsequence.finalProbabilities,
-      weight,
-    );
-    increaseOutcomesByBetMultiplier(
-      hitConsequence.outcomesByBetMultiplier,
-      nextConsequence.outcomesByBetMultiplier,
-      weight,
-    );
-    hitConsequence.edge += nextConsequence.edge * weight;
-  }
-
-  return hitConsequence;
-};
-
-type NextResolvedHandParameters = {
-  allScores: number[][];
-  hasTwoCards: boolean;
-  isPostSplit: boolean;
-  isPostSplitAces: boolean;
-};
-
-const getNextResolvedHand = (
-  rules: Rules,
-  futureResolvedHandsMap: ResolvedHandsMap,
-  { allScores, hasTwoCards, isPostSplit, isPostSplitAces }: NextResolvedHandParameters,
-) => {
-  const splitSymbol = undefined; // The player will never get to a split hand after hitting
-
-  const { label } = getNextLabelAndScores(rules, {
-    allScores,
-    hasTwoCards,
-    isPostSplit,
-    isPostSplitAces,
-    splitSymbol,
-  });
-  const nextResolvedHand = futureResolvedHandsMap[label];
-
-  if (!nextResolvedHand) {
-    const [firstScores] = allScores;
-    const label = getNextLabel(rules, {
-      isPostSplit,
-      isPostSplitAces,
-      scores: firstScores,
-      splitSymbol,
-    });
-    throw new Error(`The "${label}" resolved hand is not available before ${label}`);
-  }
-
-  return nextResolvedHand;
+  return mergeFutureConsequences(futureConsequences, hit);
 };
 
 export const getSplitConsequence = (
-  postSplitLabel: string,
-  futureResolvedHandsMap: ResolvedHandsMap,
+  ...[abstractHand, rules, abstractHands, futureResolvedHandsMap]: FutureHandsConsequenceParameters
 ): Consequence => {
-  const nextResolvedHand = futureResolvedHandsMap[postSplitLabel];
-  const nextConsequence = nextResolvedHand.consequences[nextResolvedHand.action]!;
+  const futureConsequences = getFutureConsequences(
+    abstractHand.label,
+    split,
+    rules,
+    abstractHands,
+    futureResolvedHandsMap,
+    resolvedHand => resolvedHand.action,
+  );
 
-  const { edge, finalProbabilities, outcomesByBetMultiplier } = nextConsequence;
-
-  const splitConsequence: Consequence = {
-    action: split,
-    finalProbabilities,
-    outcomesByBetMultiplier,
-    edge,
-  };
-
-  return splitConsequence;
+  return mergeFutureConsequences(futureConsequences, split, 2);
 };
 
-export const getStandConsequence = (score: number, betMultiplier: number): Consequence => {
+export const getStandConsequence = (abstractHand: AbstractHand): Consequence => {
   const finalScore: FinalScoreBase = {
-    score,
+    score: abstractHand.effectiveScore,
     probability: 1,
   };
+  const betMultiplier = getBetMultiplier(1, {
+    isBlackjack: abstractHand.effectiveScore === blackjackScore,
+  });
   const expectedResult = getExpectedResult(finalScore, { [betMultiplier]: 1 });
 
   return {
-    finalProbabilities: { [score]: 1 },
+    finalProbabilities: { [finalScore.score]: 1 },
     action: stand,
     outcomesByBetMultiplier: expectedResult.outcomesByBetMultiplier,
     edge: expectedResult.edge,
@@ -191,4 +93,55 @@ const increaseFinalProbabilities = (
     }
     finalProbabilities[scoreNumber] += toAdd[scoreNumber] * weight;
   }
+};
+
+const getFutureConsequences = (
+  label: string,
+  action: typeof double | typeof hit | typeof split,
+  rules: Rules,
+  abstractHands: AbstractHand[],
+  futureResolvedHandsMap: ResolvedHandsMap,
+  getFutureAction: (resolvedHand: ResolvedHand) => Action,
+): Consequence[] => {
+  const futureConsequences = cards.map(card => {
+    const futureLabel = getNextHandLabel(abstractHands, rules, label, action, card)!;
+    const futureResolvedHand = futureResolvedHandsMap[futureLabel];
+    const futureAction = getFutureAction(futureResolvedHand);
+    const futureConsequence = futureResolvedHand.consequences[futureAction]!;
+
+    return futureConsequence;
+  });
+
+  return futureConsequences;
+};
+
+export const mergeFutureConsequences = (
+  futureConsequences: Consequence[],
+  action: typeof double | typeof hit | typeof split,
+  multiplier = 1,
+) => {
+  const mergedConsequence: Consequence = {
+    action,
+    finalProbabilities: {},
+    outcomesByBetMultiplier: createOutcomesByBetMultiplier({}),
+    edge: 0,
+  };
+  const weight = 1 / futureConsequences.length;
+
+  for (const futureConsequence of futureConsequences) {
+    increaseFinalProbabilities(
+      mergedConsequence.finalProbabilities,
+      futureConsequence.finalProbabilities,
+      weight,
+    );
+    increaseOutcomesByBetMultiplier(
+      mergedConsequence.outcomesByBetMultiplier,
+      futureConsequence.outcomesByBetMultiplier,
+      weight,
+      multiplier,
+    );
+    mergedConsequence.edge += futureConsequence.edge * weight * multiplier;
+  }
+
+  return mergedConsequence;
 };

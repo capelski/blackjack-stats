@@ -5,4 +5,3 @@ export const splitScoresSeparator = ',';
 export const acesLabel = `A${splitScoresSeparator}A`;
 export const postDoubleSymbol = 'D';
 export const postSplitSymbol = 'S';
-export const postSplitAcesSingleCardLabel = '1/11 (S,A)';

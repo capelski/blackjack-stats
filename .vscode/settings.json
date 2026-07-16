@@ -8,5 +8,6 @@
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "typescript.unstable": {
     "organizeImportsIgnoreCase": true
-  }
+  },
+  "cSpell.words": ["splittable"]
 }

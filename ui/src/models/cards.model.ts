@@ -16,4 +16,9 @@ export const cards: Card[] = [
   { symbol: 'K', scores: [10] },
 ];
 
+export const cardsMap = cards.reduce((map, card) => {
+  map[card.symbol] = card;
+  return map;
+}, {} as Record<string, Card>);
+
 export const cardsNumber = cards.length;

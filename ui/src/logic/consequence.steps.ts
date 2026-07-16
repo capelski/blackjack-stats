@@ -1,14 +1,9 @@
 import { DataTable, Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
-import { stand } from '../models/action.model';
-import { blackjackScore } from '../models/scores.model';
+import { double, hit, stand } from '../models/action.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
-import { getBetMultiplier } from './bet-multiplier.logic';
-import {
-  getDoubleConsequence,
-  getHitConsequenceCore,
-  getStandConsequence,
-} from './consequence.logic';
+import { getAbstractHands } from './abstract-hands.logic';
+import { getStandConsequence, mergeFutureConsequences } from './consequence.logic';
 import {
   formatOutcomesByBetMultiplier,
   parseOutcomesByBetMultiplier,
@@ -18,7 +13,17 @@ import { parseScore } from './result.steps';
 
 interface ConsequenceWorld {
   consequence: Consequence;
+  futureConsequences: Consequence[];
 }
+
+const parseFinalProbabilities = (value: string): FinalProbabilities => {
+  return Object.fromEntries(
+    value.split(',').map(entry => {
+      const [scoreLabel, probability] = entry.split('=');
+      return [parseScore(scoreLabel.trim()), parseFloat(probability)];
+    }),
+  );
+};
 
 const formatFinalProbabilities = (finalProbabilities: FinalProbabilities): string => {
   return Object.keys(finalProbabilities)
@@ -28,36 +33,33 @@ const formatFinalProbabilities = (finalProbabilities: FinalProbabilities): strin
     .join(',');
 };
 
-When('getting the consequences of standing with a score of {string}', function(
-  this: ConsequenceWorld,
-  scoreLabel: string,
-) {
-  const score = parseScore(scoreLabel);
-  const standBetMultiplier = getBetMultiplier(1, {
-    isBlackjack: score === blackjackScore,
-  });
-  this.consequence = getStandConsequence(score, standBetMultiplier);
-});
-
-Given('getting the consequences of hitting with this list of next consequences', function(
+Given('the following list of future consequences', function(
   this: ConsequenceWorld,
   table: DataTable,
 ) {
-  const nextConsequences = table.hashes().map<Consequence>(row => ({
+  this.futureConsequences = table.hashes().map<Consequence>(row => ({
     action: stand,
     finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
     outcomesByBetMultiplier: parseOutcomesByBetMultiplier(row['Outcomes'].trim()),
     edge: parseFloat(row['Edge'].trim()),
   }));
-  this.consequence = getHitConsequenceCore(nextConsequences);
 });
 
-When('getting the consequences of doubling with a score of {string}', function(
+When('getting the consequences of standing with {string} hand', function(
   this: ConsequenceWorld,
-  scoreLabel: string,
+  label: string,
 ) {
-  const score = parseScore(scoreLabel);
-  this.consequence = getDoubleConsequence({}, [score], 1);
+  const abstractHands = getAbstractHands({});
+  const abstractHand = abstractHands.find(x => x.label === label)!;
+  this.consequence = getStandConsequence(abstractHand);
+});
+
+When('getting the consequences of hitting', function(this: ConsequenceWorld) {
+  this.consequence = mergeFutureConsequences(this.futureConsequences, hit);
+});
+
+When('getting the consequences of doubling or splitting', function(this: ConsequenceWorld) {
+  this.consequence = mergeFutureConsequences(this.futureConsequences, double, 2);
 });
 
 Then('the consequence action equals {string}', function(
@@ -88,12 +90,3 @@ Then('the consequence edge equals {string}', function(
 ) {
   assert.strictEqual(String(this.consequence.edge), expectedEdge);
 });
-
-const parseFinalProbabilities = (value: string): FinalProbabilities => {
-  return Object.fromEntries(
-    value.split(',').map(entry => {
-      const [scoreLabel, probability] = entry.split('=');
-      return [parseScore(scoreLabel.trim()), parseFloat(probability)];
-    }),
-  );
-};

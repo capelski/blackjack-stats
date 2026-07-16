@@ -1,7 +1,8 @@
+import { HandCategory } from '../models/hand-category.model';
+
 export type HandBase = {
-  betMultiplier: number;
+  category: HandCategory;
   effectiveScore: number;
-  isPostSplit: boolean;
   label: string;
   scores: number[];
 };

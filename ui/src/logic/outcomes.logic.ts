@@ -28,14 +28,18 @@ export const increaseOutcomesByBetMultiplier = (
   outcomes: OutcomesByBetMultiplierMap,
   toAdd: OutcomesByBetMultiplierMap,
   weight = 1,
+  multiplier = 1,
 ): void => {
   getSortedNumericKeys(toAdd.lose).forEach(key => {
-    outcomes.lose[key] = (outcomes.lose[key] || 0) + toAdd.lose[key] * weight;
+    outcomes.lose[key * multiplier] =
+      (outcomes.lose[key * multiplier] || 0) + toAdd.lose[key] * weight;
   });
   getSortedNumericKeys(toAdd.push).forEach(key => {
-    outcomes.push[key] = (outcomes.push[key] || 0) + toAdd.push[key] * weight;
+    outcomes.push[key * multiplier] =
+      (outcomes.push[key * multiplier] || 0) + toAdd.push[key] * weight;
   });
   getSortedNumericKeys(toAdd.win).forEach(key => {
-    outcomes.win[key] = (outcomes.win[key] || 0) + toAdd.win[key] * weight;
+    outcomes.win[key * multiplier] =
+      (outcomes.win[key * multiplier] || 0) + toAdd.win[key] * weight;
   });
 };

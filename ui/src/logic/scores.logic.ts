@@ -1,3 +1,10 @@
+import {
+  HandCategory,
+  initialPair,
+  postASplitPair,
+  postSplitPair,
+  splittablePair,
+} from '../models/hand-category.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
@@ -6,46 +13,40 @@ export const getEffectiveScore = (scores: number[]) => {
   return scores[scores.length - 1];
 };
 
-export type ScoresFromCardsParameters = {
-  cards: Card[];
-  isPostSplit: boolean;
-};
-
-export const getScoresFromCards = (
+export const getNextScores = (
+  currentScores: number[],
+  nextCardScores: number[],
+  nextCategory: HandCategory,
   rules: Rules,
-  { cards, isPostSplit }: ScoresFromCardsParameters,
 ) => {
-  const allScores = cards.map(card => card.scores);
-  return getScoresFromScores(rules, { allScores, hasTwoCards: cards.length === 2, isPostSplit });
+  const scores = getValidScores(currentScores, nextCardScores);
+
+  const isPostSplit = nextCategory === postSplitPair || nextCategory === postASplitPair;
+  const hasTwoCards =
+    nextCategory === initialPair || nextCategory === splittablePair || isPostSplit;
+
+  if (isBlackjack(rules, { scores, hasTwoCards, isPostSplit })) {
+    return [blackjackScore];
+  }
+
+  return scores;
 };
 
-export type ScoresFromScoresOptions = {
-  allScores: number[][];
-  hasTwoCards: boolean;
-  isPostSplit: boolean;
-};
-
-export const getScoresFromScores = (
+export const getNextScoresFromCards = (
+  cards: Card[],
+  nextCardScores: number[],
+  nextCategory: HandCategory,
   rules: Rules,
-  { allScores, hasTwoCards, isPostSplit }: ScoresFromScoresOptions,
 ) => {
-  const [first, ...rest] = allScores;
+  const cardScores = cards.map(card => card.scores);
+  const [first, ...rest] = cardScores;
   let scores = first;
 
   for (const scoreSet of rest) {
     scores = getUniqueScores(scores, scoreSet);
   }
 
-  const validScores = scores.filter(x => x < bustScore);
-  if (validScores.length === 0) {
-    return [bustScore];
-  }
-
-  if (isBlackjack(rules, { scores: validScores, hasTwoCards, isPostSplit })) {
-    return [blackjackScore];
-  }
-
-  return validScores;
+  return getNextScores(scores, nextCardScores, nextCategory, rules);
 };
 
 const getUniqueScores = (values1: number[], values2: number[]) => {
@@ -54,6 +55,17 @@ const getUniqueScores = (values1: number[], values2: number[]) => {
     [],
   );
   return [...new Set(allValues)].sort((a, b) => a - b);
+};
+
+const getValidScores = (currentScores: number[], nextCardScores: number[]) => {
+  const scores = getUniqueScores(currentScores, nextCardScores);
+
+  const validScores = scores.filter(x => x < bustScore);
+  if (validScores.length === 0) {
+    return [bustScore];
+  }
+
+  return validScores;
 };
 
 type BlackjackParameters = {
