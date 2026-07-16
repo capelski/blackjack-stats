@@ -7,6 +7,7 @@ import { FinalScoreBase } from '../types/final-score.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
+import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { getNextHandLabel } from './labels.logic';
 import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
@@ -140,8 +141,9 @@ export const mergeFutureConsequences = (
       weight,
       multiplier,
     );
-    mergedConsequence.edge += futureConsequence.edge * weight * multiplier;
   }
+
+  mergedConsequence.edge = getEdge(mergedConsequence.outcomesByBetMultiplier);
 
   return mergedConsequence;
 };
