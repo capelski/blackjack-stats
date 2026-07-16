@@ -98,7 +98,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
       }
 
       const symbols = serializeCards(hand);
-      return symbols.includes(normalizedFilter);
+      return symbols.startsWith(normalizedFilter);
     });
   }, [cardsFilter, props.hands, showNonFinalHands]);
 
