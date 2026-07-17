@@ -14,7 +14,6 @@ export const getExpectedResult = (
 
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier(probabilityByBetMultiplier);
 
-  let edge = 0;
   let probability = 0;
 
   for (const finalComparison of Object.values(finalComparisons)) {
@@ -24,7 +23,6 @@ export const getExpectedResult = (
       finalComparison.outcomesByBetMultiplier,
       absoluteProbability,
     );
-    edge += getEdge(finalComparison.outcomesByBetMultiplier) * absoluteProbability;
     probability += finalComparison.probability;
   }
 
@@ -33,7 +31,7 @@ export const getExpectedResult = (
     probability,
     probabilityByBetMultiplier,
     outcomesByBetMultiplier,
-    edge,
+    edge: getEdge(outcomesByBetMultiplier),
     score: playerScore.score,
   };
 
@@ -49,7 +47,6 @@ export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults =
   }
 
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});
-  let edge = 0;
   let probability = 0;
 
   for (const expectedResult of Object.values(breakdown)) {
@@ -58,7 +55,6 @@ export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults =
       expectedResult.outcomesByBetMultiplier,
       expectedResult.probability,
     );
-    edge += expectedResult.edge * expectedResult.probability;
     probability += expectedResult.probability;
   }
 
@@ -66,7 +62,7 @@ export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults =
     breakdown,
     probability,
     outcomesByBetMultiplier,
-    edge,
+    edge: getEdge(outcomesByBetMultiplier),
   };
 
   return expectedResults;

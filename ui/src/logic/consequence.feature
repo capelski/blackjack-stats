@@ -12,7 +12,7 @@ Feature: Consequences
     When getting the consequences of standing with "BJ" hand
     Then the consequence final probabilities equal "BJ=1"
     And the consequence outcomes equals "win: 1.5=0.9526627218934662 / push: 1.5=0.04733727810650889 / lose: 1.5=0"
-    And the consequence edge equals "1.428994082840199"
+    And the consequence edge equals "1.4289940828401995"
 
   Scenario: Future hands consequences (standing on 12+)
     Given the following list of future consequences
