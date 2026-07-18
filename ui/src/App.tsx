@@ -14,13 +14,34 @@ import { Rules } from './types/rules.type';
 
 const defaultStandThreshold = 17;
 const standThresholdParam = 't';
-const defaultRules: Rules = {};
+
+const doublingParam = 'd';
+const splittingParam = 's';
+const doublingAfterSplitParam = 'das';
+const hitSplitAcesParam = 'hsa';
+const blackjackAfterSplitParam = 'bas';
 
 function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
-  const [rules, setRules] = useState<Rules>(defaultRules);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const [rules, setRules] = useState<Rules>(() => {
+    const doubling = searchParams.get(doublingParam) === '1';
+    const splitting = searchParams.get(splittingParam) === '1';
+    const doublingAfterSplit = searchParams.get(doublingAfterSplitParam) === '1';
+    const hitSplitAces = searchParams.get(hitSplitAcesParam) === '1';
+    const blackjackAfterSplit = searchParams.get(blackjackAfterSplitParam) === '1';
+
+    return {
+      doubling,
+      splitting,
+      doublingAfterSplit,
+      hitSplitAces,
+      blackjackAfterSplit,
+    };
+  });
+
   const [standThreshold, setStandThreshold] = useState(() => {
     const queryValue = searchParams.get(standThresholdParam);
     if (queryValue === null) {
@@ -31,6 +52,43 @@ function App() {
 
     return Number.isInteger(threshold) ? threshold : defaultStandThreshold;
   });
+
+  const updateRules = (newRules: Rules) => {
+    setRules(newRules);
+    const nextSearchParams = new URLSearchParams(searchParams);
+
+    if (newRules.doubling) {
+      nextSearchParams.set(doublingParam, '1');
+    } else {
+      nextSearchParams.delete(doublingParam);
+    }
+
+    if (newRules.splitting) {
+      nextSearchParams.set(splittingParam, '1');
+    } else {
+      nextSearchParams.delete(splittingParam);
+    }
+
+    if (newRules.doublingAfterSplit) {
+      nextSearchParams.set(doublingAfterSplitParam, '1');
+    } else {
+      nextSearchParams.delete(doublingAfterSplitParam);
+    }
+
+    if (newRules.hitSplitAces) {
+      nextSearchParams.set(hitSplitAcesParam, '1');
+    } else {
+      nextSearchParams.delete(hitSplitAcesParam);
+    }
+
+    if (newRules.blackjackAfterSplit) {
+      nextSearchParams.set(blackjackAfterSplitParam, '1');
+    } else {
+      nextSearchParams.delete(blackjackAfterSplitParam);
+    }
+
+    setSearchParams(nextSearchParams);
+  };
 
   const updateStandThreshold = (newValue: number) => {
     setStandThreshold(newValue);
@@ -83,7 +141,7 @@ function App() {
               </Route>
               <Route
                 path={optimalActionsRoute}
-                element={<OptimalActionsPage rules={rules} setRules={setRules} />}
+                element={<OptimalActionsPage rules={rules} setRules={updateRules} />}
               >
                 {getStrategyPageNestedRoutes(searchParams)}
               </Route>
