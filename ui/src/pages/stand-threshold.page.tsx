@@ -24,6 +24,7 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
       return hand.effectiveScore >= threshold ? stand : hit;
     };
 
+    // Deliberately ignoring the app rules, as the stand threshold strategy doesn't depend on them
     const strategy = await getStrategy({}, handResolver);
     setStrategy(strategy);
     setComputing(false);

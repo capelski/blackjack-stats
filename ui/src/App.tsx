@@ -10,13 +10,16 @@ import { getLocalizedRoute, getNavLinkStyle, getStrategyPageNestedRoutes } from 
 import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
 import { SettingsContext } from './settings.context';
+import { Rules } from './types/rules.type';
 
 const defaultStandThreshold = 17;
 const standThresholdParam = 't';
+const defaultRules: Rules = {};
 
 function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
+  const [rules, setRules] = useState<Rules>(defaultRules);
   const [searchParams, setSearchParams] = useSearchParams();
   const [standThreshold, setStandThreshold] = useState(() => {
     const queryValue = searchParams.get(standThresholdParam);
@@ -78,7 +81,10 @@ function App() {
               >
                 {getStrategyPageNestedRoutes(searchParams)}
               </Route>
-              <Route path={optimalActionsRoute} element={<OptimalActionsPage />}>
+              <Route
+                path={optimalActionsRoute}
+                element={<OptimalActionsPage rules={rules} setRules={setRules} />}
+              >
                 {getStrategyPageNestedRoutes(searchParams)}
               </Route>
               <Route
