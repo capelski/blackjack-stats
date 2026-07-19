@@ -6,6 +6,15 @@ export const getBetMultiplier = (
   previousMultiplier: number,
   options: BetMultiplierOptions = {},
 ): number => {
-  const factor = options.isBlackjack ? blackjackMultiplier : options.isDoubleBet ? 2 : 1;
+  let factor = 1;
+
+  if (options.isBlackjack) {
+    factor *= blackjackMultiplier;
+  }
+
+  if (options.isDoubleBet) {
+    factor *= 2;
+  }
+
   return previousMultiplier * factor;
 };

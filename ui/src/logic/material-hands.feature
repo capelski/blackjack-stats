@@ -20,16 +20,16 @@ Feature: Material hands
     Given doubling is allowed
     When getting the material hands of a hand resolver for optimal actions
     Then 25558 material hands are returned
-    And there is a material hand with cards "5,6", probability "0.00591715976331361", action "double" and bet multiplier "2"
+    And there is a material hand with cards "5,6", probability "0.00591715976331361", action "double" and bet multiplier "1"
     And there is a material hand with cards "5,6,A", probability "0.0004551661356395085", action "end" and bet multiplier "2"
 
   Scenario: Material hands for optimal actions with splitting
     Given splitting is allowed
     When getting the material hands of a hand resolver for optimal actions
     Then 23660 material hands are returned
-    And there is a material hand with cards "A,A", probability "0.00591715976331361", action "split" and bet multiplier "2"
+    And there is a material hand with cards "A,A", probability "0.00591715976331361", action "split" and bet multiplier "1"
     And there is a material post split hand with cards "A,A", probability "0.0004551661356395085", action "end" and bet multiplier "2"
-    And there is a material hand with cards "8,8", probability "0.00591715976331361", action "split" and bet multiplier "2"
+    And there is a material hand with cards "8,8", probability "0.00591715976331361", action "split" and bet multiplier "1"
     And there is a material post split hand with cards "8,2", probability "0.0004551661356395085", action "hit" and bet multiplier "2"
 
   Scenario: Material hands for optimal actions with hit split aces
@@ -51,7 +51,7 @@ Feature: Material hands
     And doubling after splitting is allowed
     When getting the material hands of a hand resolver for optimal actions
     Then 22113 material hands are returned
-    And there is a material post split hand with cards "8,2", probability "0.0004551661356395085", action "double" and bet multiplier "4"
+    And there is a material post split hand with cards "8,2", probability "0.0004551661356395085", action "double" and bet multiplier "2"
     And there is a material post split hand with cards "8,2,6", probability "0.00003501277966457758", action "end" and bet multiplier "4"
 
   Scenario: Material hands for optimal actions with blackjack after split

@@ -121,7 +121,7 @@ const getNextMaterialHand = (
     action: nextAction,
     betMultiplier: getBetMultiplier(previous.betMultiplier, {
       isBlackjack: nextEffectiveScore === blackjackScore,
-      isDoubleBet: nextAction === double || nextAction === split,
+      isDoubleBet: previousDouble || previousSplit,
     }),
     cards: nextCards,
     category: nextCategory,
