@@ -1,11 +1,11 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { win } from '../models/result.model';
+import { useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { FinalScore } from '../types/final-score.type';
@@ -62,7 +62,7 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
 
 export const ExpectedResultsMatrix: React.FC = () => {
   const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { searchParams, toggleParameter } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
@@ -70,21 +70,12 @@ export const ExpectedResultsMatrix: React.FC = () => {
 
   const toggleMode = (nextMode: Mode) => {
     setMode(nextMode);
-
-    const nextSearchParams = new URLSearchParams(searchParams);
-
-    if (nextMode === probability) {
-      nextSearchParams.delete('mode');
-    } else {
-      nextSearchParams.set('mode', nextMode);
-    }
-
-    setSearchParams(nextSearchParams);
+    toggleParameter('mode', nextMode, probability);
   };
 
   useEffect(() => {
     const modeParam = searchParams.get('mode');
-    if (modeParam && (modeParam === probability || modeParam === result) && modeParam !== mode) {
+    if (modeParam && modeParam !== mode && (modeParam === probability || modeParam === result)) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setMode(modeParam);
     }

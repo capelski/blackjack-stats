@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { modalQueryParamName, useSearchParamsUtils } from '../search-params-utils';
 import { MaterialHand } from '../types/material-hand.type';
 import { MaterialHandsListCore } from './material-hands-list-core.component';
 import { HandsListProps } from './material-hands-list-item.component';
-import { BaseModal, modalQueryParamName } from './modal.component';
+import { BaseModal } from './modal.component';
 
 type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
   hands: MaterialHand[];
@@ -12,13 +12,12 @@ type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
 
 export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props => {
   const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { setParameter } = useSearchParamsUtils();
 
   const modalId = props.score;
+
   const openModal = () => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.set(modalQueryParamName, modalId);
-    setSearchParams(nextSearchParams);
+    setParameter(modalQueryParamName, modalId);
   };
 
   return (

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, YAxis } from 'recharts';
 import { toDecimal } from '../logic/numbers.logic';
+import { modalQueryParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
-import { BaseModal, modalQueryParamName } from './modal.component';
+import { BaseModal } from './modal.component';
 
 function getRandomOutcome(limit: number): number {
   const num = Math.random();
@@ -30,7 +30,7 @@ type ExpectedResultsSummaryModalProps = {
 export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalProps> = props => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { setParameter } = useSearchParamsUtils();
 
   const [randomResults, setRandomResults] = useState<number[]>([]);
   const [roundsNumber, setRoundsNumber] = useState(100);
@@ -44,10 +44,9 @@ export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalPr
   }));
 
   const modalId = 'simulations';
+
   const openModal = () => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.set(modalQueryParamName, modalId);
-    setSearchParams(nextSearchParams);
+    setParameter(modalQueryParamName, modalId);
   };
 
   return (
