@@ -4,7 +4,6 @@ import { FinalScore } from '../types/final-score.type';
 import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
-import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import {
   formatProbabilityByBetMultiplier,
   getFinalScoresListForOptimalActions,
@@ -86,9 +85,11 @@ When(
     const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel);
     const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
 
-    const probabilityByBetMultiplier = getProbabilityByBetMultiplier(playerScore);
-
-    this.comparison = getFinalComparison(playerScore, dealerScore, probabilityByBetMultiplier);
+    this.comparison = getFinalComparison(
+      playerScore,
+      dealerScore,
+      playerScore.probabilityByBetMultiplier,
+    );
   },
 );
 

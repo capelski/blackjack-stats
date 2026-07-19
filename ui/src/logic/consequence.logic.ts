@@ -65,13 +65,17 @@ export const getSplitConsequence = (
 };
 
 export const getStandConsequence = (abstractHand: AbstractHand): Consequence => {
-  const finalScore: FinalScoreBase = {
-    score: abstractHand.effectiveScore,
-    probability: 1,
-  };
   const betMultiplier = getBetMultiplier(1, {
     isBlackjack: abstractHand.effectiveScore === blackjackScore,
   });
+  const finalScore: FinalScoreBase = {
+    score: abstractHand.effectiveScore,
+    probability: 1,
+    probabilityByBetMultiplier: {
+      [betMultiplier]: 1,
+    },
+  };
+
   const expectedResult = getExpectedResult(finalScore, { [betMultiplier]: 1 });
 
   return {

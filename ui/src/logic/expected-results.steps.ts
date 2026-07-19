@@ -2,7 +2,6 @@ import { DataTable, Then } from '@cucumber/cucumber';
 import { FinalScore } from '../types/final-score.type';
 import { Rules } from '../types/rules.type';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
-import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import {
   formatProbabilityByBetMultiplier,
   getFinalScoresListForOptimalActions,
@@ -63,8 +62,7 @@ Then('the following individual expected result scenarios are considered', functi
     const rules: Rules = JSON.parse(row['Rules'].trim());
     const finalScores = getFinalScoresFromResolver(rules, resolver);
     const finalScore = findFinalScore(finalScores, row['Score'].trim());
-    const probabilityByBetMultiplier = getProbabilityByBetMultiplier(finalScore);
-    const result = getExpectedResult(finalScore, probabilityByBetMultiplier);
+    const result = getExpectedResult(finalScore, finalScore.probabilityByBetMultiplier);
 
     assertNumberClose(
       result.probability,

@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { MaterialHand } from '../types/material-hand.type';
 import { FinalScoresListModal } from './final-scores-list-modal.component';
 import { HandsListProps } from './material-hands-list-item.component';
@@ -6,7 +7,7 @@ export type FinalScoresListItemProps = Pick<HandsListProps, 'showBetMultiplier'>
   combinations: string;
   hands: string | MaterialHand[];
   isHeader?: boolean;
-  probability: string;
+  probability: ReactNode;
   score: string;
 };
 

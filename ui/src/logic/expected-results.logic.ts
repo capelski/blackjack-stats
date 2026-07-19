@@ -3,7 +3,6 @@ import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/ex
 import { FinalScore, FinalScoreBase } from '../types/final-score.type';
 import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
-import { getProbabilityByBetMultiplier } from './final-scores-list.logic';
 import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
 
 export const getExpectedResult = (
@@ -42,8 +41,10 @@ export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults =
   const breakdown: ExpectedResultsMap = {};
 
   for (const playerScore of finalScores) {
-    const probabilityByBetMultiplier = getProbabilityByBetMultiplier(playerScore);
-    breakdown[playerScore.score] = getExpectedResult(playerScore, probabilityByBetMultiplier);
+    breakdown[playerScore.score] = getExpectedResult(
+      playerScore,
+      playerScore.probabilityByBetMultiplier,
+    );
   }
 
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});

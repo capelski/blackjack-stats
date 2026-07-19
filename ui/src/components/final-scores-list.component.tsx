@@ -4,6 +4,7 @@ import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
+import { BetMultipliersCell } from './bet-multipliers-cell.component';
 import { FinalScoresListItem } from './final-scores-list-item.component';
 
 export const FinalScoresList: React.FC = () => {
@@ -45,7 +46,12 @@ export const FinalScoresList: React.FC = () => {
               <FinalScoresListItem
                 hands={finalScore.hands}
                 key={index}
-                probability={toPercentage(finalScore.probability, decimals)}
+                probability={
+                  <BetMultipliersCell
+                    betMultiplierMap={finalScore.probabilityByBetMultiplier}
+                    transform={value => toPercentage(value * finalScore.probability, decimals)}
+                  />
+                }
                 score={effectiveScoreToLabel(finalScore.score)}
                 combinations={combinations}
                 showBetMultiplier={showBetMultiplier}
