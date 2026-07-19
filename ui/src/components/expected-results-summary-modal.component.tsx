@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, YAxis } from 'recharts';
 import { toDecimal } from '../logic/numbers.logic';
-import { modalQueryParamName, useSearchParamsUtils } from '../search-params-utils';
+import { modalParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { BaseModal } from './modal.component';
 
@@ -46,7 +46,7 @@ export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalPr
   const modalId = 'simulations';
 
   const openModal = () => {
-    setParameter(modalQueryParamName, modalId);
+    setParameter(modalParamName, modalId);
   };
 
   return (

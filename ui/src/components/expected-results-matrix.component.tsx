@@ -5,7 +5,7 @@ import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { win } from '../models/result.model';
-import { useSearchParamsUtils } from '../search-params-utils';
+import { modeParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { FinalScore } from '../types/final-score.type';
@@ -62,7 +62,7 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
 
 export const ExpectedResultsMatrix: React.FC = () => {
   const { t } = useTranslation();
-  const { searchParams, toggleParameter } = useSearchParamsUtils();
+  const { getParameter, toggleParameter } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
@@ -70,16 +70,16 @@ export const ExpectedResultsMatrix: React.FC = () => {
 
   const toggleMode = (nextMode: Mode) => {
     setMode(nextMode);
-    toggleParameter('mode', nextMode, probability);
+    toggleParameter(modeParamName, nextMode, probability);
   };
 
   useEffect(() => {
-    const modeParam = searchParams.get('mode');
-    if (modeParam && modeParam !== mode && (modeParam === probability || modeParam === result)) {
+    const modeParam = getParameter(modeParamName, [probability, result]);
+    if (modeParam && modeParam !== mode) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setMode(modeParam);
     }
-  }, [mode, searchParams]);
+  }, [getParameter, mode]);
 
   return (
     <div>

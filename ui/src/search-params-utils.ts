@@ -1,14 +1,16 @@
 import { useSearchParams } from 'react-router-dom';
 
-export const modalQueryParamName = 'modal-id';
+export const modalParamName = 'modal-id';
 
-export const standThresholdParam = 't';
+export const modeParamName = 'mode';
 
-export const doublingParam = 'd';
-export const splittingParam = 's';
-export const doublingAfterSplitParam = 'das';
-export const hitSplitAcesParam = 'hsa';
-export const blackjackAfterSplitParam = 'bas';
+export const standThresholdParamName = 't';
+
+export const doublingParamName = 'd';
+export const splittingParamName = 's';
+export const doublingAfterSplitParamName = 'das';
+export const hitSplitAcesParamName = 'hsa';
+export const blackjackAfterSplitParamName = 'bas';
 
 export type ToggleParameterArguments = [string, string, string];
 
@@ -19,6 +21,11 @@ export const useSearchParamsUtils = () => {
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.delete(paramName);
     setSearchParams(nextSearchParams);
+  };
+
+  const getParameter = <T extends string>(paramName: string, allowedValues?: T[]): T | null => {
+    const value = searchParams.get(paramName);
+    return value && (!allowedValues || allowedValues.includes(value as T)) ? (value as T) : null;
   };
 
   const setParameter = (paramName: string, paramValue: string) => {
@@ -47,6 +54,7 @@ export const useSearchParamsUtils = () => {
 
   return {
     deleteParameter,
+    getParameter,
     searchParams,
     setParameter,
     setSearchParams,

@@ -1,17 +1,17 @@
 import { PropsWithChildren, useCallback, useEffect } from 'react';
 import Modal from 'react-modal';
-import { modalQueryParamName, useSearchParamsUtils } from '../search-params-utils';
+import { modalParamName, useSearchParamsUtils } from '../search-params-utils';
 
 export type BaseModalProps = PropsWithChildren<{
   id: string;
 }>;
 
 export const BaseModal: React.FC<BaseModalProps> = props => {
-  const { deleteParameter, searchParams } = useSearchParamsUtils();
-  const isModalOpen = searchParams.get(modalQueryParamName) === props.id;
+  const { deleteParameter, getParameter } = useSearchParamsUtils();
+  const isModalOpen = getParameter(modalParamName) === props.id;
 
   const closeModal = useCallback(() => {
-    deleteParameter(modalQueryParamName);
+    deleteParameter(modalParamName);
   }, [deleteParameter]);
 
   useEffect(() => {

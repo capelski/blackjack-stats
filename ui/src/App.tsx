@@ -10,12 +10,12 @@ import { getLocalizedRoute, getNavLinkStyle, getStrategyPageNestedRoutes } from 
 import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
 import {
-  blackjackAfterSplitParam,
-  doublingAfterSplitParam,
-  doublingParam,
-  hitSplitAcesParam,
-  splittingParam,
-  standThresholdParam,
+  blackjackAfterSplitParamName,
+  doublingAfterSplitParamName,
+  doublingParamName,
+  hitSplitAcesParamName,
+  splittingParamName,
+  standThresholdParamName,
   useSearchParamsUtils,
 } from './search-params-utils';
 import { SettingsContext } from './settings.context';
@@ -26,14 +26,14 @@ const defaultStandThreshold = 17;
 function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
-  const { searchParams, toggleParameter, toggleParameters } = useSearchParamsUtils();
+  const { searchParams, toggleParameter, toggleParameters, getParameter } = useSearchParamsUtils();
 
   const [rules, setRules] = useState<Rules>(() => {
-    const doubling = searchParams.get(doublingParam) === '1';
-    const splitting = searchParams.get(splittingParam) === '1';
-    const doublingAfterSplit = searchParams.get(doublingAfterSplitParam) === '1';
-    const hitSplitAces = searchParams.get(hitSplitAcesParam) === '1';
-    const blackjackAfterSplit = searchParams.get(blackjackAfterSplitParam) === '1';
+    const doubling = getParameter(doublingParamName) === '1';
+    const splitting = getParameter(splittingParamName) === '1';
+    const doublingAfterSplit = getParameter(doublingAfterSplitParamName) === '1';
+    const hitSplitAces = getParameter(hitSplitAcesParamName) === '1';
+    const blackjackAfterSplit = getParameter(blackjackAfterSplitParamName) === '1';
 
     return {
       doubling,
@@ -45,7 +45,7 @@ function App() {
   });
 
   const [standThreshold, setStandThreshold] = useState(() => {
-    const queryValue = searchParams.get(standThresholdParam);
+    const queryValue = getParameter(standThresholdParamName);
     if (queryValue === null) {
       return defaultStandThreshold;
     }
@@ -59,17 +59,17 @@ function App() {
     setRules(newRules);
 
     toggleParameters([
-      [doublingParam, newRules.doubling ? '1' : '0', '0'],
-      [splittingParam, newRules.splitting ? '1' : '0', '0'],
-      [doublingAfterSplitParam, newRules.doublingAfterSplit ? '1' : '0', '0'],
-      [hitSplitAcesParam, newRules.hitSplitAces ? '1' : '0', '0'],
-      [blackjackAfterSplitParam, newRules.blackjackAfterSplit ? '1' : '0', '0'],
+      [doublingParamName, newRules.doubling ? '1' : '0', '0'],
+      [splittingParamName, newRules.splitting ? '1' : '0', '0'],
+      [doublingAfterSplitParamName, newRules.doublingAfterSplit ? '1' : '0', '0'],
+      [hitSplitAcesParamName, newRules.hitSplitAces ? '1' : '0', '0'],
+      [blackjackAfterSplitParamName, newRules.blackjackAfterSplit ? '1' : '0', '0'],
     ]);
   };
 
   const updateStandThreshold = (newValue: number) => {
     setStandThreshold(newValue);
-    toggleParameter(standThresholdParam, String(newValue), String(defaultStandThreshold));
+    toggleParameter(standThresholdParamName, String(newValue), String(defaultStandThreshold));
   };
 
   const search = searchParams.toString();

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { modalQueryParamName, useSearchParamsUtils } from '../search-params-utils';
+import { modalParamName, useSearchParamsUtils } from '../search-params-utils';
 import { MaterialHand } from '../types/material-hand.type';
 import { MaterialHandsListCore } from './material-hands-list-core.component';
 import { HandsListProps } from './material-hands-list-item.component';
@@ -17,7 +17,7 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
   const modalId = props.score;
 
   const openModal = () => {
-    setParameter(modalQueryParamName, modalId);
+    setParameter(modalParamName, modalId);
   };
 
   return (
