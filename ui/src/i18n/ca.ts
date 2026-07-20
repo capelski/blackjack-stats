@@ -21,6 +21,7 @@ export const ca = {
     probability: 'Probabilitat',
     result: 'Resultat',
     decimals: '{{count}} decimals',
+    hand: 'Mà',
   },
   actions: {
     double: 'Doblar',

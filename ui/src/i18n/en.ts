@@ -21,6 +21,7 @@ export const en = {
     probability: 'Probability',
     result: 'Result',
     decimals: '{{count}} decimals',
+    hand: 'Hand',
   },
   actions: {
     double: 'Double',

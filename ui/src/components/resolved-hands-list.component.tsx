@@ -28,7 +28,7 @@ export const ResolvedHandsList: React.FC = () => {
             ]}
             decision={t('commons.decision')}
             isHeader={true}
-            score={t('commons.score')}
+            label={t('commons.hand')}
           />
         </thead>
 
@@ -48,7 +48,7 @@ export const ResolvedHandsList: React.FC = () => {
                 decision={resolvedHand.action}
                 key={resolvedHand.label}
                 optimalDecision={resolvedHand.optimalConsequence.action}
-                score={resolvedHand.label}
+                label={resolvedHand.label}
               />
             );
           })}

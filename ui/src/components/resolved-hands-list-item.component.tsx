@@ -12,7 +12,7 @@ export type ActionRow = {
 export type ResolvedHandsListItemProps = {
   actionRows: ActionRow[];
   decision: string;
-  score: string;
+  label: string;
 } & (
   | {
       isHeader: true;
@@ -46,11 +46,9 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
               padding: '8px 0',
             }}
           >
-            <td style={columnStyle} className="score">
-              {isFirstActionRow ? props.score : ''}
-            </td>
+            <td style={columnStyle}>{isFirstActionRow ? props.label : ''}</td>
 
-            <td style={columnStyle} className="decision">
+            <td style={columnStyle}>
               {props.isHeader
                 ? props.decision
                 : isFirstActionRow
@@ -66,7 +64,6 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
                 fontWeight:
                   props.isHeader || actionRow.action === props.optimalDecision ? 'bold' : 'normal',
               }}
-              className="action"
             >
               {props.isHeader ? actionRow.action : t(`actions.${actionRow.action}`)}
             </td>
