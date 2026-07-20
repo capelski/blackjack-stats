@@ -6,12 +6,13 @@ import { getSortedNumericKeys } from './numbers.logic';
 export const createOutcomesByBetMultiplier = (
   probabilityByBetMultiplier: BetMultiplierMap,
   comparisonResult?: Result,
+  weight = 1,
 ): OutcomesByBetMultiplierMap => {
   const getMap = (result: Result) =>
     getSortedNumericKeys(probabilityByBetMultiplier).reduce<BetMultiplierMap>(
       (acc, betMultiplier) => {
         acc[betMultiplier] =
-          comparisonResult === result ? probabilityByBetMultiplier[betMultiplier] : 0;
+          weight * (comparisonResult === result ? probabilityByBetMultiplier[betMultiplier] : 0);
         return acc;
       },
       {},

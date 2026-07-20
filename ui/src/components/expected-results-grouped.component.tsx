@@ -46,7 +46,7 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.outcomesByBetMultiplier.win}
-            transform={number => toPercentage(number * props.expectedResult.probability, decimals)}
+            transform={number => toPercentage(number, decimals)}
           />
         ) : (
           t('commons.win')
@@ -57,7 +57,7 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.outcomesByBetMultiplier.push}
-            transform={number => toPercentage(number * props.expectedResult.probability, decimals)}
+            transform={number => toPercentage(number, decimals)}
           />
         ) : (
           t('commons.push')
@@ -68,7 +68,7 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
         {props.expectedResult ? (
           <BetMultipliersCell
             betMultiplierMap={props.expectedResult.outcomesByBetMultiplier.lose}
-            transform={number => toPercentage(number * props.expectedResult.probability, decimals)}
+            transform={number => toPercentage(number, decimals)}
           />
         ) : (
           t('commons.lose')
@@ -76,9 +76,14 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
       </td>
 
       <td style={cellStyle}>
-        {props.expectedResult
-          ? toPercentage(props.expectedResult.probability, decimals)
-          : t('commons.total')}
+        {props.expectedResult ? (
+          <BetMultipliersCell
+            betMultiplierMap={props.expectedResult.probabilityByBetMultiplier}
+            transform={number => toPercentage(number, decimals)}
+          />
+        ) : (
+          t('commons.total')
+        )}
       </td>
     </tr>
   );

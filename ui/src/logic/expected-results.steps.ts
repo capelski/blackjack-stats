@@ -15,21 +15,6 @@ const assertEqual = (actual: unknown, expected: unknown, message: string): void 
   }
 };
 
-const assertNumberClose = (
-  actual: number,
-  expected: number,
-  message: string,
-  epsilon = 1e-15,
-): void => {
-  if (!Number.isFinite(actual) || !Number.isFinite(expected)) {
-    throw new Error(`${message}: expected a finite number, got "${actual}" and "${expected}"`);
-  }
-
-  if (Math.abs(actual - expected) > epsilon) {
-    throw new Error(`${message}: expected "${expected}", got "${actual}"`);
-  }
-};
-
 const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalScore => {
   const score = parseScore(scoreLabel);
   const finalScore = finalScores.find(item => item.score === score);
@@ -62,13 +47,9 @@ Then('the following individual expected result scenarios are considered', functi
     const rules: Rules = JSON.parse(row['Rules'].trim());
     const finalScores = getFinalScoresFromResolver(rules, resolver);
     const finalScore = findFinalScore(finalScores, row['Score'].trim());
-    const result = getExpectedResult(finalScore, finalScore.probabilityByBetMultiplier);
+    const result = getExpectedResult(finalScore);
 
-    assertNumberClose(
-      result.probability,
-      Number(row['Probability'].trim()),
-      'Probability mismatch',
-    );
+    assertEqual(result.probability, Number(row['Probability'].trim()), 'Probability mismatch');
     assertEqual(
       formatProbabilityByBetMultiplier(result.outcomesByBetMultiplier.win),
       row['Win'].trim(),
@@ -84,7 +65,7 @@ Then('the following individual expected result scenarios are considered', functi
       row['Lose'].trim(),
       'Lose mismatch',
     );
-    assertNumberClose(result.edge, Number(row['Edge'].trim()), 'Edge mismatch');
+    assertEqual(result.edge, Number(row['Edge'].trim()), 'Edge mismatch');
   }
 });
 
@@ -95,11 +76,7 @@ Then('the following overall expected results scenarios are considered', function
     const finalScores = getFinalScoresFromResolver(rules, resolver);
     const results = getExpectedResults(finalScores);
 
-    assertNumberClose(
-      results.probability,
-      Number(row['Probability'].trim()),
-      'Probability mismatch',
-    );
+    assertEqual(results.probability, Number(row['Probability'].trim()), 'Probability mismatch');
     assertEqual(
       formatProbabilityByBetMultiplier(results.outcomesByBetMultiplier.win),
       row['Win'].trim(),
@@ -115,6 +92,6 @@ Then('the following overall expected results scenarios are considered', function
       row['Lose'].trim(),
       'Lose mismatch',
     );
-    assertNumberClose(results.edge, Number(row['Edge'].trim()), 'Edge mismatch');
+    assertEqual(results.edge, Number(row['Edge'].trim()), 'Edge mismatch');
   }
 });

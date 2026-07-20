@@ -76,7 +76,7 @@ export const getStandConsequence = (abstractHand: AbstractHand): Consequence => 
     },
   };
 
-  const expectedResult = getExpectedResult(finalScore, { [betMultiplier]: 1 });
+  const expectedResult = getExpectedResult(finalScore);
 
   return {
     finalProbabilities: { [finalScore.score]: 1 },

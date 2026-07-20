@@ -115,7 +115,7 @@ Then('the final score {int} has cards {string}, probability {string} and {string
   assert.strictEqual(String(item.hands.length), expectedHands);
 });
 
-Then('the returned probabilities are {string}', function(
+Then('the final score probabilities by bet multiplier are {string}', function(
   this: FinalScoresListWorld,
   expected: string,
 ) {

@@ -28,12 +28,6 @@ export const getFinalScoresList = (hands: MaterialHand[]): FinalScore[] => {
     finalScore.probabilityByBetMultiplier[hand.betMultiplier] += hand.probability;
   }
 
-  for (const finalScore of Object.values(finalScoresMap)) {
-    for (const betMultiplier of getSortedNumericKeys(finalScore.probabilityByBetMultiplier)) {
-      finalScore.probabilityByBetMultiplier[betMultiplier] /= finalScore.probability;
-    }
-  }
-
   const sortedKeys = getSortedNumericKeys(finalScoresMap);
 
   return sortedKeys.map(key => finalScoresMap[key]);

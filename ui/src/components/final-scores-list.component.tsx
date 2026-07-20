@@ -49,7 +49,7 @@ export const FinalScoresList: React.FC = () => {
                 probability={
                   <BetMultipliersCell
                     betMultiplierMap={finalScore.probabilityByBetMultiplier}
-                    transform={value => toPercentage(value * finalScore.probability, decimals)}
+                    transform={value => toPercentage(value, decimals)}
                   />
                 }
                 score={effectiveScoreToLabel(finalScore.score)}

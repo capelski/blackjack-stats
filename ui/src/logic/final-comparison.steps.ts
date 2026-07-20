@@ -85,11 +85,7 @@ When(
     const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel);
     const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
 
-    this.comparison = getFinalComparison(
-      playerScore,
-      dealerScore,
-      playerScore.probabilityByBetMultiplier,
-    );
+    this.comparison = getFinalComparison(playerScore, dealerScore);
   },
 );
 
@@ -104,6 +100,7 @@ Then('the final comparison probability equals {string}', function(
   this: FinalComparisonWorld,
   expectedProbability: string,
 ) {
+  //TODO
   assertEqual(
     String(this.comparison.probability),
     expectedProbability,
