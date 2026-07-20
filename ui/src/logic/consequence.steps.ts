@@ -3,7 +3,11 @@ import assert from 'node:assert';
 import { double, hit, stand } from '../models/action.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { getAbstractHands } from './abstract-hands.logic';
-import { getStandConsequence, mergeFutureConsequences } from './consequence.logic';
+import {
+  getStandConsequence,
+  getSurrenderConsequence,
+  mergeFutureConsequences,
+} from './consequence.logic';
 import {
   formatOutcomesByBetMultiplier,
   parseOutcomesByBetMultiplier,
@@ -60,6 +64,15 @@ When('getting the consequences of hitting', function(this: ConsequenceWorld) {
 
 When('getting the consequences of doubling or splitting', function(this: ConsequenceWorld) {
   this.consequence = mergeFutureConsequences(this.futureConsequences, double, 2);
+});
+
+When('getting the consequences of surrendering with {string} hand', function(
+  this: ConsequenceWorld,
+  label: string,
+) {
+  const abstractHands = getAbstractHands({});
+  const abstractHand = abstractHands.find(x => x.label === label)!;
+  this.consequence = getSurrenderConsequence(abstractHand);
 });
 
 Then('the consequence action equals {string}', function(

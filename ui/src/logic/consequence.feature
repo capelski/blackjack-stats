@@ -38,3 +38,9 @@ Feature: Consequences
     Then the consequence final probabilities equal "12=0.07692307692307693,13=0.07692307692307693,14=0.07692307692307693,15=0.07692307692307693,16=0.07692307692307693,17=0.07692307692307693,18=0.07692307692307693,19=0.07692307692307693,20=0.07692307692307693,21=0.3076923076923077"
     And the consequence outcomes equals "win: 2=0.5309153370754748 / push: 2=0.0684047588884379 / lose: 2=0.4006799040360623"
     And the consequence edge equals "0.26047086607882497"
+
+  Scenario: Surrender consequence
+    When getting the consequences of surrendering with "15" hand
+    Then the consequence final probabilities equal "15=1"
+    And the consequence outcomes equals "win: 0.5=0 / push: 0.5=0 / lose: 0.5=1"
+    And the consequence edge equals "-0.5"

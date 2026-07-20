@@ -1,4 +1,4 @@
-import { Action, double, hit, split, stand } from '../models/action.model';
+import { Action, double, hit, split, stand, surrender } from '../models/action.model';
 import { OutcomesByBetMultiplierMap } from './outcomes.type';
 
 export type FinalProbabilities = {
@@ -17,4 +17,5 @@ export type ConsequencesMap = {
   [hit]?: Consequence;
   [split]?: Consequence;
   [stand]: Consequence;
+  [surrender]?: Consequence;
 };

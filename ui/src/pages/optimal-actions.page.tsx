@@ -58,6 +58,12 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
           onChange={checked => props.setRules({ ...props.rules, splitting: checked })}
         />
         <CheckboxComponent
+          checked={!!props.rules.surrendering}
+          disabled={computing}
+          label={t('rules.surrendering')}
+          onChange={checked => props.setRules({ ...props.rules, surrendering: checked })}
+        />
+        <CheckboxComponent
           checked={doublingEnabled && splittingEnabled && !!props.rules.doublingAfterSplit}
           disabled={computing || !doublingEnabled || !splittingEnabled}
           label={t('rules.doublingAfterSplit')}

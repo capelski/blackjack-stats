@@ -1,4 +1,4 @@
-import { double, hit, split, stand } from '../models/action.model';
+import { double, hit, split, stand, surrender } from '../models/action.model';
 import { acesLabel, softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
 import { ConsequencesMap } from '../types/consequence.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
@@ -11,6 +11,7 @@ import {
   getHitConsequence,
   getSplitConsequence,
   getStandConsequence,
+  getSurrenderConsequence,
 } from './consequence.logic';
 
 export const getResolvedHands = (
@@ -43,6 +44,10 @@ export const getResolvedHands = (
 
       if (abstractHand.canSplit) {
         consequences[split] = getSplitConsequence(...parameters);
+      }
+
+      if (abstractHand.canSurrender) {
+        consequences[surrender] = getSurrenderConsequence(abstractHand);
       }
     }
 

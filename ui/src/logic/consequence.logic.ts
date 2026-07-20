@@ -1,5 +1,6 @@
-import { Action, double, hit, split, stand } from '../models/action.model';
+import { Action, double, hit, split, stand, surrender } from '../models/action.model';
 import { cards } from '../models/cards.model';
+import { lose } from '../models/result.model';
 import { blackjackScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
@@ -83,6 +84,21 @@ export const getStandConsequence = (abstractHand: AbstractHand): Consequence => 
     action: stand,
     outcomesByBetMultiplier: expectedResult.outcomesByBetMultiplier,
     edge: expectedResult.edge,
+  };
+};
+
+export const getSurrenderConsequence = (abstractHand: AbstractHand): Consequence => {
+  const probabilityByBetMultiplier = {
+    [0.5]: 1,
+  };
+
+  const outcomesByBetMultiplier = createOutcomesByBetMultiplier(probabilityByBetMultiplier, lose);
+
+  return {
+    finalProbabilities: { [abstractHand.effectiveScore]: 1 },
+    action: surrender,
+    outcomesByBetMultiplier,
+    edge: getEdge(outcomesByBetMultiplier),
   };
 };
 

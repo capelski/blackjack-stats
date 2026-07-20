@@ -14,6 +14,7 @@ import { HandBase } from './hand-base.type';
 export type AbstractHand = HandBase & {
   canDouble: boolean;
   canSplit: boolean;
+  canSurrender: boolean;
   example: string;
   isActionable: boolean;
   isHidden?: boolean;

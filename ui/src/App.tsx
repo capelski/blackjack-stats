@@ -16,6 +16,7 @@ import {
   hitSplitAcesParamName,
   splittingParamName,
   standThresholdParamName,
+  surrenderingParamName,
   useSearchParamsUtils,
 } from './search-params-utils';
 import { SettingsContext } from './settings.context';
@@ -34,6 +35,7 @@ function App() {
     const doublingAfterSplit = getParameter(doublingAfterSplitParamName) === '1';
     const hitSplitAces = getParameter(hitSplitAcesParamName) === '1';
     const blackjackAfterSplit = getParameter(blackjackAfterSplitParamName) === '1';
+    const surrendering = getParameter(surrenderingParamName) === '1';
 
     return {
       doubling,
@@ -41,6 +43,7 @@ function App() {
       doublingAfterSplit,
       hitSplitAces,
       blackjackAfterSplit,
+      surrendering,
     };
   });
 
@@ -64,6 +67,7 @@ function App() {
       [doublingAfterSplitParamName, newRules.doublingAfterSplit ? '1' : '0', '0'],
       [hitSplitAcesParamName, newRules.hitSplitAces ? '1' : '0', '0'],
       [blackjackAfterSplitParamName, newRules.blackjackAfterSplit ? '1' : '0', '0'],
+      [surrenderingParamName, newRules.surrendering ? '1' : '0', '0'],
     ]);
   };
 

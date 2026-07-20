@@ -27,6 +27,7 @@ export const en = {
     hit: 'Hit',
     split: 'Split',
     stand: 'Stand',
+    surrender: 'Surrender',
     bust: 'Bust',
     end: 'End',
   },
@@ -74,6 +75,7 @@ export const en = {
     doublingAfterSplit: 'Doubling After Split',
     hitSplitAces: 'Hit Split Aces',
     blackjackAfterSplit: 'Blackjack After Split',
+    surrendering: 'Surrendering',
   },
   standThresholdControl: {
     label: 'Stand threshold',

@@ -27,6 +27,7 @@ export const ca = {
     hit: 'Demanar',
     split: 'Dividir',
     stand: 'Plantar',
+    surrender: 'Rendir-se',
     bust: 'Eliminat',
     end: 'Fi',
   },
@@ -74,6 +75,7 @@ export const ca = {
     doublingAfterSplit: 'Doblar després de dividir',
     hitSplitAces: 'Demanar carta després de dividir asos',
     blackjackAfterSplit: 'Blackjack després de dividir',
+    surrendering: 'Rendir-se',
   },
   standThresholdControl: {
     label: 'Límit de plantar',

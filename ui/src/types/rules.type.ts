@@ -4,4 +4,5 @@ export type Rules = {
   doublingAfterSplit?: boolean;
   hitSplitAces?: boolean;
   splitting?: boolean;
+  surrendering?: boolean;
 };

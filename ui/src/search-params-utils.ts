@@ -11,6 +11,7 @@ export const splittingParamName = 's';
 export const doublingAfterSplitParamName = 'das';
 export const hitSplitAcesParamName = 'hsa';
 export const blackjackAfterSplitParamName = 'bas';
+export const surrenderingParamName = 'r';
 
 export type ToggleParameterArguments = [string, string, string];
 
