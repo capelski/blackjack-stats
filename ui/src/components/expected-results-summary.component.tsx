@@ -41,22 +41,13 @@ export const ExpectedResultsSummary: React.FC = () => {
       style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}
     >
       <ExpectedResultsSummaryCard discriminator={win}>
-        <BetMultipliersCell
-          betMultiplierMap={strategy.expectedResults.outcomesByBetMultiplier.win}
-          transform={number => toPercentage(number, decimals)}
-        />
+        <BetMultipliersCell map={strategy.expectedResults.outcomesByBetMultiplier.win} />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator={push}>
-        <BetMultipliersCell
-          betMultiplierMap={strategy.expectedResults.outcomesByBetMultiplier.push}
-          transform={number => toPercentage(number, decimals)}
-        />
+        <BetMultipliersCell map={strategy.expectedResults.outcomesByBetMultiplier.push} />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator={lose}>
-        <BetMultipliersCell
-          betMultiplierMap={strategy.expectedResults.outcomesByBetMultiplier.lose}
-          transform={number => toPercentage(number, decimals)}
-        />
+        <BetMultipliersCell map={strategy.expectedResults.outcomesByBetMultiplier.lose} />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator="edge">
         {toPercentage(strategy.expectedResults.edge, decimals)}

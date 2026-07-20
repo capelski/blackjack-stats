@@ -46,12 +46,7 @@ export const FinalScoresList: React.FC = () => {
               <FinalScoresListItem
                 hands={finalScore.hands}
                 key={index}
-                probability={
-                  <BetMultipliersCell
-                    betMultiplierMap={finalScore.probabilityByBetMultiplier}
-                    transform={value => toPercentage(value, decimals)}
-                  />
-                }
+                probability={<BetMultipliersCell map={finalScore.probabilityByBetMultiplier} />}
                 score={effectiveScoreToLabel(finalScore.score)}
                 combinations={combinations}
                 showBetMultiplier={showBetMultiplier}

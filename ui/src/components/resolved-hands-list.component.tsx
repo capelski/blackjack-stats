@@ -41,24 +41,9 @@ export const ResolvedHandsList: React.FC = () => {
                 actionRows={consequences.map(consequence => ({
                   action: consequence.action,
                   edge: toPercentage(consequence.edge, decimals),
-                  lose: (
-                    <BetMultipliersCell
-                      betMultiplierMap={consequence.outcomesByBetMultiplier.lose}
-                      transform={number => toPercentage(number, decimals)}
-                    />
-                  ),
-                  push: (
-                    <BetMultipliersCell
-                      betMultiplierMap={consequence.outcomesByBetMultiplier.push}
-                      transform={number => toPercentage(number, decimals)}
-                    />
-                  ),
-                  win: (
-                    <BetMultipliersCell
-                      betMultiplierMap={consequence.outcomesByBetMultiplier.win}
-                      transform={number => toPercentage(number, decimals)}
-                    />
-                  ),
+                  lose: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.lose} />,
+                  push: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.push} />,
+                  win: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.win} />,
                 }))}
                 decision={resolvedHand.action}
                 key={resolvedHand.label}

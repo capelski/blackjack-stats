@@ -119,10 +119,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
                     ? {
                         style: resultToStyles(finalComparison.result),
                         node: (
-                          <BetMultipliersCell
-                            betMultiplierMap={finalComparison.probabilityByBetMultiplier}
-                            transform={value => toPercentage(value, decimals)}
-                          />
+                          <BetMultipliersCell map={finalComparison.probabilityByBetMultiplier} />
                         ),
                       }
                     : {
@@ -134,12 +131,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
                             : '🔴',
                       };
                 }}
-                lastCell={
-                  <BetMultipliersCell
-                    betMultiplierMap={expectedResult.probabilityByBetMultiplier}
-                    transform={number => toPercentage(number, decimals)}
-                  />
-                }
+                lastCell={<BetMultipliersCell map={expectedResult.probabilityByBetMultiplier} />}
                 mode={mode}
               />
             );
