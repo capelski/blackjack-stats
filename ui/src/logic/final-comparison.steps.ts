@@ -100,18 +100,9 @@ Then('the final comparison probability equals {string}', function(
   this: FinalComparisonWorld,
   expectedProbability: string,
 ) {
-  //TODO
   assertEqual(
     String(this.comparison.probability),
     expectedProbability,
     'Final comparison probability mismatch',
   );
-});
-
-Then('the final comparison outcomes equal {string}', function(
-  this: FinalComparisonWorld,
-  expected: string,
-) {
-  const actual = formatOutcomesByBetMultiplier(this.comparison.outcomesByBetMultiplier);
-  assertEqual(actual, expected, 'Final comparison outcomes mismatch');
 });

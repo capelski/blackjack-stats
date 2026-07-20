@@ -10,10 +10,11 @@ export const getExpectedResult = (playerScore: FinalScoreBase): ExpectedResult =
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});
 
   for (const finalComparison of Object.values(finalComparisons)) {
-    increaseOutcomesByBetMultiplier(
-      outcomesByBetMultiplier,
-      finalComparison.outcomesByBetMultiplier,
+    const comparisonOutcomes = createOutcomesByBetMultiplier(
+      finalComparison.probabilityByBetMultiplier,
+      finalComparison.result,
     );
+    increaseOutcomesByBetMultiplier(outcomesByBetMultiplier, comparisonOutcomes);
   }
 
   const expectedResult: ExpectedResult = {
