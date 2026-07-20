@@ -49,7 +49,6 @@ Then('the following individual expected result scenarios are considered', functi
     const finalScore = findFinalScore(finalScores, row['Score'].trim());
     const result = getExpectedResult(finalScore);
 
-    assertEqual(result.probability, Number(row['Probability'].trim()), 'Probability mismatch');
     assertEqual(
       formatProbabilityByBetMultiplier(result.outcomesByBetMultiplier.win),
       row['Win'].trim(),

@@ -19,7 +19,6 @@ export const getExpectedResult = (playerScore: FinalScoreBase): ExpectedResult =
 
   const expectedResult: ExpectedResult = {
     finalComparisons,
-    probability: playerScore.probability,
     probabilityByBetMultiplier: playerScore.probabilityByBetMultiplier,
     outcomesByBetMultiplier,
     edge: getEdge(outcomesByBetMultiplier),
@@ -31,20 +30,19 @@ export const getExpectedResult = (playerScore: FinalScoreBase): ExpectedResult =
 
 export const getExpectedResults = (finalScores: FinalScore[]): ExpectedResults => {
   const breakdown: ExpectedResultsMap = {};
-
-  for (const playerScore of finalScores) {
-    breakdown[playerScore.score] = getExpectedResult(playerScore);
-  }
-
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});
   let probability = 0;
 
-  for (const expectedResult of Object.values(breakdown)) {
+  for (const playerScore of finalScores) {
+    probability += playerScore.probability;
+
+    const expectedResult = getExpectedResult(playerScore);
+    breakdown[playerScore.score] = expectedResult;
+
     increaseOutcomesByBetMultiplier(
       outcomesByBetMultiplier,
       expectedResult.outcomesByBetMultiplier,
     );
-    probability += expectedResult.probability;
   }
 
   const expectedResults: ExpectedResults = {
