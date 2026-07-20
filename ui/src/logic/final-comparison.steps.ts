@@ -96,12 +96,12 @@ Then('the final comparison result equals {string}', function(
   assertEqual(this.comparison.result, expectedResult, 'Final comparison result mismatch');
 });
 
-Then('the final comparison probability equals {string}', function(
+Then('the final comparison probabilities by bet multiplier are {string}', function(
   this: FinalComparisonWorld,
   expectedProbability: string,
 ) {
   assertEqual(
-    String(this.comparison.probability),
+    formatProbabilityByBetMultiplier(this.comparison.probabilityByBetMultiplier),
     expectedProbability,
     'Final comparison probability mismatch',
   );

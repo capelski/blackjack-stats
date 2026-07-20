@@ -1,3 +1,4 @@
+import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalComparison, FinalComparisonsMap } from '../types/final-comparison.type';
 import { FinalScore, FinalScoreBase } from '../types/final-score.type';
 import { dealerFinalScores } from './dealer-data.logic';
@@ -10,25 +11,17 @@ export const getFinalComparison = (
 ): FinalComparison => {
   const result = getResult(playerScore.score, dealerScore.score);
 
-  const { probability, probabilityByBetMultiplier } = getSortedNumericKeys(
+  const probabilityByBetMultiplier = getSortedNumericKeys(
     playerScore.probabilityByBetMultiplier,
-  ).reduce<{
-    probability: FinalComparison['probability'];
-    probabilityByBetMultiplier: FinalComparison['probabilityByBetMultiplier'];
-  }>(
-    (reduced, key) => {
-      const weightedProbability =
-        playerScore.probabilityByBetMultiplier[key] * dealerScore.probability;
-      reduced.probability += weightedProbability;
-      reduced.probabilityByBetMultiplier[key] = weightedProbability;
+  ).reduce<BetMultiplierMap>((reduced, key) => {
+    const weightedProbability =
+      playerScore.probabilityByBetMultiplier[key] * dealerScore.probability;
+    reduced[key] = weightedProbability;
 
-      return reduced;
-    },
-    { probability: 0, probabilityByBetMultiplier: {} },
-  );
+    return reduced;
+  }, {});
 
   const finalComparison: FinalComparison = {
-    probability,
     probabilityByBetMultiplier,
     result,
   };
