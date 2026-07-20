@@ -33,42 +33,45 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
     computeStrategy(props.rules);
   }, [props.rules]);
 
+  const doublingEnabled = !!props.rules.doubling;
+  const splittingEnabled = !!props.rules.splitting;
+
   return (
     <StrategyContext.Provider
       value={{
         computing,
-        showBetMultiplier: !!props.rules.doubling || !!props.rules.splitting,
+        showBetMultiplier: doublingEnabled || splittingEnabled,
         strategy,
       }}
     >
       <StrategyLayoutComponent title={t('titles.optimalActions')}>
         <CheckboxComponent
-          checked={!!props.rules.doubling}
+          checked={doublingEnabled}
           disabled={computing}
           label={t('rules.doubling')}
           onChange={checked => props.setRules({ ...props.rules, doubling: checked })}
         />
         <CheckboxComponent
-          checked={!!props.rules.splitting}
+          checked={splittingEnabled}
           disabled={computing}
           label={t('rules.splitting')}
           onChange={checked => props.setRules({ ...props.rules, splitting: checked })}
         />
         <CheckboxComponent
-          checked={!!props.rules.doublingAfterSplit}
-          disabled={computing || !props.rules.doubling || !props.rules.splitting}
+          checked={doublingEnabled && splittingEnabled && !!props.rules.doublingAfterSplit}
+          disabled={computing || !doublingEnabled || !splittingEnabled}
           label={t('rules.doublingAfterSplit')}
           onChange={checked => props.setRules({ ...props.rules, doublingAfterSplit: checked })}
         />
         <CheckboxComponent
-          checked={!!props.rules.hitSplitAces}
-          disabled={computing || !props.rules.splitting}
+          checked={splittingEnabled && !!props.rules.hitSplitAces}
+          disabled={computing || !splittingEnabled}
           label={t('rules.hitSplitAces')}
           onChange={checked => props.setRules({ ...props.rules, hitSplitAces: checked })}
         />
         <CheckboxComponent
-          checked={!!props.rules.blackjackAfterSplit}
-          disabled={computing || !props.rules.splitting}
+          checked={splittingEnabled && !!props.rules.blackjackAfterSplit}
+          disabled={computing || !splittingEnabled}
           label={t('rules.blackjackAfterSplit')}
           onChange={checked => props.setRules({ ...props.rules, blackjackAfterSplit: checked })}
         />
