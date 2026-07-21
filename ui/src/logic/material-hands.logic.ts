@@ -142,7 +142,7 @@ export const serializeCards = (hand: MaterialHand, separator: string = ','): str
   const symbols = hand.cards.map(c => c.symbol);
 
   if (hand.isPostSplit) {
-    symbols.splice(1, 0, postSplitSymbol);
+    symbols.splice(1, 0, symbols[0], postSplitSymbol);
   }
 
   if (hand.isPostDouble) {
