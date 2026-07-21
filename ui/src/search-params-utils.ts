@@ -55,9 +55,16 @@ export const useSearchParamsUtils = () => {
     setSearchParams(nextSearchParams);
   };
 
+  const getSearchString = () => {
+    const cleanSearchParams = new URLSearchParams(searchParams);
+    cleanSearchParams.delete(cardsFilterParamName);
+    return cleanSearchParams.toString();
+  };
+
   return {
     deleteParameter,
     getParameter,
+    getSearchString,
     searchParams,
     setParameter,
     setSearchParams,

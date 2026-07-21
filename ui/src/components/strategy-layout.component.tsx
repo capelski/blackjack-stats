@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet, useSearchParams } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import {
   expectedResultsRoute,
   finalScoresRoute,
@@ -8,6 +8,7 @@ import {
   resolvedHandsRoute,
 } from '../../../constants';
 import { getNavLinkStyle } from '../nav-utils';
+import { useSearchParamsUtils } from '../search-params-utils';
 import { useStrategyContext } from '../strategy.context';
 
 export type StrategyLayoutComponentProps = PropsWithChildren<{
@@ -17,8 +18,8 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
   const { t } = useTranslation();
   const { computing, strategy } = useStrategyContext();
-  const [searchParams] = useSearchParams();
-  const search = searchParams.toString();
+  const { getSearchString } = useSearchParamsUtils();
+  const search = getSearchString();
 
   return (
     <div>
