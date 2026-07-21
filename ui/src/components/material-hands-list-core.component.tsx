@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { scoresToLabel } from '../logic/labels.logic';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
+import { cardsFilterParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { MaterialHand } from '../types/material-hand.type';
@@ -67,13 +68,15 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { computing } = useStrategyContext();
+  const { getParameter, setParameter } = useSearchParamsUtils();
 
-  const [cardsFilter, setCardsFilter] = useState('');
+  const [cardsFilter, setCardsFilter] = useState(() => getParameter(cardsFilterParamName) ?? '');
   const [showNonFinalHands, setShowNonFinalHands] = useState(false);
   const [page, setPage] = useState(1);
 
   const updateCardsFilter = (value: string) => {
     setCardsFilter(value);
+    setParameter(cardsFilterParamName, value);
     setPage(1);
   };
 
