@@ -4,6 +4,7 @@ import { CheckboxComponent } from '../components/checkbox.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { getStrategy } from '../logic/strategy.logic';
 import { StrategyContext } from '../strategy.context';
+import { DecisionOverrideHandler, DecisionOverridesMap } from '../types/decision-overrides.type';
 import { HandResolver } from '../types/hand-resolution.type';
 import { Rules } from '../types/rules.type';
 import { Strategy } from '../types/strategy.type';
@@ -11,6 +12,8 @@ import { Strategy } from '../types/strategy.type';
 const optimalActionsHandResolver: HandResolver = hand => hand.optimalConsequence.action;
 
 export type OptimalActionsPageProps = {
+  decisionOverrides: DecisionOverridesMap;
+  onDecisionOverride: DecisionOverrideHandler;
   rules: Rules;
   setRules: (rules: Rules) => void;
 };
@@ -20,18 +23,28 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
   const [computing, setComputing] = useState(false);
   const [strategy, setStrategy] = useState<Strategy>(undefined!);
 
-  const computeStrategy = async (rules: Rules) => {
+  const computeStrategy = async (rules: Rules, decisionOverrides: DecisionOverridesMap) => {
     setComputing(true);
 
-    const strategy = await getStrategy(rules, optimalActionsHandResolver);
+    const handResolver: HandResolver = hand => {
+      const overriddenDecision = decisionOverrides[hand.label];
+
+      if (overriddenDecision && hand.consequences[overriddenDecision]) {
+        return overriddenDecision;
+      }
+
+      return optimalActionsHandResolver(hand);
+    };
+
+    const strategy = await getStrategy(rules, handResolver);
     setStrategy(strategy);
     setComputing(false);
   };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    computeStrategy(props.rules);
-  }, [props.rules]);
+    computeStrategy(props.rules, props.decisionOverrides);
+  }, [props.decisionOverrides, props.rules]);
 
   const doublingEnabled = !!props.rules.doubling;
   const splittingEnabled = !!props.rules.splitting;
@@ -40,6 +53,8 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
     <StrategyContext.Provider
       value={{
         computing,
+        decisionOverrides: props.decisionOverrides,
+        onDecisionOverride: props.onDecisionOverride,
         showBetMultiplier: doublingEnabled || splittingEnabled,
         strategy,
       }}

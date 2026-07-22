@@ -1,8 +1,11 @@
 import { createContext, useContext } from 'react';
+import { DecisionOverrideHandler, DecisionOverridesMap } from './types/decision-overrides.type';
 import { Strategy } from './types/strategy.type';
 
 export type StrategyContextValue = {
   computing: boolean;
+  decisionOverrides: DecisionOverridesMap;
+  onDecisionOverride: DecisionOverrideHandler;
   showBetMultiplier: boolean;
   strategy: Strategy;
 };

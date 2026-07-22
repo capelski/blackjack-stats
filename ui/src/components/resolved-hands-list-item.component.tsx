@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Action } from '../models/action.model';
+import { DecisionOverrideHandler } from '../types/decision-overrides.type';
 
 export type ActionRow = {
   action: string;
@@ -11,16 +13,19 @@ export type ActionRow = {
 
 export type ResolvedHandsListItemProps = {
   actionRows: ActionRow[];
-  decision: string;
   label: string;
 } & (
   | {
+      decision: string;
       isHeader: true;
+      onDecisionOverride?: undefined;
       optimalDecision?: undefined;
     }
   | {
+      decision: Action;
       isHeader?: false;
-      optimalDecision: string;
+      onDecisionOverride: DecisionOverrideHandler;
+      optimalDecision: Action;
     }
 );
 
@@ -49,13 +54,28 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
             <td style={columnStyle}>{isFirstActionRow ? props.label : ''}</td>
 
             <td style={columnStyle}>
-              {props.isHeader
-                ? props.decision
-                : isFirstActionRow
-                ? `${t(`actions.${props.decision}`)}${
-                    props.decision === props.optimalDecision ? '' : ' ⚠️'
-                  }`
-                : ''}
+              {props.isHeader ? (
+                props.decision
+              ) : isFirstActionRow ? (
+                <div style={{ alignItems: 'center', display: 'flex', gap: '8px' }}>
+                  <select
+                    onChange={event => {
+                      props.onDecisionOverride(props.label, event.target.value as Action);
+                    }}
+                    value={props.decision}
+                  >
+                    {props.actionRows.map(actionOption => (
+                      <option key={actionOption.action} value={actionOption.action}>
+                        {t(`actions.${actionOption.action}`)}
+                      </option>
+                    ))}
+                  </select>
+
+                  {props.decision === props.optimalDecision ? '' : '⚠️'}
+                </div>
+              ) : (
+                ''
+              )}
             </td>
 
             <td

@@ -9,7 +9,7 @@ import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
 export const ResolvedHandsList: React.FC = () => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { strategy } = useStrategyContext();
+  const { decisionOverrides, onDecisionOverride, strategy } = useStrategyContext();
   const actionableResolvedHands = getActionableResolvedHands(strategy.resolvedHands);
 
   return (
@@ -35,6 +35,7 @@ export const ResolvedHandsList: React.FC = () => {
         <tbody>
           {actionableResolvedHands.map(resolvedHand => {
             const consequences = Object.values(resolvedHand.consequences);
+            const selectedDecision = decisionOverrides[resolvedHand.label] ?? resolvedHand.action;
 
             return (
               <ResolvedHandsListItem
@@ -45,8 +46,9 @@ export const ResolvedHandsList: React.FC = () => {
                   push: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.push} />,
                   win: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.win} />,
                 }))}
-                decision={resolvedHand.action}
+                decision={selectedDecision}
                 key={resolvedHand.label}
+                onDecisionOverride={onDecisionOverride}
                 optimalDecision={resolvedHand.optimalConsequence.action}
                 label={resolvedHand.label}
               />

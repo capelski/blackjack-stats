@@ -20,6 +20,7 @@ import {
   useSearchParamsUtils,
 } from './search-params-utils';
 import { SettingsContext } from './settings.context';
+import { DecisionOverrideHandler, DecisionOverridesMap } from './types/decision-overrides.type';
 import { Rules } from './types/rules.type';
 
 const defaultStandThreshold = 17;
@@ -28,6 +29,12 @@ function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
   const { searchParams, toggleParameter, toggleParameters, getParameter } = useSearchParamsUtils();
+  const [standThresholdDecisionOverrides, setStandThresholdDecisionOverrides] = useState<
+    DecisionOverridesMap
+  >({});
+  const [optimalActionsDecisionOverrides, setOptimalActionsDecisionOverrides] = useState<
+    DecisionOverridesMap
+  >({});
 
   const [rules, setRules] = useState<Rules>(() => {
     const doubling = getParameter(doublingParamName) === '1';
@@ -76,6 +83,14 @@ function App() {
     toggleParameter(standThresholdParamName, String(newValue), String(defaultStandThreshold));
   };
 
+  const onStandThresholdDecisionOverride: DecisionOverrideHandler = (label, action) => {
+    setStandThresholdDecisionOverrides(previous => ({ ...previous, [label]: action }));
+  };
+
+  const onOptimalActionsDecisionOverride: DecisionOverrideHandler = (label, action) => {
+    setOptimalActionsDecisionOverrides(previous => ({ ...previous, [label]: action }));
+  };
+
   const search = searchParams.toString();
 
   return (
@@ -111,6 +126,8 @@ function App() {
                 path={standThresholdRoute}
                 element={
                   <StandThresholdPage
+                    decisionOverrides={standThresholdDecisionOverrides}
+                    onDecisionOverride={onStandThresholdDecisionOverride}
                     standThreshold={standThreshold}
                     setStandThreshold={updateStandThreshold}
                   />
@@ -120,7 +137,14 @@ function App() {
               </Route>
               <Route
                 path={optimalActionsRoute}
-                element={<OptimalActionsPage rules={rules} setRules={updateRules} />}
+                element={
+                  <OptimalActionsPage
+                    decisionOverrides={optimalActionsDecisionOverrides}
+                    onDecisionOverride={onOptimalActionsDecisionOverride}
+                    rules={rules}
+                    setRules={updateRules}
+                  />
+                }
               >
                 {getStrategyPageNestedRoutes(searchParams)}
               </Route>
