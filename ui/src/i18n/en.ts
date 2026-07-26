@@ -78,7 +78,8 @@ export const en = {
     blackjackAfterSplit: 'Blackjack After Split',
     surrendering: 'Surrendering',
   },
-  standThresholdControl: {
+  standThreshold: {
     label: 'Stand threshold',
+    softLabel: 'Soft stand threshold',
   },
 };

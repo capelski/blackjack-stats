@@ -78,7 +78,8 @@ export const ca = {
     blackjackAfterSplit: 'Blackjack després de dividir',
     surrendering: 'Rendir-se',
   },
-  standThresholdControl: {
-    label: 'Límit de plantar',
+  standThreshold: {
+    label: 'Límit per plantar-se',
+    softLabel: 'Límit suau per plantar-se',
   },
 };

@@ -14,6 +14,7 @@ import {
   doublingAfterSplitParamName,
   doublingParamName,
   hitSplitAcesParamName,
+  softStandThresholdParamName,
   splittingParamName,
   standThresholdParamName,
   surrenderingParamName,
@@ -65,6 +66,17 @@ function App() {
     return Number.isInteger(threshold) ? threshold : defaultStandThreshold;
   });
 
+  const [softStandThreshold, setSoftStandThreshold] = useState(() => {
+    const queryValue = getParameter(softStandThresholdParamName);
+    if (queryValue === null) {
+      return defaultStandThreshold;
+    }
+
+    const threshold = Number(queryValue);
+
+    return Number.isInteger(threshold) ? threshold : defaultStandThreshold;
+  });
+
   const updateRules = (newRules: Rules) => {
     setRules(newRules);
 
@@ -81,6 +93,11 @@ function App() {
   const updateStandThreshold = (newValue: number) => {
     setStandThreshold(newValue);
     toggleParameter(standThresholdParamName, String(newValue), String(defaultStandThreshold));
+  };
+
+  const updateSoftStandThreshold = (newValue: number) => {
+    setSoftStandThreshold(newValue);
+    toggleParameter(softStandThresholdParamName, String(newValue), String(defaultStandThreshold));
   };
 
   const onStandThresholdDecisionOverride: DecisionOverrideHandler = (label, action) => {
@@ -128,6 +145,8 @@ function App() {
                   <StandThresholdPage
                     decisionOverrides={standThresholdDecisionOverrides}
                     onDecisionOverride={onStandThresholdDecisionOverride}
+                    softStandThreshold={softStandThreshold}
+                    setSoftStandThreshold={updateSoftStandThreshold}
                     standThreshold={standThreshold}
                     setStandThreshold={updateStandThreshold}
                   />

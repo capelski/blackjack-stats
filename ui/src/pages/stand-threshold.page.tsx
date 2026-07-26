@@ -13,6 +13,8 @@ import { Strategy } from '../types/strategy.type';
 export type StandThresholdPageProps = {
   decisionOverrides: DecisionOverridesMap;
   onDecisionOverride: DecisionOverrideHandler;
+  softStandThreshold: number;
+  setSoftStandThreshold: (standThreshold: number) => void;
   standThreshold: number;
   setStandThreshold: (standThreshold: number) => void;
 };
@@ -22,11 +24,16 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
   const [computing, setComputing] = useState(false);
   const [strategy, setStrategy] = useState<Strategy>(undefined!);
 
-  const computeStrategy = async (threshold: number, decisionOverrides: DecisionOverridesMap) => {
+  const computeStrategy = async (
+    threshold: number,
+    softThreshold: number,
+    decisionOverrides: DecisionOverridesMap,
+  ) => {
     setComputing(true);
 
     const standThresholdResolver: HandResolver = hand => {
-      return hand.effectiveScore >= threshold ? stand : hit;
+      const thresholdToUse = hand.scores.length > 1 ? softThreshold : threshold;
+      return hand.effectiveScore >= thresholdToUse ? stand : hit;
     };
 
     const handResolver = getOverridesResolver(standThresholdResolver, decisionOverrides);
@@ -39,8 +46,8 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    computeStrategy(props.standThreshold, props.decisionOverrides);
-  }, [props.decisionOverrides, props.standThreshold]);
+    computeStrategy(props.standThreshold, props.softStandThreshold, props.decisionOverrides);
+  }, [props.decisionOverrides, props.softStandThreshold, props.standThreshold]);
 
   return (
     <StrategyContext.Provider
@@ -55,8 +62,15 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
       <StrategyLayoutComponent title={t('titles.standThreshold')}>
         <StandThresholdControl
           disabled={computing}
+          label={t('standThreshold.label')}
           onChange={props.setStandThreshold}
           value={props.standThreshold}
+        />
+        <StandThresholdControl
+          disabled={computing}
+          label={t('standThreshold.softLabel')}
+          onChange={props.setSoftStandThreshold}
+          value={props.softStandThreshold}
         />
       </StrategyLayoutComponent>
     </StrategyContext.Provider>

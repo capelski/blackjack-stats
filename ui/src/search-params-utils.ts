@@ -7,6 +7,7 @@ export const modeParamName = 'mode';
 export const cardsFilterParamName = 'cf';
 
 export const standThresholdParamName = 't';
+export const softStandThresholdParamName = 'st';
 
 export const doublingParamName = 'd';
 export const splittingParamName = 's';
