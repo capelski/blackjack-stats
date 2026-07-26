@@ -66,6 +66,7 @@ const cardToMaterialHand = (card: Card): MaterialHand => {
     isPostDouble: false,
     isPostSplit,
     label,
+    labelAsInitial: label,
     probability: 1 / cardsNumber,
     scores,
   };
@@ -130,6 +131,11 @@ const getNextMaterialHand = (
     isPostDouble: previousDouble,
     isPostSplit,
     label: nextLabel,
+    labelAsInitial: getHandLabel(
+      nextScores,
+      nextCanSplit ? splittablePair : initialPair,
+      previous.cards[0].symbol,
+    ),
     // Computing based on previous probability to account for post split hands
     probability: previous.probability / cardsNumber,
     scores: nextScores,

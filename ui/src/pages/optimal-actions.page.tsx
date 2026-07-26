@@ -27,7 +27,7 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
     setComputing(true);
 
     const handResolver: HandResolver = hand => {
-      const overriddenDecision = decisionOverrides[hand.label];
+      const overriddenDecision = decisionOverrides[hand.labelAsInitial];
 
       if (overriddenDecision && hand.consequences[overriddenDecision]) {
         return overriddenDecision;

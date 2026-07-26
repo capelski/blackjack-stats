@@ -23,18 +23,19 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
 
   const computeStrategy = async (threshold: number, decisionOverrides: DecisionOverridesMap) => {
     setComputing(true);
-    const baseResolver: HandResolver = hand => {
+
+    const standThresholdResolver: HandResolver = hand => {
       return hand.effectiveScore >= threshold ? stand : hit;
     };
 
     const handResolver: HandResolver = hand => {
-      const overriddenDecision = decisionOverrides[hand.label];
+      const overriddenDecision = decisionOverrides[hand.labelAsInitial];
 
       if (overriddenDecision && hand.consequences[overriddenDecision]) {
         return overriddenDecision;
       }
 
-      return baseResolver(hand);
+      return standThresholdResolver(hand);
     };
 
     // Deliberately ignoring the app rules, as the stand threshold strategy doesn't depend on them

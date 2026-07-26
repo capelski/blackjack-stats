@@ -55,6 +55,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       effectiveScore,
       isActionable: effectiveScore < playerScoreLimit,
       isHidden: true,
+      labelAsInitial: x.label.split(' ')[0],
     };
   });
 
@@ -98,6 +99,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       category: initialPair,
       effectiveScore,
       isActionable: effectiveScore < playerScoreLimit,
+      labelAsInitial: x.label,
     };
   });
 
@@ -145,6 +147,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       effectiveScore,
       isActionable: effectiveScore < playerScoreLimit,
       isHidden: true,
+      labelAsInitial: x.label.split(' ')[0],
     };
   });
 
@@ -176,6 +179,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       effectiveScore,
       isActionable: !!rules.hitSplitAces,
       isHidden: true,
+      labelAsInitial: x.label.split(' ')[0],
     };
   });
 
@@ -209,6 +213,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       effectiveScore,
       isActionable: true,
       isHidden: x.isHidden || !rules.splitting,
+      labelAsInitial: x.label,
     };
   });
 
