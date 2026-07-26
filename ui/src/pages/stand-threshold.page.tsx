@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StandThresholdControl } from '../components/stand-threshold-control.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
+import { getOverridesResolver } from '../logic/decision-overrides.logic';
 import { getStrategy } from '../logic/strategy.logic';
 import { hit, stand } from '../models/action.model';
 import { StrategyContext } from '../strategy.context';
@@ -28,15 +29,7 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
       return hand.effectiveScore >= threshold ? stand : hit;
     };
 
-    const handResolver: HandResolver = hand => {
-      const overriddenDecision = decisionOverrides[hand.labelAsInitial];
-
-      if (overriddenDecision && hand.consequences[overriddenDecision]) {
-        return overriddenDecision;
-      }
-
-      return standThresholdResolver(hand);
-    };
+    const handResolver = getOverridesResolver(standThresholdResolver, decisionOverrides);
 
     // Deliberately ignoring the app rules, as the stand threshold strategy doesn't depend on them
     const strategy = await getStrategy({}, handResolver);

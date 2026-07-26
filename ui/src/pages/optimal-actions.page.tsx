@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckboxComponent } from '../components/checkbox.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
+import { getOverridesResolver } from '../logic/decision-overrides.logic';
 import { getStrategy } from '../logic/strategy.logic';
 import { StrategyContext } from '../strategy.context';
 import { DecisionOverrideHandler, DecisionOverridesMap } from '../types/decision-overrides.type';
@@ -26,15 +27,7 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
   const computeStrategy = async (rules: Rules, decisionOverrides: DecisionOverridesMap) => {
     setComputing(true);
 
-    const handResolver: HandResolver = hand => {
-      const overriddenDecision = decisionOverrides[hand.labelAsInitial];
-
-      if (overriddenDecision && hand.consequences[overriddenDecision]) {
-        return overriddenDecision;
-      }
-
-      return optimalActionsHandResolver(hand);
-    };
+    const handResolver = getOverridesResolver(optimalActionsHandResolver, decisionOverrides);
 
     const strategy = await getStrategy(rules, handResolver);
     setStrategy(strategy);

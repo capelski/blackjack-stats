@@ -66,6 +66,12 @@ export const getResolvedHands = (
       action,
     };
 
+    if (resolvedHand.isActionable && !resolvedHand.consequences[action]) {
+      throw new Error(
+        `The hand resolver returned "${action}", which is not allowed for hand "${resolvedHand.label}"`,
+      );
+    }
+
     resolvedHandsMap[resolvedHand.label] = resolvedHand;
 
     resolvedHands.push(resolvedHand);
