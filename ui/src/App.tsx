@@ -23,13 +23,19 @@ import {
 import { SettingsContext } from './settings.context';
 import { DecisionOverrideHandler, DecisionOverridesMap } from './types/decision-overrides.type';
 import { Rules } from './types/rules.type';
+import { StandThresholds } from './types/stand-thresholds.type';
 
 const defaultStandThreshold = 17;
 
 function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
-  const { searchParams, toggleParameter, toggleParameters, getParameter } = useSearchParamsUtils();
+  const {
+    searchParams,
+    toggleParameters,
+    getNumericParameter,
+    getParameter,
+  } = useSearchParamsUtils();
   const [standThresholdDecisionOverrides, setStandThresholdDecisionOverrides] = useState<
     DecisionOverridesMap
   >({});
@@ -55,26 +61,11 @@ function App() {
     };
   });
 
-  const [standThreshold, setStandThreshold] = useState(() => {
-    const queryValue = getParameter(standThresholdParamName);
-    if (queryValue === null) {
-      return defaultStandThreshold;
-    }
-
-    const threshold = Number(queryValue);
-
-    return Number.isInteger(threshold) ? threshold : defaultStandThreshold;
-  });
-
-  const [softStandThreshold, setSoftStandThreshold] = useState(() => {
-    const queryValue = getParameter(softStandThresholdParamName);
-    if (queryValue === null) {
-      return defaultStandThreshold;
-    }
-
-    const threshold = Number(queryValue);
-
-    return Number.isInteger(threshold) ? threshold : defaultStandThreshold;
+  const [standThresholds, setStandThresholds] = useState<StandThresholds>(() => {
+    return {
+      regular: getNumericParameter(standThresholdParamName) ?? defaultStandThreshold,
+      softScores: getNumericParameter(softStandThresholdParamName) ?? defaultStandThreshold,
+    };
   });
 
   const updateRules = (newRules: Rules) => {
@@ -90,14 +81,12 @@ function App() {
     ]);
   };
 
-  const updateStandThreshold = (newValue: number) => {
-    setStandThreshold(newValue);
-    toggleParameter(standThresholdParamName, String(newValue), String(defaultStandThreshold));
-  };
-
-  const updateSoftStandThreshold = (newValue: number) => {
-    setSoftStandThreshold(newValue);
-    toggleParameter(softStandThresholdParamName, String(newValue), String(defaultStandThreshold));
+  const updateStandThresholds = (newValue: StandThresholds) => {
+    setStandThresholds(newValue);
+    toggleParameters([
+      [standThresholdParamName, String(newValue.regular), String(defaultStandThreshold)],
+      [softStandThresholdParamName, String(newValue.softScores), String(defaultStandThreshold)],
+    ]);
   };
 
   const onStandThresholdDecisionOverride: DecisionOverrideHandler = (label, action) => {
@@ -145,10 +134,8 @@ function App() {
                   <StandThresholdPage
                     decisionOverrides={standThresholdDecisionOverrides}
                     onDecisionOverride={onStandThresholdDecisionOverride}
-                    softStandThreshold={softStandThreshold}
-                    setSoftStandThreshold={updateSoftStandThreshold}
-                    standThreshold={standThreshold}
-                    setStandThreshold={updateStandThreshold}
+                    setStandThresholds={updateStandThresholds}
+                    standThresholds={standThresholds}
                   />
                 }
               >

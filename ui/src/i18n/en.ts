@@ -81,5 +81,6 @@ export const en = {
   standThreshold: {
     label: 'Stand threshold',
     softLabel: 'Soft stand threshold',
+    sameThreshold: 'Same',
   },
 };

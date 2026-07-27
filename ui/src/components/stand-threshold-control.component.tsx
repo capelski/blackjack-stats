@@ -2,7 +2,7 @@ import React from 'react';
 
 type StandThresholdSliderProps = {
   disabled?: boolean;
-  label: string;
+  label?: string;
   onChange: (value: number) => void;
   value: number;
 };
@@ -29,7 +29,7 @@ export const StandThresholdControl: React.FC<StandThresholdSliderProps> = ({
 
   return (
     <React.Fragment>
-      <label>{label}:</label>
+      {label && <label>{label}:</label>}
       <button
         disabled={disabled || value <= minValue}
         onClick={() => updateValue(value - 1)}

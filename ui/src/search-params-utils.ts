@@ -27,6 +27,16 @@ export const useSearchParamsUtils = () => {
     setSearchParams(nextSearchParams);
   };
 
+  const getNumericParameter = (paramName: string): number | null => {
+    const paramValue = getParameter(paramName);
+    if (paramValue === null) {
+      return null;
+    }
+
+    const parsedValue = Number(paramValue);
+    return Number.isInteger(parsedValue) ? parsedValue : null;
+  };
+
   const getParameter = <T extends string>(paramName: string, allowedValues?: T[]): T | null => {
     const value = searchParams.get(paramName);
     return value && (!allowedValues || allowedValues.includes(value as T)) ? (value as T) : null;
@@ -64,6 +74,7 @@ export const useSearchParamsUtils = () => {
 
   return {
     deleteParameter,
+    getNumericParameter,
     getParameter,
     getSearchString,
     searchParams,
