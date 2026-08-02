@@ -5,9 +5,14 @@ import {
   postSplitPair,
   splittablePair,
 } from '../models/hand-category.model';
+import { softScoresSeparator } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
+
+export const getDisplayScores = (scores: number[], separator = softScoresSeparator) => {
+  return scores.join(separator);
+};
 
 export const getEffectiveScore = (scores: number[]) => {
   return scores[scores.length - 1];

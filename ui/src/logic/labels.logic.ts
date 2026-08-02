@@ -6,17 +6,12 @@ import {
   splittablePair,
   threeOrMoreCards,
 } from '../models/hand-category.model';
-import {
-  blackjackLabel,
-  bustLabel,
-  softScoresSeparator,
-  splitScoresSeparator,
-} from '../models/labels.model';
+import { blackjackLabel, bustLabel, splitScoresSeparator } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
-import { getEffectiveScore, getNextScores } from './scores.logic';
+import { getDisplayScores, getEffectiveScore, getNextScores } from './scores.logic';
 
 export const effectiveScoreToLabel = (effectiveScore: number): string => {
   if (effectiveScore === bustScore) {
@@ -95,5 +90,5 @@ export const scoresToLabel = (scores: number[]): string => {
     ? bustLabel
     : score === blackjackScore
     ? blackjackLabel
-    : scores.join(softScoresSeparator);
+    : getDisplayScores(scores);
 };
