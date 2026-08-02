@@ -1,12 +1,14 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import {
   expectedResultsRoute,
   finalScoresRoute,
   materialHandsRoute,
+  playerLabelUrlParam,
   resolvedHandsRoute,
 } from '../../constants';
+import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
 import { useStrategyContext } from '../strategy.context';
 
@@ -17,10 +19,17 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
   const { t } = useTranslation();
   const { computing, strategy } = useStrategyContext();
+  const params = useParams();
+
+  const rawPlayerLabel = params[playerLabelUrlParam];
+  const playerLabel = rawPlayerLabel && urlParamToLabel(rawPlayerLabel);
 
   return (
     <div>
-      <h1>{props.title}</h1>
+      <h1>
+        {props.title}
+        {playerLabel ? ` - ${playerLabel}` : ''}
+      </h1>
 
       {props.children}
 

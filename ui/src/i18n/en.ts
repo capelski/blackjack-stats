@@ -39,6 +39,8 @@ export const en = {
     actionsAnalysis: 'Actions analysis',
   },
   actionsBreakdown: {
+    dealerScore: 'Dealer score',
+    edgeContribution: 'Edge contribution',
     notFound: '"{{label}}" is not a valid score',
   },
   expectedResults: {

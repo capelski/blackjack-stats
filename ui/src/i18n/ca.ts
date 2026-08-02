@@ -39,6 +39,8 @@ export const ca = {
     actionsAnalysis: "Anàlisi d'accions",
   },
   actionsBreakdown: {
+    dealerScore: 'Puntuació del crupier',
+    edgeContribution: "Contribució a l'avantatge",
     notFound: '"{{label}}" no és una puntuació vàlida',
   },
   expectedResults: {

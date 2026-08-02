@@ -5,6 +5,7 @@ import { playerLabelUrlParam } from '../../constants';
 import { getActionableHands } from '../logic/abstract-hands.logic';
 import { urlParamToLabel } from '../logic/labels.logic';
 import { useStrategyContext } from '../strategy.context';
+import { ActionsBreakdownStand } from './actions-breakdown-stand.component';
 
 export const ActionsBreakdown: React.FC = () => {
   const { t } = useTranslation();
@@ -21,7 +22,9 @@ export const ActionsBreakdown: React.FC = () => {
   return (
     <div className="actions-breakdown">
       {resolvedHand ? (
-        <React.Fragment></React.Fragment>
+        <React.Fragment>
+          <ActionsBreakdownStand resolvedHand={resolvedHand} />
+        </React.Fragment>
       ) : (
         <h3>{t('actionsBreakdown.notFound', { label: playerLabel })}</h3>
       )}
