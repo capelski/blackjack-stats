@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '../models/action.model';
 import { DecisionOverrideHandler } from '../types/decision-overrides.type';
@@ -6,9 +6,6 @@ import { DecisionOverrideHandler } from '../types/decision-overrides.type';
 export type ActionRow = {
   action: string;
   edge: string;
-  lose: ReactNode;
-  push: ReactNode;
-  win: ReactNode;
 };
 
 export type ResolvedHandsListItemProps = {
@@ -32,7 +29,7 @@ export type ResolvedHandsListItemProps = {
 export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props => {
   const { t } = useTranslation();
 
-  const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr', '1fr', '1fr', '1fr'];
+  const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr'];
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
   };
@@ -87,12 +84,6 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
             >
               {props.isHeader ? actionRow.action : t(`actions.${actionRow.action}`)}
             </td>
-
-            <td style={columnStyle}>{actionRow.win}</td>
-
-            <td style={columnStyle}>{actionRow.push}</td>
-
-            <td style={columnStyle}>{actionRow.lose}</td>
 
             <td style={columnStyle}>{actionRow.edge}</td>
           </tr>

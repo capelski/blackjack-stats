@@ -3,7 +3,6 @@ import { toPercentage } from '../logic/numbers.logic';
 import { getActionableResolvedHands } from '../logic/resolved-hands.logic';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
-import { BetMultipliersCell } from './bet-multipliers-cell.component';
 import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
 
 export const ResolvedHandsList: React.FC = () => {
@@ -20,9 +19,6 @@ export const ResolvedHandsList: React.FC = () => {
             actionRows={[
               {
                 action: t('commons.action'),
-                win: t('commons.win'),
-                lose: t('commons.lose'),
-                push: t('commons.push'),
                 edge: t('commons.edge'),
               },
             ]}
@@ -42,15 +38,12 @@ export const ResolvedHandsList: React.FC = () => {
                 actionRows={consequences.map(consequence => ({
                   action: consequence.action,
                   edge: toPercentage(consequence.edge, decimals),
-                  lose: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.lose} />,
-                  push: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.push} />,
-                  win: <BetMultipliersCell map={consequence.outcomesByBetMultiplier.win} />,
                 }))}
                 decision={selectedDecision}
                 key={resolvedHand.label}
+                label={resolvedHand.label}
                 onDecisionOverride={onDecisionOverride}
                 optimalDecision={resolvedHand.optimalConsequence.action}
-                label={resolvedHand.label}
               />
             );
           })}
