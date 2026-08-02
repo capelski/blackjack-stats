@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { vitePrerenderPlugin } from 'vite-prerender-plugin';
 import {
+  actionsBreakdownRoute,
   expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
   expectedResultsRoute,
@@ -13,6 +14,13 @@ import {
   standThresholdRoute,
   supportedLanguages,
 } from './constants';
+import { getAbstractHands, getActionableHands } from './src/logic/abstract-hands.logic';
+import { labelToUrlParam } from './src/logic/labels.logic';
+
+const abstractHands = getAbstractHands({ splitting: true });
+const actionsBreakdownRoutes = getActionableHands(abstractHands).map(
+  hand => `${actionsBreakdownRoute}/${labelToUrlParam(hand.label)}`,
+);
 
 const allRoutes = supportedLanguages
   .map(language => {
@@ -24,6 +32,7 @@ const allRoutes = supportedLanguages
           `${expectedResultsRoute}/${expectedResultsGroupedRoute}`,
           `${expectedResultsRoute}/${expectedResultsMatrixRoute}`,
           resolvedHandsRoute,
+          ...actionsBreakdownRoutes,
         ].map(route => `/${language}/${page}/${route}`);
       })
       .flat();

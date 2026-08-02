@@ -1,6 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { actionsBreakdownRoute } from '../../constants';
+import { labelToUrlParam } from '../logic/labels.logic';
 import { Action } from '../models/action.model';
+import { useSearchParamsUtils } from '../search-params-utils';
 import { DecisionOverrideHandler } from '../types/decision-overrides.type';
 
 export type ActionRow = {
@@ -28,8 +32,11 @@ export type ResolvedHandsListItemProps = {
 
 export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props => {
   const { t } = useTranslation();
+  const { getSearchString } = useSearchParamsUtils();
+  const navigate = useNavigate();
+  const search = getSearchString();
 
-  const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr'];
+  const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr', '1fr'];
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
   };
@@ -84,6 +91,21 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
                 </div>
               ) : (
                 ''
+              )}
+            </td>
+
+            <td style={columnStyle}>
+              {!props.isHeader && isFirstActionRow && (
+                <button
+                  onClick={() => {
+                    navigate({
+                      pathname: `${actionsBreakdownRoute}/${labelToUrlParam(props.label)}`,
+                      search,
+                    });
+                  }}
+                >
+                  {t('resolvedHandsList.viewBreakdown')}
+                </button>
               )}
             </td>
           </tr>

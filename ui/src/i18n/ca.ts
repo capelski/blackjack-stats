@@ -38,6 +38,9 @@ export const ca = {
     expectedResults: 'Resultats esperats',
     actionsAnalysis: "Anàlisi d'accions",
   },
+  actionsBreakdown: {
+    notFound: '"{{label}}" no és una puntuació vàlida',
+  },
   expectedResults: {
     matrix: 'Matriu',
     grouped: 'Agrupats',
@@ -82,5 +85,8 @@ export const ca = {
     label: 'Límit per plantar-se',
     softLabel: 'Límit suau per plantar-se',
     sameThreshold: 'Igual',
+  },
+  resolvedHandsList: {
+    viewBreakdown: 'Veure detalls',
   },
 };

@@ -238,3 +238,9 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
 
   return abstractHands;
 };
+
+export const getActionableHands = <T extends Pick<AbstractHand, 'isActionable' | 'isHidden'>>(
+  resolvedHands: T[],
+): T[] => {
+  return resolvedHands.filter(hand => hand.isActionable && !hand.isHidden);
+};

@@ -6,7 +6,13 @@ import {
   splittablePair,
   threeOrMoreCards,
 } from '../models/hand-category.model';
-import { blackjackLabel, bustLabel, splitScoresSeparator } from '../models/labels.model';
+import {
+  blackjackLabel,
+  bustLabel,
+  softScoresSeparator,
+  softScoresSeparatorUrl,
+  splitScoresSeparator,
+} from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Card } from '../types/card.type';
@@ -83,6 +89,10 @@ export const getNextHandLabel = (
   return getHandLabel(nextScores, threeOrMoreCards);
 };
 
+export const labelToUrlParam = (label: string): string => {
+  return label.replace(softScoresSeparator, softScoresSeparatorUrl);
+};
+
 export const scoresToLabel = (scores: number[]): string => {
   const score = getEffectiveScore(scores);
 
@@ -91,4 +101,8 @@ export const scoresToLabel = (scores: number[]): string => {
     : score === blackjackScore
     ? blackjackLabel
     : getDisplayScores(scores);
+};
+
+export const urlParamToLabel = (urlParam: string): string => {
+  return urlParam.replace(softScoresSeparatorUrl, softScoresSeparator);
 };

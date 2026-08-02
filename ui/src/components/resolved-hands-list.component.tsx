@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { getActionableHands } from '../logic/abstract-hands.logic';
 import { toPercentage } from '../logic/numbers.logic';
-import { getActionableResolvedHands } from '../logic/resolved-hands.logic';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { ResolvedHandsListItem } from './resolved-hands-list-item.component';
@@ -9,7 +9,7 @@ export const ResolvedHandsList: React.FC = () => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { decisionOverrides, onDecisionOverride, strategy } = useStrategyContext();
-  const actionableResolvedHands = getActionableResolvedHands(strategy.resolvedHands);
+  const actionableResolvedHands = getActionableHands(strategy.resolvedHands);
 
   return (
     <div className="hand-actions-list">

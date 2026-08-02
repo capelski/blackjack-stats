@@ -38,6 +38,9 @@ export const en = {
     expectedResults: 'Expected results',
     actionsAnalysis: 'Actions analysis',
   },
+  actionsBreakdown: {
+    notFound: '"{{label}}" is not a valid score',
+  },
   expectedResults: {
     matrix: 'Matrix',
     grouped: 'Grouped',
@@ -82,5 +85,8 @@ export const en = {
     label: 'Stand threshold',
     softLabel: 'Soft stand threshold',
     sameThreshold: 'Same',
+  },
+  resolvedHandsList: {
+    viewBreakdown: 'View breakdown',
   },
 };

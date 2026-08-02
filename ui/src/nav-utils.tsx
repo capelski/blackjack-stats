@@ -1,13 +1,16 @@
 import React from 'react';
 import { Navigate, NavLinkRenderProps, Route } from 'react-router-dom';
 import {
+  actionsBreakdownRoute,
   expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
   expectedResultsRoute,
   finalScoresRoute,
   materialHandsRoute,
+  playerLabelUrlParam,
   resolvedHandsRoute,
 } from '../constants';
+import { ActionsBreakdown } from './components/actions-breakdown.component';
 import { ExpectedResultsGrouped } from './components/expected-results-grouped.component';
 import { ExpectedResultsMatrix } from './components/expected-results-matrix.component';
 import { ExpectedResults } from './components/expected-results.component';
@@ -26,31 +29,27 @@ export const getNavLinkStyle: (props: NavLinkRenderProps) => React.CSSProperties
   fontWeight: isActive ? 'bold' : 'normal',
 });
 
-export const getStrategyPageNestedRoutes = (search: URLSearchParams) => {
+export const getStrategyPageNestedRoutes = (search: string) => {
   return (
     <React.Fragment>
-      <Route
-        index
-        element={
-          <Navigate to={{ pathname: materialHandsRoute, search: search.toString() }} replace />
-        }
-      />
+      <Route index element={<Navigate to={{ pathname: materialHandsRoute, search }} replace />} />
       <Route path={materialHandsRoute} element={<MaterialHandsList />} />
       <Route path={finalScoresRoute} element={<FinalScoresList />} />
       <Route path={expectedResultsRoute} element={<ExpectedResults />}>
         <Route
           index
-          element={
-            <Navigate
-              to={{ pathname: expectedResultsMatrixRoute, search: search.toString() }}
-              replace
-            />
-          }
+          element={<Navigate to={{ pathname: expectedResultsMatrixRoute, search }} replace />}
         />
         <Route path={expectedResultsMatrixRoute} element={<ExpectedResultsMatrix />} />
         <Route path={expectedResultsGroupedRoute} element={<ExpectedResultsGrouped />} />
       </Route>
-      <Route path={resolvedHandsRoute} element={<ResolvedHandsList />} />
+      <Route path={resolvedHandsRoute}>
+        <Route index element={<ResolvedHandsList />} />
+        <Route
+          path={`${actionsBreakdownRoute}/:${playerLabelUrlParam}`}
+          element={<ActionsBreakdown />}
+        />
+      </Route>
     </React.Fragment>
   );
 };

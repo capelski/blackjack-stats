@@ -31,10 +31,10 @@ function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
   const {
-    searchParams,
     toggleParameters,
     getNumericParameter,
     getParameter,
+    getSearchString,
   } = useSearchParamsUtils();
   const [standThresholdDecisionOverrides, setStandThresholdDecisionOverrides] = useState<
     DecisionOverridesMap
@@ -97,7 +97,7 @@ function App() {
     setOptimalActionsDecisionOverrides(previous => ({ ...previous, [label]: action }));
   };
 
-  const search = searchParams.toString();
+  const search = getSearchString();
 
   return (
     <div className="app">
@@ -139,7 +139,7 @@ function App() {
                   />
                 }
               >
-                {getStrategyPageNestedRoutes(searchParams)}
+                {getStrategyPageNestedRoutes(search)}
               </Route>
               <Route
                 path={optimalActionsRoute}
@@ -152,28 +152,15 @@ function App() {
                   />
                 }
               >
-                {getStrategyPageNestedRoutes(searchParams)}
+                {getStrategyPageNestedRoutes(search)}
               </Route>
               <Route
                 index
-                element={
-                  <Navigate
-                    to={{ pathname: standThresholdRoute, search: searchParams.toString() }}
-                    replace
-                  />
-                }
+                element={<Navigate to={{ pathname: standThresholdRoute, search }} replace />}
               />
             </Route>
           ))}
-          <Route
-            index
-            element={
-              <Navigate
-                to={{ pathname: defaultLanguage, search: searchParams.toString() }}
-                replace
-              />
-            }
-          />
+          <Route index element={<Navigate to={{ pathname: defaultLanguage, search }} replace />} />
         </Routes>
       </SettingsContext.Provider>
     </div>

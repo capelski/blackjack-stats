@@ -81,10 +81,6 @@ export const getResolvedHands = (
   return { resolvedHands: sortResolvedHands(resolvedHands), handResolutionMap };
 };
 
-export const getActionableResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
-  return resolvedHands.filter(hand => hand.isActionable && !hand.isHidden);
-};
-
 const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
   return [...resolvedHands].sort((a, b) => {
     const isASoft = a.label.includes(softScoresSeparator);
