@@ -15,11 +15,10 @@ type SearchNavLinkProps = Omit<NavLinkProps, 'style' | 'to'> & {
 export const SearchNavLink: React.FC<SearchNavLinkProps> = props => {
   const { children, ...rest } = props;
 
-  const { getSearchString } = useSearchParamsUtils();
-  const search = getSearchString();
+  const { searchString } = useSearchParamsUtils();
 
   return (
-    <NavLink {...rest} style={getNavLinkStyle} to={{ pathname: props.to, search }}>
+    <NavLink {...rest} style={getNavLinkStyle} to={{ pathname: props.to, search: searchString }}>
       {children}
     </NavLink>
   );

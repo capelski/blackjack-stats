@@ -22,6 +22,10 @@ export const useSearchParamsUtils = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const cleanSearchParams = new URLSearchParams(searchParams);
+  cleanSearchParams.delete(cardsFilterParamName);
+  const searchString = cleanSearchParams.toString();
+
   const deleteParameter = (paramName: string) => {
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.delete(paramName);
@@ -46,7 +50,7 @@ export const useSearchParamsUtils = () => {
   const navigateWithSearch = (pathname: string) => {
     navigate({
       pathname,
-      search: getSearchString(),
+      search: searchString,
     });
   };
 
@@ -74,19 +78,13 @@ export const useSearchParamsUtils = () => {
     setSearchParams(nextSearchParams);
   };
 
-  const getSearchString = () => {
-    const cleanSearchParams = new URLSearchParams(searchParams);
-    cleanSearchParams.delete(cardsFilterParamName);
-    return cleanSearchParams.toString();
-  };
-
   return {
     deleteParameter,
     getNumericParameter,
     getParameter,
-    getSearchString,
     navigateWithSearch,
     searchParams,
+    searchString,
     setParameter,
     setSearchParams,
     toggleParameter,
