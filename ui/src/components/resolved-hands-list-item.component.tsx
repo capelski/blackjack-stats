@@ -50,6 +50,18 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
           >
             <td style={columnStyle}>{isFirstActionRow ? props.label : ''}</td>
 
+            <td
+              style={{
+                ...columnStyle,
+                fontWeight:
+                  props.isHeader || actionRow.action === props.optimalDecision ? 'bold' : 'normal',
+              }}
+            >
+              {props.isHeader ? actionRow.action : t(`actions.${actionRow.action}`)}
+            </td>
+
+            <td style={columnStyle}>{actionRow.edge}</td>
+
             <td style={columnStyle}>
               {props.isHeader ? (
                 props.decision
@@ -74,18 +86,6 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
                 ''
               )}
             </td>
-
-            <td
-              style={{
-                ...columnStyle,
-                fontWeight:
-                  props.isHeader || actionRow.action === props.optimalDecision ? 'bold' : 'normal',
-              }}
-            >
-              {props.isHeader ? actionRow.action : t(`actions.${actionRow.action}`)}
-            </td>
-
-            <td style={columnStyle}>{actionRow.edge}</td>
           </tr>
         );
       })}
