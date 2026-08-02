@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { optimalActionsRoute, standThresholdRoute, supportedLanguages } from '../constants';
 import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
 import { defaultLanguage } from './i18n';
-import { getLocalizedRoute, getNavLinkStyle, getStrategyPageNestedRoutes } from './nav-utils';
+import { getLocalizedRoute, getStrategyPageNestedRoutes } from './nav-utils';
 import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
+import { SearchNavLink } from './search-nav-link';
 import {
   blackjackAfterSplitParamName,
   doublingAfterSplitParamName,
@@ -102,24 +103,12 @@ function App() {
   return (
     <div className="app">
       <nav className="navbar">
-        <NavLink
-          to={{
-            pathname: getLocalizedRoute(i18n.language, standThresholdRoute),
-            search,
-          }}
-          style={getNavLinkStyle}
-        >
+        <SearchNavLink to={getLocalizedRoute(i18n.language, standThresholdRoute)}>
           {t('titles.standThreshold')}
-        </NavLink>
-        <NavLink
-          to={{
-            pathname: getLocalizedRoute(i18n.language, optimalActionsRoute),
-            search,
-          }}
-          style={getNavLinkStyle}
-        >
+        </SearchNavLink>
+        <SearchNavLink to={getLocalizedRoute(i18n.language, optimalActionsRoute)}>
           {t('titles.optimalActions')}
-        </NavLink>
+        </SearchNavLink>
         <LanguageSelector />
         <DecimalsSelector decimals={decimals} onDecimalsChange={setDecimals} />
       </nav>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, NavLinkRenderProps, Route } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 import {
   actionsBreakdownRoute,
   expectedResultsGroupedRoute,
@@ -21,13 +21,6 @@ import { ResolvedHandsList } from './components/resolved-hands-list.component';
 export const getLocalizedRoute = (language: string, route: string) => {
   return `/${language}/${route}`;
 };
-
-export const getNavLinkStyle: (props: NavLinkRenderProps) => React.CSSProperties = ({
-  isActive,
-}): React.CSSProperties => ({
-  marginRight: 16,
-  fontWeight: isActive ? 'bold' : 'normal',
-});
 
 export const getStrategyPageNestedRoutes = (search: string) => {
   return (

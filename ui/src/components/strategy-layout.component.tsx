@@ -1,14 +1,13 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import {
   expectedResultsRoute,
   finalScoresRoute,
   materialHandsRoute,
   resolvedHandsRoute,
 } from '../../constants';
-import { getNavLinkStyle } from '../nav-utils';
-import { useSearchParamsUtils } from '../search-params-utils';
+import { SearchNavLink } from '../search-nav-link';
 import { useStrategyContext } from '../strategy.context';
 
 export type StrategyLayoutComponentProps = PropsWithChildren<{
@@ -18,8 +17,6 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
   const { t } = useTranslation();
   const { computing, strategy } = useStrategyContext();
-  const { getSearchString } = useSearchParamsUtils();
-  const search = getSearchString();
 
   return (
     <div>
@@ -47,18 +44,14 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
         )}
 
         <nav className="nested-navbar">
-          <NavLink to={{ pathname: materialHandsRoute, search }} style={getNavLinkStyle}>
-            {t('strategyLayout.hands')}
-          </NavLink>
-          <NavLink to={{ pathname: finalScoresRoute, search }} style={getNavLinkStyle}>
-            {t('strategyLayout.finalScores')}
-          </NavLink>
-          <NavLink to={{ pathname: expectedResultsRoute, search }} style={getNavLinkStyle}>
+          <SearchNavLink to={materialHandsRoute}>{t('strategyLayout.hands')}</SearchNavLink>
+          <SearchNavLink to={finalScoresRoute}>{t('strategyLayout.finalScores')}</SearchNavLink>
+          <SearchNavLink to={expectedResultsRoute}>
             {t('strategyLayout.expectedResults')}
-          </NavLink>
-          <NavLink to={{ pathname: resolvedHandsRoute, search }} style={getNavLinkStyle}>
+          </SearchNavLink>
+          <SearchNavLink to={resolvedHandsRoute}>
             {t('strategyLayout.actionsAnalysis')}
-          </NavLink>
+          </SearchNavLink>
         </nav>
 
         {strategy && <Outlet />}

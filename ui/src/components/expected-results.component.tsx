@@ -1,26 +1,21 @@
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { expectedResultsGroupedRoute, expectedResultsMatrixRoute } from '../../constants';
-import { getNavLinkStyle } from '../nav-utils';
-import { useSearchParamsUtils } from '../search-params-utils';
+import { SearchNavLink } from '../search-nav-link';
 import { ExpectedResultsSummary } from './expected-results-summary.component';
 
 export const ExpectedResults: React.FC = () => {
   const { t } = useTranslation();
-  const { getSearchString } = useSearchParamsUtils();
-  const search = getSearchString();
 
   return (
     <div className="expected-results">
       <ExpectedResultsSummary />
 
       <nav className="nested-navbar">
-        <NavLink to={{ pathname: expectedResultsMatrixRoute, search }} style={getNavLinkStyle}>
-          {t('expectedResults.matrix')}
-        </NavLink>
-        <NavLink to={{ pathname: expectedResultsGroupedRoute, search }} style={getNavLinkStyle}>
+        <SearchNavLink to={expectedResultsMatrixRoute}>{t('expectedResults.matrix')}</SearchNavLink>
+        <SearchNavLink to={expectedResultsGroupedRoute}>
           {t('expectedResults.grouped')}
-        </NavLink>
+        </SearchNavLink>
       </nav>
 
       <Outlet />
