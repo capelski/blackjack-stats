@@ -19,11 +19,9 @@ import { MaterialHandsList } from './components/material-hands-list.component';
 import { ResolvedHandsList } from './components/resolved-hands-list.component';
 import { SearchNavigate } from './search-navigate';
 
-export const getLocalizedRoute = (language: string, route: string) => {
-  return `/${language}/${route}`;
-};
-
-export const getStrategyPageNestedRoutes = () => {
+// Must be called as a function (e.g. {StrategyPageNestedRoutes()}) rather than rendered as JSX:
+// react-router only accepts <Route> and <React.Fragment> as children of <Routes>/<Route>.
+export const StrategyPageNestedRoutes = () => {
   return (
     <React.Fragment>
       <Route index element={<SearchNavigate to={materialHandsRoute} />} />
@@ -43,14 +41,4 @@ export const getStrategyPageNestedRoutes = () => {
       </Route>
     </React.Fragment>
   );
-};
-
-export const splitPathname = (pathname: string) => {
-  const [language, ...route] = pathname.split('/').filter(Boolean);
-  return { language, route: route.join('/') };
-};
-
-export const translateLocalizedRoute = (pathname: string, language: string) => {
-  const { route } = splitPathname(pathname);
-  return `/${language}/${route}`;
 };

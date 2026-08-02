@@ -6,7 +6,7 @@ import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
 import { defaultLanguage } from './i18n';
-import { getLocalizedRoute, getStrategyPageNestedRoutes } from './nav-utils';
+import { getLocalizedRoute } from './nav-utils';
 import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
 import { SearchNavLink } from './search-nav-link';
@@ -23,6 +23,7 @@ import {
   useSearchParamsUtils,
 } from './search-params-utils';
 import { SettingsContext } from './settings.context';
+import { StrategyPageNestedRoutes } from './strategy-page-nested-routes';
 import { DecisionOverrideHandler, DecisionOverridesMap } from './types/decision-overrides.type';
 import { Rules } from './types/rules.type';
 import { StandThresholds } from './types/stand-thresholds.type';
@@ -122,7 +123,7 @@ function App() {
                   />
                 }
               >
-                {getStrategyPageNestedRoutes()}
+                {StrategyPageNestedRoutes()}
               </Route>
               <Route
                 path={optimalActionsRoute}
@@ -135,7 +136,7 @@ function App() {
                   />
                 }
               >
-                {getStrategyPageNestedRoutes()}
+                {StrategyPageNestedRoutes()}
               </Route>
               <Route index element={<SearchNavigate to={standThresholdRoute} />} />
             </Route>
