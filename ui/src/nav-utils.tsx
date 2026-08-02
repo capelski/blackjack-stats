@@ -7,7 +7,7 @@ import {
   finalScoresRoute,
   materialHandsRoute,
   resolvedHandsRoute,
-} from '../../constants';
+} from '../constants';
 import { ExpectedResultsGrouped } from './components/expected-results-grouped.component';
 import { ExpectedResultsMatrix } from './components/expected-results-matrix.component';
 import { ExpectedResults } from './components/expected-results.component';

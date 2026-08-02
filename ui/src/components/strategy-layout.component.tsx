@@ -6,7 +6,7 @@ import {
   finalScoresRoute,
   materialHandsRoute,
   resolvedHandsRoute,
-} from '../../../constants';
+} from '../../constants';
 import { getNavLinkStyle } from '../nav-utils';
 import { useSearchParamsUtils } from '../search-params-utils';
 import { useStrategyContext } from '../strategy.context';

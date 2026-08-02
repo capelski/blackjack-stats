@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router-dom';
-import { expectedResultsGroupedRoute, expectedResultsMatrixRoute } from '../../../constants';
+import { expectedResultsGroupedRoute, expectedResultsMatrixRoute } from '../../constants';
 import { getNavLinkStyle } from '../nav-utils';
 import { useSearchParamsUtils } from '../search-params-utils';
 import { ExpectedResultsSummary } from './expected-results-summary.component';

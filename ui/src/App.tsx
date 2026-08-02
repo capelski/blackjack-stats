@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import { optimalActionsRoute, standThresholdRoute, supportedLanguages } from '../../constants';
+import { optimalActionsRoute, standThresholdRoute, supportedLanguages } from '../constants';
 import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';

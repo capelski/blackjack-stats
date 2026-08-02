@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { supportedLanguages } from '../../../constants';
+import { supportedLanguages } from '../../constants';
 import { Language } from '../i18n';
 import { splitPathname, translateLocalizedRoute } from '../nav-utils';
 

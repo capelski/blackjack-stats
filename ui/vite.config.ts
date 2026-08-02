@@ -12,7 +12,7 @@ import {
   resolvedHandsRoute,
   standThresholdRoute,
   supportedLanguages,
-} from '../constants';
+} from './constants';
 
 const allRoutes = supportedLanguages
   .map(language => {

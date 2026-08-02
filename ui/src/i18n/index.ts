@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { supportedLanguages } from '../../../constants';
+import { supportedLanguages } from '../../constants';
 import { ca } from './ca';
 import { en } from './en';
 

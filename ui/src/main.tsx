@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import Modal from 'react-modal';
 import { BrowserRouter, StaticRouter } from 'react-router-dom';
-import { publicPath } from '../../constants';
+import { publicPath } from '../constants.ts';
 import App from './App.tsx';
 import './i18n/index';
 import './index.css';
