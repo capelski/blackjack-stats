@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { optimalActionsRoute, standThresholdRoute, supportedLanguages } from '../constants';
 import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
@@ -10,6 +10,7 @@ import { getLocalizedRoute, getStrategyPageNestedRoutes } from './nav-utils';
 import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
 import { SearchNavLink } from './search-nav-link';
+import { SearchNavigate } from './search-navigate';
 import {
   blackjackAfterSplitParamName,
   doublingAfterSplitParamName,
@@ -31,12 +32,7 @@ const defaultStandThreshold = 17;
 function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
-  const {
-    toggleParameters,
-    getNumericParameter,
-    getParameter,
-    getSearchString,
-  } = useSearchParamsUtils();
+  const { toggleParameters, getNumericParameter, getParameter } = useSearchParamsUtils();
   const [standThresholdDecisionOverrides, setStandThresholdDecisionOverrides] = useState<
     DecisionOverridesMap
   >({});
@@ -98,8 +94,6 @@ function App() {
     setOptimalActionsDecisionOverrides(previous => ({ ...previous, [label]: action }));
   };
 
-  const search = getSearchString();
-
   return (
     <div className="app">
       <nav className="navbar">
@@ -128,7 +122,7 @@ function App() {
                   />
                 }
               >
-                {getStrategyPageNestedRoutes(search)}
+                {getStrategyPageNestedRoutes()}
               </Route>
               <Route
                 path={optimalActionsRoute}
@@ -141,15 +135,12 @@ function App() {
                   />
                 }
               >
-                {getStrategyPageNestedRoutes(search)}
+                {getStrategyPageNestedRoutes()}
               </Route>
-              <Route
-                index
-                element={<Navigate to={{ pathname: standThresholdRoute, search }} replace />}
-              />
+              <Route index element={<SearchNavigate to={standThresholdRoute} />} />
             </Route>
           ))}
-          <Route index element={<Navigate to={{ pathname: defaultLanguage, search }} replace />} />
+          <Route index element={<SearchNavigate to={defaultLanguage} />} />
         </Routes>
       </SettingsContext.Provider>
     </div>

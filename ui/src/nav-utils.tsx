@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import {
   actionsBreakdownRoute,
   expectedResultsGroupedRoute,
@@ -17,22 +17,20 @@ import { ExpectedResults } from './components/expected-results.component';
 import { FinalScoresList } from './components/final-scores-list.component';
 import { MaterialHandsList } from './components/material-hands-list.component';
 import { ResolvedHandsList } from './components/resolved-hands-list.component';
+import { SearchNavigate } from './search-navigate';
 
 export const getLocalizedRoute = (language: string, route: string) => {
   return `/${language}/${route}`;
 };
 
-export const getStrategyPageNestedRoutes = (search: string) => {
+export const getStrategyPageNestedRoutes = () => {
   return (
     <React.Fragment>
-      <Route index element={<Navigate to={{ pathname: materialHandsRoute, search }} replace />} />
+      <Route index element={<SearchNavigate to={materialHandsRoute} />} />
       <Route path={materialHandsRoute} element={<MaterialHandsList />} />
       <Route path={finalScoresRoute} element={<FinalScoresList />} />
       <Route path={expectedResultsRoute} element={<ExpectedResults />}>
-        <Route
-          index
-          element={<Navigate to={{ pathname: expectedResultsMatrixRoute, search }} replace />}
-        />
+        <Route index element={<SearchNavigate to={expectedResultsMatrixRoute} />} />
         <Route path={expectedResultsMatrixRoute} element={<ExpectedResultsMatrix />} />
         <Route path={expectedResultsGroupedRoute} element={<ExpectedResultsGrouped />} />
       </Route>
