@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const modalParamName = 'modal-id';
 
@@ -20,6 +20,7 @@ export type ToggleParameterArguments = [string, string, string];
 
 export const useSearchParamsUtils = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const deleteParameter = (paramName: string) => {
     const nextSearchParams = new URLSearchParams(searchParams);
@@ -40,6 +41,13 @@ export const useSearchParamsUtils = () => {
   const getParameter = <T extends string>(paramName: string, allowedValues?: T[]): T | null => {
     const value = searchParams.get(paramName);
     return value && (!allowedValues || allowedValues.includes(value as T)) ? (value as T) : null;
+  };
+
+  const navigateWithSearch = (pathname: string) => {
+    navigate({
+      pathname,
+      search: getSearchString(),
+    });
   };
 
   const setParameter = (paramName: string, paramValue: string) => {
@@ -77,6 +85,7 @@ export const useSearchParamsUtils = () => {
     getNumericParameter,
     getParameter,
     getSearchString,
+    navigateWithSearch,
     searchParams,
     setParameter,
     setSearchParams,

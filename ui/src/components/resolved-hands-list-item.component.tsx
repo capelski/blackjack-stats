@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { actionsBreakdownRoute } from '../../constants';
 import { labelToUrlParam } from '../logic/labels.logic';
 import { Action } from '../models/action.model';
@@ -32,9 +31,7 @@ export type ResolvedHandsListItemProps = {
 
 export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props => {
   const { t } = useTranslation();
-  const { getSearchString } = useSearchParamsUtils();
-  const navigate = useNavigate();
-  const search = getSearchString();
+  const { navigateWithSearch } = useSearchParamsUtils();
 
   const gridTemplateColumns = ['1fr', '1fr', '1fr', '1fr', '1fr'];
   const columnStyle: React.CSSProperties = {
@@ -98,10 +95,7 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
               {!props.isHeader && isFirstActionRow && (
                 <button
                   onClick={() => {
-                    navigate({
-                      pathname: `${actionsBreakdownRoute}/${labelToUrlParam(props.label)}`,
-                      search,
-                    });
+                    navigateWithSearch(`${actionsBreakdownRoute}/${labelToUrlParam(props.label)}`);
                   }}
                 >
                   {t('resolvedHandsList.viewBreakdown')}
