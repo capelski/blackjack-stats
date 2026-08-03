@@ -56,7 +56,15 @@ const getNextCardsLabel = (groupCards: Card[]): string => {
     : groupCards[0].symbol;
 };
 
-export const ActionsBreakdownHit: React.FC<{ resolvedHand: ResolvedHand }> = ({ resolvedHand }) => {
+type ActionsBreakdownHitProps = {
+  resolvedHand: ResolvedHand;
+  sectionRef: React.RefObject<HTMLDivElement | null>;
+};
+
+export const ActionsBreakdownHit: React.FC<ActionsBreakdownHitProps> = ({
+  resolvedHand,
+  sectionRef,
+}) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { rules, strategy } = useStrategyContext();
@@ -97,7 +105,7 @@ export const ActionsBreakdownHit: React.FC<{ resolvedHand: ResolvedHand }> = ({ 
   );
 
   return (
-    <div className="hit-section" id="hit">
+    <div className="hit-section" ref={sectionRef}>
       <h3>{t('actions.hit')}</h3>
 
       <table style={{ width: '100%' }}>

@@ -4,6 +4,8 @@ export const modalParamName = 'modal-id';
 
 export const modeParamName = 'mode';
 
+export const selectedActionParamName = 'a';
+
 export const cardsFilterParamName = 'cf';
 
 export const standThresholdParamName = 't';

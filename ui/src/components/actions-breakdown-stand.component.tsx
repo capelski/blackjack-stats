@@ -42,8 +42,14 @@ const getEdgeContribution = (result: Result, dealerProbability: number): number 
   return result === win ? dealerProbability : result === lose ? -dealerProbability : 0;
 };
 
-export const ActionsBreakdownStand: React.FC<{ resolvedHand: ResolvedHand }> = ({
+type ActionsBreakdownStandProps = {
+  resolvedHand: ResolvedHand;
+  sectionRef: React.RefObject<HTMLDivElement | null>;
+};
+
+export const ActionsBreakdownStand: React.FC<ActionsBreakdownStandProps> = ({
   resolvedHand,
+  sectionRef,
 }) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
@@ -59,7 +65,7 @@ export const ActionsBreakdownStand: React.FC<{ resolvedHand: ResolvedHand }> = (
   );
 
   return (
-    <div className="stand-section" id="stand">
+    <div className="stand-section" ref={sectionRef}>
       <h3>{t('actions.stand')}</h3>
 
       <table style={{ width: '100%' }}>
