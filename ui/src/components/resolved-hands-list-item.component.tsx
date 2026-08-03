@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { actionsBreakdownRoute } from '../../constants';
 import { labelToUrlParam } from '../logic/labels.logic';
 import { Action } from '../models/action.model';
 import { useSearchParamsUtils } from '../search-params-utils';
@@ -95,7 +94,7 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
               {!props.isHeader && isFirstActionRow && (
                 <button
                   onClick={() => {
-                    navigateWithSearch(`${actionsBreakdownRoute}/${labelToUrlParam(props.label)}`);
+                    navigateWithSearch(labelToUrlParam(props.label));
                   }}
                 >
                   {t('resolvedHandsList.viewBreakdown')}

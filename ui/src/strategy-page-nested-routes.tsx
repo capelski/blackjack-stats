@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import {
-  actionsBreakdownRoute,
   expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
   expectedResultsRoute,
@@ -34,10 +33,7 @@ export const StrategyPageNestedRoutes = () => {
       </Route>
       <Route path={resolvedHandsRoute}>
         <Route index element={<ResolvedHandsList />} />
-        <Route
-          path={`${actionsBreakdownRoute}/:${playerLabelUrlParam}`}
-          element={<ActionsBreakdown />}
-        />
+        <Route path={`:${playerLabelUrlParam}`} element={<ActionsBreakdown />} />
       </Route>
     </React.Fragment>
   );
