@@ -4,9 +4,11 @@ import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
 import { getResult, resultToStyles } from '../logic/result.logic';
+import { stand } from '../models/action.model';
 import { lose, Result, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
 import { ResolvedHand } from '../types/resolved-hand.type';
+import { ActionsBreakdownTitle } from './actions-breakdown-title.component';
 
 type ActionsBreakdownStandRowProps = {
   dealerScore: React.ReactNode;
@@ -66,7 +68,7 @@ export const ActionsBreakdownStand: React.FC<ActionsBreakdownStandProps> = ({
 
   return (
     <div className="stand-section" ref={sectionRef}>
-      <h3>{t('actions.stand')}</h3>
+      <ActionsBreakdownTitle action={stand} />
 
       <table style={{ width: '100%' }}>
         <thead>

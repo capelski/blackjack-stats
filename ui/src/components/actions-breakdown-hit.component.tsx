@@ -8,6 +8,7 @@ import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { Card } from '../types/card.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
+import { ActionsBreakdownTitle } from './actions-breakdown-title.component';
 
 type NextHandGroup = {
   cards: Card[];
@@ -106,7 +107,7 @@ export const ActionsBreakdownHit: React.FC<ActionsBreakdownHitProps> = ({
 
   return (
     <div className="hit-section" ref={sectionRef}>
-      <h3>{t('actions.hit')}</h3>
+      <ActionsBreakdownTitle action={hit} />
 
       <table style={{ width: '100%' }}>
         <thead>

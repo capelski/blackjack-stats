@@ -26,6 +26,7 @@ export const useSearchParamsUtils = () => {
 
   const cleanSearchParams = new URLSearchParams(searchParams);
   cleanSearchParams.delete(cardsFilterParamName);
+  cleanSearchParams.delete(selectedActionParamName);
   const searchString = cleanSearchParams.toString();
 
   const deleteParameter = (paramName: string) => {
