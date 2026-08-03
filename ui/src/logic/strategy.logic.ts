@@ -8,7 +8,10 @@ import { getResolvedHands } from './resolved-hands.logic';
 
 export const getStrategy = async (rules: Rules, handResolver: HandResolver): Promise<Strategy> => {
   await new Promise(resolve => setTimeout(resolve, 500)); // Simulate async computation
-  const { resolvedHands, handResolutionMap } = getResolvedHands(rules, handResolver);
+  const { handResolutionMap, resolvedHandsList, resolvedHandsMap } = getResolvedHands(
+    rules,
+    handResolver,
+  );
   const materialHands = getMaterialHands(rules, handResolutionMap);
   const finalScores = getFinalScoresList(materialHands);
   const expectedResults = getExpectedResults(finalScores);
@@ -17,6 +20,7 @@ export const getStrategy = async (rules: Rules, handResolver: HandResolver): Pro
     expectedResults,
     finalScores,
     materialHands,
-    resolvedHands,
+    resolvedHandsList,
+    resolvedHandsMap,
   };
 };

@@ -5,6 +5,7 @@ import { playerLabelUrlParam } from '../../constants';
 import { getActionableHands } from '../logic/abstract-hands.logic';
 import { urlParamToLabel } from '../logic/labels.logic';
 import { useStrategyContext } from '../strategy.context';
+import { ActionsBreakdownHit } from './actions-breakdown-hit.component';
 import { ActionsBreakdownStand } from './actions-breakdown-stand.component';
 
 export const ActionsBreakdown: React.FC = () => {
@@ -15,7 +16,7 @@ export const ActionsBreakdown: React.FC = () => {
   const rawPlayerLabel = params[playerLabelUrlParam];
   const playerLabel = rawPlayerLabel && urlParamToLabel(rawPlayerLabel);
 
-  const resolvedHand = getActionableHands(strategy.resolvedHands).find(
+  const resolvedHand = getActionableHands(strategy.resolvedHandsList).find(
     resolvedHand => resolvedHand.label === playerLabel,
   );
 
@@ -24,6 +25,7 @@ export const ActionsBreakdown: React.FC = () => {
       {resolvedHand ? (
         <React.Fragment>
           <ActionsBreakdownStand resolvedHand={resolvedHand} />
+          <ActionsBreakdownHit resolvedHand={resolvedHand} />
         </React.Fragment>
       ) : (
         <h3>{t('actionsBreakdown.notFound', { label: playerLabel })}</h3>

@@ -59,7 +59,7 @@ export const ActionsBreakdownStand: React.FC<{ resolvedHand: ResolvedHand }> = (
   );
 
   return (
-    <div className="stand-section">
+    <div className="stand-section" id="stand">
       <h3>{t('actions.stand')}</h3>
 
       <table style={{ width: '100%' }}>

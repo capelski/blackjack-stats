@@ -14,12 +14,12 @@ type ResolvedHandsWorld = RulesWorld & {
 
 const getResolvedHandsForStandThreshold = (threshold: number): ResolvedHand[] => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
-  return getResolvedHands({}, handResolver).resolvedHands;
+  return getResolvedHands({}, handResolver).resolvedHandsList;
 };
 
 const getResolvedHandsForOptimalActions = (rules: Rules = {}): ResolvedHand[] => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
-  return getResolvedHands(rules, handResolver).resolvedHands;
+  return getResolvedHands(rules, handResolver).resolvedHandsList;
 };
 
 When('getting the resolved hands of a hand resolver with a stand threshold of {int}', function(

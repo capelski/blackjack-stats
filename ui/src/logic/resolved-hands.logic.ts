@@ -4,6 +4,7 @@ import { ConsequencesMap } from '../types/consequence.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
 import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
+import { Strategy } from '../types/strategy.type';
 import { getAbstractHands } from './abstract-hands.logic';
 import {
   FutureHandsConsequenceParameters,
@@ -14,10 +15,14 @@ import {
   getSurrenderConsequence,
 } from './consequence.logic';
 
+type ResolvedHandsReturnType = Pick<Strategy, 'resolvedHandsList' | 'resolvedHandsMap'> & {
+  handResolutionMap: HandResolutionMap;
+};
+
 export const getResolvedHands = (
   rules: Rules,
   handResolver: HandResolver,
-): { handResolutionMap: HandResolutionMap; resolvedHands: ResolvedHand[] } => {
+): ResolvedHandsReturnType => {
   const abstractHands = getAbstractHands(rules);
   const resolvedHandsMap: ResolvedHandsMap = {};
 
@@ -78,7 +83,11 @@ export const getResolvedHands = (
     handResolutionMap[resolvedHand.label] = action;
   }
 
-  return { resolvedHands: sortResolvedHands(resolvedHands), handResolutionMap };
+  return {
+    handResolutionMap,
+    resolvedHandsList: sortResolvedHands(resolvedHands),
+    resolvedHandsMap,
+  };
 };
 
 const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {

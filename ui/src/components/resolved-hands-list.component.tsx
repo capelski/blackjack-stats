@@ -9,7 +9,7 @@ export const ResolvedHandsList: React.FC = () => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { decisionOverrides, onDecisionOverride, strategy } = useStrategyContext();
-  const actionableResolvedHands = getActionableHands(strategy.resolvedHands);
+  const actionableResolvedHands = getActionableHands(strategy.resolvedHandsList);
 
   return (
     <div className="hand-actions-list">

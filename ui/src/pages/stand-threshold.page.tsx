@@ -8,8 +8,12 @@ import { hit, stand } from '../models/action.model';
 import { StrategyContext } from '../strategy.context';
 import { DecisionOverrideHandler, DecisionOverridesMap } from '../types/decision-overrides.type';
 import { HandResolver } from '../types/hand-resolution.type';
+import { Rules } from '../types/rules.type';
 import { StandThresholds } from '../types/stand-thresholds.type';
 import { Strategy } from '../types/strategy.type';
+
+// Deliberately ignoring the app rules, as the stand threshold strategy doesn't depend on them
+const standThresholdRules: Rules = {};
 
 export type StandThresholdPageProps = {
   decisionOverrides: DecisionOverridesMap;
@@ -39,8 +43,7 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
 
     const handResolver = getOverridesResolver(standThresholdResolver, decisionOverrides);
 
-    // Deliberately ignoring the app rules, as the stand threshold strategy doesn't depend on them
-    const strategy = await getStrategy({}, handResolver);
+    const strategy = await getStrategy(standThresholdRules, handResolver);
     setStrategy(strategy);
     setComputing(false);
   };
@@ -56,6 +59,7 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
         computing,
         decisionOverrides: props.decisionOverrides,
         onDecisionOverride: props.onDecisionOverride,
+        rules: standThresholdRules,
         showBetMultiplier: false,
         strategy,
       }}

@@ -41,7 +41,9 @@ export const ca = {
   actionsBreakdown: {
     dealerScore: 'Puntuació del crupier',
     edgeContribution: "Contribució a l'avantatge",
-    notFound: '"{{label}}" no és una puntuació vàlida',
+    nextCard: 'Carta següent',
+    nextHand: 'Mà següent',
+    notFound: '"{{label}}" no és una mà vàlida',
   },
   expectedResults: {
     matrix: 'Matriu',

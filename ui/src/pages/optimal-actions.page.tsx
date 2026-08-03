@@ -48,6 +48,7 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
         computing,
         decisionOverrides: props.decisionOverrides,
         onDecisionOverride: props.onDecisionOverride,
+        rules: props.rules,
         showBetMultiplier: doublingEnabled || splittingEnabled,
         strategy,
       }}

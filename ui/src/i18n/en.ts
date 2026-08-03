@@ -41,7 +41,9 @@ export const en = {
   actionsBreakdown: {
     dealerScore: 'Dealer score',
     edgeContribution: 'Edge contribution',
-    notFound: '"{{label}}" is not a valid score',
+    nextCard: 'Next card',
+    nextHand: 'Next hand',
+    notFound: '"{{label}}" is not a valid hand',
   },
   expectedResults: {
     matrix: 'Matrix',
