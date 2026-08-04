@@ -16,14 +16,14 @@ export type ActionsAnalysisListItemProps = {
   label: string;
 } & (
   | {
-      decision: string;
+      action: string;
       edgeByAction?: undefined;
       isHeader: true;
       onDecisionOverride?: undefined;
       optimalDecision?: undefined;
     }
   | {
-      decision: Action;
+      action: Action;
       edgeByAction: EdgeByActionMap;
       isHeader?: false;
       onDecisionOverride: DecisionOverrideHandler;
@@ -67,14 +67,14 @@ export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = p
 
       <td style={columnStyle}>
         {props.isHeader ? (
-          props.decision
+          props.action
         ) : (
           <div style={{ alignItems: 'center', display: 'flex', gap: '8px' }}>
             <select
               onChange={event => {
                 props.onDecisionOverride(props.label, event.target.value as Action);
               }}
-              value={props.decision}
+              value={props.action}
             >
               {props.actions
                 .filter(action => props.edgeByAction[action])
@@ -85,7 +85,7 @@ export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = p
                 ))}
             </select>
 
-            {props.decision === props.optimalDecision ? '' : '⚠️'}
+            {props.action === props.optimalDecision ? '' : '⚠️'}
           </div>
         )}
       </td>

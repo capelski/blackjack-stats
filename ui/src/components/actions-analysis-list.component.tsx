@@ -26,7 +26,7 @@ export const ActionsAnalysisList: React.FC = () => {
         <thead>
           <ActionsAnalysisListItem
             actions={actions}
-            decision={t('commons.decision')}
+            action={t('commons.action')}
             isHeader={true}
             label={t('commons.hand')}
           />
@@ -45,7 +45,7 @@ export const ActionsAnalysisList: React.FC = () => {
             return (
               <ActionsAnalysisListItem
                 actions={actions}
-                decision={selectedDecision}
+                action={selectedDecision}
                 edgeByAction={edgeByAction}
                 key={resolvedHand.label}
                 label={resolvedHand.label}
