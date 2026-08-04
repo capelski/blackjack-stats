@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { getBetMultiplier } from '../logic/bet-multiplier.logic';
 import { getNextHandLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
-import { Action, double, hit, stand } from '../models/action.model';
+import { Action, double, hit, split, stand } from '../models/action.model';
 import { cards, cardsNumber } from '../models/cards.model';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
@@ -60,9 +60,10 @@ const getNextCardsLabel = (groupCards: Card[]): string => {
 };
 
 type ActionsBreakdownNextCardProps = {
-  /** Both actions draw a next card. When doubling, the bet is doubled and the next hand
-   * can no longer be actioned, so it always stands */
-  action: typeof double | typeof hit;
+  /** All three actions draw a next card. When doubling, the bet is doubled and the next hand
+   * can no longer be actioned, so it always stands. When splitting, the next card is drawn on top
+   * of one of the split cards and the bet is doubled, because two hands are played */
+  action: typeof double | typeof hit | typeof split;
   resolvedHand: ResolvedHand;
   sectionRef: React.RefObject<HTMLDivElement | null>;
 };
@@ -77,7 +78,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
   const { rules, strategy } = useStrategyContext();
 
   const cardProbability = 1 / cardsNumber;
-  const betMultiplier = getBetMultiplier(1, { isDoubleBet: action === double });
+  const betMultiplier = getBetMultiplier(1, { isDoubleBet: action === double || action === split });
 
   /** Different next cards can lead to the same next hand (e.g. any ten-valued card),
    * in which case they are displayed as a single row with their probabilities merged */
