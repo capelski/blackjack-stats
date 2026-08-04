@@ -1,21 +1,21 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import {
+  actionsAnalysisRoute,
   expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
   expectedResultsRoute,
   finalScoresRoute,
   materialHandsRoute,
   playerLabelUrlParam,
-  resolvedHandsRoute,
 } from '../constants';
+import { ActionsAnalysisList } from './components/actions-analysis-list.component';
 import { ActionsBreakdown } from './components/actions-breakdown.component';
 import { ExpectedResultsGrouped } from './components/expected-results-grouped.component';
 import { ExpectedResultsMatrix } from './components/expected-results-matrix.component';
 import { ExpectedResults } from './components/expected-results.component';
 import { FinalScoresList } from './components/final-scores-list.component';
 import { MaterialHandsList } from './components/material-hands-list.component';
-import { ResolvedHandsList } from './components/resolved-hands-list.component';
 import { SearchNavigate } from './search-navigate';
 
 // Must be called as a function (e.g. {StrategyPageNestedRoutes()}) rather than rendered as JSX:
@@ -31,8 +31,8 @@ export const StrategyPageNestedRoutes = () => {
         <Route path={expectedResultsMatrixRoute} element={<ExpectedResultsMatrix />} />
         <Route path={expectedResultsGroupedRoute} element={<ExpectedResultsGrouped />} />
       </Route>
-      <Route path={resolvedHandsRoute}>
-        <Route index element={<ResolvedHandsList />} />
+      <Route path={actionsAnalysisRoute}>
+        <Route index element={<ActionsAnalysisList />} />
         <Route path={`:${playerLabelUrlParam}`} element={<ActionsBreakdown />} />
       </Route>
     </React.Fragment>

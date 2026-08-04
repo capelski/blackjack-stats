@@ -10,7 +10,7 @@ export type EdgeByActionMap = {
   [action: string]: string;
 };
 
-export type ResolvedHandsListItemProps = {
+export type ActionsAnalysisListItemProps = {
   /** Actions displayed as columns, in the order they are displayed */
   actions: Action[];
   label: string;
@@ -31,7 +31,7 @@ export type ResolvedHandsListItemProps = {
     }
 );
 
-export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props => {
+export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = props => {
   const { t } = useTranslation();
   const { navigateWithSearch } = useSearchParamsUtils();
 
@@ -97,7 +97,7 @@ export const ResolvedHandsListItem: React.FC<ResolvedHandsListItemProps> = props
               navigateWithSearch(labelToUrlParam(props.label));
             }}
           >
-            {t('resolvedHandsList.viewBreakdown')}
+            {t('actionsAnalysisList.viewBreakdown')}
           </button>
         )}
       </td>

@@ -4,12 +4,12 @@ import { toPercentage } from '../logic/numbers.logic';
 import { Action, double, hit, split, stand, surrender } from '../models/action.model';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
-import { EdgeByActionMap, ResolvedHandsListItem } from './resolved-hands-list-item.component';
+import { ActionsAnalysisListItem, EdgeByActionMap } from './actions-analysis-list-item.component';
 
 /** Actions in the order they are displayed as columns */
 const actionColumns: Action[] = [stand, hit, double, split, surrender];
 
-export const ResolvedHandsList: React.FC = () => {
+export const ActionsAnalysisList: React.FC = () => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { decisionOverrides, onDecisionOverride, strategy } = useStrategyContext();
@@ -24,7 +24,7 @@ export const ResolvedHandsList: React.FC = () => {
     <div className="hand-actions-list">
       <table style={{ width: '100%' }}>
         <thead>
-          <ResolvedHandsListItem
+          <ActionsAnalysisListItem
             actions={actions}
             decision={t('commons.decision')}
             isHeader={true}
@@ -43,7 +43,7 @@ export const ResolvedHandsList: React.FC = () => {
             }, {});
 
             return (
-              <ResolvedHandsListItem
+              <ActionsAnalysisListItem
                 actions={actions}
                 decision={selectedDecision}
                 edgeByAction={edgeByAction}

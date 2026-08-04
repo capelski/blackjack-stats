@@ -90,7 +90,7 @@ export const ca = {
     softLabel: 'Límit suau per plantar-se',
     sameThreshold: 'Igual',
   },
-  resolvedHandsList: {
+  actionsAnalysisList: {
     viewBreakdown: 'Veure detalls',
   },
 };

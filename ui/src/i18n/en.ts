@@ -90,7 +90,7 @@ export const en = {
     softLabel: 'Soft stand threshold',
     sameThreshold: 'Same',
   },
-  resolvedHandsList: {
+  actionsAnalysisList: {
     viewBreakdown: 'View breakdown',
   },
 };

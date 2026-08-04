@@ -2,11 +2,11 @@ import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useParams } from 'react-router-dom';
 import {
+  actionsAnalysisRoute,
   expectedResultsRoute,
   finalScoresRoute,
   materialHandsRoute,
   playerLabelUrlParam,
-  resolvedHandsRoute,
 } from '../../constants';
 import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
@@ -58,7 +58,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
           <SearchNavLink to={expectedResultsRoute}>
             {t('strategyLayout.expectedResults')}
           </SearchNavLink>
-          <SearchNavLink to={resolvedHandsRoute}>
+          <SearchNavLink to={actionsAnalysisRoute}>
             {t('strategyLayout.actionsAnalysis')}
           </SearchNavLink>
         </nav>
