@@ -4,6 +4,7 @@ import { getHandStatus } from '../logic/abstract-hands.logic';
 import { getBetMultiplier } from '../logic/bet-multiplier.logic';
 import { getNextHandLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
+import { loseColor, winColor } from '../logic/result.logic';
 import { double, hit, split } from '../models/action.model';
 import { cards, cardsNumber } from '../models/cards.model';
 import { HandStatus } from '../models/hand-status.model';
@@ -22,20 +23,34 @@ type NextHandGroup = {
 };
 
 type ActionsBreakdownNextCardRowProps = {
-  action: React.ReactNode;
-  edge: React.ReactNode;
-  edgeContribution: React.ReactNode;
-  isHeader?: boolean;
-  nextCard: React.ReactNode;
-  nextHand: React.ReactNode;
-  probability: React.ReactNode;
-};
+  action: string;
+  edge: string;
+  nextCard: string;
+  nextHand: string;
+  probability: string;
+} & (
+  | {
+      edgeContribution?: undefined;
+      isHeader: true;
+    }
+  | {
+      edgeContribution: number;
+      isHeader?: undefined;
+    }
+);
 
 const ActionsBreakdownNextCardRow: React.FC<ActionsBreakdownNextCardRowProps> = props => {
+  const { t } = useTranslation();
+  const { decimals } = useSettingsContext();
+
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
     padding: '8px',
   };
+
+  const numericEdge = props.edgeContribution ?? 0;
+  const edgeContributionColor =
+    numericEdge > 0 ? winColor : numericEdge < 0 ? loseColor : undefined;
 
   return (
     <tr
@@ -48,8 +63,12 @@ const ActionsBreakdownNextCardRow: React.FC<ActionsBreakdownNextCardRowProps> = 
       <td style={columnStyle}>{props.probability}</td>
       <td style={columnStyle}>{props.nextHand}</td>
       <td style={columnStyle}>{props.action}</td>
-      <td style={columnStyle}>{props.edge}</td>
-      <td style={columnStyle}>{props.edgeContribution}</td>
+      <td style={columnStyle}>{props.edge} </td>
+      <td style={{ ...columnStyle, color: edgeContributionColor }}>
+        {props.isHeader
+          ? t('actionsBreakdown.edgeContribution')
+          : toPercentage(props.edgeContribution, decimals)}
+      </td>
     </tr>
   );
 };
@@ -125,7 +144,6 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
           <ActionsBreakdownNextCardRow
             action={t('commons.action')}
             edge={t('commons.edge')}
-            edgeContribution={t('actionsBreakdown.edgeContribution')}
             isHeader={true}
             nextCard={t('actionsBreakdown.nextCard')}
             nextHand={t('actionsBreakdown.nextHand')}
@@ -140,7 +158,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
               edge={`${toPercentage(edge, decimals)}${
                 betMultiplier > 1 ? ` (x${betMultiplier})` : ''
               }`}
-              edgeContribution={toPercentage(edge * betMultiplier * probability, decimals)}
+              edgeContribution={edge * betMultiplier * probability}
               key={nextHand.label}
               nextCard={getNextCardsLabel(groupCards)}
               nextHand={nextHand.labelAsInitial}
@@ -151,9 +169,8 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
           <ActionsBreakdownNextCardRow
             action=""
             edge=""
-            edgeContribution={toPercentage(totalEdgeContribution * betMultiplier, decimals)}
-            isHeader={true}
-            nextCard={t('commons.total')}
+            edgeContribution={totalEdgeContribution * betMultiplier}
+            nextCard={t('commons.edge')}
             nextHand=""
             probability=""
           />

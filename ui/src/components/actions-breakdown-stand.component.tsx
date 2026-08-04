@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
-import { getResult, resultToStyles } from '../logic/result.logic';
+import { getResult, loseColor, resultToStyles, winColor } from '../logic/result.logic';
 import { stand } from '../models/action.model';
 import { lose, Result, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
@@ -11,19 +11,33 @@ import { ResolvedHand } from '../types/resolved-hand.type';
 import { ActionsBreakdownTitle } from './actions-breakdown-title.component';
 
 type ActionsBreakdownStandRowProps = {
-  dealerScore: React.ReactNode;
-  edgeContribution: React.ReactNode;
-  isHeader?: boolean;
-  probability: React.ReactNode;
-  result: React.ReactNode;
+  dealerScore: string;
+  probability: string;
+  result: string;
   style?: React.CSSProperties;
-};
+} & (
+  | {
+      edgeContribution?: undefined;
+      isHeader: true;
+    }
+  | {
+      edgeContribution: number;
+      isHeader?: undefined;
+    }
+);
 
 const ActionsBreakdownStandRow: React.FC<ActionsBreakdownStandRowProps> = props => {
+  const { t } = useTranslation();
+  const { decimals } = useSettingsContext();
+
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
     padding: '8px',
   };
+
+  const numericEdge = props.edgeContribution ?? 0;
+  const edgeContributionColor =
+    numericEdge > 0 ? winColor : numericEdge < 0 ? loseColor : undefined;
 
   return (
     <tr
@@ -35,7 +49,11 @@ const ActionsBreakdownStandRow: React.FC<ActionsBreakdownStandRowProps> = props 
       <td style={columnStyle}>{props.dealerScore}</td>
       <td style={columnStyle}>{props.probability}</td>
       <td style={{ ...columnStyle, ...props.style }}>{props.result}</td>
-      <td style={columnStyle}>{props.edgeContribution}</td>
+      <td style={{ ...columnStyle, color: edgeContributionColor }}>
+        {props.isHeader
+          ? t('actionsBreakdown.edgeContribution')
+          : toPercentage(props.edgeContribution, decimals)}
+      </td>
     </tr>
   );
 };
@@ -74,7 +92,6 @@ export const ActionsBreakdownStand: React.FC<ActionsBreakdownStandProps> = ({
         <thead>
           <ActionsBreakdownStandRow
             dealerScore={t('actionsBreakdown.dealerScore')}
-            edgeContribution={t('actionsBreakdown.edgeContribution')}
             isHeader={true}
             probability={t('commons.probability')}
             result={t('commons.result')}
@@ -88,22 +105,18 @@ export const ActionsBreakdownStand: React.FC<ActionsBreakdownStandProps> = ({
             return (
               <ActionsBreakdownStandRow
                 dealerScore={effectiveScoreToLabel(dealerScore.score)}
-                edgeContribution={toPercentage(
-                  getEdgeContribution(result, dealerScore.probability),
-                  decimals,
-                )}
+                edgeContribution={getEdgeContribution(result, dealerScore.probability)}
                 key={dealerScore.score}
                 probability={toPercentage(dealerScore.probability, decimals)}
                 result={t(`commons.${result}`)}
-                style={resultToStyles(result)}
+                style={{ color: resultToStyles(result)?.color }}
               />
             );
           })}
 
           <ActionsBreakdownStandRow
             dealerScore={t('commons.edge')}
-            edgeContribution={toPercentage(totalEdgeContribution, decimals)}
-            isHeader={true}
+            edgeContribution={totalEdgeContribution}
             probability=""
             result=""
           />
