@@ -1,10 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getHandStatus } from '../logic/abstract-hands.logic';
 import { getBetMultiplier } from '../logic/bet-multiplier.logic';
 import { getNextHandLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
-import { Action, double, hit, split, stand } from '../models/action.model';
+import { double, hit, split } from '../models/action.model';
 import { cards, cardsNumber } from '../models/cards.model';
+import { HandStatus } from '../models/hand-status.model';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { Card } from '../types/card.type';
@@ -14,13 +16,13 @@ import { ActionsBreakdownTitle } from './actions-breakdown-title.component';
 type NextHandGroup = {
   cards: Card[];
   edge: number;
-  nextAction: Action;
+  nextAction: HandStatus;
   nextHand: ResolvedHand;
   probability: number;
 };
 
 type ActionsBreakdownNextCardRowProps = {
-  decision: React.ReactNode;
+  action: React.ReactNode;
   edge: React.ReactNode;
   edgeContribution: React.ReactNode;
   isHeader?: boolean;
@@ -45,7 +47,7 @@ const ActionsBreakdownNextCardRow: React.FC<ActionsBreakdownNextCardRowProps> = 
       <td style={columnStyle}>{props.nextCard}</td>
       <td style={columnStyle}>{props.probability}</td>
       <td style={columnStyle}>{props.nextHand}</td>
-      <td style={columnStyle}>{props.decision}</td>
+      <td style={columnStyle}>{props.action}</td>
       <td style={columnStyle}>{props.edge}</td>
       <td style={columnStyle}>{props.edgeContribution}</td>
     </tr>
@@ -97,12 +99,10 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
       group.cards.push(card);
       group.probability += cardProbability;
     } else {
-      const nextAction = action === double ? stand : nextHand.action;
-
       reduced.push({
         cards: [card],
-        edge: nextHand.consequences[nextAction]!.edge,
-        nextAction,
+        edge: nextHand.consequences[nextHand.action]!.edge,
+        nextAction: getHandStatus(nextHand.action, nextHand.isActionable, nextHand.effectiveScore),
         nextHand,
         probability: cardProbability,
       });
@@ -123,7 +123,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
       <table style={{ width: '100%' }}>
         <thead>
           <ActionsBreakdownNextCardRow
-            decision={t('commons.decision')}
+            action={t('commons.action')}
             edge={t('commons.edge')}
             edgeContribution={t('actionsBreakdown.edgeContribution')}
             isHeader={true}
@@ -136,7 +136,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
         <tbody>
           {nextHandGroups.map(({ cards: groupCards, edge, nextAction, nextHand, probability }) => (
             <ActionsBreakdownNextCardRow
-              decision={t(`actions.${nextAction}`)}
+              action={t(`actions.${nextAction}`)}
               edge={`${toPercentage(edge, decimals)}${
                 betMultiplier > 1 ? ` (x${betMultiplier})` : ''
               }`}
@@ -149,7 +149,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
           ))}
 
           <ActionsBreakdownNextCardRow
-            decision=""
+            action=""
             edge=""
             edgeContribution={toPercentage(totalEdgeContribution * betMultiplier, decimals)}
             isHeader={true}

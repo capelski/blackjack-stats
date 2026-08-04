@@ -4,16 +4,16 @@ Feature: Resolved hands
 
   Scenario: Resolved hands for stand threshold
     When getting the resolved hands of a hand resolver with a stand threshold of 17
-    Then 102 resolved hands are returned
+    Then 128 resolved hands are returned
     And the resolved hand 1 has label "A,A", action "hit" and the following actions breakdown
       | Action | Win                   | Push                   | Lose                  | Edge                  |
       | stand  | 1=0.2815928473666239  | 1=0                    | 1=0.7184071526333512  | -0.4368143052667273   |
       | hit    | 1=0.4309989442283621  | 1=0.10133718449414611  | 1=0.4676638712774668  | -0.03666492704910468  |
-    And the resolved hand 102 has label "22+ (3+)", action "stand" and the following actions breakdown
+    And the resolved hand 128 has label "22+ (3+)", action "stand" and the following actions breakdown
       | Action | Win                   | Push                   | Lose                  | Edge                  |
       | stand  | 1=0                   | 1=0                    | 1=0.9999999999999751  | -0.9999999999999751   |
     And the resolved hand with label "15" has action "hit" and the following actions breakdown
-      | Action | Win                 | Push                 | Lose                | Edge                  |
+      | Action | Win                   | Push                   | Lose                  | Edge                  |
       | stand  | 1=0.2815928473666239  | 1=0                    | 1=0.7184071526333512  | -0.4368143052667273   |
       | hit    | 1=0.23643754785128446 | 1=0.055591587238910015 | 1=0.7079708649097806  | -0.4715333170584961   |
 
@@ -23,7 +23,7 @@ Feature: Resolved hands
       | Action | Win                   | Push                   | Lose                  | Edge                  |
       | stand  | 1=0.2815928473666239  | 1=0                    | 1=0.7184071526333512  | -0.4368143052667273   |
       | hit    | 1=0.44988190522271815 | 1=0.08907669491247122  | 1=0.46104139986478565 | -0.011159494642067502 |
-    And the resolved hand 102 has label "22+ (3+)", action "stand" and the following actions breakdown
+    And the resolved hand 128 has label "22+ (3+)", action "stand" and the following actions breakdown
       | Action | Win                   | Push                   | Lose                  | Edge                  |
       | stand  | 1=0                   | 1=0                    | 1=0.9999999999999751  | -0.9999999999999751   |
     And the resolved hand with label "15" has action "stand" and the following actions breakdown

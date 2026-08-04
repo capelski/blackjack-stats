@@ -12,6 +12,11 @@ Feature: Labels
     When hitting with next card "10"
     Then the next hand label is "22+ (3+)"
 
+  Scenario: Doubling an initial pair
+    Given the hand label "11"
+    When doubling with next card "3"
+    Then the next hand label is "14 (D)"
+
   Scenario: Splitting a splittable pair
     Given the hand label "8,8"
     When splitting with next card "3"

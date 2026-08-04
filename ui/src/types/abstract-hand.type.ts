@@ -1,6 +1,7 @@
 import {
   initialPair,
   postASplitPair,
+  postDoubleHand,
   postSplitPair,
   splittablePair,
   threeOrMoreCards,
@@ -22,6 +23,7 @@ export type AbstractHand = HandBase & {
     | {
         category:
           | typeof threeOrMoreCards
+          | typeof postDoubleHand
           | typeof initialPair
           | typeof postSplitPair
           | typeof postASplitPair;

@@ -1,11 +1,14 @@
+import { Action } from '../models/action.model';
 import { cardsMap } from '../models/cards.model';
 import {
   initialPair,
   postASplitPair,
+  postDoubleHand,
   postSplitPair,
   splittablePair,
   threeOrMoreCards,
 } from '../models/hand-category.model';
+import { bust, end, HandStatus } from '../models/hand-status.model';
 import { blackjackScore, bustScore, playerScoreLimit } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
@@ -54,6 +57,50 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       category: threeOrMoreCards,
       effectiveScore,
       isActionable: effectiveScore < playerScoreLimit,
+      isHidden: true,
+      labelAsInitial: x.label.split(' ')[0],
+    };
+  });
+
+  /** "Post double hands" are non actionable */
+  const postDoubleHands: AbstractHand[] = [
+    { example: '9,3,D,J', label: '22+ (D)', scores: [bustScore] },
+    { example: '9,3,D,9', label: '21 (D)', scores: [21] },
+    { example: '9,3,D,8', label: '20 (D)', scores: [20] },
+    { example: '9,3,D,7', label: '19 (D)', scores: [19] },
+    { example: '9,3,D,6', label: '18 (D)', scores: [18] },
+    { example: '9,3,D,5', label: '17 (D)', scores: [17] },
+    { example: '9,3,D,4', label: '16 (D)', scores: [16] },
+    { example: '9,3,D,3', label: '15 (D)', scores: [15] },
+    { example: '9,3,D,2', label: '14 (D)', scores: [14] },
+    { example: '8,3,D,2', label: '13 (D)', scores: [13] },
+    { example: '7,3,D,2', label: '12 (D)', scores: [12] },
+    { example: '6,3,D,2', label: '11 (D)', scores: [11] },
+    { example: 'A,A,D,9', label: '11/21 (D)', scores: [11, 21] },
+    { example: '5,3,D,2', label: '10 (D)', scores: [10] },
+    { example: 'A,A,D,8', label: '10/20 (D)', scores: [10, 20] },
+    { example: '4,3,D,2', label: '9 (D)', scores: [9] },
+    { example: 'A,A,D,7', label: '9/19 (D)', scores: [9, 19] },
+    { example: '3,3,D,2', label: '8 (D)', scores: [8] },
+    { example: 'A,A,D,6', label: '8/18 (D)', scores: [8, 18] },
+    { example: '2,3,D,2', label: '7 (D)', scores: [7] },
+    { example: 'A,A,D,5', label: '7/17 (D)', scores: [7, 17] },
+    { example: '2,2,D,2', label: '6 (D)', scores: [6] },
+    { example: 'A,A,D,4', label: '6/16 (D)', scores: [6, 16] },
+    { example: 'A,A,D,3', label: '5/15 (D)', scores: [5, 15] },
+    { example: 'A,A,D,2', label: '4/14 (D)', scores: [4, 14] },
+    { example: 'A,A,D,A', label: '3/13 (D)', scores: [3, 13] },
+  ].map<AbstractHand>(x => {
+    const effectiveScore = getEffectiveScore(x.scores);
+
+    return {
+      ...x,
+      canDouble: false,
+      canSplit: false,
+      canSurrender: false,
+      category: postDoubleHand,
+      effectiveScore,
+      isActionable: false,
       isHidden: true,
       labelAsInitial: x.label.split(' ')[0],
     };
@@ -219,6 +266,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
 
   const abstractHands = [
     ...threeOrMoreCardsHands,
+    ...postDoubleHands,
     ...initialPairs,
     ...postSplitPairs,
     ...postASplitPairs,
@@ -243,4 +291,12 @@ export const getActionableHands = <T extends Pick<AbstractHand, 'isActionable' |
   resolvedHands: T[],
 ): T[] => {
   return resolvedHands.filter(hand => hand.isActionable && !hand.isHidden);
+};
+
+export const getHandStatus = (
+  action: Action,
+  isActionable: boolean,
+  effectiveScore: number,
+): HandStatus => {
+  return isActionable ? action : effectiveScore === bustScore ? bust : end;
 };

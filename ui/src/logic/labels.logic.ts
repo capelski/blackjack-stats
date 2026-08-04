@@ -2,6 +2,7 @@ import { double, hit, split } from '../models/action.model';
 import {
   HandCategory,
   postASplitPair,
+  postDoubleHand,
   postSplitPair,
   splittablePair,
   threeOrMoreCards,
@@ -44,6 +45,8 @@ export const getHandLabel = (scores: number[], category: HandCategory, symbol?: 
       ? 'S'
       : category === threeOrMoreCards
       ? '3+'
+      : category === postDoubleHand
+      ? 'D'
       : '';
 
   return `${scoresString}${discriminator ? ` (${discriminator})` : ''}`;
@@ -79,14 +82,15 @@ export const getNextHandLabel = (
     return getHandLabel(nextScores, nextCategory);
   }
 
+  const nextCategory = nextAction === double ? postDoubleHand : threeOrMoreCards;
   const nextScores = getNextScores(
     currentAbstractHand.scores,
     nextCard.scores,
-    threeOrMoreCards,
+    nextCategory,
     rules,
   );
 
-  return getHandLabel(nextScores, threeOrMoreCards);
+  return getHandLabel(nextScores, nextCategory);
 };
 
 export const labelToUrlParam = (label: string): string => {

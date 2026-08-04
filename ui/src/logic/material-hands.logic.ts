@@ -4,17 +4,18 @@ import {
   HandCategory,
   initialPair,
   postASplitPair,
+  postDoubleHand,
   postSplitPair,
   splittablePair,
   threeOrMoreCards,
 } from '../models/hand-category.model';
-import { bust, end } from '../models/hand-status.model';
 import { postDoubleSymbol, postSplitSymbol } from '../models/labels.model';
-import { blackjackScore, bustScore } from '../models/scores.model';
+import { blackjackScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { HandResolutionMap } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { Rules } from '../types/rules.type';
+import { getHandStatus } from './abstract-hands.logic';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getHandLabel, scoresToLabel } from './labels.logic';
 import { canAction, canSplit } from './rules.logic';
@@ -93,6 +94,8 @@ const getNextMaterialHand = (
       : postSplitPair
     : nextCanSplit
     ? splittablePair
+    : previousDouble
+    ? postDoubleHand
     : nextCards.length === 2
     ? initialPair
     : threeOrMoreCards;
@@ -108,11 +111,11 @@ const getNextMaterialHand = (
     score: nextEffectiveScore,
   });
 
-  const nextAction = nextIsActionable
-    ? handResolutionMap[nextLabel]
-    : nextEffectiveScore === bustScore
-    ? bust
-    : end;
+  const nextAction = getHandStatus(
+    handResolutionMap[nextLabel],
+    nextIsActionable,
+    nextEffectiveScore,
+  );
 
   if (!nextAction) {
     throw new Error(`No action was defined for hand ${nextLabel}`);

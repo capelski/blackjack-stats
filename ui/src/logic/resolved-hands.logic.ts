@@ -1,5 +1,12 @@
 import { double, hit, split, stand, surrender } from '../models/action.model';
-import { acesLabel, softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
+import {
+  initialPair,
+  postASplitPair,
+  postDoubleHand,
+  postSplitPair,
+  splittablePair,
+} from '../models/hand-category.model';
+import { acesLabel, softScoresSeparator } from '../models/labels.model';
 import { ConsequencesMap } from '../types/consequence.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
 import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
@@ -92,25 +99,53 @@ export const getResolvedHands = (
 
 const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
   return [...resolvedHands].sort((a, b) => {
-    const isASoft = a.label.includes(softScoresSeparator);
-    const isBSoft = b.label.includes(softScoresSeparator);
+    const isASplittable = a.category === splittablePair;
+    const isBSplittable = b.category === splittablePair;
 
-    const isASplit = a.label.includes(splitScoresSeparator);
-    const isBSplit = b.label.includes(splitScoresSeparator);
+    if (isASplittable !== isBSplittable) {
+      return isASplittable ? -1 : 1;
+    }
+
+    const isAInitialPair = a.category === initialPair;
+    const isBInitialPair = b.category === initialPair;
+
+    if (isAInitialPair !== isBInitialPair) {
+      return isAInitialPair ? -1 : 1;
+    }
+
+    const isAPostDouble = a.category === postDoubleHand;
+    const isBPostDouble = b.category === postDoubleHand;
+
+    if (isAPostDouble !== isBPostDouble) {
+      return isAPostDouble ? -1 : 1;
+    }
+
+    const isAPostASplit = a.category === postASplitPair;
+    const isBPostASplit = b.category === postASplitPair;
+
+    if (isAPostASplit !== isBPostASplit) {
+      return isAPostASplit ? -1 : 1;
+    }
+
+    const isAPostSplit = a.category === postSplitPair;
+    const isBPostSplit = b.category === postSplitPair;
+
+    if (isAPostSplit !== isBPostSplit) {
+      return isAPostSplit ? -1 : 1;
+    }
 
     const isAAces = a.label === acesLabel;
     const isBAces = b.label === acesLabel;
 
-    if (isASplit !== isBSplit) {
-      return isASplit ? -1 : 1;
+    if (isAAces !== isBAces) {
+      return isAAces ? -1 : 1;
     }
+
+    const isASoft = a.label.includes(softScoresSeparator);
+    const isBSoft = b.label.includes(softScoresSeparator);
 
     if (isASoft !== isBSoft) {
       return isASoft ? -1 : 1;
-    }
-
-    if (isAAces !== isBAces) {
-      return isAAces ? -1 : 1;
     }
 
     return a.effectiveScore - b.effectiveScore;

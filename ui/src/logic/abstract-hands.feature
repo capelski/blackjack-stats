@@ -4,8 +4,9 @@ Feature: Abstract hands
 
   Scenario: Abstract hands
     When getting the abstract hands
-    Then 102 abstract hands are returned
+    Then 128 abstract hands are returned
     And there are 26 abstract hands with category "3+ cards"
+    And there are 26 abstract hands with category "Post double hand"
     And there are 27 abstract hands with category "Initial pair"
     And there are 26 abstract hands with category "Post split pair"
     And there are 10 abstract hands with category "Post A-split pair"
