@@ -87,7 +87,7 @@ export const en = {
   },
   standThreshold: {
     label: 'Stand threshold',
-    softLabel: 'Soft stand threshold',
+    softLabel: 'Stand threshold (soft scores)',
     sameThreshold: 'Same',
   },
   actionsAnalysisList: {

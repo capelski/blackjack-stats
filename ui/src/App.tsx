@@ -60,9 +60,11 @@ function App() {
   });
 
   const [standThresholds, setStandThresholds] = useState<StandThresholds>(() => {
+    const regular = getNumericParameter(standThresholdParamName) ?? defaultStandThreshold;
+
     return {
-      regular: getNumericParameter(standThresholdParamName) ?? defaultStandThreshold,
-      softScores: getNumericParameter(softStandThresholdParamName) ?? defaultStandThreshold,
+      regular,
+      softScores: getNumericParameter(softStandThresholdParamName) ?? regular,
     };
   });
 
@@ -83,7 +85,7 @@ function App() {
     setStandThresholds(newValue);
     toggleParameters([
       [standThresholdParamName, String(newValue.regular), String(defaultStandThreshold)],
-      [softStandThresholdParamName, String(newValue.softScores), String(defaultStandThreshold)],
+      [softStandThresholdParamName, String(newValue.softScores), String(newValue.regular)],
     ]);
   };
 

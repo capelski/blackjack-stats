@@ -87,7 +87,7 @@ export const ca = {
   },
   standThreshold: {
     label: 'Límit per plantar-se',
-    softLabel: 'Límit suau per plantar-se',
+    softLabel: 'Límit per plantar-se (puntuacions dobles)',
     sameThreshold: 'Igual',
   },
   actionsAnalysisList: {
