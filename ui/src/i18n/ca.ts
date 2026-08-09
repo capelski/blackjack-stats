@@ -6,6 +6,7 @@ export const ca = {
   titles: {
     standThreshold: 'Límit de plantar',
     optimalActions: 'Accions òptimes',
+    dealerCard: 'Carta del crupier',
   },
   commons: {
     action: 'Acció',
@@ -44,6 +45,10 @@ export const ca = {
     nextCard: 'Carta següent',
     nextHand: 'Mà següent',
     notFound: '"{{label}}" no és una mà vàlida',
+  },
+  dealerCard: {
+    card: 'Carta',
+    hands: '{{hands}} mans',
   },
   expectedResults: {
     matrix: 'Matriu',

@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import { vitePrerenderPlugin } from 'vite-prerender-plugin';
 import {
   actionsAnalysisRoute,
+  dealerCardRoute,
   expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
   expectedResultsRoute,
@@ -23,7 +24,7 @@ const actionsBreakdownRoutes = getActionableHands(abstractHands).map(
 
 const allRoutes = supportedLanguages
   .map(language => {
-    return [standThresholdRoute, optimalActionsRoute]
+    const strategyRoutes = [standThresholdRoute, optimalActionsRoute]
       .map(page => {
         return [
           materialHandsRoute,
@@ -35,6 +36,10 @@ const allRoutes = supportedLanguages
         ].map(route => `/${language}/${page}/${route}`);
       })
       .flat();
+
+    const dealerStrategyRoutes = [`/${language}/${dealerCardRoute}`];
+
+    return [...strategyRoutes, ...dealerStrategyRoutes];
   })
   .flat();
 

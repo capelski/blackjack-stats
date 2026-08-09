@@ -14,3 +14,7 @@ export type FinalScore = FinalScoreBase & {
 export type FinalScoresMap = {
   [score: number]: FinalScore;
 };
+
+export type FinalScoresByFirstCard = {
+  [card: string]: FinalScoresMap;
+};

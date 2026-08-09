@@ -6,6 +6,7 @@ export const en = {
   titles: {
     standThreshold: 'Stand threshold',
     optimalActions: 'Optimal actions',
+    dealerCard: 'Dealer card',
   },
   commons: {
     action: 'Action',
@@ -44,6 +45,10 @@ export const en = {
     nextCard: 'Next card',
     nextHand: 'Next hand',
     notFound: '"{{label}}" is not a valid hand',
+  },
+  dealerCard: {
+    card: 'Card',
+    hands: '{{hands}} hands',
   },
   expectedResults: {
     matrix: 'Matrix',

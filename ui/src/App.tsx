@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
-import { optimalActionsRoute, standThresholdRoute, supportedLanguages } from '../constants';
+import {
+  dealerCardRoute,
+  optimalActionsRoute,
+  standThresholdRoute,
+  supportedLanguages,
+} from '../constants';
 import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
 import { defaultLanguage } from './i18n';
 import { getLocalizedRoute } from './nav-utils';
+import { DealerCardPage } from './pages/dealer-card.page';
 import { OptimalActionsPage } from './pages/optimal-actions.page';
 import { StandThresholdPage } from './pages/stand-threshold.page';
 import { SearchNavLink } from './search-nav-link';
@@ -106,6 +112,9 @@ function App() {
         <SearchNavLink to={getLocalizedRoute(i18n.language, optimalActionsRoute)}>
           {t('titles.optimalActions')}
         </SearchNavLink>
+        <SearchNavLink to={getLocalizedRoute(i18n.language, dealerCardRoute)}>
+          {t('titles.dealerCard')}
+        </SearchNavLink>
         <LanguageSelector />
         <DecimalsSelector decimals={decimals} onDecimalsChange={setDecimals} />
       </nav>
@@ -114,19 +123,7 @@ function App() {
         <Routes>
           {supportedLanguages.map(language => (
             <Route key={language} path={language}>
-              <Route
-                path={standThresholdRoute}
-                element={
-                  <StandThresholdPage
-                    decisionOverrides={standThresholdDecisionOverrides}
-                    onDecisionOverride={onStandThresholdDecisionOverride}
-                    setStandThresholds={updateStandThresholds}
-                    standThresholds={standThresholds}
-                  />
-                }
-              >
-                {StrategyPageNestedRoutes()}
-              </Route>
+              <Route path={dealerCardRoute} element={<DealerCardPage />} />
               <Route
                 path={optimalActionsRoute}
                 element={
@@ -135,6 +132,19 @@ function App() {
                     onDecisionOverride={onOptimalActionsDecisionOverride}
                     rules={rules}
                     setRules={updateRules}
+                  />
+                }
+              >
+                {StrategyPageNestedRoutes()}
+              </Route>
+              <Route
+                path={standThresholdRoute}
+                element={
+                  <StandThresholdPage
+                    decisionOverrides={standThresholdDecisionOverrides}
+                    onDecisionOverride={onStandThresholdDecisionOverride}
+                    setStandThresholds={updateStandThresholds}
+                    standThresholds={standThresholds}
                   />
                 }
               >
