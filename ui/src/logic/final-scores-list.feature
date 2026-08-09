@@ -73,3 +73,10 @@ Feature: Final scores list
     When getting the final scores list of a hand resolver for optimal actions
     Then the returned final scores list contains 12 elements
     And the final score 11 has score "BJ", probability "0.04915794264906692" and "12" hands
+
+  Scenario: Final scores by first card
+    When getting the final scores by first card of a hand resolver with a stand threshold of 17
+    Then the returned final scores map contains 13 elements
+    And the final score "17" of the final scores group "6" has probability "0.012726013577180471" and "259" hands
+    And the final score "17" of the final scores group "A" has probability "0.01006068459891694" and "1184" hands
+    And the final score "22+" of the final scores group "A" has probability "0.008868174638551676" and "8286" hands
