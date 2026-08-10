@@ -5,7 +5,7 @@ import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { win } from '../models/result.model';
-import { modeParamName, useSearchParamsUtils } from '../search-params-utils';
+import { matrixModeParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { FinalScore } from '../types/final-score.type';
@@ -13,7 +13,7 @@ import { BetMultipliersCell } from './bet-multipliers-cell.component';
 
 const probability = 'probability';
 const result = 'result';
-type Mode = typeof probability | typeof result;
+type MatrixMode = typeof probability | typeof result;
 
 const getCellProps = (isHeader: boolean): CSSProperties => {
   const cellStyle: CSSProperties = {
@@ -24,7 +24,7 @@ const getCellProps = (isHeader: boolean): CSSProperties => {
   return cellStyle;
 };
 
-const getColumnsNumber = (mode: Mode): number => {
+const getColumnsNumber = (mode: MatrixMode): number => {
   return 1 + dealerFinalScores.length + (mode === probability ? 1 : 0);
 };
 
@@ -32,7 +32,7 @@ type ExpectedResultsMatrixRowProps = {
   firstCell: React.ReactNode;
   dealerScoreToCell: (dealerScore: FinalScore) => { node: React.ReactNode; style?: CSSProperties };
   lastCell: React.ReactNode;
-  mode: Mode;
+  mode: MatrixMode;
   isHeader?: boolean;
 };
 
@@ -66,15 +66,15 @@ export const ExpectedResultsMatrix: React.FC = () => {
   const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
-  const [mode, setMode] = useState<Mode>(probability);
+  const [mode, setMode] = useState<MatrixMode>(probability);
 
-  const toggleMode = (nextMode: Mode) => {
+  const toggleMode = (nextMode: MatrixMode) => {
     setMode(nextMode);
-    toggleParameter(modeParamName, nextMode, probability);
+    toggleParameter(matrixModeParamName, nextMode, probability);
   };
 
   useEffect(() => {
-    const modeParam = getParameter(modeParamName, [probability, result]);
+    const modeParam = getParameter(matrixModeParamName, [probability, result]);
     if (modeParam && modeParam !== mode) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setMode(modeParam);

@@ -2,7 +2,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const modalParamName = 'modal-id';
 
-export const modeParamName = 'mode';
+export const matrixModeParamName = 'mm';
+
+export const dealerCardModeParamName = 'dcm';
 
 export const selectedActionParamName = 'a';
 

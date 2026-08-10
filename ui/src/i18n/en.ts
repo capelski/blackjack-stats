@@ -50,8 +50,8 @@ export const en = {
     card: 'Card',
     modes: {
       hands: 'Hands',
-      absoluteProbability: 'Probability (absolute)',
-      relativeProbability: 'Probability (relative)',
+      absolute: 'Probability (absolute)',
+      relative: 'Probability (relative)',
     },
   },
   expectedResults: {

@@ -1,20 +1,21 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dealerFinalScores, dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
 import { sortedCardSymbols } from '../models/cards.model';
+import { dealerCardModeParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { FinalScore, FinalScoresGroup } from '../types/final-score.type';
 
 const hands = 'hands';
-const absoluteProbability = 'absoluteProbability';
-const relativeProbability = 'relativeProbability';
+const absoluteProbability = 'absolute';
+const relativeProbability = 'relative';
 const modes = [hands, absoluteProbability, relativeProbability] as const;
-type Mode = typeof modes[number];
+type DealerCardTableMode = typeof modes[number];
 
 const getCellValue = (
-  mode: Mode,
+  mode: DealerCardTableMode,
   finalScore: FinalScore,
   finalScoresGroup: FinalScoresGroup,
   decimals: number,
@@ -41,10 +42,24 @@ const rowStyle: CSSProperties = {
 
 export const DealerCardPage: React.FC = () => {
   const { t } = useTranslation();
+  const { getParameter, toggleParameter } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
   const sortedDealerFinalScores = dealerFinalScores.map(finalScore => finalScore.score);
 
-  const [mode, setMode] = useState<Mode>(hands);
+  const [mode, setMode] = useState<DealerCardTableMode>(relativeProbability);
+
+  const toggleMode = (nextMode: DealerCardTableMode) => {
+    setMode(nextMode);
+    toggleParameter(dealerCardModeParamName, nextMode, relativeProbability);
+  };
+
+  useEffect(() => {
+    const modeParam = getParameter(dealerCardModeParamName, [...modes]);
+    if (modeParam && modeParam !== mode) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMode(modeParam);
+    }
+  }, [getParameter, mode]);
 
   return (
     <div>
@@ -83,7 +98,7 @@ export const DealerCardPage: React.FC = () => {
         </tbody>
       </table>
 
-      <select value={mode} onChange={e => setMode(e.target.value as Mode)}>
+      <select value={mode} onChange={e => toggleMode(e.target.value as DealerCardTableMode)}>
         {modes.map(modeOption => (
           <option key={modeOption} value={modeOption}>
             {t(`dealerCard.modes.${modeOption}`)}
