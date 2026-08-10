@@ -78,7 +78,7 @@ Feature: Final scores list
     When getting the final scores by first card of a hand resolver with a stand threshold of 17
     Then the returned final scores map contains 10 elements
     And the final scores group "6" has an accumulated probability of "0.07692307692307622"
-    And the final score "17" of the final scores group "6" has probability "0.012726013577180471" and "259" hands
+    And the final score "17" of the final scores group "6" has probability "0.16543817650334763" and "259" hands
     And the final scores group "10 - K" has an accumulated probability of "0.307692307692307"
-    And the final score "17" of the final scores group "10 - K" has probability "0.03428441185311197" and "128" hands
-    And the final score "22+" of the final scores group "10 - K" has probability "0.0652643312669839" and "888" hands
+    And the final score "17" of the final scores group "10 - K" has probability "0.11142433852261416" and "128" hands
+    And the final score "22+" of the final scores group "10 - K" has probability "0.21210907661769818" and "888" hands

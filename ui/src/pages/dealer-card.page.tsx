@@ -24,9 +24,9 @@ const getCellValue = (
     return String(finalScore.hands.length);
   }
   if (mode === absoluteProbability) {
-    return toPercentage(finalScore.probability, decimals);
+    return toPercentage(finalScore.probability * finalScoresGroup.probability, decimals);
   }
-  return toPercentage(finalScore.probability / finalScoresGroup.probability, decimals);
+  return toPercentage(finalScore.probability, decimals);
 };
 
 const getCellStyle = (isHeader: boolean): CSSProperties => ({
@@ -46,7 +46,7 @@ export const DealerCardPage: React.FC = () => {
   const { decimals } = useSettingsContext();
   const sortedDealerFinalScores = dealerFinalScores.map(finalScore => finalScore.score);
 
-  const [mode, toggleMode] = useUrlState(dealerCardModeParamName, absoluteProbability, modes);
+  const [mode, toggleMode] = useUrlState(dealerCardModeParamName, relativeProbability, modes);
 
   return (
     <div>

@@ -77,6 +77,12 @@ export const getFinalScoresByFirstCard = (hands: MaterialHand[]): FinalScoresByF
     addHandToFinalScore(finalScoreEntry, hand);
   }
 
+  for (const finalScoresGroup of Object.values(finalScoresByFirstCard)) {
+    for (const finalScore of Object.values(finalScoresGroup.finalScores)) {
+      finalScore.probability /= finalScoresGroup.probability;
+    }
+  }
+
   return finalScoresByFirstCard;
 };
 
