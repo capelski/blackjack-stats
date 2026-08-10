@@ -46,7 +46,7 @@ export const DealerCardPage: React.FC = () => {
   const { decimals } = useSettingsContext();
   const sortedDealerFinalScores = dealerFinalScores.map(finalScore => finalScore.score);
 
-  const [mode, toggleMode] = useUrlState(dealerCardModeParamName, relativeProbability, modes);
+  const [mode, toggleMode] = useUrlState(dealerCardModeParamName, absoluteProbability, modes);
 
   return (
     <div>
