@@ -135,6 +135,20 @@ Then('the returned final scores map contains {int} elements', function(
   assert.strictEqual(Object.keys(this.map).length, count);
 });
 
+Then('the final scores group {string} has an accumulated probability of {string}', function(
+  this: FinalScoresListWorld,
+  cardSymbol: string,
+  expectedProbability: string,
+) {
+  const finalScoresGroup = this.map[cardSymbol];
+
+  if (!finalScoresGroup) {
+    throw new Error(`Could not find final scores group for card "${cardSymbol}"`);
+  }
+
+  assert.strictEqual(String(finalScoresGroup.probability), expectedProbability);
+});
+
 Then(
   'the final score {string} of the final scores group {string} has probability {string} and {string} hands',
   function(
@@ -150,7 +164,7 @@ Then(
       throw new Error(`Could not find final scores group for card "${cardSymbol}"`);
     }
 
-    const finalScore = finalScoresGroup[parseScore(scoreLabel)];
+    const finalScore = finalScoresGroup.finalScores[parseScore(scoreLabel)];
 
     if (!finalScore) {
       throw new Error(

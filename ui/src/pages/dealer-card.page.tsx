@@ -40,13 +40,13 @@ export const DealerCardPage: React.FC = () => {
 
         <tbody>
           {sortedCardSymbols.map(cardSymbol => {
-            const finalScores = dealerFinalScoresByFirstCard[cardSymbol];
+            const finalScoresGroup = dealerFinalScoresByFirstCard[cardSymbol];
 
             return (
               <tr key={cardSymbol} style={rowStyle}>
                 <td style={getCellStyle(true)}>{cardSymbol}</td>
                 {sortedDealerFinalScores.map(dealerFinalScoreKey => {
-                  const finalScore = finalScores[dealerFinalScoreKey];
+                  const finalScore = finalScoresGroup.finalScores[dealerFinalScoreKey];
 
                   return (
                     <td key={dealerFinalScoreKey} style={getCellStyle(false)}>

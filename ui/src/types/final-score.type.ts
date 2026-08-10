@@ -15,6 +15,11 @@ export type FinalScoresMap = {
   [score: number]: FinalScore;
 };
 
+export type FinalScoresGroup = {
+  finalScores: FinalScoresMap;
+  probability: number;
+};
+
 export type FinalScoresByFirstCard = {
-  [card: string]: FinalScoresMap;
+  [card: string]: FinalScoresGroup;
 };

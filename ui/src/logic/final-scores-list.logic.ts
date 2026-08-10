@@ -1,4 +1,9 @@
-import { FinalScore, FinalScoresByFirstCard, FinalScoresMap } from '../types/final-score.type';
+import {
+  FinalScore,
+  FinalScoresByFirstCard,
+  FinalScoresGroup,
+  FinalScoresMap,
+} from '../types/final-score.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { getSortedNumericKeys } from './numbers.logic';
 
@@ -17,6 +22,13 @@ const createFinalScore = (effectiveScore: number): FinalScore => ({
   probabilityByBetMultiplier: {},
   score: effectiveScore,
 });
+
+const createFinalScoresGroup = (): FinalScoresGroup => {
+  return {
+    finalScores: {},
+    probability: 0,
+  };
+};
 
 export const getFinalScoresList = (hands: MaterialHand[]): FinalScore[] => {
   const finalScoresMap: FinalScoresMap = {};
@@ -48,14 +60,15 @@ export const getFinalScoresByFirstCard = (hands: MaterialHand[]): FinalScoresByF
     const firstCardSymbol = hand.cards[0].symbol;
 
     if (!finalScoresByFirstCard[firstCardSymbol]) {
-      finalScoresByFirstCard[firstCardSymbol] = {};
+      finalScoresByFirstCard[firstCardSymbol] = createFinalScoresGroup();
     }
     const finalScoresGroup = finalScoresByFirstCard[firstCardSymbol];
+    finalScoresGroup.probability += hand.probability;
 
-    if (!finalScoresGroup[hand.effectiveScore]) {
-      finalScoresGroup[hand.effectiveScore] = createFinalScore(hand.effectiveScore);
+    if (!finalScoresGroup.finalScores[hand.effectiveScore]) {
+      finalScoresGroup.finalScores[hand.effectiveScore] = createFinalScore(hand.effectiveScore);
     }
-    const finalScoreEntry = finalScoresGroup[hand.effectiveScore];
+    const finalScoreEntry = finalScoresGroup.finalScores[hand.effectiveScore];
 
     addHandToFinalScore(finalScoreEntry, hand);
   }
