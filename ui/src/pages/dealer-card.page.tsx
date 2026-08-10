@@ -11,8 +11,8 @@ import { FinalScore, FinalScoresGroup } from '../types/final-score.type';
 const hands = 'hands';
 const absoluteProbability = 'absolute';
 const relativeProbability = 'relative';
-const modes = [hands, absoluteProbability, relativeProbability] as const;
-type DealerCardTableMode = typeof modes[number];
+type DealerCardTableMode = typeof hands | typeof absoluteProbability | typeof relativeProbability;
+const modes: DealerCardTableMode[] = [hands, absoluteProbability, relativeProbability];
 
 const getCellValue = (
   mode: DealerCardTableMode,
@@ -42,15 +42,11 @@ const rowStyle: CSSProperties = {
 
 export const DealerCardPage: React.FC = () => {
   const { t } = useTranslation();
-  const { getParameter, toggleParameter } = useSearchParamsUtils();
+  const { useUrlState } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
   const sortedDealerFinalScores = dealerFinalScores.map(finalScore => finalScore.score);
 
-  const mode = getParameter(dealerCardModeParamName, [...modes]) ?? relativeProbability;
-
-  const toggleMode = (nextMode: DealerCardTableMode) => {
-    toggleParameter(dealerCardModeParamName, nextMode, relativeProbability);
-  };
+  const [mode, toggleMode] = useUrlState(dealerCardModeParamName, relativeProbability, modes);
 
   return (
     <div>

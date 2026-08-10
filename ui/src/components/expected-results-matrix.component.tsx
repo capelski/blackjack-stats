@@ -14,6 +14,7 @@ import { BetMultipliersCell } from './bet-multipliers-cell.component';
 const probability = 'probability';
 const result = 'result';
 type MatrixMode = typeof probability | typeof result;
+const modes: MatrixMode[] = [probability, result];
 
 const getCellProps = (isHeader: boolean): CSSProperties => {
   const cellStyle: CSSProperties = {
@@ -62,15 +63,11 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
 
 export const ExpectedResultsMatrix: React.FC = () => {
   const { t } = useTranslation();
-  const { getParameter, toggleParameter } = useSearchParamsUtils();
+  const { useUrlState } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
-  const mode = getParameter(matrixModeParamName, [probability, result]) ?? probability;
-
-  const toggleMode = (nextMode: MatrixMode) => {
-    toggleParameter(matrixModeParamName, nextMode, probability);
-  };
+  const [mode, toggleMode] = useUrlState(matrixModeParamName, probability, modes);
 
   return (
     <div>
@@ -141,10 +138,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
         </tbody>
       </table>
 
-      <select
-        value={mode}
-        onChange={e => toggleMode(e.target.value as typeof probability | typeof result)}
-      >
+      <select value={mode} onChange={e => toggleMode(e.target.value as MatrixMode)}>
         <option value={result}>{t(`commons.${result}`)}</option>
         <option value={probability}>{t(`commons.${probability}`)}</option>
       </select>

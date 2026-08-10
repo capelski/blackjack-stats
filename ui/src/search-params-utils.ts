@@ -83,6 +83,20 @@ export const useSearchParamsUtils = () => {
     setSearchParams(nextSearchParams);
   };
 
+  const useUrlState = <T extends string>(
+    paramName: string,
+    defaultValue: T,
+    allowedValues?: T[],
+  ) => {
+    const parameter = getParameter(paramName, allowedValues) ?? defaultValue;
+
+    const setParameter = (nextValue: T) => {
+      toggleParameter(paramName, nextValue, defaultValue);
+    };
+
+    return [parameter, setParameter] as const;
+  };
+
   return {
     deleteParameter,
     getNumericParameter,
@@ -94,5 +108,6 @@ export const useSearchParamsUtils = () => {
     setSearchParams,
     toggleParameter,
     toggleParameters,
+    useUrlState,
   };
 };
