@@ -54,7 +54,11 @@ export const ActionsBreakdown: React.FC = () => {
     <div className="actions-breakdown">
       {resolvedHand ? (
         <React.Fragment>
-          <ActionsBreakdownStand resolvedHand={resolvedHand} sectionRef={standRef} />
+          <ActionsBreakdownStand
+            dealerScores={strategy.dealerScores}
+            resolvedHand={resolvedHand}
+            sectionRef={standRef}
+          />
           <ActionsBreakdownNextCard action={hit} resolvedHand={resolvedHand} sectionRef={hitRef} />
           {resolvedHand.canDouble && (
             <ActionsBreakdownNextCard

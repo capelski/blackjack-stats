@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
 import { getResult, loseColor, resultToStyles, winColor } from '../logic/result.logic';
 import { stand } from '../models/action.model';
 import { lose, Result, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
+import { FinalScoreBase } from '../types/final-score.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 import { ActionsBreakdownTitle } from './actions-breakdown-title.component';
 
@@ -63,18 +63,20 @@ const getEdgeContribution = (result: Result, dealerProbability: number): number 
 };
 
 type ActionsBreakdownStandProps = {
+  dealerScores: FinalScoreBase[];
   resolvedHand: ResolvedHand;
   sectionRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const ActionsBreakdownStand: React.FC<ActionsBreakdownStandProps> = ({
+  dealerScores,
   resolvedHand,
   sectionRef,
 }) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
 
-  const totalEdgeContribution = dealerFinalScores.reduce(
+  const totalEdgeContribution = dealerScores.reduce(
     (reduced, dealerScore) =>
       reduced +
       getEdgeContribution(
@@ -99,7 +101,7 @@ export const ActionsBreakdownStand: React.FC<ActionsBreakdownStandProps> = ({
         </thead>
 
         <tbody>
-          {dealerFinalScores.map(dealerScore => {
+          {dealerScores.map(dealerScore => {
             const result = getResult(resolvedHand.effectiveScore, dealerScore.score);
 
             return (

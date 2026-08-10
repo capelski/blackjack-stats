@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckboxComponent } from '../components/checkbox.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
+import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { getOverridesResolver } from '../logic/decision-overrides.logic';
 import { getStrategy } from '../logic/strategy.logic';
 import { StrategyContext } from '../strategy.context';
@@ -29,7 +30,7 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
 
     const handResolver = getOverridesResolver(optimalActionsHandResolver, decisionOverrides);
 
-    const strategy = await getStrategy(rules, handResolver);
+    const strategy = await getStrategy(rules, handResolver, dealerFinalScores);
     setStrategy(strategy);
     setComputing(false);
   };

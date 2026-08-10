@@ -8,6 +8,7 @@ import {
   getSurrenderConsequence,
   mergeFutureConsequences,
 } from './consequence.logic';
+import { dealerFinalScores } from './dealer-data.logic';
 import {
   formatOutcomesByBetMultiplier,
   parseOutcomesByBetMultiplier,
@@ -55,7 +56,7 @@ When('getting the consequences of standing with {string} hand', function(
 ) {
   const abstractHands = getAbstractHands({});
   const abstractHand = abstractHands.find(x => x.label === label)!;
-  this.consequence = getStandConsequence(abstractHand);
+  this.consequence = getStandConsequence(abstractHand, dealerFinalScores);
 });
 
 When('getting the consequences of hitting', function(this: ConsequenceWorld) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StandThresholdControl } from '../components/stand-threshold-control.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
+import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { getOverridesResolver } from '../logic/decision-overrides.logic';
 import { getStrategy } from '../logic/strategy.logic';
 import { hit, stand } from '../models/action.model';
@@ -43,7 +44,7 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
 
     const handResolver = getOverridesResolver(standThresholdResolver, decisionOverrides);
 
-    const strategy = await getStrategy(standThresholdRules, handResolver);
+    const strategy = await getStrategy(standThresholdRules, handResolver, dealerFinalScores);
     setStrategy(strategy);
     setComputing(false);
   };

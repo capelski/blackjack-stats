@@ -65,7 +65,10 @@ export const getSplitConsequence = (
   return mergeFutureConsequences(futureConsequences, split, 2);
 };
 
-export const getStandConsequence = (abstractHand: AbstractHand): Consequence => {
+export const getStandConsequence = (
+  abstractHand: AbstractHand,
+  dealerScores: FinalScoreBase[],
+): Consequence => {
   const betMultiplier = getBetMultiplier(1, {
     isBlackjack: abstractHand.effectiveScore === blackjackScore,
   });
@@ -77,7 +80,7 @@ export const getStandConsequence = (abstractHand: AbstractHand): Consequence => 
     },
   };
 
-  const expectedResult = getExpectedResult(finalScore);
+  const expectedResult = getExpectedResult(finalScore, dealerScores);
 
   return {
     finalProbabilities: { [finalScore.score]: 1 },

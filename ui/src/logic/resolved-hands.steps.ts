@@ -4,6 +4,7 @@ import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
+import { dealerFinalScores } from './dealer-data.logic';
 import { formatProbabilityByBetMultiplier } from './final-scores-list.steps';
 import { getResolvedHands } from './resolved-hands.logic';
 import { RulesWorld } from './rules.steps';
@@ -14,12 +15,12 @@ type ResolvedHandsWorld = RulesWorld & {
 
 const getResolvedHandsForStandThreshold = (threshold: number): ResolvedHand[] => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
-  return getResolvedHands({}, handResolver).resolvedHandsList;
+  return getResolvedHands({}, handResolver, dealerFinalScores).resolvedHandsList;
 };
 
 const getResolvedHandsForOptimalActions = (rules: Rules = {}): ResolvedHand[] => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
-  return getResolvedHands(rules, handResolver).resolvedHandsList;
+  return getResolvedHands(rules, handResolver, dealerFinalScores).resolvedHandsList;
 };
 
 When('getting the resolved hands of a hand resolver with a stand threshold of {int}', function(

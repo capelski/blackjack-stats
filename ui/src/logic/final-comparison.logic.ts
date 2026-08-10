@@ -1,13 +1,12 @@
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalComparison, FinalComparisonsMap } from '../types/final-comparison.type';
-import { FinalScore, FinalScoreBase } from '../types/final-score.type';
-import { dealerFinalScores } from './dealer-data.logic';
+import { FinalScoreBase } from '../types/final-score.type';
 import { getSortedNumericKeys } from './numbers.logic';
 import { getResult } from './result.logic';
 
 export const getFinalComparison = (
   playerScore: FinalScoreBase,
-  dealerScore: FinalScore,
+  dealerScore: FinalScoreBase,
 ): FinalComparison => {
   const result = getResult(playerScore.score, dealerScore.score);
 
@@ -29,10 +28,13 @@ export const getFinalComparison = (
   return finalComparison;
 };
 
-export const getFinalComparisons = (playerScore: FinalScoreBase): FinalComparisonsMap => {
+export const getFinalComparisons = (
+  playerScore: FinalScoreBase,
+  dealerScores: FinalScoreBase[],
+): FinalComparisonsMap => {
   const finalComparisonsMap: FinalComparisonsMap = {};
 
-  for (const dealerScore of dealerFinalScores) {
+  for (const dealerScore of dealerScores) {
     finalComparisonsMap[dealerScore.score] = getFinalComparison(playerScore, dealerScore);
   }
 

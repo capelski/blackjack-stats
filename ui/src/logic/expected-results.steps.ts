@@ -1,6 +1,7 @@
 import { DataTable, Then } from '@cucumber/cucumber';
 import { FinalScore } from '../types/final-score.type';
 import { Rules } from '../types/rules.type';
+import { dealerFinalScores } from './dealer-data.logic';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
 import {
   formatProbabilityByBetMultiplier,
@@ -47,7 +48,7 @@ Then('the following individual expected result scenarios are considered', functi
     const rules: Rules = JSON.parse(row['Rules'].trim());
     const finalScores = getFinalScoresFromResolver(rules, resolver);
     const finalScore = findFinalScore(finalScores, row['Score'].trim());
-    const result = getExpectedResult(finalScore);
+    const result = getExpectedResult(finalScore, dealerFinalScores);
 
     assertEqual(
       formatProbabilityByBetMultiplier(result.outcomesByBetMultiplier.win),
@@ -73,7 +74,7 @@ Then('the following overall expected results scenarios are considered', function
     const resolver = row['Hand resolver'].trim();
     const rules: Rules = JSON.parse(row['Rules'].trim());
     const finalScores = getFinalScoresFromResolver(rules, resolver);
-    const results = getExpectedResults(finalScores);
+    const results = getExpectedResults(finalScores, dealerFinalScores);
 
     assertEqual(results.probability, Number(row['Probability'].trim()), 'Probability mismatch');
     assertEqual(

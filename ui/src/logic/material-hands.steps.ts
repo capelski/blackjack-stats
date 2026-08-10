@@ -4,6 +4,7 @@ import { hit, stand } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { Rules } from '../types/rules.type';
+import { dealerFinalScores } from './dealer-data.logic';
 import { getMaterialHands } from './material-hands.logic';
 import { getResolvedHands } from './resolved-hands.logic';
 import { RulesWorld } from './rules.steps';
@@ -14,13 +15,13 @@ type MaterialHandsWorld = RulesWorld & {
 
 export const getMaterialHandsForStandThreshold = (rules: Rules, threshold: number) => {
   const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
-  const { handResolutionMap } = getResolvedHands(rules, handResolver);
+  const { handResolutionMap } = getResolvedHands(rules, handResolver, dealerFinalScores);
   return getMaterialHands(rules, handResolutionMap);
 };
 
 export const getMaterialHandsForOptimalActions = (rules: Rules) => {
   const handResolver: HandResolver = hand => hand.optimalConsequence.action;
-  const { handResolutionMap } = getResolvedHands(rules, handResolver);
+  const { handResolutionMap } = getResolvedHands(rules, handResolver, dealerFinalScores);
   return getMaterialHands(rules, handResolutionMap);
 };
 

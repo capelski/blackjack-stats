@@ -1,6 +1,5 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
@@ -8,7 +7,7 @@ import { win } from '../models/result.model';
 import { matrixModeParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
-import { FinalScore } from '../types/final-score.type';
+import { FinalScoreBase } from '../types/final-score.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
 
 const probability = 'probability';
@@ -25,13 +24,16 @@ const getCellProps = (isHeader: boolean): CSSProperties => {
   return cellStyle;
 };
 
-const getColumnsNumber = (mode: MatrixMode): number => {
-  return 1 + dealerFinalScores.length + (mode === probability ? 1 : 0);
+const getColumnsNumber = (mode: MatrixMode, dealerScoresCount: number): number => {
+  return 1 + dealerScoresCount + (mode === probability ? 1 : 0);
 };
 
 type ExpectedResultsMatrixRowProps = {
+  dealerScores: FinalScoreBase[];
   firstCell: React.ReactNode;
-  dealerScoreToCell: (dealerScore: FinalScore) => { node: React.ReactNode; style?: CSSProperties };
+  dealerScoreToCell: (
+    dealerScore: FinalScoreBase,
+  ) => { node: React.ReactNode; style?: CSSProperties };
   lastCell: React.ReactNode;
   mode: MatrixMode;
   isHeader?: boolean;
@@ -44,11 +46,14 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
     <tr
       style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${getColumnsNumber(props.mode)}, 1fr)`,
+        gridTemplateColumns: `repeat(${getColumnsNumber(
+          props.mode,
+          props.dealerScores.length,
+        )}, 1fr)`,
       }}
     >
       <td style={cellStyle}>{props.firstCell}</td>
-      {dealerFinalScores.map(dealerScore => {
+      {props.dealerScores.map(dealerScore => {
         const { node, style } = props.dealerScoreToCell(dealerScore);
         return (
           <td style={{ ...cellStyle, ...style }} key={dealerScore.score}>
@@ -76,7 +81,8 @@ export const ExpectedResultsMatrix: React.FC = () => {
           <tr
             style={{
               display: 'grid',
-              gridTemplateColumns: `1fr ${getColumnsNumber(mode) - 1}fr`,
+              gridTemplateColumns: `1fr ${getColumnsNumber(mode, strategy.dealerScores.length) -
+                1}fr`,
             }}
           >
             <td style={getCellProps(true)}>{t('commons.player')}</td>
@@ -84,6 +90,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
           </tr>
 
           <ExpectedResultsMatrixRow
+            dealerScores={strategy.dealerScores}
             firstCell=""
             dealerScoreToCell={dealerScore => ({ node: effectiveScoreToLabel(dealerScore.score) })}
             lastCell={t('commons.total')}
@@ -98,6 +105,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
 
             return (
               <ExpectedResultsMatrixRow
+                dealerScores={strategy.dealerScores}
                 key={playerScore}
                 firstCell={effectiveScoreToLabel(playerScore)}
                 dealerScoreToCell={dealerScore => {
@@ -127,6 +135,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
 
           {mode === probability && (
             <ExpectedResultsMatrixRow
+              dealerScores={strategy.dealerScores}
               firstCell={t('commons.total')}
               dealerScoreToCell={dealerScore => ({
                 node: toPercentage(dealerScore.probability, decimals),
