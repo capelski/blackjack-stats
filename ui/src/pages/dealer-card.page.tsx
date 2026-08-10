@@ -14,7 +14,7 @@ const getCellStyle = (isHeader: boolean): CSSProperties => ({
 
 const rowStyle: CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: `repeat(${1 + dealerFinalScores.length}, 1fr)`,
+  gridTemplateColumns: `repeat(${1 + sortedCardSymbols.length}, 1fr)`,
 };
 
 export const DealerCardPage: React.FC = () => {
@@ -29,41 +29,40 @@ export const DealerCardPage: React.FC = () => {
       <table style={{ width: '100%' }}>
         <thead>
           <tr style={rowStyle}>
-            <td style={getCellStyle(true)}>{t('dealerCard.card')}</td>
-            {sortedDealerFinalScores.map(finalScoreKey => (
-              <td key={finalScoreKey} style={getCellStyle(true)}>
-                {effectiveScoreToLabel(Number(finalScoreKey))}
+            <td style={getCellStyle(true)}>{t('commons.score')}</td>
+            {sortedCardSymbols.map(cardSymbol => (
+              <td key={cardSymbol} style={getCellStyle(true)}>
+                {cardSymbol}
               </td>
             ))}
           </tr>
         </thead>
 
         <tbody>
-          {sortedCardSymbols.map(cardSymbol => {
-            const finalScoresGroup = dealerFinalScoresByFirstCard[cardSymbol];
+          {sortedDealerFinalScores.map(dealerFinalScoreKey => (
+            <tr key={dealerFinalScoreKey} style={rowStyle}>
+              <td style={getCellStyle(true)}>
+                {effectiveScoreToLabel(Number(dealerFinalScoreKey))}
+              </td>
+              {sortedCardSymbols.map(cardSymbol => {
+                const finalScoresGroup = dealerFinalScoresByFirstCard[cardSymbol];
+                const finalScore = finalScoresGroup.finalScores[dealerFinalScoreKey];
 
-            return (
-              <tr key={cardSymbol} style={rowStyle}>
-                <td style={getCellStyle(true)}>{cardSymbol}</td>
-                {sortedDealerFinalScores.map(dealerFinalScoreKey => {
-                  const finalScore = finalScoresGroup.finalScores[dealerFinalScoreKey];
-
-                  return (
-                    <td key={dealerFinalScoreKey} style={getCellStyle(false)}>
-                      {finalScore ? (
-                        <React.Fragment>
-                          <div>{t('dealerCard.hands', { hands: finalScore.hands.length })}</div>
-                          <div>{toPercentage(finalScore.probability, decimals)}</div>
-                        </React.Fragment>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+                return (
+                  <td key={cardSymbol} style={getCellStyle(false)}>
+                    {finalScore ? (
+                      <React.Fragment>
+                        <div>{t('dealerCard.hands', { hands: finalScore.hands.length })}</div>
+                        <div>{toPercentage(finalScore.probability, decimals)}</div>
+                      </React.Fragment>
+                    ) : (
+                      '-'
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
