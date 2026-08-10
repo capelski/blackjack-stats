@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dealerFinalScores, dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
@@ -46,20 +46,11 @@ export const DealerCardPage: React.FC = () => {
   const { decimals } = useSettingsContext();
   const sortedDealerFinalScores = dealerFinalScores.map(finalScore => finalScore.score);
 
-  const [mode, setMode] = useState<DealerCardTableMode>(relativeProbability);
+  const mode = getParameter(dealerCardModeParamName, [...modes]) ?? relativeProbability;
 
   const toggleMode = (nextMode: DealerCardTableMode) => {
-    setMode(nextMode);
     toggleParameter(dealerCardModeParamName, nextMode, relativeProbability);
   };
-
-  useEffect(() => {
-    const modeParam = getParameter(dealerCardModeParamName, [...modes]);
-    if (modeParam && modeParam !== mode) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMode(modeParam);
-    }
-  }, [getParameter, mode]);
 
   return (
     <div>

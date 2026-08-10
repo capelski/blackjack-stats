@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
@@ -66,20 +66,11 @@ export const ExpectedResultsMatrix: React.FC = () => {
   const { decimals } = useSettingsContext();
   const { strategy } = useStrategyContext();
 
-  const [mode, setMode] = useState<MatrixMode>(probability);
+  const mode = getParameter(matrixModeParamName, [probability, result]) ?? probability;
 
   const toggleMode = (nextMode: MatrixMode) => {
-    setMode(nextMode);
     toggleParameter(matrixModeParamName, nextMode, probability);
   };
-
-  useEffect(() => {
-    const modeParam = getParameter(matrixModeParamName, [probability, result]);
-    if (modeParam && modeParam !== mode) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMode(modeParam);
-    }
-  }, [getParameter, mode]);
 
   return (
     <div>
