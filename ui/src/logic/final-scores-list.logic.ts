@@ -1,3 +1,4 @@
+import { tenCardsSymbols, tenCardUnifiedSymbol } from '../models/cards.model';
 import {
   FinalScore,
   FinalScoresByFirstCard,
@@ -58,11 +59,14 @@ export const getFinalScoresByFirstCard = (hands: MaterialHand[]): FinalScoresByF
     }
 
     const firstCardSymbol = hand.cards[0].symbol;
+    const applicableSymbol = tenCardsSymbols.includes(firstCardSymbol)
+      ? tenCardUnifiedSymbol
+      : firstCardSymbol;
 
-    if (!finalScoresByFirstCard[firstCardSymbol]) {
-      finalScoresByFirstCard[firstCardSymbol] = createFinalScoresGroup();
+    if (!finalScoresByFirstCard[applicableSymbol]) {
+      finalScoresByFirstCard[applicableSymbol] = createFinalScoresGroup();
     }
-    const finalScoresGroup = finalScoresByFirstCard[firstCardSymbol];
+    const finalScoresGroup = finalScoresByFirstCard[applicableSymbol];
     finalScoresGroup.probability += hand.probability;
 
     if (!finalScoresGroup.finalScores[hand.effectiveScore]) {

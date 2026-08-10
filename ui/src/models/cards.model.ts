@@ -23,4 +23,19 @@ export const cardsMap = cards.reduce((map, card) => {
 
 export const cardsNumber = cards.length;
 
-export const sortedCardSymbols = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+export const tenCardsSymbols = ['10', 'J', 'Q', 'K'];
+
+export const tenCardUnifiedSymbol = '10 - K';
+
+export const sortedCardSymbols = [
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  tenCardUnifiedSymbol,
+  'A',
+];
