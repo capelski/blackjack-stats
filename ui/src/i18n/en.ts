@@ -48,7 +48,11 @@ export const en = {
   },
   dealerCard: {
     card: 'Card',
-    hands: '{{hands}} hands',
+    modes: {
+      hands: 'Hands',
+      absoluteProbability: 'Probability (absolute)',
+      relativeProbability: 'Probability (relative)',
+    },
   },
   expectedResults: {
     matrix: 'Matrix',

@@ -1,10 +1,32 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dealerFinalScores, dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
 import { sortedCardSymbols } from '../models/cards.model';
 import { useSettingsContext } from '../settings.context';
+import { FinalScore, FinalScoresGroup } from '../types/final-score.type';
+
+const hands = 'hands';
+const absoluteProbability = 'absoluteProbability';
+const relativeProbability = 'relativeProbability';
+const modes = [hands, absoluteProbability, relativeProbability] as const;
+type Mode = typeof modes[number];
+
+const getCellValue = (
+  mode: Mode,
+  finalScore: FinalScore,
+  finalScoresGroup: FinalScoresGroup,
+  decimals: number,
+): string => {
+  if (mode === hands) {
+    return String(finalScore.hands.length);
+  }
+  if (mode === absoluteProbability) {
+    return toPercentage(finalScore.probability, decimals);
+  }
+  return toPercentage(finalScore.probability / finalScoresGroup.probability, decimals);
+};
 
 const getCellStyle = (isHeader: boolean): CSSProperties => ({
   fontWeight: isHeader ? 'bold' : undefined,
@@ -21,6 +43,8 @@ export const DealerCardPage: React.FC = () => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const sortedDealerFinalScores = dealerFinalScores.map(finalScore => finalScore.score);
+
+  const [mode, setMode] = useState<Mode>(hands);
 
   return (
     <div>
@@ -50,14 +74,7 @@ export const DealerCardPage: React.FC = () => {
 
                 return (
                   <td key={cardSymbol} style={getCellStyle(false)}>
-                    {finalScore ? (
-                      <React.Fragment>
-                        <div>{t('dealerCard.hands', { hands: finalScore.hands.length })}</div>
-                        <div>{toPercentage(finalScore.probability, decimals)}</div>
-                      </React.Fragment>
-                    ) : (
-                      '-'
-                    )}
+                    {finalScore ? getCellValue(mode, finalScore, finalScoresGroup, decimals) : '-'}
                   </td>
                 );
               })}
@@ -65,6 +82,14 @@ export const DealerCardPage: React.FC = () => {
           ))}
         </tbody>
       </table>
+
+      <select value={mode} onChange={e => setMode(e.target.value as Mode)}>
+        {modes.map(modeOption => (
+          <option key={modeOption} value={modeOption}>
+            {t(`dealerCard.modes.${modeOption}`)}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };
