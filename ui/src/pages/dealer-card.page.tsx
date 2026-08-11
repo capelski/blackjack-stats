@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DealerFinalScoresMatrix } from '../components/dealer-final-scores-matrix.component';
-import { ExpectedResultsSummary } from '../components/expected-results-summary.component';
-import { OptimalActionsMatrix } from '../components/optimal-actions-matrix.component';
+import { Outlet } from 'react-router-dom';
+import { finalScoresRoute, summaryRoute } from '../../constants';
+import { DealerCardContext } from '../dealer-card.context';
 import { dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
 import { optimalActionsHandResolver } from '../logic/resolved-hands.logic';
 import { getStrategyByFirstCard } from '../logic/strategy.logic';
+import { SearchNavLink } from '../search-nav-link';
 import { Rules } from '../types/rules.type';
 import { StrategyByFirstCard } from '../types/strategy.type';
 
@@ -37,21 +38,17 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
   }, [props.rules]);
 
   return (
-    <div>
-      <h1>{t('titles.dealerCard')}</h1>
+    <DealerCardContext.Provider value={{ computing, strategy }}>
+      <div>
+        <h1>{t('titles.dealerCard')}</h1>
 
-      <DealerFinalScoresMatrix />
+        <nav className="nested-navbar">
+          <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>
+          <SearchNavLink to={summaryRoute}>{t('dealerCard.summary')}</SearchNavLink>
+        </nav>
 
-      {computing || !strategy ? (
-        <p>...</p>
-      ) : (
-        <React.Fragment>
-          <OptimalActionsMatrix strategy={strategy} />
-
-          <h2>{t('strategyLayout.expectedResults')}</h2>
-          <ExpectedResultsSummary expectedResults={strategy.expectedResults} />
-        </React.Fragment>
-      )}
-    </div>
+        <Outlet />
+      </div>
+    </DealerCardContext.Provider>
   );
 };

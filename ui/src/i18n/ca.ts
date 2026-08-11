@@ -47,7 +47,8 @@ export const ca = {
     notFound: '"{{label}}" no és una mà vàlida',
   },
   dealerCard: {
-    card: 'Carta',
+    dealerScores: 'Puntuacions del crupier',
+    summary: 'Resum',
     modes: {
       hands: 'Mans',
       absolute: 'Probabilitat (absoluta)',

@@ -10,6 +10,7 @@ import {
 import './App.css';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
+import { DealerCardPageNestedRoutes } from './dealer-card-page-nested-routes';
 import { defaultLanguage } from './i18n';
 import { getLocalizedRoute } from './nav-utils';
 import { DealerCardPage } from './pages/dealer-card.page';
@@ -126,7 +127,9 @@ function App() {
               <Route
                 path={dealerCardRoute}
                 element={<DealerCardPage rules={rules} setRules={updateRules} />}
-              />
+              >
+                {DealerCardPageNestedRoutes()}
+              </Route>
               <Route
                 path={optimalActionsRoute}
                 element={

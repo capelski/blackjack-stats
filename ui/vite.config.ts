@@ -12,6 +12,7 @@ import {
   optimalActionsRoute,
   publicPath,
   standThresholdRoute,
+  summaryRoute,
   supportedLanguages,
 } from './constants';
 import { getAbstractHands, getActionableHands } from './src/logic/abstract-hands.logic';
@@ -37,7 +38,9 @@ const allRoutes = supportedLanguages
       })
       .flat();
 
-    const dealerStrategyRoutes = [`/${language}/${dealerCardRoute}`];
+    const dealerStrategyRoutes = [finalScoresRoute, summaryRoute].map(
+      route => `/${language}/${dealerCardRoute}/${route}`,
+    );
 
     return [...strategyRoutes, ...dealerStrategyRoutes];
   })

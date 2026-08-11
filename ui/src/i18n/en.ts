@@ -47,7 +47,8 @@ export const en = {
     notFound: '"{{label}}" is not a valid hand',
   },
   dealerCard: {
-    card: 'Card',
+    dealerScores: 'Dealer scores',
+    summary: 'Summary',
     modes: {
       hands: 'Hands',
       absolute: 'Probability (absolute)',
