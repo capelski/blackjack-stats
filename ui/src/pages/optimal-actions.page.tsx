@@ -4,14 +4,12 @@ import { CheckboxComponent } from '../components/checkbox.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
 import { getOverridesResolver } from '../logic/decision-overrides.logic';
+import { optimalActionsHandResolver } from '../logic/resolved-hands.logic';
 import { getStrategy } from '../logic/strategy.logic';
 import { StrategyContext } from '../strategy.context';
 import { DecisionOverrideHandler, DecisionOverridesMap } from '../types/decision-overrides.type';
-import { HandResolver } from '../types/hand-resolution.type';
 import { Rules } from '../types/rules.type';
 import { Strategy } from '../types/strategy.type';
-
-const optimalActionsHandResolver: HandResolver = hand => hand.optimalConsequence.action;
 
 export type OptimalActionsPageProps = {
   decisionOverrides: DecisionOverridesMap;

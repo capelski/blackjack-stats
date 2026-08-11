@@ -123,7 +123,10 @@ function App() {
         <Routes>
           {supportedLanguages.map(language => (
             <Route key={language} path={language}>
-              <Route path={dealerCardRoute} element={<DealerCardPage />} />
+              <Route
+                path={dealerCardRoute}
+                element={<DealerCardPage rules={rules} setRules={updateRules} />}
+              />
               <Route
                 path={optimalActionsRoute}
                 element={

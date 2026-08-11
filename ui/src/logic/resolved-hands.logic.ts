@@ -99,6 +99,8 @@ export const getResolvedHands = (
   };
 };
 
+export const optimalActionsHandResolver: HandResolver = hand => hand.optimalConsequence.action;
+
 const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
   return [...resolvedHands].sort((a, b) => {
     const isASplittable = a.category === splittablePair;

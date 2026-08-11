@@ -11,3 +11,10 @@ export type Strategy = {
   resolvedHandsList: ResolvedHand[];
   resolvedHandsMap: ResolvedHandsMap;
 };
+
+export type StrategyByFirstCard = {
+  breakdown: StrategyMap;
+  expectedResults: Pick<ExpectedResults, 'edge' | 'outcomesByBetMultiplier' | 'probability'>;
+};
+
+export type StrategyMap = Record<string, Strategy>;
