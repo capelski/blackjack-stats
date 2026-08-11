@@ -2,14 +2,16 @@ import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import { expectedResultsGroupedRoute, expectedResultsMatrixRoute } from '../../constants';
 import { SearchNavLink } from '../search-nav-link';
+import { useStrategyContext } from '../strategy.context';
 import { ExpectedResultsSummary } from './expected-results-summary.component';
 
 export const ExpectedResults: React.FC = () => {
   const { t } = useTranslation();
+  const { strategy } = useStrategyContext();
 
   return (
     <div className="expected-results">
-      <ExpectedResultsSummary />
+      <ExpectedResultsSummary expectedResults={strategy.expectedResults} />
 
       <nav className="nested-navbar">
         <SearchNavLink to={expectedResultsMatrixRoute}>{t('expectedResults.matrix')}</SearchNavLink>

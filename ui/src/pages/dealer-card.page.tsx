@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DealerFinalScoresMatrix } from '../components/dealer-final-scores-matrix.component';
+import { ExpectedResultsSummary } from '../components/expected-results-summary.component';
 import { OptimalActionsMatrix } from '../components/optimal-actions-matrix.component';
 import { dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
 import { optimalActionsHandResolver } from '../logic/resolved-hands.logic';
@@ -41,7 +42,16 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
 
       <DealerFinalScoresMatrix />
 
-      {computing || !strategy ? <p>...</p> : <OptimalActionsMatrix strategy={strategy} />}
+      {computing || !strategy ? (
+        <p>...</p>
+      ) : (
+        <React.Fragment>
+          <OptimalActionsMatrix strategy={strategy} />
+
+          <h2>{t('strategyLayout.expectedResults')}</h2>
+          <ExpectedResultsSummary expectedResults={strategy.expectedResults} />
+        </React.Fragment>
+      )}
     </div>
   );
 };

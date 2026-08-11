@@ -4,7 +4,7 @@ import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { lose, push, Result, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
-import { useStrategyContext } from '../strategy.context';
+import { ExpectedResults } from '../types/expected-result.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
 import { ExpectedResultsSummaryModal } from './expected-results-summary-modal.component';
 
@@ -30,10 +30,14 @@ const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = pr
   );
 };
 
-export const ExpectedResultsSummary: React.FC = () => {
+type ExpectedResultsSummaryProps = {
+  expectedResults: Pick<ExpectedResults, 'edge' | 'outcomesByBetMultiplier'>;
+};
+
+export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = props => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { strategy } = useStrategyContext();
+  const { expectedResults } = props;
 
   return (
     <div
@@ -41,23 +45,23 @@ export const ExpectedResultsSummary: React.FC = () => {
       style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}
     >
       <ExpectedResultsSummaryCard discriminator={win}>
-        <BetMultipliersCell map={strategy.expectedResults.outcomesByBetMultiplier.win} />
+        <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.win} />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator={push}>
-        <BetMultipliersCell map={strategy.expectedResults.outcomesByBetMultiplier.push} />
+        <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.push} />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator={lose}>
-        <BetMultipliersCell map={strategy.expectedResults.outcomesByBetMultiplier.lose} />
+        <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.lose} />
       </ExpectedResultsSummaryCard>
       <ExpectedResultsSummaryCard discriminator="edge">
-        {toPercentage(strategy.expectedResults.edge, decimals)}
+        {toPercentage(expectedResults.edge, decimals)}
         <br />
         <i>
           {t('expectedResults.xRounds', {
-            rounds: toDecimal(1 / -strategy.expectedResults.edge, decimals),
+            rounds: toDecimal(1 / -expectedResults.edge, decimals),
           })}{' '}
         </i>
-        <ExpectedResultsSummaryModal edge={strategy.expectedResults.edge} />
+        <ExpectedResultsSummaryModal edge={expectedResults.edge} />
       </ExpectedResultsSummaryCard>
     </div>
   );
