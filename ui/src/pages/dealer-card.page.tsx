@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DealerFinalScoresMatrix } from '../components/dealer-final-scores-matrix.component';
+import { OptimalActionsMatrix } from '../components/optimal-actions-matrix.component';
 import { dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
 import { optimalActionsHandResolver } from '../logic/resolved-hands.logic';
 import { getStrategyByFirstCard } from '../logic/strategy.logic';
@@ -14,8 +15,8 @@ export type OptimalActionsPageProps = {
 
 export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
   const { t } = useTranslation();
-  const [, setComputing] = useState(false);
-  const [, setStrategy] = useState<StrategyByFirstCard>(undefined!);
+  const [computing, setComputing] = useState(false);
+  const [strategy, setStrategy] = useState<StrategyByFirstCard>(undefined!);
 
   const computeStrategy = async (rules: Rules) => {
     setComputing(true);
@@ -39,6 +40,8 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
       <h1>{t('titles.dealerCard')}</h1>
 
       <DealerFinalScoresMatrix />
+
+      {computing || !strategy ? <p>...</p> : <OptimalActionsMatrix strategy={strategy} />}
     </div>
   );
 };
