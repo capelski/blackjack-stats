@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import { finalScoresRoute, summaryRoute } from '../constants';
-import { DealerCardStrategyTable } from './components/dealer-card-strategy-table.component';
+import { DealerCardSummary } from './components/dealer-card-summary.component';
 import { DealerFinalScoresMatrix } from './components/dealer-final-scores-matrix.component';
 import { SearchNavigate } from './search-navigate';
 
@@ -12,7 +12,7 @@ export const DealerCardPageNestedRoutes = () => {
     <React.Fragment>
       <Route index element={<SearchNavigate to={finalScoresRoute} />} />
       <Route path={finalScoresRoute} element={<DealerFinalScoresMatrix />} />
-      <Route path={summaryRoute} element={<DealerCardStrategyTable />} />
+      <Route path={summaryRoute} element={<DealerCardSummary />} />
     </React.Fragment>
   );
 };

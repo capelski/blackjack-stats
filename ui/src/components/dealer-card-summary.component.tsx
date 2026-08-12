@@ -4,7 +4,7 @@ import { ExpectedResultsSummary } from './expected-results-summary.component';
 import { LoadingOverlay } from './loading-overlay.component';
 import { OptimalActionsMatrix } from './optimal-actions-matrix.component';
 
-export const DealerCardStrategyTable: React.FC = () => {
+export const DealerCardSummary: React.FC = () => {
   const { computing, strategy } = useDealerCardContext();
 
   return (
