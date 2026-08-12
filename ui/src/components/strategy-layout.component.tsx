@@ -11,6 +11,7 @@ import {
 import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
 import { useStrategyContext } from '../strategy.context';
+import { LoadingOverlay } from './loading-overlay.component';
 
 export type StrategyLayoutComponentProps = PropsWithChildren<{
   title: string;
@@ -33,25 +34,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
 
       {props.children}
 
-      <div style={{ position: 'relative' }}>
-        {(computing || !strategy) && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              top: 0,
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              display: 'flex',
-              justifyContent: 'center',
-              paddingTop: 100,
-            }}
-          >
-            <h1>🔄</h1>
-          </div>
-        )}
-
+      <LoadingOverlay loading={computing || !strategy}>
         <nav className="nested-navbar">
           <SearchNavLink to={materialHandsRoute}>{t('strategyLayout.hands')}</SearchNavLink>
           <SearchNavLink to={finalScoresRoute}>{t('strategyLayout.finalScores')}</SearchNavLink>
@@ -64,7 +47,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
         </nav>
 
         {strategy && <Outlet />}
-      </div>
+      </LoadingOverlay>
     </div>
   );
 };
