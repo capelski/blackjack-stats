@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import { finalScoresRoute, summaryRoute } from '../../constants';
 import { LoadingOverlay } from '../components/loading-overlay.component';
+import { RulesCheckboxes } from '../components/rules-checkboxes.component';
 import { DealerCardContext } from '../dealer-card.context';
 import { dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
 import { optimalActionsHandResolver } from '../logic/resolved-hands.logic';
@@ -44,6 +45,8 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
         <h1>{t('titles.dealerCard')}</h1>
 
         <LoadingOverlay loading={computing || !strategy}>
+          <RulesCheckboxes disabled={computing} rules={props.rules} setRules={props.setRules} />
+
           <nav className="nested-navbar">
             <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>
             <SearchNavLink to={summaryRoute}>{t('dealerCard.summary')}</SearchNavLink>
