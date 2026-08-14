@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LoadingOverlay } from '../components/loading-overlay.component';
 import { RulesCheckboxes } from '../components/rules-checkboxes.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
@@ -39,19 +40,20 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
   }, [props.decisionOverrides, props.rules]);
 
   return (
-    <StrategyContext.Provider
-      value={{
-        computing,
-        decisionOverrides: props.decisionOverrides,
-        onDecisionOverride: props.onDecisionOverride,
-        rules: props.rules,
-        showBetMultiplier: !!props.rules.doubling || !!props.rules.splitting,
-        strategy,
-      }}
-    >
-      <StrategyLayoutComponent title={t('titles.optimalActions')}>
-        <RulesCheckboxes disabled={computing} rules={props.rules} setRules={props.setRules} />
-      </StrategyLayoutComponent>
-    </StrategyContext.Provider>
+    <LoadingOverlay loading={computing || !strategy}>
+      <StrategyContext.Provider
+        value={{
+          decisionOverrides: props.decisionOverrides,
+          onDecisionOverride: props.onDecisionOverride,
+          rules: props.rules,
+          showBetMultiplier: !!props.rules.doubling || !!props.rules.splitting,
+          strategy,
+        }}
+      >
+        <StrategyLayoutComponent title={t('titles.optimalActions')}>
+          <RulesCheckboxes disabled={computing} rules={props.rules} setRules={props.setRules} />
+        </StrategyLayoutComponent>
+      </StrategyContext.Provider>
+    </LoadingOverlay>
   );
 };

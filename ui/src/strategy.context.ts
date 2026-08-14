@@ -4,7 +4,6 @@ import { Rules } from './types/rules.type';
 import { Strategy } from './types/strategy.type';
 
 export type StrategyContextValue = {
-  computing: boolean;
   decisionOverrides: DecisionOverridesMap;
   onDecisionOverride: DecisionOverrideHandler;
   rules: Rules;

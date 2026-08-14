@@ -11,7 +11,6 @@ import {
 import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
 import { useStrategyContext } from '../strategy.context';
-import { LoadingOverlay } from './loading-overlay.component';
 
 export type StrategyLayoutComponentProps = PropsWithChildren<{
   title?: string;
@@ -19,7 +18,7 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
 
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
   const { t } = useTranslation();
-  const { computing, strategy } = useStrategyContext();
+  const { strategy } = useStrategyContext();
   const params = useParams();
 
   const rawPlayerLabel = params[playerLabelUrlParam];
@@ -36,20 +35,18 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
 
       {props.children}
 
-      <LoadingOverlay loading={computing || !strategy}>
-        <nav className="nested-navbar">
-          <SearchNavLink to={materialHandsRoute}>{t('strategyLayout.hands')}</SearchNavLink>
-          <SearchNavLink to={finalScoresRoute}>{t('strategyLayout.finalScores')}</SearchNavLink>
-          <SearchNavLink to={expectedResultsRoute}>
-            {t('strategyLayout.expectedResults')}
-          </SearchNavLink>
-          <SearchNavLink to={actionsAnalysisRoute}>
-            {t('strategyLayout.actionsAnalysis')}
-          </SearchNavLink>
-        </nav>
+      <nav className="nested-navbar">
+        <SearchNavLink to={materialHandsRoute}>{t('strategyLayout.hands')}</SearchNavLink>
+        <SearchNavLink to={finalScoresRoute}>{t('strategyLayout.finalScores')}</SearchNavLink>
+        <SearchNavLink to={expectedResultsRoute}>
+          {t('strategyLayout.expectedResults')}
+        </SearchNavLink>
+        <SearchNavLink to={actionsAnalysisRoute}>
+          {t('strategyLayout.actionsAnalysis')}
+        </SearchNavLink>
+      </nav>
 
-        {strategy && <Outlet />}
-      </LoadingOverlay>
+      {strategy && <Outlet />}
     </div>
   );
 };

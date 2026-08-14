@@ -3,7 +3,6 @@ import { Rules } from './types/rules.type';
 import { StrategyByFirstCard } from './types/strategy.type';
 
 export type DealerCardContextValue = {
-  computing: boolean;
   rules: Rules;
   strategy: StrategyByFirstCard;
 };

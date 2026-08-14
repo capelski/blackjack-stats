@@ -52,26 +52,24 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
   }, [props.rules]);
 
   return (
-    <DealerCardContext.Provider value={{ computing, rules: props.rules, strategy }}>
-      <div>
+    <LoadingOverlay loading={computing || !strategy}>
+      <DealerCardContext.Provider value={{ rules: props.rules, strategy }}>
         <h1>
           {t('titles.dealerCard')}
           {dealerCard ? ` - ${dealerCard}` : ''}
           {playerLabel ? ` vs ${playerLabel}` : ''}
         </h1>
 
-        <LoadingOverlay loading={computing || !strategy}>
-          <RulesCheckboxes disabled={computing} rules={props.rules} setRules={props.setRules} />
+        <RulesCheckboxes disabled={computing} rules={props.rules} setRules={props.setRules} />
 
-          <nav className="nested-navbar">
-            <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>
-            <SearchNavLink to={summaryRoute}>{t('dealerCard.summary')}</SearchNavLink>
-            <SearchNavLink to={dealerBreakdownRoute}>{t('dealerCard.breakdown')}</SearchNavLink>
-          </nav>
+        <nav className="nested-navbar">
+          <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>
+          <SearchNavLink to={summaryRoute}>{t('dealerCard.summary')}</SearchNavLink>
+          <SearchNavLink to={dealerBreakdownRoute}>{t('dealerCard.breakdown')}</SearchNavLink>
+        </nav>
 
-          <Outlet />
-        </LoadingOverlay>
-      </div>
-    </DealerCardContext.Provider>
+        <Outlet />
+      </DealerCardContext.Provider>
+    </LoadingOverlay>
   );
 };

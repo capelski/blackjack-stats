@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LoadingOverlay } from '../components/loading-overlay.component';
 import { StandThresholdControl } from '../components/stand-threshold-control.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { dealerFinalScores } from '../logic/dealer-data.logic';
@@ -55,69 +56,70 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
   }, [props.decisionOverrides, props.standThresholds]);
 
   return (
-    <StrategyContext.Provider
-      value={{
-        computing,
-        decisionOverrides: props.decisionOverrides,
-        onDecisionOverride: props.onDecisionOverride,
-        rules: standThresholdRules,
-        showBetMultiplier: false,
-        strategy,
-      }}
-    >
-      <StrategyLayoutComponent title={t('titles.standThreshold')}>
-        <p>
-          <StandThresholdControl
-            disabled={computing}
-            label={t('standThreshold.label')}
-            onChange={value => {
-              props.setStandThresholds({
-                regular: value,
-                softScores: sameThresholdForSoftScores ? value : props.standThresholds.softScores,
-              });
-            }}
-            value={props.standThresholds.regular}
-          />
-        </p>
-        <p>
-          {t('standThreshold.softLabel')}:{' '}
-          <span>
-            <input
-              checked={sameThresholdForSoftScores}
+    <LoadingOverlay loading={computing || !strategy}>
+      <StrategyContext.Provider
+        value={{
+          decisionOverrides: props.decisionOverrides,
+          onDecisionOverride: props.onDecisionOverride,
+          rules: standThresholdRules,
+          showBetMultiplier: false,
+          strategy,
+        }}
+      >
+        <StrategyLayoutComponent title={t('titles.standThreshold')}>
+          <p>
+            <StandThresholdControl
               disabled={computing}
-              name="soft-threshold-mode"
-              onChange={() => {
-                setSameThresholdForSoftScores(true);
+              label={t('standThreshold.label')}
+              onChange={value => {
                 props.setStandThresholds({
-                  regular: props.standThresholds.regular,
-                  softScores: props.standThresholds.regular,
+                  regular: value,
+                  softScores: sameThresholdForSoftScores ? value : props.standThresholds.softScores,
                 });
               }}
-              type="radio"
-            />{' '}
-            {t('standThreshold.sameThreshold')}
-          </span>
-          <span>
-            <input
-              checked={!sameThresholdForSoftScores}
-              disabled={computing}
-              name="soft-threshold-mode"
-              onChange={() => setSameThresholdForSoftScores(false)}
-              type="radio"
+              value={props.standThresholds.regular}
             />
-          </span>
-          <StandThresholdControl
-            disabled={computing || sameThresholdForSoftScores}
-            onChange={value => {
-              props.setStandThresholds({
-                regular: props.standThresholds.regular,
-                softScores: Number(value),
-              });
-            }}
-            value={props.standThresholds.softScores}
-          />
-        </p>
-      </StrategyLayoutComponent>
-    </StrategyContext.Provider>
+          </p>
+          <p>
+            {t('standThreshold.softLabel')}:{' '}
+            <span>
+              <input
+                checked={sameThresholdForSoftScores}
+                disabled={computing}
+                name="soft-threshold-mode"
+                onChange={() => {
+                  setSameThresholdForSoftScores(true);
+                  props.setStandThresholds({
+                    regular: props.standThresholds.regular,
+                    softScores: props.standThresholds.regular,
+                  });
+                }}
+                type="radio"
+              />{' '}
+              {t('standThreshold.sameThreshold')}
+            </span>
+            <span>
+              <input
+                checked={!sameThresholdForSoftScores}
+                disabled={computing}
+                name="soft-threshold-mode"
+                onChange={() => setSameThresholdForSoftScores(false)}
+                type="radio"
+              />
+            </span>
+            <StandThresholdControl
+              disabled={computing || sameThresholdForSoftScores}
+              onChange={value => {
+                props.setStandThresholds({
+                  regular: props.standThresholds.regular,
+                  softScores: Number(value),
+                });
+              }}
+              value={props.standThresholds.softScores}
+            />
+          </p>
+        </StrategyLayoutComponent>
+      </StrategyContext.Provider>
+    </LoadingOverlay>
   );
 };
