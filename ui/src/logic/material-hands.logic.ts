@@ -1,4 +1,4 @@
-import { double, hit, split, stand } from '../models/action.model';
+import { double, hit, split, stand, surrender } from '../models/action.model';
 import { cards, cardsNumber } from '../models/cards.model';
 import {
   HandCategory,
@@ -130,7 +130,7 @@ const getNextMaterialHand = (
     cards: nextCards,
     category: nextCategory,
     effectiveScore: nextEffectiveScore,
-    isFinal: nextAction === stand || !nextIsActionable,
+    isFinal: nextAction === stand || nextAction === surrender || !nextIsActionable,
     isPostDouble: previousDouble,
     isPostSplit,
     label: nextLabel,
