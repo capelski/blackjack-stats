@@ -1,8 +1,14 @@
 import { createContext, useContext } from 'react';
+import {
+  DecisionOverrideByFirstCardHandler,
+  DecisionOverridesByFirstCard,
+} from './types/decision-overrides.type';
 import { Rules } from './types/rules.type';
 import { StrategyByFirstCard } from './types/strategy.type';
 
 export type DealerCardContextValue = {
+  decisionOverrides: DecisionOverridesByFirstCard;
+  onDecisionOverride: DecisionOverrideByFirstCardHandler;
   rules: Rules;
   strategy: StrategyByFirstCard;
 };

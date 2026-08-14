@@ -31,7 +31,12 @@ import {
 } from './search-params-utils';
 import { SettingsContext } from './settings.context';
 import { StrategyPageNestedRoutes } from './strategy-page-nested-routes';
-import { DecisionOverrideHandler, DecisionOverridesMap } from './types/decision-overrides.type';
+import {
+  DecisionOverrideByFirstCardHandler,
+  DecisionOverrideHandler,
+  DecisionOverridesByFirstCard,
+  DecisionOverridesMap,
+} from './types/decision-overrides.type';
 import { Rules } from './types/rules.type';
 import { StandThresholds } from './types/stand-thresholds.type';
 
@@ -46,6 +51,9 @@ function App() {
   >({});
   const [optimalActionsDecisionOverrides, setOptimalActionsDecisionOverrides] = useState<
     DecisionOverridesMap
+  >({});
+  const [dealerCardDecisionOverrides, setDealerCardDecisionOverrides] = useState<
+    DecisionOverridesByFirstCard
   >({});
 
   const [rules, setRules] = useState<Rules>(() => {
@@ -104,6 +112,17 @@ function App() {
     setOptimalActionsDecisionOverrides(previous => ({ ...previous, [label]: action }));
   };
 
+  const onDealerCardDecisionOverride: DecisionOverrideByFirstCardHandler = (
+    firstCard,
+    label,
+    action,
+  ) => {
+    setDealerCardDecisionOverrides(previous => ({
+      ...previous,
+      [firstCard]: { ...previous[firstCard], [label]: action },
+    }));
+  };
+
   return (
     <div className="app">
       <nav className="navbar">
@@ -126,7 +145,14 @@ function App() {
             <Route key={language} path={language}>
               <Route
                 path={dealerCardRoute}
-                element={<DealerCardPage rules={rules} setRules={updateRules} />}
+                element={
+                  <DealerCardPage
+                    decisionOverrides={dealerCardDecisionOverrides}
+                    onDecisionOverride={onDealerCardDecisionOverride}
+                    rules={rules}
+                    setRules={updateRules}
+                  />
+                }
               >
                 {DealerCardPageNestedRoutes()}
               </Route>

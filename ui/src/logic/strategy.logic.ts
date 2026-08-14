@@ -20,7 +20,7 @@ export const getStrategy = async (
 
 export const getStrategyByFirstCard = async (
   rules: Rules,
-  handResolver: HandResolver,
+  getHandResolver: (firstCard: string) => HandResolver,
   dealerScores: FinalScoresByFirstCard,
 ): Promise<StrategyByFirstCard> => {
   await new Promise(resolve => setTimeout(resolve, 10)); // Simulate async computation
@@ -32,7 +32,7 @@ export const getStrategyByFirstCard = async (
 
   for (const [firstCard, finalScoresGroup] of Object.entries(dealerScores)) {
     const finalScores = getSortedFinalScores(finalScoresGroup.finalScores);
-    const strategy = getStrategyCore(rules, handResolver, finalScores);
+    const strategy = getStrategyCore(rules, getHandResolver(firstCard), finalScores);
     strategyMap[firstCard] = strategy;
 
     probability += strategy.expectedResults.probability * finalScoresGroup.probability;
