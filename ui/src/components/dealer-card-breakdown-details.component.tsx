@@ -11,6 +11,10 @@ export const DealerCardBreakdownDetails: React.FC = () => {
   const { decisionOverrides, onDecisionOverride, rules, strategy } = useDealerCardContext();
   const params = useParams();
 
+  if (!strategy) {
+    return null;
+  }
+
   const cardSymbol = params[dealerCardUrlParam];
   const cardStrategy = cardSymbol ? strategy?.breakdown[cardSymbol] : undefined;
 
