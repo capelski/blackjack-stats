@@ -11,6 +11,6 @@ export const finalScoresRoute = 'scores';
 export const materialHandsRoute = 'hands';
 export const optimalActionsRoute = 'optimal';
 export const standThresholdRoute = 'threshold';
-export const summaryRoute = 'strategy';
+export const summaryRoute = 'summary';
 
 export const playerLabelUrlParam = 'playerLabel';
