@@ -56,8 +56,7 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
       <DealerCardContext.Provider value={{ rules: props.rules, strategy }}>
         <h1>
           {t('titles.dealerCard')}
-          {dealerCard ? ` - ${dealerCard}` : ''}
-          {playerLabel ? ` vs ${playerLabel}` : ''}
+          {dealerCard ? ` - ${playerLabel ? `${playerLabel} vs ` : ''}${dealerCard}` : ''}
         </h1>
 
         <RulesCheckboxes disabled={computing} rules={props.rules} setRules={props.setRules} />
