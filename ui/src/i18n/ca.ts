@@ -47,7 +47,10 @@ export const ca = {
     notFound: '"{{label}}" no és una mà vàlida',
   },
   dealerCard: {
+    breakdown: 'Detall',
     dealerScores: 'Puntuacions del crupier',
+    details: 'Detalls',
+    notFound: '"{{cardSymbol}}" no és una carta del crupier vàlida',
     summary: 'Resum',
     modes: {
       hands: 'Mans',

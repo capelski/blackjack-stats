@@ -14,7 +14,7 @@ import { useStrategyContext } from '../strategy.context';
 import { LoadingOverlay } from './loading-overlay.component';
 
 export type StrategyLayoutComponentProps = PropsWithChildren<{
-  title: string;
+  title?: string;
 }>;
 
 export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
@@ -27,10 +27,12 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
 
   return (
     <div>
-      <h1>
-        {props.title}
-        {playerLabel ? ` - ${playerLabel}` : ''}
-      </h1>
+      {props.title && (
+        <h1>
+          {props.title}
+          {playerLabel ? ` - ${playerLabel}` : ''}
+        </h1>
+      )}
 
       {props.children}
 

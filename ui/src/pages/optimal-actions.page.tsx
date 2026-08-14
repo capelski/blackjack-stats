@@ -38,9 +38,6 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
     computeStrategy(props.rules, props.decisionOverrides);
   }, [props.decisionOverrides, props.rules]);
 
-  const doublingEnabled = !!props.rules.doubling;
-  const splittingEnabled = !!props.rules.splitting;
-
   return (
     <StrategyContext.Provider
       value={{
@@ -48,7 +45,7 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
         decisionOverrides: props.decisionOverrides,
         onDecisionOverride: props.onDecisionOverride,
         rules: props.rules,
-        showBetMultiplier: doublingEnabled || splittingEnabled,
+        showBetMultiplier: !!props.rules.doubling || !!props.rules.splitting,
         strategy,
       }}
     >

@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router-dom';
-import { finalScoresRoute, summaryRoute } from '../../constants';
+import { Outlet, useParams } from 'react-router-dom';
+import {
+  dealerBreakdownRoute,
+  dealerCardUrlParam,
+  finalScoresRoute,
+  playerLabelUrlParam,
+  summaryRoute,
+} from '../../constants';
 import { LoadingOverlay } from '../components/loading-overlay.component';
 import { RulesCheckboxes } from '../components/rules-checkboxes.component';
 import { DealerCardContext } from '../dealer-card.context';
 import { dealerFinalScoresByFirstCard } from '../logic/dealer-data.logic';
+import { urlParamToLabel } from '../logic/labels.logic';
 import { optimalActionsHandResolver } from '../logic/resolved-hands.logic';
 import { getStrategyByFirstCard } from '../logic/strategy.logic';
 import { SearchNavLink } from '../search-nav-link';
@@ -21,6 +28,11 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
   const { t } = useTranslation();
   const [computing, setComputing] = useState(false);
   const [strategy, setStrategy] = useState<StrategyByFirstCard>(undefined!);
+  const params = useParams();
+
+  const dealerCard = params[dealerCardUrlParam];
+  const rawPlayerLabel = params[playerLabelUrlParam];
+  const playerLabel = rawPlayerLabel && urlParamToLabel(rawPlayerLabel);
 
   const computeStrategy = async (rules: Rules) => {
     setComputing(true);
@@ -40,9 +52,13 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
   }, [props.rules]);
 
   return (
-    <DealerCardContext.Provider value={{ computing, strategy }}>
+    <DealerCardContext.Provider value={{ computing, rules: props.rules, strategy }}>
       <div>
-        <h1>{t('titles.dealerCard')}</h1>
+        <h1>
+          {t('titles.dealerCard')}
+          {dealerCard ? ` - ${dealerCard}` : ''}
+          {playerLabel ? ` vs ${playerLabel}` : ''}
+        </h1>
 
         <LoadingOverlay loading={computing || !strategy}>
           <RulesCheckboxes disabled={computing} rules={props.rules} setRules={props.setRules} />
@@ -50,6 +66,7 @@ export const DealerCardPage: React.FC<OptimalActionsPageProps> = props => {
           <nav className="nested-navbar">
             <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>
             <SearchNavLink to={summaryRoute}>{t('dealerCard.summary')}</SearchNavLink>
+            <SearchNavLink to={dealerBreakdownRoute}>{t('dealerCard.breakdown')}</SearchNavLink>
           </nav>
 
           <Outlet />

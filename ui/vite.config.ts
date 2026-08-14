@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import { vitePrerenderPlugin } from 'vite-prerender-plugin';
 import {
   actionsAnalysisRoute,
+  dealerBreakdownRoute,
   dealerCardRoute,
   expectedResultsGroupedRoute,
   expectedResultsMatrixRoute,
@@ -17,15 +18,28 @@ import {
 } from './constants';
 import { getAbstractHands, getActionableHands } from './src/logic/abstract-hands.logic';
 import { labelToUrlParam } from './src/logic/labels.logic';
-
-const abstractHands = getAbstractHands({ splitting: true });
-const actionsBreakdownRoutes = getActionableHands(abstractHands).map(
-  hand => `${actionsAnalysisRoute}/${labelToUrlParam(hand.label)}`,
-);
+import { sortedCardSymbols } from './src/models/cards.model';
 
 const allRoutes = supportedLanguages
   .map(language => {
-    const strategyRoutes = [standThresholdRoute, optimalActionsRoute]
+    const dealerStrategyBreakdownRoutes = sortedCardSymbols.map(
+      card => `${dealerBreakdownRoute}/${card}`,
+    );
+    const dealerStrategyRoutes = [
+      finalScoresRoute,
+      summaryRoute,
+      ...dealerStrategyBreakdownRoutes,
+    ].map(route => `/${language}/${dealerCardRoute}/${route}`);
+
+    const abstractHands = getAbstractHands({ splitting: true });
+    const actionsBreakdownRoutes = getActionableHands(abstractHands).map(
+      hand => `${actionsAnalysisRoute}/${labelToUrlParam(hand.label)}`,
+    );
+    const playerStrategyRoutes = [
+      standThresholdRoute,
+      optimalActionsRoute,
+      ...dealerStrategyBreakdownRoutes.map(x => `${dealerCardRoute}/${x}`),
+    ]
       .map(page => {
         return [
           materialHandsRoute,
@@ -38,11 +52,7 @@ const allRoutes = supportedLanguages
       })
       .flat();
 
-    const dealerStrategyRoutes = [finalScoresRoute, summaryRoute].map(
-      route => `/${language}/${dealerCardRoute}/${route}`,
-    );
-
-    return [...strategyRoutes, ...dealerStrategyRoutes];
+    return [...playerStrategyRoutes, ...dealerStrategyRoutes];
   })
   .flat();
 
