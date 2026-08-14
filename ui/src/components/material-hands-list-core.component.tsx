@@ -5,7 +5,6 @@ import { serializeCards } from '../logic/material-hands.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { cardsFilterParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
-import { useStrategyContext } from '../strategy.context';
 import { MaterialHand } from '../types/material-hand.type';
 import { HandsListItem, HandsListProps } from './material-hands-list-item.component';
 
@@ -67,7 +66,6 @@ export type MaterialHandsListCoreProps = HandsListProps & {
 export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { computing } = useStrategyContext();
   const { getParameter, setParameter } = useSearchParamsUtils();
 
   const [cardsFilter, setCardsFilter] = useState(() => getParameter(cardsFilterParamName) ?? '');
@@ -117,7 +115,6 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
       <p>
         {t('materialHandsList.cardsFilter')}
         <input
-          disabled={computing}
           type="text"
           value={cardsFilter}
           onChange={event => updateCardsFilter(event.target.value)}
@@ -131,7 +128,6 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
               checked={showNonFinalHands}
               onChange={event => updateShowNonFinalHands(event.target.checked)}
               style={{ marginLeft: 16 }}
-              disabled={computing}
             />
             <span>{t('materialHandsList.nonFinalHands')}</span>
           </React.Fragment>
@@ -143,7 +139,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
       </p>
 
       <p>
-        <button disabled={computing || currentPage === 1} onClick={() => setPage(currentPage - 1)}>
+        <button disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>
           {t('materialHandsList.previous')}
         </button>
 
@@ -151,15 +147,11 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
           {t('materialHandsList.page', { current: currentPage, total: pages })}
         </span>
 
-        <button
-          disabled={computing || currentPage === pages}
-          onClick={() => setPage(currentPage + 1)}
-        >
+        <button disabled={currentPage === pages} onClick={() => setPage(currentPage + 1)}>
           {t('materialHandsList.next')}
         </button>
 
         <button
-          disabled={computing}
           onClick={() => downloadCsv({ hands: props.hands, t: key => t(key) })}
           style={{ marginLeft: 8 }}
         >
