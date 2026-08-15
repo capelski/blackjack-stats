@@ -4,13 +4,12 @@ import { LoadingOverlay } from '../components/loading-overlay.component';
 import { RulesCheckboxes } from '../components/rules-checkboxes.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { StrategyContext } from '../strategy.context';
-import { DecisionOverrideHandler, DecisionOverridesMap } from '../types/decision-overrides.type';
+import { DecisionOverrideHandler } from '../types/decision-overrides.type';
 import { Rules } from '../types/rules.type';
 import { Strategy } from '../types/strategy.type';
 
 export type OptimalActionsPageProps = {
   computing: boolean;
-  decisionOverrides: DecisionOverridesMap;
   onDecisionOverride: DecisionOverrideHandler;
   rules: Rules;
   setRules: (rules: Rules) => void;
@@ -24,7 +23,6 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
     <LoadingOverlay loading={props.computing || !props.strategy}>
       <StrategyContext.Provider
         value={{
-          decisionOverrides: props.decisionOverrides,
           onDecisionOverride: props.onDecisionOverride,
           rules: props.rules,
           showBetMultiplier: !!props.rules.doubling || !!props.rules.splitting,

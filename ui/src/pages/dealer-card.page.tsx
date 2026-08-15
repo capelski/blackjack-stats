@@ -13,16 +13,12 @@ import { RulesCheckboxes } from '../components/rules-checkboxes.component';
 import { DealerCardContext } from '../dealer-card.context';
 import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
-import {
-  DecisionOverrideByFirstCardHandler,
-  DecisionOverridesByFirstCard,
-} from '../types/decision-overrides.type';
+import { DecisionOverrideByFirstCardHandler } from '../types/decision-overrides.type';
 import { Rules } from '../types/rules.type';
 import { StrategyByFirstCard } from '../types/strategy.type';
 
 export type DealerCardPageProps = {
   computing: boolean;
-  decisionOverrides: DecisionOverridesByFirstCard;
   onDecisionOverride: DecisionOverrideByFirstCardHandler;
   rules: Rules;
   setRules: (rules: Rules) => void;
@@ -41,7 +37,6 @@ export const DealerCardPage: React.FC<DealerCardPageProps> = props => {
     <LoadingOverlay loading={props.computing || !props.strategy}>
       <DealerCardContext.Provider
         value={{
-          decisionOverrides: props.decisionOverrides,
           onDecisionOverride: props.onDecisionOverride,
           rules: props.rules,
           strategy: props.strategy,

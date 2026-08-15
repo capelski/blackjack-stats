@@ -12,7 +12,7 @@ const actionColumns: Action[] = [stand, hit, double, split, surrender];
 export const ActionsAnalysisList: React.FC = () => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { decisionOverrides, onDecisionOverride, strategy } = useStrategyContext();
+  const { onDecisionOverride, strategy } = useStrategyContext();
   const actionableResolvedHands = getActionableHands(strategy.resolvedHandsList);
 
   /** Actions that no hand allows (e.g. splitting, when the rule is disabled) don't get a column */
@@ -35,7 +35,8 @@ export const ActionsAnalysisList: React.FC = () => {
         <tbody>
           {actionableResolvedHands.map(resolvedHand => {
             const consequences = Object.values(resolvedHand.consequences);
-            const selectedDecision = decisionOverrides[resolvedHand.label] ?? resolvedHand.action;
+            const selectedDecision =
+              strategy.decisionOverrides[resolvedHand.label] ?? resolvedHand.action;
 
             const edgeByAction = consequences.reduce<EdgeByActionMap>((reduced, consequence) => {
               reduced[consequence.action] = toPercentage(consequence.edge, decimals);

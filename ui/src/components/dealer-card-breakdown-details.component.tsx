@@ -8,7 +8,7 @@ import { StrategyLayoutComponent } from './strategy-layout.component';
 
 export const DealerCardBreakdownDetails: React.FC = () => {
   const { t } = useTranslation();
-  const { decisionOverrides, onDecisionOverride, rules, strategy } = useDealerCardContext();
+  const { onDecisionOverride, rules, strategy } = useDealerCardContext();
   const params = useParams();
 
   if (!strategy) {
@@ -25,7 +25,6 @@ export const DealerCardBreakdownDetails: React.FC = () => {
   return (
     <StrategyContext.Provider
       value={{
-        decisionOverrides: decisionOverrides[cardSymbol] ?? {},
         onDecisionOverride: (label, action) => onDecisionOverride(cardSymbol, label, action),
         rules,
         showBetMultiplier: !!rules.doubling || !!rules.splitting,

@@ -13,7 +13,6 @@ import { LanguageSelector } from './components/language-selector.component';
 import { DealerCardPageNestedRoutes } from './dealer-card-page-nested-routes';
 import { defaultLanguage } from './i18n';
 import { dealerFinalScores, dealerFinalScoresByFirstCard } from './logic/dealer-data.logic';
-import { getOverridesResolver } from './logic/decision-overrides.logic';
 import { optimalActionsHandResolver } from './logic/resolved-hands.logic';
 import { getStrategy, getStrategyByFirstCard } from './logic/strategy.logic';
 import { hit, stand } from './models/action.model';
@@ -56,22 +55,14 @@ function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
   const { toggleParameters, getNumericParameter, getParameter } = useSearchParamsUtils();
-  const [standThresholdDecisionOverrides, setStandThresholdDecisionOverrides] = useState<
-    DecisionOverridesMap
-  >({});
-  const [optimalActionsDecisionOverrides, setOptimalActionsDecisionOverrides] = useState<
-    DecisionOverridesMap
-  >({});
-  const [dealerCardDecisionOverrides, setDealerCardDecisionOverrides] = useState<
-    DecisionOverridesByFirstCard
-  >({});
 
+  // The strategies are undefined until they are computed for the first time
   const [computingStandThresholdStrategy, setComputingStandThresholdStrategy] = useState(false);
-  const [standThresholdStrategy, setStandThresholdStrategy] = useState<Strategy>(undefined!);
+  const [standThresholdStrategy, setStandThresholdStrategy] = useState<Strategy>();
   const [computingOptimalActionsStrategy, setComputingOptimalActionsStrategy] = useState(false);
-  const [optimalActionsStrategy, setOptimalActionsStrategy] = useState<Strategy>(undefined!);
+  const [optimalActionsStrategy, setOptimalActionsStrategy] = useState<Strategy>();
   const [computingDealerCardStrategy, setComputingDealerCardStrategy] = useState(false);
-  const [dealerCardStrategy, setDealerCardStrategy] = useState<StrategyByFirstCard>(undefined!);
+  const [dealerCardStrategy, setDealerCardStrategy] = useState<StrategyByFirstCard>();
 
   const [rules, setRules] = useState<Rules>(() => {
     const doubling = getParameter(doublingParamName) === '1';
@@ -100,46 +91,6 @@ function App() {
     };
   });
 
-  const updateRules = (newRules: Rules) => {
-    setRules(newRules);
-
-    toggleParameters([
-      [doublingParamName, newRules.doubling ? '1' : '0', '0'],
-      [splittingParamName, newRules.splitting ? '1' : '0', '0'],
-      [doublingAfterSplitParamName, newRules.doublingAfterSplit ? '1' : '0', '0'],
-      [hitSplitAcesParamName, newRules.hitSplitAces ? '1' : '0', '0'],
-      [blackjackAfterSplitParamName, newRules.blackjackAfterSplit ? '1' : '0', '0'],
-      [surrenderingParamName, newRules.surrendering ? '1' : '0', '0'],
-    ]);
-  };
-
-  const updateStandThresholds = (newValue: StandThresholds) => {
-    setStandThresholds(newValue);
-    toggleParameters([
-      [standThresholdParamName, String(newValue.regular), String(defaultStandThreshold)],
-      [softStandThresholdParamName, String(newValue.softScores), String(newValue.regular)],
-    ]);
-  };
-
-  const onStandThresholdDecisionOverride: DecisionOverrideHandler = (label, action) => {
-    setStandThresholdDecisionOverrides(previous => ({ ...previous, [label]: action }));
-  };
-
-  const onOptimalActionsDecisionOverride: DecisionOverrideHandler = (label, action) => {
-    setOptimalActionsDecisionOverrides(previous => ({ ...previous, [label]: action }));
-  };
-
-  const onDealerCardDecisionOverride: DecisionOverrideByFirstCardHandler = (
-    firstCard,
-    label,
-    action,
-  ) => {
-    setDealerCardDecisionOverrides(previous => ({
-      ...previous,
-      [firstCard]: { ...previous[firstCard], [label]: action },
-    }));
-  };
-
   const computeStandThresholdStrategy = async (
     thresholds: StandThresholds,
     decisionOverrides: DecisionOverridesMap,
@@ -151,9 +102,12 @@ function App() {
       return hand.effectiveScore >= thresholdToUse ? stand : hit;
     };
 
-    const handResolver = getOverridesResolver(standThresholdResolver, decisionOverrides);
-
-    const strategy = await getStrategy(standThresholdRules, handResolver, dealerFinalScores);
+    const strategy = await getStrategy(
+      standThresholdRules,
+      standThresholdResolver,
+      dealerFinalScores,
+      decisionOverrides,
+    );
     setStandThresholdStrategy(strategy);
     setComputingStandThresholdStrategy(false);
   };
@@ -164,9 +118,12 @@ function App() {
   ) => {
     setComputingOptimalActionsStrategy(true);
 
-    const handResolver = getOverridesResolver(optimalActionsHandResolver, decisionOverrides);
-
-    const strategy = await getStrategy(rules, handResolver, dealerFinalScores);
+    const strategy = await getStrategy(
+      rules,
+      optimalActionsHandResolver,
+      dealerFinalScores,
+      decisionOverrides,
+    );
     setOptimalActionsStrategy(strategy);
     setComputingOptimalActionsStrategy(false);
   };
@@ -179,28 +136,80 @@ function App() {
 
     const strategy = await getStrategyByFirstCard(
       rules,
-      firstCard =>
-        getOverridesResolver(optimalActionsHandResolver, decisionOverrides[firstCard] ?? {}),
+      optimalActionsHandResolver,
       dealerFinalScoresByFirstCard,
+      decisionOverrides,
     );
     setDealerCardStrategy(strategy);
     setComputingDealerCardStrategy(false);
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    computeStandThresholdStrategy(standThresholds, standThresholdDecisionOverrides);
-  }, [standThresholdDecisionOverrides, standThresholds]);
+  const updateRules = (newRules: Rules) => {
+    setRules(newRules);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    computeOptimalActionsStrategy(rules, optimalActionsDecisionOverrides);
-  }, [optimalActionsDecisionOverrides, rules]);
+    toggleParameters([
+      [doublingParamName, newRules.doubling ? '1' : '0', '0'],
+      [splittingParamName, newRules.splitting ? '1' : '0', '0'],
+      [doublingAfterSplitParamName, newRules.doublingAfterSplit ? '1' : '0', '0'],
+      [hitSplitAcesParamName, newRules.hitSplitAces ? '1' : '0', '0'],
+      [blackjackAfterSplitParamName, newRules.blackjackAfterSplit ? '1' : '0', '0'],
+      [surrenderingParamName, newRules.surrendering ? '1' : '0', '0'],
+    ]);
 
+    computeOptimalActionsStrategy(newRules, optimalActionsStrategy?.decisionOverrides ?? {});
+    computeDealerCardStrategy(newRules, dealerCardStrategy?.decisionOverrides ?? {});
+  };
+
+  const updateStandThresholds = (newValue: StandThresholds) => {
+    setStandThresholds(newValue);
+    toggleParameters([
+      [standThresholdParamName, String(newValue.regular), String(defaultStandThreshold)],
+      [softStandThresholdParamName, String(newValue.softScores), String(newValue.regular)],
+    ]);
+
+    computeStandThresholdStrategy(newValue, standThresholdStrategy?.decisionOverrides ?? {});
+  };
+
+  const onStandThresholdDecisionOverride: DecisionOverrideHandler = (label, action) => {
+    const nextDecisionOverrides: DecisionOverridesMap = {
+      ...standThresholdStrategy?.decisionOverrides,
+      [label]: action,
+    };
+    computeStandThresholdStrategy(standThresholds, nextDecisionOverrides);
+  };
+
+  const onOptimalActionsDecisionOverride: DecisionOverrideHandler = (label, action) => {
+    const nextDecisionOverrides: DecisionOverridesMap = {
+      ...optimalActionsStrategy?.decisionOverrides,
+      [label]: action,
+    };
+    computeOptimalActionsStrategy(rules, nextDecisionOverrides);
+  };
+
+  const onDealerCardDecisionOverride: DecisionOverrideByFirstCardHandler = (
+    firstCard,
+    label,
+    action,
+  ) => {
+    const decisionOverrides = dealerCardStrategy?.decisionOverrides ?? {};
+    const nextDecisionOverrides: DecisionOverridesByFirstCard = {
+      ...decisionOverrides,
+      [firstCard]: { ...decisionOverrides[firstCard], [label]: action },
+    };
+
+    computeDealerCardStrategy(rules, nextDecisionOverrides);
+  };
+
+  // The strategies are only computed on mount. From then on, they are recomputed by the handlers
+  // updating their inputs, which carry over the decision overrides of the previous strategy
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    computeDealerCardStrategy(rules, dealerCardDecisionOverrides);
-  }, [dealerCardDecisionOverrides, rules]);
+    /* eslint-disable react-hooks/set-state-in-effect */
+    computeStandThresholdStrategy(standThresholds, {});
+    computeOptimalActionsStrategy(rules, {});
+    computeDealerCardStrategy(rules, {});
+    /* eslint-enable react-hooks/set-state-in-effect */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="app">
@@ -227,11 +236,10 @@ function App() {
                 element={
                   <DealerCardPage
                     computing={computingDealerCardStrategy}
-                    decisionOverrides={dealerCardDecisionOverrides}
                     onDecisionOverride={onDealerCardDecisionOverride}
                     rules={rules}
                     setRules={updateRules}
-                    strategy={dealerCardStrategy}
+                    strategy={dealerCardStrategy!}
                   />
                 }
               >
@@ -242,11 +250,10 @@ function App() {
                 element={
                   <OptimalActionsPage
                     computing={computingOptimalActionsStrategy}
-                    decisionOverrides={optimalActionsDecisionOverrides}
                     onDecisionOverride={onOptimalActionsDecisionOverride}
                     rules={rules}
                     setRules={updateRules}
-                    strategy={optimalActionsStrategy}
+                    strategy={optimalActionsStrategy!}
                   />
                 }
               >
@@ -257,12 +264,11 @@ function App() {
                 element={
                   <StandThresholdPage
                     computing={computingStandThresholdStrategy}
-                    decisionOverrides={standThresholdDecisionOverrides}
                     onDecisionOverride={onStandThresholdDecisionOverride}
                     rules={standThresholdRules}
                     setStandThresholds={updateStandThresholds}
                     standThresholds={standThresholds}
-                    strategy={standThresholdStrategy}
+                    strategy={standThresholdStrategy!}
                   />
                 }
               >

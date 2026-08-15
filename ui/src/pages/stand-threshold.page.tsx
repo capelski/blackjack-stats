@@ -4,14 +4,13 @@ import { LoadingOverlay } from '../components/loading-overlay.component';
 import { StandThresholdControl } from '../components/stand-threshold-control.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { StrategyContext } from '../strategy.context';
-import { DecisionOverrideHandler, DecisionOverridesMap } from '../types/decision-overrides.type';
+import { DecisionOverrideHandler } from '../types/decision-overrides.type';
 import { Rules } from '../types/rules.type';
 import { StandThresholds } from '../types/stand-thresholds.type';
 import { Strategy } from '../types/strategy.type';
 
 export type StandThresholdPageProps = {
   computing: boolean;
-  decisionOverrides: DecisionOverridesMap;
   onDecisionOverride: DecisionOverrideHandler;
   rules: Rules;
   setStandThresholds: (standThresholds: StandThresholds) => void;
@@ -29,7 +28,6 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
     <LoadingOverlay loading={props.computing || !props.strategy}>
       <StrategyContext.Provider
         value={{
-          decisionOverrides: props.decisionOverrides,
           onDecisionOverride: props.onDecisionOverride,
           rules: props.rules,
           showBetMultiplier: false,
