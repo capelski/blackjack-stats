@@ -7,7 +7,7 @@ import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
-import { getBetMultiplier, surrenderBetMultiplier } from './bet-multiplier.logic';
+import { getBetMultiplier } from './bet-multiplier.logic';
 import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { getNextHandLabel } from './labels.logic';
@@ -72,6 +72,7 @@ export const getStandConsequence = (
   const betMultiplier = getBetMultiplier(1, {
     isBlackjack: abstractHand.effectiveScore === blackjackScore,
   });
+
   const finalScore: FinalScoreBase = {
     score: abstractHand.effectiveScore,
     probability: 1,
@@ -91,8 +92,10 @@ export const getStandConsequence = (
 };
 
 export const getSurrenderConsequence = (): Consequence => {
+  const betMultiplier = getBetMultiplier(1, { isSurrender: true });
+
   const probabilityByBetMultiplier = {
-    [surrenderBetMultiplier]: 1,
+    [betMultiplier]: 1,
   };
 
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier(

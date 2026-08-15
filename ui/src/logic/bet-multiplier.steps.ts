@@ -14,10 +14,20 @@ When('getting the bet multiplier for a blackjack hand', function(this: BetMultip
   this.result = getBetMultiplier(1, { isBlackjack: true });
 });
 
+When('getting the bet multiplier for a blackjack hand after splitting', function(
+  this: BetMultiplierWorld,
+) {
+  this.result = getBetMultiplier(1, { isBlackjack: true, isDoubleBet: true });
+});
+
 When('getting the bet multiplier for a hand that doubled the bet', function(
   this: BetMultiplierWorld,
 ) {
   this.result = getBetMultiplier(1, { isDoubleBet: true });
+});
+
+When('getting the bet multiplier for a hand that surrendered', function(this: BetMultiplierWorld) {
+  this.result = getBetMultiplier(1, { isSurrender: true });
 });
 
 Then('the returned value is {float}', function(this: BetMultiplierWorld, expected: number) {
