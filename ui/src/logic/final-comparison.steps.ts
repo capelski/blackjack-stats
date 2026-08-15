@@ -1,4 +1,5 @@
 import { Given, Then, When } from '@cucumber/cucumber';
+import { lose, push, surrender, win } from '../models/result.model';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
 import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
@@ -9,7 +10,7 @@ import {
   getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
-import { parseScore } from './result.steps';
+import { labelToEffectiveScore } from './labels.logic';
 import { RulesWorld } from './rules.steps';
 
 type FinalComparisonWorld = RulesWorld & {
@@ -24,7 +25,7 @@ const assertEqual = (actual: unknown, expected: unknown, message: string): void 
 };
 
 const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalScore => {
-  const score = parseScore(scoreLabel);
+  const score = labelToEffectiveScore(scoreLabel);
   const finalScore = finalScores.find(item => item.score === score);
 
   if (!finalScore) {
@@ -34,12 +35,13 @@ const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalSco
   return finalScore!;
 };
 
-export const formatOutcomesByBetMultiplier = (outcomes: OutcomesByBetMultiplierMap): string => {
-  const formattedWin = formatProbabilityByBetMultiplier(outcomes.win);
-  const formattedPush = formatProbabilityByBetMultiplier(outcomes.push);
-  const formattedLose = formatProbabilityByBetMultiplier(outcomes.lose);
+const formattedOutcomeResults: (keyof OutcomesByBetMultiplierMap)[] = [win, push, lose, surrender];
 
-  return `win: ${formattedWin} / push: ${formattedPush} / lose: ${formattedLose}`;
+export const formatOutcomesByBetMultiplier = (outcomes: OutcomesByBetMultiplierMap): string => {
+  return formattedOutcomeResults
+    .filter(result => Object.keys(outcomes[result]).length > 0)
+    .map(result => `${result}: ${formatProbabilityByBetMultiplier(outcomes[result])}`)
+    .join(' / ');
 };
 
 export const parseOutcomesByBetMultiplier = (
@@ -49,6 +51,7 @@ export const parseOutcomesByBetMultiplier = (
     win: {},
     push: {},
     lose: {},
+    surrender: {},
   };
 
   const outcomeParts = outcomesString.split('/').map(part => part.trim());

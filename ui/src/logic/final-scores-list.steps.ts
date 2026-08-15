@@ -4,12 +4,11 @@ import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore, FinalScoresByFirstCard } from '../types/final-score.type';
 import { Rules } from '../types/rules.type';
 import { getFinalScoresByFirstCard, getFinalScoresList } from './final-scores-list.logic';
-import { effectiveScoreToLabel } from './labels.logic';
+import { effectiveScoreToLabel, labelToEffectiveScore } from './labels.logic';
 import {
   getMaterialHandsForOptimalActions,
   getMaterialHandsForStandThreshold,
 } from './material-hands.steps';
-import { parseScore } from './result.steps';
 import { RulesWorld } from './rules.steps';
 
 type FinalScoresListWorld = RulesWorld & {
@@ -29,8 +28,8 @@ export const getFinalScoresByFirstCardForStandThreshold = (rules: Rules, thresho
   return getFinalScoresByFirstCard(hands);
 };
 
-export const getFinalScoresListForOptimalActions = (rules: Rules) => {
-  const hands = getMaterialHandsForOptimalActions(rules);
+export const getFinalScoresListForOptimalActions = (rules: Rules, surrenderLabel?: string) => {
+  const hands = getMaterialHandsForOptimalActions(rules, surrenderLabel);
   return getFinalScoresList(hands);
 };
 
@@ -47,7 +46,7 @@ When(
   function(this: FinalScoresListWorld, scoreLabel: string, threshold: number) {
     const hands = getMaterialHandsForStandThreshold(this.rules, threshold);
     this.list = getFinalScoresList(hands);
-    const score = parseScore(scoreLabel);
+    const score = labelToEffectiveScore(scoreLabel);
     const finalScore = this.list.find(item => item.score === score);
 
     if (!finalScore) {
@@ -63,7 +62,7 @@ When('getting the final score {string} of a hand resolver for optimal actions', 
   scoreLabel: string,
 ) {
   this.list = getFinalScoresListForOptimalActions(this.rules);
-  const score = parseScore(scoreLabel);
+  const score = labelToEffectiveScore(scoreLabel);
   const finalScore = this.list.find(item => item.score === score);
 
   if (!finalScore) {
@@ -85,6 +84,13 @@ When('getting the final scores list of a hand resolver for optimal actions', fun
 ) {
   this.list = getFinalScoresListForOptimalActions(this.rules);
 });
+
+When(
+  'getting the final scores list of a hand resolver for optimal actions that surrenders {string} hands',
+  function(this: FinalScoresListWorld, surrenderedLabel: string) {
+    this.list = getFinalScoresListForOptimalActions(this.rules, surrenderedLabel);
+  },
+);
 
 When(
   'getting the final scores by first card of a hand resolver with a stand threshold of {int}',
@@ -164,7 +170,7 @@ Then(
       throw new Error(`Could not find final scores group for card "${cardSymbol}"`);
     }
 
-    const finalScore = finalScoresGroup.finalScores[parseScore(scoreLabel)];
+    const finalScore = finalScoresGroup.finalScores[labelToEffectiveScore(scoreLabel)];
 
     if (!finalScore) {
       throw new Error(

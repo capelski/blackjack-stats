@@ -19,6 +19,10 @@ Given('splitting is allowed', function(this: RulesWorld) {
   this.rules.splitting = true;
 });
 
+Given('surrendering is allowed', function(this: RulesWorld) {
+  this.rules.surrendering = true;
+});
+
 Given('hitting split aces is allowed', function(this: RulesWorld) {
   this.rules.hitSplitAces = true;
 });

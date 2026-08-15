@@ -1,5 +1,6 @@
 export const blackjackLabel = 'BJ';
 export const bustLabel = '22+';
+export const surrenderLabel = 'Surrender';
 export const softScoresSeparator = '/';
 export const softScoresSeparatorUrl = '-';
 export const splitScoresSeparator = ',';

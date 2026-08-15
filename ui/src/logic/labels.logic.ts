@@ -13,20 +13,25 @@ import {
   softScoresSeparator,
   softScoresSeparatorUrl,
   splitScoresSeparator,
+  surrenderLabel,
 } from '../models/labels.model';
-import { blackjackScore, bustScore } from '../models/scores.model';
+import { blackjackScore, bustScore, surrenderScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
 import { getDisplayScores, getEffectiveScore, getNextScores } from './scores.logic';
 
 export const effectiveScoreToLabel = (effectiveScore: number): string => {
-  if (effectiveScore === bustScore) {
-    return bustLabel;
+  if (effectiveScore === surrenderScore) {
+    return surrenderLabel;
   }
 
   if (effectiveScore === blackjackScore) {
     return blackjackLabel;
+  }
+
+  if (effectiveScore === bustScore) {
+    return bustLabel;
   }
 
   return String(effectiveScore);
@@ -91,6 +96,22 @@ export const getNextHandLabel = (
   );
 
   return getHandLabel(nextScores, nextCategory);
+};
+
+export const labelToEffectiveScore = (label: string): number => {
+  if (label === surrenderLabel) {
+    return surrenderScore;
+  }
+
+  if (label === blackjackLabel) {
+    return blackjackScore;
+  }
+
+  if (label === bustLabel) {
+    return bustScore;
+  }
+
+  return parseInt(label, 10);
 };
 
 export const labelToUrlParam = (label: string): string => {

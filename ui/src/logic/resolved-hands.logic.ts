@@ -61,7 +61,7 @@ export const getResolvedHands = (
       }
 
       if (abstractHand.canSurrender) {
-        consequences[surrender] = getSurrenderConsequence(abstractHand);
+        consequences[surrender] = getSurrenderConsequence();
       }
     }
 

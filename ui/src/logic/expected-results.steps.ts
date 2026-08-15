@@ -8,7 +8,7 @@ import {
   getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
-import { parseScore } from './result.steps';
+import { labelToEffectiveScore } from './labels.logic';
 
 const assertEqual = (actual: unknown, expected: unknown, message: string): void => {
   if (actual !== expected) {
@@ -17,7 +17,7 @@ const assertEqual = (actual: unknown, expected: unknown, message: string): void 
 };
 
 const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalScore => {
-  const score = parseScore(scoreLabel);
+  const score = labelToEffectiveScore(scoreLabel);
   const finalScore = finalScores.find(item => item.score === score);
 
   if (!finalScore) {

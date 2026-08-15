@@ -13,6 +13,7 @@ export const ca = {
     win: 'Victòria',
     lose: 'Derrota',
     push: 'Empat',
+    surrender: 'Rendició',
     edge: 'Avantatge',
     decision: 'Decisió',
     score: 'Puntuació',

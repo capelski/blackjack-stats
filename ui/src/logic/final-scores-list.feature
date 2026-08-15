@@ -42,6 +42,13 @@ Feature: Final scores list
     And the final score 1 has score "12", probability "0.0004551661356395085" and "1" hands
     And the final score 12 has cards "22+", probability "0.13714939336279428" and "8671" hands
 
+  Scenario: Final scores for surrendered hands
+    Given surrendering is allowed
+    When getting the final scores list of a hand resolver for optimal actions that surrenders "16" hands
+    Then the returned final scores list contains 10 elements
+    And the final score 1 has score "Surrender", probability "0.06508875739644972" and "11" hands
+    And the final score 10 has score "22+", probability "0.1375096477714669" and "9882" hands
+
   Scenario: Final scores for optimal actions with hit split aces
     Given splitting is allowed
     And hitting split aces is allowed

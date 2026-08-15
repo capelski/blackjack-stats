@@ -1,7 +1,9 @@
-import { Result } from '../models/result.model';
+import { lose, push, Result, surrender, win } from '../models/result.model';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { getSortedNumericKeys } from './numbers.logic';
+
+export const outcomeResults: Result[] = [lose, push, surrender, win];
 
 export const createOutcomesByBetMultiplier = (
   probabilityByBetMultiplier: BetMultiplierMap,
@@ -18,9 +20,10 @@ export const createOutcomesByBetMultiplier = (
     );
 
   return {
-    lose: getMap('lose'),
-    push: getMap('push'),
-    win: getMap('win'),
+    lose: getMap(lose),
+    push: getMap(push),
+    surrender: getMap(surrender),
+    win: getMap(win),
   };
 };
 
@@ -30,16 +33,10 @@ export const increaseOutcomesByBetMultiplier = (
   weight = 1,
   multiplier = 1,
 ): void => {
-  getSortedNumericKeys(toAdd.lose).forEach(key => {
-    outcomes.lose[key * multiplier] =
-      (outcomes.lose[key * multiplier] || 0) + toAdd.lose[key] * weight;
-  });
-  getSortedNumericKeys(toAdd.push).forEach(key => {
-    outcomes.push[key * multiplier] =
-      (outcomes.push[key * multiplier] || 0) + toAdd.push[key] * weight;
-  });
-  getSortedNumericKeys(toAdd.win).forEach(key => {
-    outcomes.win[key * multiplier] =
-      (outcomes.win[key * multiplier] || 0) + toAdd.win[key] * weight;
+  outcomeResults.forEach(result => {
+    getSortedNumericKeys(toAdd[result]).forEach(key => {
+      outcomes[result][key * multiplier] =
+        (outcomes[result][key * multiplier] || 0) + toAdd[result][key] * weight;
+    });
   });
 };

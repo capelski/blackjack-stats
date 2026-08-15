@@ -5,4 +5,5 @@ export type BetMultiplierMap = {
 export type BetMultiplierOptions = {
   isDoubleBet?: boolean;
   isBlackjack?: boolean;
+  isSurrender?: boolean;
 };

@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
-import { lose, push, win } from '../models/result.model';
+import { lose, push, surrender, win } from '../models/result.model';
 import { useStrategyContext } from '../strategy.context';
 import { ExpectedResult } from '../types/expected-result.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
 
-type ExpectedResultsGroupedRowProps =
+type ExpectedResultsGroupedRowProps = {
+  isSurrenderingEnabled: boolean;
+} & (
   | {
       expectedResult?: undefined;
       isHeader: true;
@@ -16,7 +18,8 @@ type ExpectedResultsGroupedRowProps =
   | {
       expectedResult: ExpectedResult;
       isHeader?: false;
-    };
+    }
+);
 
 const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = props => {
   const { t } = useTranslation();
@@ -31,7 +34,7 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
     <tr
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)',
+        gridTemplateColumns: `repeat(${5 + (props.isSurrenderingEnabled ? 1 : 0)}, 1fr)`,
       }}
     >
       <td style={cellStyle}>
@@ -64,6 +67,16 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
         )}
       </td>
 
+      {props.isSurrenderingEnabled && (
+        <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(surrender)) }}>
+          {props.expectedResult ? (
+            <BetMultipliersCell map={props.expectedResult.outcomesByBetMultiplier.surrender} />
+          ) : (
+            t('commons.surrender')
+          )}
+        </td>
+      )}
+
       <td style={cellStyle}>
         {props.expectedResult ? (
           <BetMultipliersCell map={props.expectedResult.probabilityByBetMultiplier} />
@@ -76,12 +89,14 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
 };
 
 export const ExpectedResultsGrouped: React.FC = () => {
-  const { strategy } = useStrategyContext();
+  const { rules, strategy } = useStrategyContext();
+
+  const surrenderingEnabled = !!rules.surrendering;
 
   return (
     <table style={{ width: '100%' }}>
       <thead>
-        <ExpectedResultsGroupedRow isHeader={true} />
+        <ExpectedResultsGroupedRow isHeader={true} isSurrenderingEnabled={surrenderingEnabled} />
       </thead>
 
       <tbody>
@@ -90,6 +105,7 @@ export const ExpectedResultsGrouped: React.FC = () => {
             <ExpectedResultsGroupedRow
               key={playerScore}
               expectedResult={strategy.expectedResults.breakdown[playerScore]}
+              isSurrenderingEnabled={surrenderingEnabled}
             />
           );
         })}

@@ -126,6 +126,7 @@ const getNextMaterialHand = (
     betMultiplier: getBetMultiplier(previous.betMultiplier, {
       isBlackjack: nextEffectiveScore === blackjackScore,
       isDoubleBet: previousDouble || previousSplit,
+      isSurrender: nextAction === surrender,
     }),
     cards: nextCards,
     category: nextCategory,

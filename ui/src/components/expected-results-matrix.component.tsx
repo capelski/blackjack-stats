@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
-import { win } from '../models/result.model';
+import { push, surrender, win } from '../models/result.model';
 import { matrixModeParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
@@ -122,8 +122,10 @@ export const ExpectedResultsMatrix: React.FC = () => {
                         node:
                           finalComparison.result === win
                             ? '🟢'
-                            : finalComparison.result === 'push'
+                            : finalComparison.result === push
                             ? '🟡'
+                            : finalComparison.result === surrender
+                            ? '🏳️'
                             : '🔴',
                       };
                 }}

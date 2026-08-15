@@ -1,4 +1,6 @@
+import { surrender } from '../models/action.model';
 import { tenCardsSymbols, tenCardUnifiedSymbol } from '../models/cards.model';
+import { surrenderScore } from '../models/scores.model';
 import {
   FinalScore,
   FinalScoresByFirstCard,
@@ -16,6 +18,10 @@ const addHandToFinalScore = (finalScore: FinalScore, hand: MaterialHand): void =
   }
   finalScore.probabilityByBetMultiplier[hand.betMultiplier] += hand.probability;
 };
+
+/** Surrendered hands are grouped apart from the hands that stand on the same score */
+const getHandFinalScore = (hand: MaterialHand): number =>
+  hand.action === surrender ? surrenderScore : hand.effectiveScore;
 
 const createFinalScore = (effectiveScore: number): FinalScore => ({
   hands: [],
@@ -39,10 +45,12 @@ export const getFinalScoresList = (hands: MaterialHand[]): FinalScore[] => {
       continue;
     }
 
-    if (!finalScoresMap[hand.effectiveScore]) {
-      finalScoresMap[hand.effectiveScore] = createFinalScore(hand.effectiveScore);
+    const score = getHandFinalScore(hand);
+
+    if (!finalScoresMap[score]) {
+      finalScoresMap[score] = createFinalScore(score);
     }
-    const finalScore = finalScoresMap[hand.effectiveScore];
+    const finalScore = finalScoresMap[score];
 
     addHandToFinalScore(finalScore, hand);
   }
@@ -69,10 +77,12 @@ export const getFinalScoresByFirstCard = (hands: MaterialHand[]): FinalScoresByF
     const finalScoresGroup = finalScoresByFirstCard[applicableSymbol];
     finalScoresGroup.probability += hand.probability;
 
-    if (!finalScoresGroup.finalScores[hand.effectiveScore]) {
-      finalScoresGroup.finalScores[hand.effectiveScore] = createFinalScore(hand.effectiveScore);
+    const score = getHandFinalScore(hand);
+
+    if (!finalScoresGroup.finalScores[score]) {
+      finalScoresGroup.finalScores[score] = createFinalScore(score);
     }
-    const finalScoreEntry = finalScoresGroup.finalScores[hand.effectiveScore];
+    const finalScoreEntry = finalScoresGroup.finalScores[score];
 
     addHandToFinalScore(finalScoreEntry, hand);
   }

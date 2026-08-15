@@ -1,6 +1,6 @@
 import { Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
-import { hit, stand } from '../models/action.model';
+import { hit, stand, surrender } from '../models/action.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { Rules } from '../types/rules.type';
@@ -19,8 +19,11 @@ export const getMaterialHandsForStandThreshold = (rules: Rules, threshold: numbe
   return getMaterialHands(rules, handResolutionMap);
 };
 
-export const getMaterialHandsForOptimalActions = (rules: Rules) => {
-  const handResolver: HandResolver = hand => hand.optimalConsequence.action;
+export const getMaterialHandsForOptimalActions = (rules: Rules, surrenderedLabel?: string) => {
+  const handResolver: HandResolver = hand =>
+    surrenderedLabel && hand.canSurrender && hand.label === surrenderedLabel
+      ? surrender
+      : hand.optimalConsequence.action;
   const { handResolutionMap } = getResolvedHands(rules, handResolver, dealerFinalScores);
   return getMaterialHands(rules, handResolutionMap);
 };

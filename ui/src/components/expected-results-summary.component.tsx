@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
-import { lose, push, Result, win } from '../models/result.model';
+import { lose, push, Result, surrender, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
 import { ExpectedResults } from '../types/expected-result.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
@@ -32,17 +32,21 @@ const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = pr
 
 type ExpectedResultsSummaryProps = {
   expectedResults: Pick<ExpectedResults, 'edge' | 'outcomesByBetMultiplier'>;
+  isSurrenderingEnabled: boolean;
 };
 
 export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = props => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { expectedResults } = props;
+  const { expectedResults, isSurrenderingEnabled } = props;
 
   return (
     <div
       className="expected-summary"
-      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${4 + (isSurrenderingEnabled ? 1 : 0)}, 1fr)`,
+      }}
     >
       <ExpectedResultsSummaryCard discriminator={win}>
         <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.win} />
@@ -53,6 +57,11 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = pro
       <ExpectedResultsSummaryCard discriminator={lose}>
         <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.lose} />
       </ExpectedResultsSummaryCard>
+      {isSurrenderingEnabled && (
+        <ExpectedResultsSummaryCard discriminator={surrender}>
+          <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.surrender} />
+        </ExpectedResultsSummaryCard>
+      )}
       <ExpectedResultsSummaryCard discriminator="edge">
         {toPercentage(expectedResults.edge, decimals)}
         <br />

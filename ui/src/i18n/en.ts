@@ -13,6 +13,7 @@ export const en = {
     win: 'Win',
     lose: 'Lose',
     push: 'Push',
+    surrender: 'Surrender',
     edge: 'Edge',
     decision: 'Decision',
     score: 'Score',

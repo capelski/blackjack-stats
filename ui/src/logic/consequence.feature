@@ -5,13 +5,13 @@ Feature: Consequences
   Scenario: Stand consequence
     When getting the consequences of standing with "17" hand
     Then the consequence final probabilities equal "17=1"
-    And the consequence outcomes equals "win: 1=0.2815928473666239 / push: 1=0.14512590450523458 / lose: 1=0.5732812481281165"
+    And the consequence outcomes equals "win: 1=0.2815928473666239 / push: 1=0.14512590450523458 / lose: 1=0.5732812481281165 / surrender: 1=0"
     And the consequence edge equals "-0.29168840076149266"
 
   Scenario: Stand consequence BJ
     When getting the consequences of standing with "BJ" hand
     Then the consequence final probabilities equal "BJ=1"
-    And the consequence outcomes equals "win: 1.5=0.9526627218934662 / push: 1.5=0.04733727810650889 / lose: 1.5=0"
+    And the consequence outcomes equals "win: 1.5=0.9526627218934662 / push: 1.5=0.04733727810650889 / lose: 1.5=0 / surrender: 1.5=0"
     And the consequence edge equals "1.4289940828401995"
 
   Scenario: Future hands consequences (standing on 12+)
@@ -40,7 +40,7 @@ Feature: Consequences
     And the consequence edge equals "0.26047086607882497"
 
   Scenario: Surrender consequence
-    When getting the consequences of surrendering with "15" hand
-    Then the consequence final probabilities equal "15=1"
-    And the consequence outcomes equals "win: 0.5=0 / push: 0.5=0 / lose: 0.5=1"
+    When getting the consequences of surrendering
+    Then the consequence final probabilities equal "Surrender=1"
+    And the consequence outcomes equals "win: 0.5=0 / push: 0.5=0 / lose: 0.5=0 / surrender: 0.5=1"
     And the consequence edge equals "-0.5"

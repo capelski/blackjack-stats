@@ -13,8 +13,7 @@ import {
   formatOutcomesByBetMultiplier,
   parseOutcomesByBetMultiplier,
 } from './final-comparison.steps';
-import { effectiveScoreToLabel } from './labels.logic';
-import { parseScore } from './result.steps';
+import { effectiveScoreToLabel, labelToEffectiveScore } from './labels.logic';
 
 interface ConsequenceWorld {
   consequence: Consequence;
@@ -25,7 +24,7 @@ const parseFinalProbabilities = (value: string): FinalProbabilities => {
   return Object.fromEntries(
     value.split(',').map(entry => {
       const [scoreLabel, probability] = entry.split('=');
-      return [parseScore(scoreLabel.trim()), parseFloat(probability)];
+      return [labelToEffectiveScore(scoreLabel.trim()), parseFloat(probability)];
     }),
   );
 };
@@ -67,13 +66,8 @@ When('getting the consequences of doubling or splitting', function(this: Consequ
   this.consequence = mergeFutureConsequences(this.futureConsequences, double, 2);
 });
 
-When('getting the consequences of surrendering with {string} hand', function(
-  this: ConsequenceWorld,
-  label: string,
-) {
-  const abstractHands = getAbstractHands({});
-  const abstractHand = abstractHands.find(x => x.label === label)!;
-  this.consequence = getSurrenderConsequence(abstractHand);
+When('getting the consequences of surrendering', function(this: ConsequenceWorld) {
+  this.consequence = getSurrenderConsequence();
 });
 
 Then('the consequence action equals {string}', function(

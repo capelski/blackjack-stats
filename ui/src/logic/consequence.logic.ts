@@ -1,13 +1,13 @@
 import { Action, double, hit, split, stand, surrender } from '../models/action.model';
 import { cards } from '../models/cards.model';
-import { lose } from '../models/result.model';
-import { blackjackScore } from '../models/scores.model';
+import { surrender as surrenderResult } from '../models/result.model';
+import { blackjackScore, surrenderScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScoreBase } from '../types/final-score.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
-import { getBetMultiplier } from './bet-multiplier.logic';
+import { getBetMultiplier, surrenderBetMultiplier } from './bet-multiplier.logic';
 import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { getNextHandLabel } from './labels.logic';
@@ -90,15 +90,18 @@ export const getStandConsequence = (
   };
 };
 
-export const getSurrenderConsequence = (abstractHand: AbstractHand): Consequence => {
+export const getSurrenderConsequence = (): Consequence => {
   const probabilityByBetMultiplier = {
-    [0.5]: 1,
+    [surrenderBetMultiplier]: 1,
   };
 
-  const outcomesByBetMultiplier = createOutcomesByBetMultiplier(probabilityByBetMultiplier, lose);
+  const outcomesByBetMultiplier = createOutcomesByBetMultiplier(
+    probabilityByBetMultiplier,
+    surrenderResult,
+  );
 
   return {
-    finalProbabilities: { [abstractHand.effectiveScore]: 1 },
+    finalProbabilities: { [surrenderScore]: 1 },
     action: surrender,
     outcomesByBetMultiplier,
     edge: getEdge(outcomesByBetMultiplier),

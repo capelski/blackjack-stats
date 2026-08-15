@@ -1,15 +1,18 @@
+import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { getSortedNumericKeys } from './numbers.logic';
 
+const getWeightedProbability = (probabilityByBetMultiplier: BetMultiplierMap): number =>
+  getSortedNumericKeys(probabilityByBetMultiplier).reduce(
+    (acc, betMultiplier) => acc + probabilityByBetMultiplier[betMultiplier] * betMultiplier,
+    0,
+  );
+
 export const getEdge = (outcomesByBetMultiplier: OutcomesByBetMultiplierMap): number => {
-  const wins = getSortedNumericKeys(outcomesByBetMultiplier.win).reduce(
-    (acc, betMultiplier) => acc + outcomesByBetMultiplier.win[betMultiplier] * betMultiplier,
-    0,
-  );
-  const losses = getSortedNumericKeys(outcomesByBetMultiplier.lose).reduce(
-    (acc, betMultiplier) => acc + outcomesByBetMultiplier.lose[betMultiplier] * betMultiplier,
-    0,
-  );
-  const difference = wins - losses;
+  const wins = getWeightedProbability(outcomesByBetMultiplier.win);
+  const losses = getWeightedProbability(outcomesByBetMultiplier.lose);
+  const surrenders = getWeightedProbability(outcomesByBetMultiplier.surrender);
+
+  const difference = wins - losses - surrenders;
   return difference;
 };

@@ -37,3 +37,7 @@ Feature: Result
   Scenario: Dealer blackjack
     When resolving a player score of "BJ" against a dealer score of "BJ"
     Then result is "push"
+
+  Scenario: Player surrenders
+    When resolving a surrendered player score
+    Then result is "surrender"
