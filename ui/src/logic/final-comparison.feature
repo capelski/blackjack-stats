@@ -40,3 +40,10 @@ Feature: Final comparison
     When getting the final comparison of a player score of "19" and a dealer score of "18"
     Then the final comparison result equals "win"
     And the final comparison probabilities by bet multiplier are "1=0.016025930508361392,2=0.00015499753144781404"
+
+  Scenario: Final comparison for surrender
+    Given surrendering is allowed
+    And a player hand resolver for optimal actions that surrenders "16" hands
+    When getting the final comparison of surrendered hands and a dealer score of "18"
+    Then the final comparison result equals "surrender"
+    And the final comparison probabilities by bet multiplier are "0.5=0.009079681629385487"

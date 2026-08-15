@@ -1,4 +1,5 @@
 import { Given, Then, When } from '@cucumber/cucumber';
+import { surrenderLabel } from '../models/labels.model';
 import { lose, push, surrender, win } from '../models/result.model';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
@@ -82,6 +83,13 @@ Given('a player hand resolver for optimal actions', function(this: FinalComparis
   this.playerFinalScores = getFinalScoresListForOptimalActions(this.rules);
 });
 
+Given('a player hand resolver for optimal actions that surrenders {string} hands', function(
+  this: FinalComparisonWorld,
+  surrenderedLabel: string,
+) {
+  this.playerFinalScores = getFinalScoresListForOptimalActions(this.rules, surrenderedLabel);
+});
+
 When(
   'getting the final comparison of a player score of {string} and a dealer score of {string}',
   function(this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
@@ -91,6 +99,16 @@ When(
     this.comparison = getFinalComparison(playerScore, dealerScore);
   },
 );
+
+When('getting the final comparison of surrendered hands and a dealer score of {string}', function(
+  this: FinalComparisonWorld,
+  dealerScoreLabel: string,
+) {
+  const playerScore = findFinalScore(this.playerFinalScores, surrenderLabel);
+  const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
+
+  this.comparison = getFinalComparison(playerScore, dealerScore);
+});
 
 Then('the final comparison result equals {string}', function(
   this: FinalComparisonWorld,
