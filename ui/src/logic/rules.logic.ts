@@ -1,5 +1,19 @@
+import { Action, double, sortedActions, split, surrender } from '../models/action.model';
 import { playerScoreLimit } from '../models/scores.model';
 import { Rules } from '../types/rules.type';
+
+const actionRules: Partial<Record<Action, keyof Rules>> = {
+  [double]: 'doubling',
+  [split]: 'splitting',
+  [surrender]: 'surrendering',
+};
+
+export const getEnabledActions = (rules: Rules): Action[] => {
+  return sortedActions.filter(action => {
+    const rule = actionRules[action];
+    return !rule || !!rules[rule];
+  });
+};
 
 export type ActionableParameters = {
   isPostDouble: boolean;

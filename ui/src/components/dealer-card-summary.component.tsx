@@ -13,7 +13,7 @@ export const DealerCardSummary: React.FC = () => {
           expectedResults={strategy.expectedResults}
           isSurrenderingEnabled={!!rules.surrendering}
         />
-        <OptimalActionsMatrix strategy={strategy} />
+        <OptimalActionsMatrix rules={rules} strategy={strategy} />
       </React.Fragment>
     )
   );
