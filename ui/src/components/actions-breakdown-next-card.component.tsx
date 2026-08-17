@@ -12,7 +12,6 @@ import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { Card } from '../types/card.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
-import { ActionsBreakdownTitle } from './actions-breakdown-title.component';
 
 type NextHandGroup = {
   cards: Card[];
@@ -86,13 +85,11 @@ type ActionsBreakdownNextCardProps = {
    * of one of the split cards and the bet is doubled, because two hands are played */
   action: typeof double | typeof hit | typeof split;
   resolvedHand: ResolvedHand;
-  sectionRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> = ({
   action,
   resolvedHand,
-  sectionRef,
 }) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
@@ -136,46 +133,40 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
   );
 
   return (
-    <div className={`${action}-section`} ref={sectionRef}>
-      <ActionsBreakdownTitle action={action} />
+    <table style={{ width: '100%' }}>
+      <thead>
+        <ActionsBreakdownNextCardRow
+          action={t('commons.action')}
+          edge={t('commons.edge')}
+          isHeader={true}
+          nextCard={t('actionsBreakdown.nextCard')}
+          nextHand={t('actionsBreakdown.nextHand')}
+          probability={t('commons.probability')}
+        />
+      </thead>
 
-      <table style={{ width: '100%' }}>
-        <thead>
+      <tbody>
+        {nextHandGroups.map(({ cards: groupCards, edge, nextAction, nextHand, probability }) => (
           <ActionsBreakdownNextCardRow
-            action={t('commons.action')}
-            edge={t('commons.edge')}
-            isHeader={true}
-            nextCard={t('actionsBreakdown.nextCard')}
-            nextHand={t('actionsBreakdown.nextHand')}
-            probability={t('commons.probability')}
+            action={t(`actions.${nextAction}`)}
+            edge={`${toPercentage(edge, decimals)}${betMultiplier > 1 ? ` (x${betMultiplier})` : ''}`}
+            edgeContribution={edge * betMultiplier * probability}
+            key={nextHand.label}
+            nextCard={getNextCardsLabel(groupCards)}
+            nextHand={nextHand.labelAsInitial}
+            probability={`${groupCards.length} / ${cardsNumber}`}
           />
-        </thead>
+        ))}
 
-        <tbody>
-          {nextHandGroups.map(({ cards: groupCards, edge, nextAction, nextHand, probability }) => (
-            <ActionsBreakdownNextCardRow
-              action={t(`actions.${nextAction}`)}
-              edge={`${toPercentage(edge, decimals)}${
-                betMultiplier > 1 ? ` (x${betMultiplier})` : ''
-              }`}
-              edgeContribution={edge * betMultiplier * probability}
-              key={nextHand.label}
-              nextCard={getNextCardsLabel(groupCards)}
-              nextHand={nextHand.labelAsInitial}
-              probability={`${groupCards.length} / ${cardsNumber}`}
-            />
-          ))}
-
-          <ActionsBreakdownNextCardRow
-            action=""
-            edge=""
-            edgeContribution={totalEdgeContribution * betMultiplier}
-            nextCard={t('commons.edge')}
-            nextHand=""
-            probability=""
-          />
-        </tbody>
-      </table>
-    </div>
+        <ActionsBreakdownNextCardRow
+          action=""
+          edge=""
+          edgeContribution={totalEdgeContribution * betMultiplier}
+          nextCard={t('commons.edge')}
+          nextHand=""
+          probability=""
+        />
+      </tbody>
+    </table>
   );
 };
