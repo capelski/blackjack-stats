@@ -34,6 +34,13 @@ export const ca = {
     bust: 'Eliminat',
     end: 'Fi',
   },
+  optimalActions: {
+    view: 'Vista',
+    modes: {
+      compact: 'Compacta',
+      full: 'Sencera',
+    },
+  },
   strategyLayout: {
     hands: 'Mans',
     finalScores: 'Puntuacions finals',

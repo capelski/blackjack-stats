@@ -6,6 +6,8 @@ export const matrixModeParamName = 'mm';
 
 export const dealerCardModeParamName = 'dcm';
 
+export const dealerSummaryModeParamName = 'dsm';
+
 export const selectedActionParamName = 'a';
 
 export const cardsFilterParamName = 'cf';

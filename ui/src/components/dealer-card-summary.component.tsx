@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDealerCardContext } from '../dealer-card.context';
+import { DealerCardMatrix } from './dealer-card-matrix.component';
 import { ExpectedResultsSummary } from './expected-results-summary.component';
-import { OptimalActionsMatrix } from './optimal-actions-matrix.component';
 
 export const DealerCardSummary: React.FC = () => {
   const { rules, strategy } = useDealerCardContext();
@@ -13,7 +13,7 @@ export const DealerCardSummary: React.FC = () => {
           expectedResults={strategy.expectedResults}
           isSurrenderingEnabled={!!rules.surrendering}
         />
-        <OptimalActionsMatrix rules={rules} strategy={strategy} />
+        <DealerCardMatrix rules={rules} strategy={strategy} />
       </React.Fragment>
     )
   );

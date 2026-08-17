@@ -34,6 +34,13 @@ export const en = {
     bust: 'Bust',
     end: 'End',
   },
+  optimalActions: {
+    view: 'View',
+    modes: {
+      compact: 'Compact',
+      full: 'Full',
+    },
+  },
   strategyLayout: {
     hands: 'Hands',
     finalScores: 'Final scores',
