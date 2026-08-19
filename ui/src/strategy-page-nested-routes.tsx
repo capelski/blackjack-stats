@@ -23,7 +23,7 @@ import { SearchNavigate } from './search-navigate';
 export const StrategyPageNestedRoutes = () => {
   return (
     <React.Fragment>
-      <Route index element={<SearchNavigate to={materialHandsRoute} />} />
+      <Route index element={<SearchNavigate to={actionsAnalysisRoute} />} />
       <Route path={materialHandsRoute} element={<MaterialHandsList />} />
       <Route path={finalScoresRoute} element={<FinalScoresList />} />
       <Route path={expectedResultsRoute} element={<ExpectedResults />}>

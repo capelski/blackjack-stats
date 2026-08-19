@@ -18,7 +18,7 @@ import { StrategyPageNestedRoutes } from './strategy-page-nested-routes';
 export const DealerCardPageNestedRoutes = () => {
   return (
     <React.Fragment>
-      <Route index element={<SearchNavigate to={finalScoresRoute} />} />
+      <Route index element={<SearchNavigate to={summaryRoute} />} />
       <Route path={finalScoresRoute} element={<DealerFinalScoresMatrix />} />
       <Route path={summaryRoute} element={<DealerCardSummary />} />
       <Route path={dealerBreakdownRoute}>
