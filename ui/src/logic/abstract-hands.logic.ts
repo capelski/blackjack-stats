@@ -9,11 +9,11 @@ import {
   threeOrMoreCards,
 } from '../models/hand-category.model';
 import { bust, end, HandStatus } from '../models/hand-status.model';
-import { blackjackScore, bustScore, playerScoreLimit } from '../models/scores.model';
+import { blackjackScore, bustScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
 import { getHandLabel } from './labels.logic';
-import { canDouble, canSplit } from './rules.logic';
+import { canAction, canDouble, canSplit } from './rules.logic';
 import { getEffectiveScore } from './scores.logic';
 
 /** The returned abstract hands are sorted so dependencies to other abstract hands are resolved first.
@@ -48,16 +48,18 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'A,A,2', label: '4/14 (3+)', scores: [4, 14] },
     { example: 'A,A,A', label: '3/13 (3+)', scores: [3, 13] },
   ].map<AbstractHand>(x => {
+    const category = threeOrMoreCards;
     const effectiveScore = getEffectiveScore(x.scores);
+    const isActionable = canAction(rules, { category, effectiveScore });
 
     return {
       ...x,
       canDouble: false,
       canSplit: false,
       canSurrender: false,
-      category: threeOrMoreCards,
+      category,
       effectiveScore,
-      isActionable: effectiveScore < playerScoreLimit,
+      isActionable,
       isHidden: true,
       labelAsInitial: x.label.split(' ')[0],
     };
@@ -139,6 +141,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
   ].map<AbstractHand>(x => {
     const category = initialPair;
     const effectiveScore = getEffectiveScore(x.scores);
+    const isActionable = canAction(rules, { category, effectiveScore });
 
     return {
       ...x,
@@ -147,7 +150,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       canSurrender: !!rules.surrendering,
       category,
       effectiveScore,
-      isActionable: effectiveScore < playerScoreLimit,
+      isActionable,
       labelAsInitial: x.label,
     };
   });
@@ -187,6 +190,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
   ].map<AbstractHand>(x => {
     const category = postSplitPair;
     const effectiveScore = getEffectiveScore(x.scores);
+    const isActionable = canAction(rules, { category, effectiveScore });
 
     return {
       ...x,
@@ -195,7 +199,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       canSurrender: false,
       category,
       effectiveScore,
-      isActionable: effectiveScore < playerScoreLimit,
+      isActionable,
       isHidden: true,
       labelAsInitial: x.label.split(' ')[0],
     };
@@ -220,15 +224,16 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
   ].map<AbstractHand>(x => {
     const category = postASplitPair;
     const effectiveScore = getEffectiveScore(x.scores);
+    const isActionable = canAction(rules, { category, effectiveScore });
 
     return {
       ...x,
-      canDouble: !!rules.hitSplitAces && canDouble(rules, { category, scores: x.scores }),
+      canDouble: isActionable && canDouble(rules, { category, scores: x.scores }),
       canSplit: false,
       canSurrender: false,
       category,
       effectiveScore,
-      isActionable: !!rules.hitSplitAces,
+      isActionable,
       isHidden: true,
       labelAsInitial: x.label.split(' ')[0],
     };
@@ -253,9 +258,10 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'Q,Q', label: 'Q,Q', scores: [20], isHidden: true, splitCard: cardsMap['Q'] },
     { example: 'K,K', label: 'K,K', scores: [20], isHidden: true, splitCard: cardsMap['K'] },
   ].map<AbstractHand>(x => {
-    const isSplittable = canSplit(rules, [x.splitCard.symbol, x.splitCard.symbol], false);
     const category = splittablePair;
     const effectiveScore = getEffectiveScore(x.scores);
+    const isActionable = canAction(rules, { category, effectiveScore });
+    const isSplittable = canSplit(rules, [x.splitCard.symbol, x.splitCard.symbol], false);
 
     return {
       ...x,
@@ -264,7 +270,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
       canSurrender: !!rules.surrendering,
       category,
       effectiveScore,
-      isActionable: true,
+      isActionable: isActionable,
       isHidden: x.isHidden || !isSplittable,
       labelAsInitial: x.label,
     };

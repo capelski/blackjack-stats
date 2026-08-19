@@ -84,7 +84,6 @@ const getNextMaterialHand = (
   const previousCards = previousSplit ? [previous.cards[0]] : previous.cards;
   const isPostSplit = previousSplit || previous.isPostSplit;
   const isFirstCardAce = previousCards[0].symbol === 'A';
-  const isPostSplitAces = isPostSplit && isFirstCardAce;
 
   const nextCards = [...previousCards, card];
   const nextCanSplit = canSplit(
@@ -109,10 +108,8 @@ const getNextMaterialHand = (
 
   const nextEffectiveScore = getEffectiveScore(nextScores);
   const nextIsActionable = canAction(rules, {
-    isPostDouble: previousDouble,
-    isPostSplit,
-    isPostSplitAces,
-    score: nextEffectiveScore,
+    category: nextCategory,
+    effectiveScore: nextEffectiveScore,
   });
 
   const nextAction = getHandStatus(

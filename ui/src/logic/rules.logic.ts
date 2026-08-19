@@ -11,6 +11,7 @@ import { doublingAll, doublingNineToEleven, nineToElevenScores } from '../models
 import {
   initialPair,
   postASplitPair,
+  postDoubleHand,
   postSplitPair,
   splittablePair,
 } from '../models/hand-category.model';
@@ -26,24 +27,18 @@ const actionRules: Record<Action, (rules: Rules) => boolean> = {
   [surrender]: rules => !!rules.surrendering,
 };
 
-export type ActionableParameters = {
-  isPostDouble: boolean;
-  isPostSplit: boolean;
-  isPostSplitAces: boolean;
-  score: number;
-};
-
-/** - Hands with a score of 21 or higher are not actionable
- * - After doubling, hands are not actionable
- * - When splitting aces, the casino might prevent hitting further */
+/** Hands are not actionable when:
+ * - Have a score of 21 or higher
+ * - After doubling
+ * - After splitting aces, depending on the casino rules */
 export const canAction = (
   rules: Rules,
-  { isPostDouble, isPostSplit, isPostSplitAces, score }: ActionableParameters,
+  hand: Pick<HandBase, 'category' | 'effectiveScore'>,
 ): boolean => {
   return (
-    score < playerScoreLimit &&
-    !isPostDouble &&
-    (!isPostSplit || !isPostSplitAces || !!rules.hitSplitAces)
+    hand.effectiveScore < playerScoreLimit &&
+    hand.category !== postDoubleHand &&
+    (hand.category !== postASplitPair || !!rules.hitSplitAces)
   );
 };
 
