@@ -15,3 +15,26 @@ export const actionAbbreviations: Record<Action, string> = {
   [stand]: 'S',
   [surrender]: 'R',
 };
+
+export const actionColors: Record<Action, { backgroundColor: string; color: string }> = {
+  [double]: {
+    backgroundColor: '#daa520',
+    color: 'white',
+  },
+  [hit]: {
+    backgroundColor: '#428bca',
+    color: 'white',
+  },
+  [split]: {
+    backgroundColor: '#9a6f93',
+    color: 'white',
+  },
+  [stand]: {
+    backgroundColor: '#5cb85c',
+    color: 'black',
+  },
+  [surrender]: {
+    backgroundColor: '#d9534f',
+    color: 'white',
+  },
+};

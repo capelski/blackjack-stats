@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { getActionableHands } from '../logic/abstract-hands.logic';
 import { compactRows, getRowLabel, OptimalActionsRow } from '../logic/optimal-actions.logic';
 import { getEnabledActions } from '../logic/rules.logic';
-import { actionAbbreviations } from '../models/action.model';
+import { actionAbbreviations, actionColors } from '../models/action.model';
 import { sortedCardSymbols } from '../models/cards.model';
 import { dealerSummaryModeParamName, useSearchParamsUtils } from '../search-params-utils';
 import { Rules } from '../types/rules.type';
@@ -16,7 +16,8 @@ const views: OptimalActionsView[] = [compactView, fullView];
 
 const getCellStyle = (isHeader: boolean): CSSProperties => ({
   fontWeight: isHeader ? 'bold' : undefined,
-  padding: 8,
+  margin: 2,
+  padding: 2,
   textAlign: 'center',
 });
 
@@ -102,7 +103,10 @@ export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = props => {
               <tr key={label} style={rowStyle}>
                 <td style={getCellStyle(true)}>{label}</td>
                 {row.actions.map((action, index) => (
-                  <td key={sortedCardSymbols[index]} style={getCellStyle(false)}>
+                  <td
+                    key={sortedCardSymbols[index]}
+                    style={{ ...getCellStyle(false), ...(action ? actionColors[action] : {}) }}
+                  >
                     {action ? actionAbbreviations[action] : '-'}
                   </td>
                 ))}
