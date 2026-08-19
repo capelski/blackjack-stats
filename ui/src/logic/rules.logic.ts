@@ -63,15 +63,7 @@ export const canDouble = (rules: Rules, hand: Pick<HandBase, 'category' | 'score
   );
 };
 
-export type SplittingParameters = {
-  cardSymbols: string[];
-  isPostSplit: boolean;
-};
-
-export const canSplit = (
-  rules: Rules,
-  { cardSymbols, isPostSplit }: SplittingParameters,
-): boolean => {
+export const canSplit = (rules: Rules, cardSymbols: string[], isPostSplit: boolean): boolean => {
   return (
     !!rules.splitting &&
     cardSymbols.length === 2 &&

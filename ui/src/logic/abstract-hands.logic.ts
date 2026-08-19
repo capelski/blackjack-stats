@@ -13,7 +13,7 @@ import { blackjackScore, bustScore, playerScoreLimit } from '../models/scores.mo
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
 import { getHandLabel } from './labels.logic';
-import { canDouble } from './rules.logic';
+import { canDouble, canSplit } from './rules.logic';
 import { getEffectiveScore } from './scores.logic';
 
 /** The returned abstract hands are sorted so dependencies to other abstract hands are resolved first.
@@ -253,19 +253,19 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'Q,Q', label: 'Q,Q', scores: [20], isHidden: true, splitCard: cardsMap['Q'] },
     { example: 'K,K', label: 'K,K', scores: [20], isHidden: true, splitCard: cardsMap['K'] },
   ].map<AbstractHand>(x => {
-    const canSplit = !!rules.splitting;
+    const isSplittable = canSplit(rules, [x.splitCard.symbol, x.splitCard.symbol], false);
     const category = splittablePair;
     const effectiveScore = getEffectiveScore(x.scores);
 
     return {
       ...x,
       canDouble: canDouble(rules, { category, scores: x.scores }),
-      canSplit,
+      canSplit: isSplittable,
       canSurrender: !!rules.surrendering,
       category,
       effectiveScore,
       isActionable: true,
-      isHidden: x.isHidden || !canSplit,
+      isHidden: x.isHidden || !isSplittable,
       labelAsInitial: x.label,
     };
   });

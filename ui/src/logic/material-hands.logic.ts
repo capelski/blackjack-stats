@@ -87,7 +87,11 @@ const getNextMaterialHand = (
   const isPostSplitAces = isPostSplit && isFirstCardAce;
 
   const nextCards = [...previousCards, card];
-  const nextCanSplit = canSplit(rules, { cardSymbols: nextCards.map(c => c.symbol), isPostSplit });
+  const nextCanSplit = canSplit(
+    rules,
+    nextCards.map(c => c.symbol),
+    isPostSplit,
+  );
   const nextCategory: HandCategory = previousSplit
     ? isFirstCardAce
       ? postASplitPair
