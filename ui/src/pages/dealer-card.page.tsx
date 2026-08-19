@@ -9,7 +9,7 @@ import {
   summaryRoute,
 } from '../../constants';
 import { LoadingOverlay } from '../components/loading-overlay.component';
-import { RulesCheckboxes } from '../components/rules-checkboxes.component';
+import { RulesControls } from '../components/rules-controls.component';
 import { DealerCardContext } from '../dealer-card.context';
 import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
@@ -47,7 +47,7 @@ export const DealerCardPage: React.FC<DealerCardPageProps> = props => {
           {dealerCard ? ` - ${playerLabel ? `${playerLabel} vs ` : ''}${dealerCard}` : ''}
         </h1>
 
-        <RulesCheckboxes disabled={props.computing} rules={props.rules} setRules={props.setRules} />
+        <RulesControls disabled={props.computing} rules={props.rules} setRules={props.setRules} />
 
         <nav className="nested-navbar">
           <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>

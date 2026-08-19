@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoadingOverlay } from '../components/loading-overlay.component';
-import { RulesCheckboxes } from '../components/rules-checkboxes.component';
+import { RulesControls } from '../components/rules-controls.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { StrategyContext } from '../strategy.context';
 import { DecisionOverrideHandler } from '../types/decision-overrides.type';
@@ -30,11 +30,7 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
         }}
       >
         <StrategyLayoutComponent title={t('titles.optimalActions')}>
-          <RulesCheckboxes
-            disabled={props.computing}
-            rules={props.rules}
-            setRules={props.setRules}
-          />
+          <RulesControls disabled={props.computing} rules={props.rules} setRules={props.setRules} />
         </StrategyLayoutComponent>
       </StrategyContext.Provider>
     </LoadingOverlay>

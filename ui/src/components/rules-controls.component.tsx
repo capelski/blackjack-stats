@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { Rules } from '../types/rules.type';
 import { CheckboxComponent } from './checkbox.component';
 
-export type RulesCheckboxesProps = {
+export type RulesControlsProps = {
   disabled?: boolean;
   rules: Rules;
   setRules: (rules: Rules) => void;
 };
 
-export const RulesCheckboxes: React.FC<RulesCheckboxesProps> = props => {
+export const RulesControls: React.FC<RulesControlsProps> = props => {
   const { t } = useTranslation();
 
   const doublingEnabled = !!props.rules.doubling;
