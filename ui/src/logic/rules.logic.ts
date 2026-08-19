@@ -47,7 +47,7 @@ export const canDouble = (rules: Rules, hand: Pick<HandBase, 'category' | 'score
   const isPostSplitPair = hand.category === postSplitPair || hand.category === postASplitPair;
   const isDoublingCategory = isInitialHand || (!!rules.doublingAfterSplit && isPostSplitPair);
 
-  if (!isDoublingCategory) {
+  if (!isDoublingCategory || (hand.category === postASplitPair && !rules.hitSplitAces)) {
     return false;
   }
 
@@ -65,6 +65,10 @@ export const canSplit = (rules: Rules, cardSymbols: string[], isPostSplit: boole
     cardSymbols[0] === cardSymbols[1] &&
     !isPostSplit
   );
+};
+
+export const canSurrender = (rules: Rules, { category }: Pick<HandBase, 'category'>): boolean => {
+  return !!rules.surrendering && (category === initialPair || category === splittablePair);
 };
 
 export const getEnabledActions = (rules: Rules): Action[] => {
