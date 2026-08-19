@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { isDoublingEnabled } from '../logic/rules.logic';
+import { Doubling, doublingDisabled, sortedDoublingOptions } from '../models/doubling.model';
 import { Rules } from '../types/rules.type';
 import { CheckboxComponent } from './checkbox.component';
 
@@ -11,17 +13,25 @@ export type RulesControlsProps = {
 export const RulesControls: React.FC<RulesControlsProps> = props => {
   const { t } = useTranslation();
 
-  const doublingEnabled = !!props.rules.doubling;
+  const doublingEnabled = isDoublingEnabled(props.rules);
   const splittingEnabled = !!props.rules.splitting;
 
   return (
     <>
-      <CheckboxComponent
-        checked={doublingEnabled}
-        disabled={props.disabled}
-        label={t('rules.doubling')}
-        onChange={checked => props.setRules({ ...props.rules, doubling: checked })}
-      />
+      <label>
+        {t('rules.doubling')}:{' '}
+        <select
+          disabled={props.disabled}
+          onChange={e => props.setRules({ ...props.rules, doubling: e.target.value as Doubling })}
+          value={props.rules.doubling ?? doublingDisabled}
+        >
+          {sortedDoublingOptions.map(option => (
+            <option key={option} value={option}>
+              {t(`rules.doublingOptions.${option}`)}
+            </option>
+          ))}
+        </select>
+      </label>
       <CheckboxComponent
         checked={splittingEnabled}
         disabled={props.disabled}

@@ -1,18 +1,29 @@
-import { Action, double, sortedActions, split, surrender } from '../models/action.model';
+import {
+  Action,
+  double,
+  hit,
+  sortedActions,
+  split,
+  stand,
+  surrender,
+} from '../models/action.model';
+import { doublingAll, doublingNineToEleven, nineToElevenScores } from '../models/doubling.model';
+import {
+  initialPair,
+  postASplitPair,
+  postSplitPair,
+  splittablePair,
+} from '../models/hand-category.model';
 import { playerScoreLimit } from '../models/scores.model';
+import { HandBase } from '../types/hand-base.type';
 import { Rules } from '../types/rules.type';
 
-const actionRules: Partial<Record<Action, keyof Rules>> = {
-  [double]: 'doubling',
-  [split]: 'splitting',
-  [surrender]: 'surrendering',
-};
-
-export const getEnabledActions = (rules: Rules): Action[] => {
-  return sortedActions.filter(action => {
-    const rule = actionRules[action];
-    return !rule || !!rules[rule];
-  });
+const actionRules: Record<Action, (rules: Rules) => boolean> = {
+  [double]: rules => isDoublingEnabled(rules),
+  [hit]: () => true,
+  [split]: rules => !!rules.splitting,
+  [stand]: () => true,
+  [surrender]: rules => !!rules.surrendering,
 };
 
 export type ActionableParameters = {
@@ -36,16 +47,20 @@ export const canAction = (
   );
 };
 
-export type DoublingParameters = {
-  cardsNumber: number;
-  isPostSplit: boolean;
-};
+export const canDouble = (rules: Rules, hand: Pick<HandBase, 'category' | 'scores'>): boolean => {
+  const isInitialHand = hand.category === initialPair || hand.category === splittablePair;
+  const isPostSplitPair = hand.category === postSplitPair || hand.category === postASplitPair;
+  const isDoublingCategory = isInitialHand || (!!rules.doublingAfterSplit && isPostSplitPair);
 
-export const canDouble = (
-  rules: Rules,
-  { cardsNumber, isPostSplit }: DoublingParameters,
-): boolean => {
-  return !!rules.doubling && cardsNumber === 2 && (!isPostSplit || !!rules.doublingAfterSplit);
+  if (!isDoublingCategory) {
+    return false;
+  }
+
+  return (
+    rules.doubling === doublingAll ||
+    (rules.doubling === doublingNineToEleven &&
+      hand.scores.some(score => nineToElevenScores.includes(score)))
+  );
 };
 
 export type SplittingParameters = {
@@ -63,4 +78,15 @@ export const canSplit = (
     cardSymbols[0] === cardSymbols[1] &&
     !isPostSplit
   );
+};
+
+export const getEnabledActions = (rules: Rules): Action[] => {
+  return sortedActions.filter(action => {
+    const isActionEnabled = actionRules[action];
+    return isActionEnabled(rules);
+  });
+};
+
+export const isDoublingEnabled = (rules: Rules): boolean => {
+  return rules.doubling === doublingAll || rules.doubling === doublingNineToEleven;
 };

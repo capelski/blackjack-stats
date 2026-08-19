@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { LoadingOverlay } from '../components/loading-overlay.component';
 import { RulesControls } from '../components/rules-controls.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
+import { isDoublingEnabled } from '../logic/rules.logic';
 import { StrategyContext } from '../strategy.context';
 import { DecisionOverrideHandler } from '../types/decision-overrides.type';
 import { Rules } from '../types/rules.type';
@@ -25,7 +26,7 @@ export const OptimalActionsPage: React.FC<OptimalActionsPageProps> = props => {
         value={{
           onDecisionOverride: props.onDecisionOverride,
           rules: props.rules,
-          showBetMultiplier: !!props.rules.doubling || !!props.rules.splitting,
+          showBetMultiplier: isDoublingEnabled(props.rules) || !!props.rules.splitting,
           strategy: props.strategy,
         }}
       >

@@ -16,6 +16,7 @@ import { dealerFinalScores, dealerFinalScoresByFirstCard } from './logic/dealer-
 import { optimalActionsHandResolver } from './logic/resolved-hands.logic';
 import { getStrategy, getStrategyByFirstCard } from './logic/strategy.logic';
 import { hit, stand } from './models/action.model';
+import { doublingDisabled, sortedDoublingOptions } from './models/doubling.model';
 import { getLocalizedRoute } from './nav-utils';
 import { DealerCardPage } from './pages/dealer-card.page';
 import { OptimalActionsPage } from './pages/optimal-actions.page';
@@ -65,7 +66,7 @@ function App() {
   const [dealerCardStrategy, setDealerCardStrategy] = useState<StrategyByFirstCard>();
 
   const [rules, setRules] = useState<Rules>(() => {
-    const doubling = getParameter(doublingParamName) === '1';
+    const doubling = getParameter(doublingParamName, sortedDoublingOptions) ?? doublingDisabled;
     const splitting = getParameter(splittingParamName) === '1';
     const doublingAfterSplit = getParameter(doublingAfterSplitParamName) === '1';
     const hitSplitAces = getParameter(hitSplitAcesParamName) === '1';
@@ -148,7 +149,7 @@ function App() {
     setRules(newRules);
 
     toggleParameters([
-      [doublingParamName, newRules.doubling ? '1' : '0', '0'],
+      [doublingParamName, newRules.doubling ?? doublingDisabled, doublingDisabled],
       [splittingParamName, newRules.splitting ? '1' : '0', '0'],
       [doublingAfterSplitParamName, newRules.doublingAfterSplit ? '1' : '0', '0'],
       [hitSplitAcesParamName, newRules.hitSplitAces ? '1' : '0', '0'],

@@ -12,6 +12,6 @@ export const actionAbbreviations: Record<Action, string> = {
   [double]: 'D',
   [hit]: 'H',
   [split]: 'P',
-  [surrender]: 'R',
   [stand]: 'S',
+  [surrender]: 'R',
 };

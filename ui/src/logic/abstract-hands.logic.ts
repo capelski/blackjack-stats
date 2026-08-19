@@ -13,6 +13,7 @@ import { blackjackScore, bustScore, playerScoreLimit } from '../models/scores.mo
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
 import { getHandLabel } from './labels.logic';
+import { canDouble } from './rules.logic';
 import { getEffectiveScore } from './scores.logic';
 
 /** The returned abstract hands are sorted so dependencies to other abstract hands are resolved first.
@@ -136,14 +137,15 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'A,2', label: '3/13', scores: [3, 13] },
     { example: 'A,A', label: '2/12', scores: [2, 12] },
   ].map<AbstractHand>(x => {
+    const category = initialPair;
     const effectiveScore = getEffectiveScore(x.scores);
 
     return {
       ...x,
-      canDouble: !!rules.doubling,
+      canDouble: canDouble(rules, { category, scores: x.scores }),
       canSplit: false,
       canSurrender: !!rules.surrendering,
-      category: initialPair,
+      category,
       effectiveScore,
       isActionable: effectiveScore < playerScoreLimit,
       labelAsInitial: x.label,
@@ -183,14 +185,15 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: '3,S,A', label: '4/14 (S)', scores: [4, 14] },
     { example: '2,S,A', label: '3/13 (S)', scores: [3, 13] },
   ].map<AbstractHand>(x => {
+    const category = postSplitPair;
     const effectiveScore = getEffectiveScore(x.scores);
 
     return {
       ...x,
-      canDouble: !!rules.doubling && !!rules.doublingAfterSplit,
+      canDouble: canDouble(rules, { category, scores: x.scores }),
       canSplit: false,
       canSurrender: false,
-      category: postSplitPair,
+      category,
       effectiveScore,
       isActionable: effectiveScore < playerScoreLimit,
       isHidden: true,
@@ -215,14 +218,15 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'A,S,2', label: '3/13 (A)', scores: [3, 13] },
     { example: 'A,S,A', label: '2/12 (A)', scores: [2, 12] },
   ].map<AbstractHand>(x => {
+    const category = postASplitPair;
     const effectiveScore = getEffectiveScore(x.scores);
 
     return {
       ...x,
-      canDouble: !!rules.hitSplitAces && !!rules.doubling && !!rules.doublingAfterSplit,
+      canDouble: !!rules.hitSplitAces && canDouble(rules, { category, scores: x.scores }),
       canSplit: false,
       canSurrender: false,
-      category: postASplitPair,
+      category,
       effectiveScore,
       isActionable: !!rules.hitSplitAces,
       isHidden: true,
@@ -249,17 +253,19 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'Q,Q', label: 'Q,Q', scores: [20], isHidden: true, splitCard: cardsMap['Q'] },
     { example: 'K,K', label: 'K,K', scores: [20], isHidden: true, splitCard: cardsMap['K'] },
   ].map<AbstractHand>(x => {
+    const canSplit = !!rules.splitting;
+    const category = splittablePair;
     const effectiveScore = getEffectiveScore(x.scores);
 
     return {
       ...x,
-      canDouble: !!rules.doubling,
-      canSplit: !!rules.splitting,
+      canDouble: canDouble(rules, { category, scores: x.scores }),
+      canSplit,
       canSurrender: !!rules.surrendering,
-      category: splittablePair,
+      category,
       effectiveScore,
       isActionable: true,
-      isHidden: x.isHidden || !rules.splitting,
+      isHidden: x.isHidden || !canSplit,
       labelAsInitial: x.label,
     };
   });

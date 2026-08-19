@@ -100,6 +100,11 @@ export const en = {
   },
   rules: {
     doubling: 'Doubling',
+    doublingOptions: {
+      disabled: 'Disabled',
+      'nine-to-eleven': '9, 10, 11',
+      all: 'All',
+    },
     splitting: 'Splitting',
     doublingAfterSplit: 'Doubling After Split',
     hitSplitAces: 'Hit Split Aces',

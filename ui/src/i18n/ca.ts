@@ -100,6 +100,11 @@ export const ca = {
   },
   rules: {
     doubling: 'Doblar',
+    doublingOptions: {
+      disabled: 'Desactivat',
+      'nine-to-eleven': '9, 10, 11',
+      all: 'Tots',
+    },
     splitting: 'Dividir',
     doublingAfterSplit: 'Doblar després de dividir',
     hitSplitAces: 'Demanar carta després de dividir asos',

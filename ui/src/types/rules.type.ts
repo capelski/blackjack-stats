@@ -1,6 +1,8 @@
+import { Doubling } from '../models/doubling.model';
+
 export type Rules = {
   blackjackAfterSplit?: boolean;
-  doubling?: boolean;
+  doubling?: Doubling;
   doublingAfterSplit?: boolean;
   hitSplitAces?: boolean;
   splitting?: boolean;
