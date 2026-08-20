@@ -25,7 +25,7 @@ export const cardsNumber = cards.length;
 
 export const tenCardsSymbols = ['10', 'J', 'Q', 'K'];
 
-export const tenCardUnifiedSymbol = '10 - K';
+export const tenCardUnifiedSymbol = '10-K';
 
 export const sortedCardSymbols = [
   '2',
