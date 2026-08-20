@@ -5,11 +5,14 @@
  * are animated by the browser: it snapshots the page before and after the route change and
  * animates both snapshots. Naming the routed content region separates it from the rest of the
  * page, so the navbar merely cross-fades while the content is being replaced: the exiting route
- * fades out upwards and the entering route fades in downwards.
+ * fades out upwards and, once it is gone, the entering route fades in downwards.
  */
 
 :root {
-  --view-transition-duration: 240ms;
+  /* The entering route only starts once the exiting one has finished, so a whole transition takes
+     twice as long as each of its two phases */
+  --view-transition-phase-duration: 300ms;
+  --view-transition-duration: calc(2 * var(--view-transition-phase-duration));
   --view-transition-distance: 24px;
 }
 
@@ -49,11 +52,13 @@
 }
 
 ::view-transition-old(animation-container) {
-  animation: fade-out-upwards var(--view-transition-duration) ease-in both;
+  animation: fade-out-upwards var(--view-transition-phase-duration) ease-in both;
 }
 
 ::view-transition-new(animation-container) {
-  animation: fade-in-downwards var(--view-transition-duration) ease-out both;
+  /* Delayed by a whole phase: it waits for the exiting route to be gone before fading in */
+  animation: fade-in-downwards var(--view-transition-phase-duration) ease-out
+    var(--view-transition-phase-duration) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
