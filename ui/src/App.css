@@ -1,0 +1,39 @@
+/*
+ * View transitions
+ *
+ * The navigations that opt into them (see the `viewTransition` flags in the navigation components)
+ * are animated by the browser: it snapshots the page before and after the route change and
+ * cross-fades both snapshots. Naming the routed content region separates it from the rest of the
+ * page, so the navbar keeps its own snapshot and stays put while the content is being replaced.
+ */
+
+.animation-container {
+  view-transition-name: animation-container;
+}
+
+::view-transition-group(root),
+::view-transition-group(animation-container) {
+  animation-duration: 220ms;
+  animation-timing-function: ease;
+}
+
+::view-transition-old(animation-container),
+::view-transition-new(animation-container) {
+  /* Both snapshots keep their natural size instead of being stretched into the animated box, so
+     that pages of a different length cross-fade rather than squash into each other */
+  height: auto;
+  object-fit: none;
+  object-position: top left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-group(animation-container),
+  ::view-transition-old(animation-container),
+  ::view-transition-new(animation-container) {
+    /* Without animations the transition finishes right away: the route change is applied instantly */
+    animation: none;
+  }
+}

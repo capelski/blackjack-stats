@@ -55,10 +55,13 @@ export const useSearchParamsUtils = () => {
   };
 
   const navigateWithSearch = (pathname: string) => {
-    navigate({
-      pathname,
-      search: searchString,
-    });
+    navigate(
+      {
+        pathname,
+        search: searchString,
+      },
+      { viewTransition: true },
+    );
   };
 
   const setParameter = (paramName: string, paramValue: string) => {

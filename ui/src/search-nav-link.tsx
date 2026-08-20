@@ -18,7 +18,12 @@ export const SearchNavLink: React.FC<SearchNavLinkProps> = props => {
   const { searchString } = useSearchParamsUtils();
 
   return (
-    <NavLink {...rest} style={getNavLinkStyle} to={{ pathname: props.to, search: searchString }}>
+    <NavLink
+      viewTransition
+      {...rest}
+      style={getNavLinkStyle}
+      to={{ pathname: props.to, search: searchString }}
+    >
       {children}
     </NavLink>
   );

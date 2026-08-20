@@ -11,9 +11,11 @@ export const LanguageSelector: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLanguageChange = (language: Language) => {
-    i18n.changeLanguage(language);
     const nextLocation = translateLocalizedRoute(location.pathname, language);
-    navigate(nextLocation);
+
+    // The language is not changed here, but by the effect below reacting to the new location, so
+    // that the translated texts are rendered as part of the view transition instead of before it
+    navigate(nextLocation, { viewTransition: true });
   };
 
   useEffect(() => {

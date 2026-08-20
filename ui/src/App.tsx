@@ -242,7 +242,9 @@ function App() {
             setRules: updateRules,
           }}
         >
-          <Outlet />
+          <main className="animation-container">
+            <Outlet />
+          </main>
         </AppContext.Provider>
       </SettingsContext.Provider>
     </div>
