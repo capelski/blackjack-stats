@@ -26,10 +26,9 @@ if (typeof window !== 'undefined') {
 }
 
 export async function prerender({ url }: { url: string }) {
-  const { renderToString } = await import('react-dom/server');
-  const { createStaticHandler, createStaticRouter, StaticRouterProvider } = await import(
-    'react-router-dom'
-  );
+  const { renderToString } = await import('react-dom/server.edge');
+  const { createStaticHandler, createStaticRouter, StaticRouterProvider } =
+    await import('react-router-dom');
   const { prerenderUrls } = await import('./prerender-routes.ts');
 
   // The static counterpart of createBrowserRouter: the routes are matched ahead of rendering
