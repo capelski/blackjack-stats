@@ -11,6 +11,7 @@ import { optimalActionsHandResolver } from './logic/resolved-hands.logic';
 import { getStrategy, getStrategyByFirstCard } from './logic/strategy.logic';
 import { hit, stand } from './models/action.model';
 import { doublingDisabled, sortedDoublingOptions } from './models/doubling.model';
+import { getAnimationContainerClassName, useIsOutletContentChanging } from './animation-utils';
 import { getLocalizedRoute } from './nav-utils';
 import { SearchNavLink } from './search-nav-link';
 import {
@@ -45,6 +46,7 @@ function App() {
   const { t, i18n } = useTranslation();
   const [decimals, setDecimals] = useState(2);
   const { toggleParameters, getNumericParameter, getParameter } = useSearchParamsUtils();
+  const isOutletContentChanging = useIsOutletContentChanging();
 
   // The strategies are undefined until they are computed for the first time
   const [computingStandThresholdStrategy, setComputingStandThresholdStrategy] = useState(false);
@@ -242,7 +244,7 @@ function App() {
             setRules: updateRules,
           }}
         >
-          <main className="animation-container">
+          <main className={getAnimationContainerClassName(isOutletContentChanging)}>
             <Outlet />
           </main>
         </AppContext.Provider>

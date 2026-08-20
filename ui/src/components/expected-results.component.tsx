@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router-dom';
 import { expectedResultsGroupedRoute, expectedResultsMatrixRoute } from '../../constants';
+import { AnimatedOutlet } from '../animated-outlet';
 import { SearchNavLink } from '../search-nav-link';
 import { useStrategyContext } from '../strategy.context';
 import { ExpectedResultsSummary } from './expected-results-summary.component';
@@ -23,7 +23,7 @@ export const ExpectedResults: React.FC = () => {
         </SearchNavLink>
       </nav>
 
-      <Outlet />
+      <AnimatedOutlet />
     </div>
   );
 };

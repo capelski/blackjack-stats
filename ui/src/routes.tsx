@@ -15,6 +15,7 @@ import {
   summaryRoute,
   supportedLanguages,
 } from '../constants';
+import { AnimatedOutlet } from './animated-outlet';
 import App from './App';
 import { ActionsAnalysisList } from './components/actions-analysis-list.component';
 import { ActionsBreakdown } from './components/actions-breakdown.component';
@@ -48,6 +49,7 @@ const strategyPageNestedRoutes: RouteObject[] = [
   },
   {
     path: actionsAnalysisRoute,
+    element: <AnimatedOutlet />,
     children: [
       { index: true, element: <ActionsAnalysisList /> },
       { path: `:${playerLabelUrlParam}`, element: <ActionsBreakdown /> },
@@ -61,6 +63,7 @@ const dealerCardPageNestedRoutes: RouteObject[] = [
   { path: summaryRoute, element: <DealerCardSummary /> },
   {
     path: dealerBreakdownRoute,
+    element: <AnimatedOutlet />,
     children: [
       { index: true, element: <DealerCardBreakdownList /> },
       {
@@ -78,6 +81,7 @@ export const routes: RouteObject[] = [
     children: [
       ...supportedLanguages.map<RouteObject>(language => ({
         path: language,
+        element: <AnimatedOutlet />,
         children: [
           {
             path: dealerCardRoute,

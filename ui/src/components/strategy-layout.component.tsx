@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   actionsAnalysisRoute,
   expectedResultsRoute,
@@ -8,6 +8,7 @@ import {
   materialHandsRoute,
   playerLabelUrlParam,
 } from '../../constants';
+import { AnimatedOutlet } from '../animated-outlet';
 import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
 import { useStrategyContext } from '../strategy.context';
@@ -46,7 +47,7 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
         </SearchNavLink>
       </nav>
 
-      {strategy && <Outlet />}
+      {strategy && <AnimatedOutlet />}
     </div>
   );
 };

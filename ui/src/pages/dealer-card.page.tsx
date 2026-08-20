@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   dealerBreakdownRoute,
   dealerCardUrlParam,
@@ -8,6 +8,7 @@ import {
   playerLabelUrlParam,
   summaryRoute,
 } from '../../constants';
+import { AnimatedOutlet } from '../animated-outlet';
 import { useAppContext } from '../app.context';
 import { LoadingOverlay } from '../components/loading-overlay.component';
 import { RulesControls } from '../components/rules-controls.component';
@@ -44,7 +45,7 @@ export const DealerCardPage: React.FC = () => {
           <SearchNavLink to={dealerBreakdownRoute}>{t('dealerCard.breakdown')}</SearchNavLink>
         </nav>
 
-        <Outlet />
+        <AnimatedOutlet />
       </DealerCardContext.Provider>
     </LoadingOverlay>
   );

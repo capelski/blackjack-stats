@@ -3,27 +3,57 @@
  *
  * The navigations that opt into them (see the `viewTransition` flags in the navigation components)
  * are animated by the browser: it snapshots the page before and after the route change and
- * cross-fades both snapshots. Naming the routed content region separates it from the rest of the
- * page, so the navbar keeps its own snapshot and stays put while the content is being replaced.
+ * animates both snapshots. Naming the routed content region separates it from the rest of the
+ * page, so the navbar merely cross-fades while the content is being replaced: the exiting route
+ * fades out upwards and the entering route fades in downwards.
  */
 
-.animation-container {
+:root {
+  --view-transition-duration: 240ms;
+  --view-transition-distance: 24px;
+}
+
+@keyframes fade-out-upwards {
+  to {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--view-transition-distance)));
+  }
+}
+
+@keyframes fade-in-downwards {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--view-transition-distance)));
+  }
+}
+
+.animation-container--transitioning {
   view-transition-name: animation-container;
 }
 
 ::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root),
 ::view-transition-group(animation-container) {
-  animation-duration: 220ms;
+  animation-duration: var(--view-transition-duration);
   animation-timing-function: ease;
 }
 
 ::view-transition-old(animation-container),
 ::view-transition-new(animation-container) {
   /* Both snapshots keep their natural size instead of being stretched into the animated box, so
-     that pages of a different length cross-fade rather than squash into each other */
+     that pages of a different length animate rather than squash into each other */
   height: auto;
   object-fit: none;
   object-position: top left;
+}
+
+::view-transition-old(animation-container) {
+  animation: fade-out-upwards var(--view-transition-duration) ease-in both;
+}
+
+::view-transition-new(animation-container) {
+  animation: fade-in-downwards var(--view-transition-duration) ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
