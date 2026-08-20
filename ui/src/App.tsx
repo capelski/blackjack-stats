@@ -1,28 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Route, Routes } from 'react-router-dom';
-import {
-  dealerCardRoute,
-  optimalActionsRoute,
-  standThresholdRoute,
-  supportedLanguages,
-} from '../constants';
+import { Outlet } from 'react-router-dom';
+import { dealerCardRoute, optimalActionsRoute, standThresholdRoute } from '../constants';
 import './App.css';
+import { AppContext } from './app.context';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
-import { DealerCardPageNestedRoutes } from './dealer-card-page-nested-routes';
-import { defaultLanguage } from './i18n';
 import { dealerFinalScores, dealerFinalScoresByFirstCard } from './logic/dealer-data.logic';
 import { optimalActionsHandResolver } from './logic/resolved-hands.logic';
 import { getStrategy, getStrategyByFirstCard } from './logic/strategy.logic';
 import { hit, stand } from './models/action.model';
 import { doublingDisabled, sortedDoublingOptions } from './models/doubling.model';
 import { getLocalizedRoute } from './nav-utils';
-import { DealerCardPage } from './pages/dealer-card.page';
-import { OptimalActionsPage } from './pages/optimal-actions.page';
-import { StandThresholdPage } from './pages/stand-threshold.page';
 import { SearchNavLink } from './search-nav-link';
-import { SearchNavigate } from './search-navigate';
 import {
   blackjackAfterSplitParamName,
   doublingAfterSplitParamName,
@@ -35,7 +25,6 @@ import {
   useSearchParamsUtils,
 } from './search-params-utils';
 import { SettingsContext } from './settings.context';
-import { StrategyPageNestedRoutes } from './strategy-page-nested-routes';
 import {
   DecisionOverrideByFirstCardHandler,
   DecisionOverrideHandler,
@@ -229,57 +218,32 @@ function App() {
       </nav>
 
       <SettingsContext.Provider value={{ decimals }}>
-        <Routes>
-          {supportedLanguages.map(language => (
-            <Route key={language} path={language}>
-              <Route
-                path={dealerCardRoute}
-                element={
-                  <DealerCardPage
-                    computing={computingDealerCardStrategy}
-                    onDecisionOverride={onDealerCardDecisionOverride}
-                    rules={rules}
-                    setRules={updateRules}
-                    strategy={dealerCardStrategy!}
-                  />
-                }
-              >
-                {DealerCardPageNestedRoutes()}
-              </Route>
-              <Route
-                path={optimalActionsRoute}
-                element={
-                  <OptimalActionsPage
-                    computing={computingOptimalActionsStrategy}
-                    onDecisionOverride={onOptimalActionsDecisionOverride}
-                    rules={rules}
-                    setRules={updateRules}
-                    strategy={optimalActionsStrategy!}
-                  />
-                }
-              >
-                {StrategyPageNestedRoutes()}
-              </Route>
-              <Route
-                path={standThresholdRoute}
-                element={
-                  <StandThresholdPage
-                    computing={computingStandThresholdStrategy}
-                    onDecisionOverride={onStandThresholdDecisionOverride}
-                    rules={standThresholdRules}
-                    setStandThresholds={updateStandThresholds}
-                    standThresholds={standThresholds}
-                    strategy={standThresholdStrategy!}
-                  />
-                }
-              >
-                {StrategyPageNestedRoutes()}
-              </Route>
-              <Route index element={<SearchNavigate to={standThresholdRoute} />} />
-            </Route>
-          ))}
-          <Route index element={<SearchNavigate to={defaultLanguage} />} />
-        </Routes>
+        <AppContext.Provider
+          value={{
+            dealerCard: {
+              computing: computingDealerCardStrategy,
+              onDecisionOverride: onDealerCardDecisionOverride,
+              strategy: dealerCardStrategy!,
+            },
+            optimalActions: {
+              computing: computingOptimalActionsStrategy,
+              onDecisionOverride: onOptimalActionsDecisionOverride,
+              strategy: optimalActionsStrategy!,
+            },
+            standThreshold: {
+              computing: computingStandThresholdStrategy,
+              onDecisionOverride: onStandThresholdDecisionOverride,
+              rules: standThresholdRules,
+              setThresholds: updateStandThresholds,
+              strategy: standThresholdStrategy!,
+              thresholds: standThresholds,
+            },
+            rules,
+            setRules: updateRules,
+          }}
+        >
+          <Outlet />
+        </AppContext.Provider>
       </SettingsContext.Provider>
     </div>
   );

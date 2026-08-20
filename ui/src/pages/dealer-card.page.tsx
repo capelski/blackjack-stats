@@ -8,46 +8,35 @@ import {
   playerLabelUrlParam,
   summaryRoute,
 } from '../../constants';
+import { useAppContext } from '../app.context';
 import { LoadingOverlay } from '../components/loading-overlay.component';
 import { RulesControls } from '../components/rules-controls.component';
 import { DealerCardContext } from '../dealer-card.context';
 import { urlParamToLabel } from '../logic/labels.logic';
 import { SearchNavLink } from '../search-nav-link';
-import { DecisionOverrideByFirstCardHandler } from '../types/decision-overrides.type';
-import { Rules } from '../types/rules.type';
-import { StrategyByFirstCard } from '../types/strategy.type';
 
-export type DealerCardPageProps = {
-  computing: boolean;
-  onDecisionOverride: DecisionOverrideByFirstCardHandler;
-  rules: Rules;
-  setRules: (rules: Rules) => void;
-  strategy: StrategyByFirstCard;
-};
-
-export const DealerCardPage: React.FC<DealerCardPageProps> = props => {
+export const DealerCardPage: React.FC = () => {
   const { t } = useTranslation();
   const params = useParams();
+  const {
+    dealerCard: { computing, strategy, onDecisionOverride },
+    rules,
+    setRules,
+  } = useAppContext();
 
   const dealerCard = params[dealerCardUrlParam];
   const rawPlayerLabel = params[playerLabelUrlParam];
   const playerLabel = rawPlayerLabel && urlParamToLabel(rawPlayerLabel);
 
   return (
-    <LoadingOverlay loading={props.computing || !props.strategy}>
-      <DealerCardContext.Provider
-        value={{
-          onDecisionOverride: props.onDecisionOverride,
-          rules: props.rules,
-          strategy: props.strategy,
-        }}
-      >
+    <LoadingOverlay loading={computing || !strategy}>
+      <DealerCardContext.Provider value={{ onDecisionOverride, rules, strategy }}>
         <h1>
           {t('titles.dealerCard')}
           {dealerCard ? ` - ${playerLabel ? `${playerLabel} vs ` : ''}${dealerCard}` : ''}
         </h1>
 
-        <RulesControls disabled={props.computing} rules={props.rules} setRules={props.setRules} />
+        <RulesControls disabled={computing} rules={rules} setRules={setRules} />
 
         <nav className="nested-navbar">
           <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>

@@ -1,51 +1,37 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../app.context';
 import { LoadingOverlay } from '../components/loading-overlay.component';
 import { StandThresholdControl } from '../components/stand-threshold-control.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
 import { StrategyContext } from '../strategy.context';
-import { DecisionOverrideHandler } from '../types/decision-overrides.type';
-import { Rules } from '../types/rules.type';
-import { StandThresholds } from '../types/stand-thresholds.type';
-import { Strategy } from '../types/strategy.type';
 
-export type StandThresholdPageProps = {
-  computing: boolean;
-  onDecisionOverride: DecisionOverrideHandler;
-  rules: Rules;
-  setStandThresholds: (standThresholds: StandThresholds) => void;
-  standThresholds: StandThresholds;
-  strategy: Strategy;
-};
-
-export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
+export const StandThresholdPage: React.FC = () => {
   const { t } = useTranslation();
+  const {
+    standThreshold: { computing, onDecisionOverride, rules, setThresholds, strategy, thresholds },
+  } = useAppContext();
   const [sameThresholdForSoftScores, setSameThresholdForSoftScores] = useState(
-    props.standThresholds.softScores === props.standThresholds.regular,
+    thresholds.softScores === thresholds.regular,
   );
 
   return (
-    <LoadingOverlay loading={props.computing || !props.strategy}>
+    <LoadingOverlay loading={computing || !strategy}>
       <StrategyContext.Provider
-        value={{
-          onDecisionOverride: props.onDecisionOverride,
-          rules: props.rules,
-          showBetMultiplier: false,
-          strategy: props.strategy,
-        }}
+        value={{ onDecisionOverride, rules, showBetMultiplier: false, strategy }}
       >
         <StrategyLayoutComponent title={t('titles.standThreshold')}>
           <p>
             <StandThresholdControl
-              disabled={props.computing}
+              disabled={computing}
               label={t('standThreshold.label')}
               onChange={value => {
-                props.setStandThresholds({
+                setThresholds({
                   regular: value,
-                  softScores: sameThresholdForSoftScores ? value : props.standThresholds.softScores,
+                  softScores: sameThresholdForSoftScores ? value : thresholds.softScores,
                 });
               }}
-              value={props.standThresholds.regular}
+              value={thresholds.regular}
             />
           </p>
           <p>
@@ -53,13 +39,13 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
             <span>
               <input
                 checked={sameThresholdForSoftScores}
-                disabled={props.computing}
+                disabled={computing}
                 name="soft-threshold-mode"
                 onChange={() => {
                   setSameThresholdForSoftScores(true);
-                  props.setStandThresholds({
-                    regular: props.standThresholds.regular,
-                    softScores: props.standThresholds.regular,
+                  setThresholds({
+                    regular: thresholds.regular,
+                    softScores: thresholds.regular,
                   });
                 }}
                 type="radio"
@@ -69,21 +55,21 @@ export const StandThresholdPage: React.FC<StandThresholdPageProps> = props => {
             <span>
               <input
                 checked={!sameThresholdForSoftScores}
-                disabled={props.computing}
+                disabled={computing}
                 name="soft-threshold-mode"
                 onChange={() => setSameThresholdForSoftScores(false)}
                 type="radio"
               />
             </span>
             <StandThresholdControl
-              disabled={props.computing || sameThresholdForSoftScores}
+              disabled={computing || sameThresholdForSoftScores}
               onChange={value => {
-                props.setStandThresholds({
-                  regular: props.standThresholds.regular,
+                setThresholds({
+                  regular: thresholds.regular,
                   softScores: Number(value),
                 });
               }}
-              value={props.standThresholds.softScores}
+              value={thresholds.softScores}
             />
           </p>
         </StrategyLayoutComponent>
