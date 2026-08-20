@@ -27,10 +27,10 @@ if (typeof window !== 'undefined') {
 
 export async function prerender({ url }: { url: string }) {
   const { renderToString } = await import('react-dom/server');
-  const { parseLinks } = await import('vite-prerender-plugin/parse');
   const { createStaticHandler, createStaticRouter, StaticRouterProvider } = await import(
     'react-router-dom'
   );
+  const { prerenderUrls } = await import('./prerender-routes.ts');
 
   // The static counterpart of createBrowserRouter: the routes are matched ahead of rendering
   const handler = createStaticHandler(routes);
@@ -47,7 +47,6 @@ export async function prerender({ url }: { url: string }) {
       router={createStaticRouter(handler.dataRoutes, context)}
     />,
   );
-  const links = parseLinks(html);
-
-  return { html, links };
+  // Returning every url of the route tree, which the plugin adds to the routes it prerenders
+  return { html, links: prerenderUrls };
 }
