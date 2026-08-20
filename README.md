@@ -1,40 +1,73 @@
-Probability and statistics about Blackjack
+# React + TypeScript + Vite
 
-## Initial pairs
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-- [Initial pairs](./output/initial-pairs.md)
-- [Initial pairs splitting](./output/initial-pairs-splitting.md)
-- [Score dependencies](./output/score-dependencies.md)
+Currently, two official plugins are available:
 
-## Dealer final scores
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-- [Dealer combinations](./output/dealer-combinations.md)
-- [Dealer finals](./output/dealer-finals.md)
-- [Dealer finals by card](./output/dealer-finals-by-card.md)
+## React Compiler
 
-## Naive strategies
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- [Stand 17](./output/strategies/naive/stand-17.md)
-- [Stand 16](./output/strategies/naive/stand-16.md)
-- [Stand 15](./output/strategies/naive/stand-15.md)
-- [Stand 14](./output/strategies/naive/stand-14.md)
-- [Stand always](./output/strategies/naive/always-stand.md)
-- [Zero risk](./output/strategies/naive/zero-risk.md)
+## Expanding the ESLint configuration
 
-## Maximum returns strategies
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-- [Base](./output/strategies/max-returns/base.md)
-- [Double all](./output/strategies/max-returns/double-all.md)
-- [Double 9/10/11](./output/strategies/max-returns/double-nine.md)
-- [Split](./output/strategies/max-returns/split.md)
-- [Split + Double all](./output/strategies/max-returns/split-double-all.md)
-- [Split + Double 9/10/11](./output/strategies/max-returns/split-double-nine.md)
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## Dealer card strategies
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-- [Base](./output/strategies/dealer-card/base.md)
-- [Double all](./output/strategies/dealer-card/double-all.md)
-- [Double 9/10/11](./output/strategies/dealer-card/double-nine.md)
-- [Split](./output/strategies/dealer-card/split.md)
-- [Split + Double all](./output/strategies/dealer-card/split-double-all.md)
-- [Split + Double 9/10/11](./output/strategies/dealer-card/split-double-nine.md)
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+]);
+```
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x';
+import reactDom from 'eslint-plugin-react-dom';
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+]);
+```

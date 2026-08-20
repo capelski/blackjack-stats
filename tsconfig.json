@@ -1,16 +1,4 @@
 {
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "outDir": "dist",
-    "strict": true,
-    "strictNullChecks": true,
-    "target": "esnext"
-  },
-  "include": ["src"]
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

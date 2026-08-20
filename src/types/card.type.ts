@@ -1,1 +1,4 @@
-export type Card = string | number;
+export type Card = {
+  symbol: string;
+  scores: number[];
+};

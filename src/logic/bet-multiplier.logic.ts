@@ -1,19 +1,26 @@
-import { toDecimal } from './numbers.logic';
+import { BetMultiplierOptions } from '../types/bet-multiplier.type';
 
-export type MultiplierOptions = {
-  isDoubleBet?: boolean;
-  isBlackjack?: boolean;
-};
+export const blackjackMultiplier = 1.5;
+/** When surrendering, only half the bet is lost */
+export const surrenderBetMultiplier = 0.5;
 
-export const formatBetMultiplier = (betMultiplier: number): string => {
-  const value = toDecimal(betMultiplier, 3);
-  return value !== '1' ? value : '-';
-};
+export const getBetMultiplier = (
+  previousMultiplier: number,
+  options: BetMultiplierOptions = {},
+): number => {
+  let factor = 1;
 
-export const getBetMultiplier = (options: MultiplierOptions = {}): number => {
-  return options.isBlackjack ? 1.5 : options.isDoubleBet ? 2 : 1;
-};
+  if (options.isBlackjack) {
+    factor *= blackjackMultiplier;
+  }
 
-export const getBetMultiplierLabel = (): string => {
-  return 'Bet Multiplier';
+  if (options.isDoubleBet) {
+    factor *= 2;
+  }
+
+  if (options.isSurrender) {
+    factor *= surrenderBetMultiplier;
+  }
+
+  return previousMultiplier * factor;
 };

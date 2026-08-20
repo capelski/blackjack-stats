@@ -7,7 +7,7 @@ import { publicPath } from './constants';
 export default defineConfig({
   base: publicPath,
   build: {
-    outDir: '../docs',
+    outDir: 'docs',
   },
   plugins: [
     react(),

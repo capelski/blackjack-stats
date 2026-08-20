@@ -1,20 +1,21 @@
-import { Action } from '../enums/action.enum';
-import { FinalProbabilities } from './final-probabilities.type';
-import { Outcomes } from './outcomes.type';
-import { Results } from './results.type';
+import { Action, double, hit, split, stand, surrender } from '../models/action.model';
+import { OutcomesByBetMultiplierMap } from './outcomes.type';
+
+export type FinalProbabilities = {
+  [score: number]: number;
+};
 
 export type Consequence = {
-  betMultiplier: number;
+  action: Action;
   finalProbabilities: FinalProbabilities;
-  initialProbability: number | undefined;
-  outcomes: Outcomes;
-  results: Results;
+  outcomesByBetMultiplier: OutcomesByBetMultiplierMap;
+  edge: number;
 };
 
-export type ConsequenceByAction = {
-  [action in Action]?: Consequence;
-};
-
-export type ConsequencesByPlayerScore = {
-  [playerScoreLabel: string]: Consequence;
+export type ConsequencesMap = {
+  [double]?: Consequence;
+  [hit]?: Consequence;
+  [split]?: Consequence;
+  [stand]: Consequence;
+  [surrender]?: Consequence;
 };

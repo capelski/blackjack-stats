@@ -1,159 +1,178 @@
-import { Consequence } from '../types/consequence.type';
-import { FinalProbabilities } from '../types/final-probabilities.type';
-import { PlayerHand } from '../types/hand.type';
-import { Outcomes } from '../types/outcomes.type';
-import { PlayerDecision } from '../types/player-decision.type';
+import { Action, double, hit, split, stand, surrender } from '../models/action.model';
+import { cards } from '../models/cards.model';
+import { surrender as surrenderResult } from '../models/result.model';
+import { blackjackScore, surrenderScore } from '../models/scores.model';
+import { AbstractHand } from '../types/abstract-hand.type';
+import { Consequence, FinalProbabilities } from '../types/consequence.type';
+import { FinalScoreBase } from '../types/final-score.type';
+import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
+import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
-import { cardsNumber, cardValues } from './cards.logic';
-import {
-  getLoseProbability,
-  getPushProbability,
-  getWinProbability,
-  mergeFinalProbabilities,
-  multiplyFinalProbabilities,
-} from './final-probabilities.logic';
-import { getScoresLabel } from './labels.logic';
-import {
-  createOutcomes,
-  incrementOutcomes,
-  mergeOutcomes,
-  multiplyOutcomes,
-} from './outcomes.logic';
-import { computeResults, createResults, mergeResults, multiplyResults } from './results.logic';
-import { blackjackScore, getScores } from './scores.logic';
+import { getEdge } from './edge.logic';
+import { getExpectedResult } from './expected-results.logic';
+import { getNextHandLabel } from './labels.logic';
+import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
 
-const createConsequence = (initialProbability: number | undefined): Consequence => {
-  return {
-    betMultiplier: 0,
-    finalProbabilities: {},
-    initialProbability,
-    outcomes: createOutcomes(),
-    results: createResults(),
-  };
-};
+export type FutureHandsConsequenceParameters = [
+  AbstractHand,
+  Rules,
+  AbstractHand[],
+  ResolvedHandsMap,
+];
 
 export const getDoubleConsequence = (
-  playerHand: PlayerHand,
-  getNextScoreConsequence: (nextScoresLabel: string) => Consequence,
+  ...[abstractHand, rules, abstractHands, futureResolvedHandsMap]: FutureHandsConsequenceParameters
 ): Consequence => {
-  const consequence = createConsequence(playerHand.initialProbability);
+  const futureConsequences = getFutureConsequences(
+    abstractHand.label,
+    double,
+    rules,
+    abstractHands,
+    futureResolvedHandsMap,
+    () => stand,
+  );
 
-  for (const nextCardValues of cardValues) {
-    const nextScores = getScores(playerHand.scores, nextCardValues, undefined);
-    const nextScoresLabel = getScoresLabel(nextScores);
-    const nextConsequence = getNextScoreConsequence(nextScoresLabel);
-
-    const weightedProbabilities = multiplyFinalProbabilities(
-      nextConsequence.finalProbabilities,
-      1 / cardsNumber,
-    );
-
-    consequence.finalProbabilities = mergeFinalProbabilities(
-      consequence.finalProbabilities,
-      weightedProbabilities,
-    );
-
-    incrementOutcomes(consequence.outcomes, nextConsequence.outcomes, 1 / cardsNumber);
-  }
-
-  consequence.betMultiplier = getBetMultiplier({ isDoubleBet: true });
-  consequence.results = computeResults(consequence.outcomes, consequence.betMultiplier);
-
-  return consequence;
+  return mergeFutureConsequences(futureConsequences, double, 2);
 };
 
 export const getHitConsequence = (
-  playerHand: PlayerHand,
-  getNextScoreDecision: (nextScoresLabel: string) => PlayerDecision,
+  ...[abstractHand, rules, abstractHands, futureResolvedHandsMap]: FutureHandsConsequenceParameters
 ): Consequence => {
-  const consequence = createConsequence(playerHand.initialProbability);
+  const futureConsequences = getFutureConsequences(
+    abstractHand.label,
+    hit,
+    rules,
+    abstractHands,
+    futureResolvedHandsMap,
+    resolvedHand => resolvedHand.action,
+  );
 
-  for (const nextCardValues of cardValues) {
-    const nextScores = getScores(playerHand.scores, nextCardValues, -1);
-    const nextScoresLabel = getScoresLabel(nextScores);
-    const nextDecision = getNextScoreDecision(nextScoresLabel);
-
-    const weightedProbabilities = multiplyFinalProbabilities(
-      nextDecision.selectedConsequence.finalProbabilities,
-      1 / cardsNumber,
-    );
-
-    consequence.finalProbabilities = mergeFinalProbabilities(
-      consequence.finalProbabilities,
-      weightedProbabilities,
-    );
-
-    incrementOutcomes(
-      consequence.outcomes,
-      nextDecision.selectedConsequence.outcomes,
-      1 / cardsNumber,
-    );
-  }
-
-  consequence.betMultiplier = getBetMultiplier();
-  consequence.results = computeResults(consequence.outcomes, consequence.betMultiplier);
-
-  return consequence;
+  return mergeFutureConsequences(futureConsequences, hit);
 };
 
 export const getSplitConsequence = (
-  playerDecision: PlayerDecision,
-  initialProbability: number | undefined,
+  ...[abstractHand, rules, abstractHands, futureResolvedHandsMap]: FutureHandsConsequenceParameters
 ): Consequence => {
-  const { outcomes } = playerDecision.selectedConsequence;
-  const betMultiplier = getBetMultiplier({ isDoubleBet: true });
-  const results = computeResults(outcomes, betMultiplier);
+  const futureConsequences = getFutureConsequences(
+    abstractHand.label,
+    split,
+    rules,
+    abstractHands,
+    futureResolvedHandsMap,
+    resolvedHand => resolvedHand.action,
+  );
 
-  const consequence: Consequence = {
-    betMultiplier,
-    finalProbabilities: playerDecision.selectedConsequence.finalProbabilities,
-    initialProbability,
-    outcomes,
-    results,
-  };
-
-  return consequence;
+  return mergeFutureConsequences(futureConsequences, split, 2);
 };
 
 export const getStandConsequence = (
-  playerHand: PlayerHand,
-  dealerProbabilities: FinalProbabilities,
+  abstractHand: AbstractHand,
+  dealerScores: FinalScoreBase[],
 ): Consequence => {
-  const lose = getLoseProbability(dealerProbabilities, playerHand.effectiveScore);
-  const push = getPushProbability(dealerProbabilities, playerHand.effectiveScore);
-  const win = getWinProbability(dealerProbabilities, playerHand.effectiveScore);
-
-  const outcomes: Outcomes = { lose, push, win };
-  const betMultiplier = getBetMultiplier({
-    isBlackjack: playerHand.effectiveScore === blackjackScore,
+  const betMultiplier = getBetMultiplier(1, {
+    isBlackjack: abstractHand.effectiveScore === blackjackScore,
   });
-  const results = computeResults(outcomes, betMultiplier);
+
+  const finalScore: FinalScoreBase = {
+    score: abstractHand.effectiveScore,
+    probability: 1,
+    probabilityByBetMultiplier: {
+      [betMultiplier]: 1,
+    },
+  };
+
+  const expectedResult = getExpectedResult(finalScore, dealerScores);
 
   return {
-    betMultiplier,
-    finalProbabilities: { [playerHand.effectiveScore]: 1 },
-    initialProbability: playerHand.initialProbability,
-    outcomes,
-    results,
+    finalProbabilities: { [finalScore.score]: 1 },
+    action: stand,
+    outcomesByBetMultiplier: expectedResult.outcomesByBetMultiplier,
+    edge: expectedResult.edge,
   };
 };
 
-export const mergeConsequences = (a: Consequence, b: Consequence): Consequence => {
+export const getSurrenderConsequence = (): Consequence => {
+  const betMultiplier = getBetMultiplier(1, { isSurrender: true });
+
+  const probabilityByBetMultiplier = {
+    [betMultiplier]: 1,
+  };
+
+  const outcomesByBetMultiplier = createOutcomesByBetMultiplier(
+    probabilityByBetMultiplier,
+    surrenderResult,
+  );
+
   return {
-    betMultiplier: a.betMultiplier + b.betMultiplier,
-    finalProbabilities: mergeFinalProbabilities(a.finalProbabilities, b.finalProbabilities),
-    initialProbability: (a.initialProbability || 0) + (b.initialProbability || 0),
-    outcomes: mergeOutcomes(a.outcomes, b.outcomes),
-    results: mergeResults(a.results, b.results),
+    finalProbabilities: { [surrenderScore]: 1 },
+    action: surrender,
+    outcomesByBetMultiplier,
+    edge: getEdge(outcomesByBetMultiplier),
   };
 };
 
-export const multiplyConsequence = (consequence: Consequence, factor: number): Consequence => {
-  return {
-    betMultiplier: consequence.betMultiplier * factor,
-    finalProbabilities: multiplyFinalProbabilities(consequence.finalProbabilities, factor),
-    initialProbability: (consequence.initialProbability || 0) * factor,
-    outcomes: multiplyOutcomes(consequence.outcomes, factor),
-    results: multiplyResults(consequence.results, factor),
+const increaseFinalProbabilities = (
+  finalProbabilities: FinalProbabilities,
+  toAdd: FinalProbabilities,
+  weight = 1,
+) => {
+  for (const score in toAdd) {
+    const scoreNumber = parseFloat(score);
+    if (!finalProbabilities[scoreNumber]) {
+      finalProbabilities[scoreNumber] = 0;
+    }
+    finalProbabilities[scoreNumber] += toAdd[scoreNumber] * weight;
+  }
+};
+
+const getFutureConsequences = (
+  label: string,
+  action: typeof double | typeof hit | typeof split,
+  rules: Rules,
+  abstractHands: AbstractHand[],
+  futureResolvedHandsMap: ResolvedHandsMap,
+  getFutureAction: (resolvedHand: ResolvedHand) => Action,
+): Consequence[] => {
+  const futureConsequences = cards.map(card => {
+    const futureLabel = getNextHandLabel(abstractHands, rules, label, action, card)!;
+    const futureResolvedHand = futureResolvedHandsMap[futureLabel];
+    const futureAction = getFutureAction(futureResolvedHand);
+    const futureConsequence = futureResolvedHand.consequences[futureAction]!;
+
+    return futureConsequence;
+  });
+
+  return futureConsequences;
+};
+
+export const mergeFutureConsequences = (
+  futureConsequences: Consequence[],
+  action: typeof double | typeof hit | typeof split,
+  multiplier = 1,
+) => {
+  const mergedConsequence: Consequence = {
+    action,
+    finalProbabilities: {},
+    outcomesByBetMultiplier: createOutcomesByBetMultiplier({}),
+    edge: 0,
   };
+  const weight = 1 / futureConsequences.length;
+
+  for (const futureConsequence of futureConsequences) {
+    increaseFinalProbabilities(
+      mergedConsequence.finalProbabilities,
+      futureConsequence.finalProbabilities,
+      weight,
+    );
+    increaseOutcomesByBetMultiplier(
+      mergedConsequence.outcomesByBetMultiplier,
+      futureConsequence.outcomesByBetMultiplier,
+      weight,
+      multiplier,
+    );
+  }
+
+  mergedConsequence.edge = getEdge(mergedConsequence.outcomesByBetMultiplier);
+
+  return mergedConsequence;
 };
