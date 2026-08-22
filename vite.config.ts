@@ -11,10 +11,10 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    // The routes to prerender are the ones the prerender entry returns as links, derived from the
-    // route tree in src/routes.tsx
+    // The routes to prerender are returned as links in the prerender.tsx file
     vitePrerenderPlugin({
       renderTarget: '#root',
+      prerenderScript: 'src/prerender.tsx',
     }),
   ],
 });
