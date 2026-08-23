@@ -102,7 +102,7 @@ export const ca = {
     doubling: 'Doblar',
     doublingOptions: {
       disabled: 'Desactivat',
-      'nine-to-eleven': '9, 10, 11',
+      '9-to-11': '9, 10, 11',
       all: 'Tots',
     },
     splitting: 'Dividir',

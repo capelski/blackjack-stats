@@ -102,7 +102,7 @@ export const en = {
     doubling: 'Doubling',
     doublingOptions: {
       disabled: 'Disabled',
-      'nine-to-eleven': '9, 10, 11',
+      '9-to-11': '9, 10, 11',
       all: 'All',
     },
     splitting: 'Splitting',

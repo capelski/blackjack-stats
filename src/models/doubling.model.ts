@@ -1,5 +1,5 @@
 export const doublingDisabled = 'disabled';
-export const doublingNineToEleven = 'nine-to-eleven';
+export const doublingNineToEleven = '9-to-11';
 export const doublingAll = 'all';
 
 /**
