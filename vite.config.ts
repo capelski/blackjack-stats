@@ -8,6 +8,7 @@ export default defineConfig({
   base: publicPath,
   build: {
     outDir: 'docs',
+    emptyOutDir: true,
   },
   plugins: [
     react(),

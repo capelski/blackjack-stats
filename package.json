@@ -4,13 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "clean": "rm -rf docs",
-    "dev": "vite",
-    "build": "npm run clean && tsc -b && vite build",
+    "build": "npm run compile && vite build",
+    "compile": "tsc -b",
+    "dev": "vite --open",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "cucumber-js \"src/**/*.feature\"",
-    "compile": " npx tsc --noEmit -p tsconfig.app.json"
+    "test": "cucumber-js \"src/**/*.feature\""
   },
   "dependencies": {
     "i18next": "^26.3.6",
