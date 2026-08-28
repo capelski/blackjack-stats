@@ -18,7 +18,9 @@ const getCellStyle = (isHeader: boolean): CSSProperties => ({
   fontWeight: isHeader ? 'bold' : undefined,
   margin: 2,
   padding: 2,
-  textAlign: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 });
 
 const rowStyle: CSSProperties = {
@@ -40,7 +42,7 @@ export type DealerCardMatrixProps = {
   strategy: StrategyByFirstCard;
 };
 
-export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = props => {
+export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = (props) => {
   const { t } = useTranslation();
   const { useUrlState } = useSearchParamsUtils();
 
@@ -52,9 +54,9 @@ export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = props => {
   const [firstBreakdown] = Object.values(props.strategy.breakdown);
   const playerHands = firstBreakdown ? getActionableHands(firstBreakdown.resolvedHandsList) : [];
 
-  const rows = playerHands.map<OptimalActionsRow>(playerHand => ({
+  const rows = playerHands.map<OptimalActionsRow>((playerHand) => ({
     actions: sortedCardSymbols.map(
-      cardSymbol =>
+      (cardSymbol) =>
         props.strategy.breakdown[cardSymbol]?.resolvedHandsMap[playerHand.label]?.action,
     ),
     labels: [playerHand.label],
@@ -65,8 +67,8 @@ export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = props => {
   return (
     <div>
       {t('optimalActions.view')}:{' '}
-      <select value={view} onChange={e => setView(e.target.value as OptimalActionsView)}>
-        {views.map(viewOption => (
+      <select value={view} onChange={(e) => setView(e.target.value as OptimalActionsView)}>
+        {views.map((viewOption) => (
           <option key={viewOption} value={viewOption}>
             {t(`optimalActions.modes.${viewOption}`)}
           </option>
@@ -88,7 +90,7 @@ export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = props => {
         <thead>
           <tr style={rowStyle}>
             <td style={getCellStyle(true)}>{t('commons.hand')}</td>
-            {sortedCardSymbols.map(cardSymbol => (
+            {sortedCardSymbols.map((cardSymbol) => (
               <td key={cardSymbol} style={getCellStyle(true)}>
                 {cardSymbol}
               </td>
@@ -97,7 +99,7 @@ export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = props => {
         </thead>
 
         <tbody>
-          {displayedRows.map(row => {
+          {displayedRows.map((row) => {
             const label = getRowLabel(row);
             return (
               <tr key={label} style={rowStyle}>
