@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../app.context';
 import { LoadingOverlay } from '../components/loading-overlay.component';
@@ -10,10 +10,18 @@ import { StrategyContext } from '../strategy.context';
 export const OptimalActionsPage: React.FC = () => {
   const { t } = useTranslation();
   const {
-    optimalActions: { computing, onDecisionOverride, strategy },
+    optimalActions: { compute, computing, onDecisionOverride, strategy },
     rules,
     setRules,
   } = useAppContext();
+
+  useEffect(() => {
+    if (!strategy) {
+      // Compute the strategy the first time this page is rendered
+      compute();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <LoadingOverlay loading={computing || !strategy}>

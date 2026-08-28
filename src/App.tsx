@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import { dealerCardRoute, optimalActionsRoute, standThresholdRoute } from '../constants';
 import './App.css';
+import { getAnimationContainerClassName, useIsOutletContentChanging } from './animation-utils';
 import { AppContext } from './app.context';
 import { DecimalsSelector } from './components/decimals-selector.component';
 import { LanguageSelector } from './components/language-selector.component';
@@ -11,7 +12,6 @@ import { optimalActionsHandResolver } from './logic/resolved-hands.logic';
 import { getStrategy, getStrategyByFirstCard } from './logic/strategy.logic';
 import { hit, stand } from './models/action.model';
 import { doublingDisabled, sortedDoublingOptions } from './models/doubling.model';
-import { getAnimationContainerClassName, useIsOutletContentChanging } from './animation-utils';
 import { getLocalizedRoute } from './nav-utils';
 import { SearchNavLink } from './search-nav-link';
 import {
@@ -89,7 +89,7 @@ function App() {
   ) => {
     setComputingStandThresholdStrategy(true);
 
-    const standThresholdResolver: HandResolver = hand => {
+    const standThresholdResolver: HandResolver = (hand) => {
       const thresholdToUse = hand.scores.length > 1 ? thresholds.softScores : thresholds.regular;
       return hand.effectiveScore >= thresholdToUse ? stand : hit;
     };
@@ -192,17 +192,6 @@ function App() {
     computeDealerCardStrategy(rules, nextDecisionOverrides);
   };
 
-  // The strategies are only computed on mount. From then on, they are recomputed by the handlers
-  // updating their inputs, which carry over the decision overrides of the previous strategy
-  useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
-    computeStandThresholdStrategy(standThresholds, {});
-    computeOptimalActionsStrategy(rules, {});
-    computeDealerCardStrategy(rules, {});
-    /* eslint-enable react-hooks/set-state-in-effect */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <div className="app">
       <nav className="navbar">
@@ -223,16 +212,19 @@ function App() {
         <AppContext.Provider
           value={{
             dealerCard: {
+              compute: () => computeDealerCardStrategy(rules, {}),
               computing: computingDealerCardStrategy,
               onDecisionOverride: onDealerCardDecisionOverride,
               strategy: dealerCardStrategy!,
             },
             optimalActions: {
+              compute: () => computeOptimalActionsStrategy(rules, {}),
               computing: computingOptimalActionsStrategy,
               onDecisionOverride: onOptimalActionsDecisionOverride,
               strategy: optimalActionsStrategy!,
             },
             standThreshold: {
+              compute: () => computeStandThresholdStrategy(standThresholds, {}),
               computing: computingStandThresholdStrategy,
               onDecisionOverride: onStandThresholdDecisionOverride,
               rules: standThresholdRules,

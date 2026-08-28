@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../app.context';
 import { LoadingOverlay } from '../components/loading-overlay.component';
@@ -9,11 +9,27 @@ import { StrategyContext } from '../strategy.context';
 export const StandThresholdPage: React.FC = () => {
   const { t } = useTranslation();
   const {
-    standThreshold: { computing, onDecisionOverride, rules, setThresholds, strategy, thresholds },
+    standThreshold: {
+      compute,
+      computing,
+      onDecisionOverride,
+      rules,
+      setThresholds,
+      strategy,
+      thresholds,
+    },
   } = useAppContext();
   const [sameThresholdForSoftScores, setSameThresholdForSoftScores] = useState(
     thresholds.softScores === thresholds.regular,
   );
+
+  useEffect(() => {
+    if (!strategy) {
+      // Compute the strategy the first time this page is rendered
+      compute();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <LoadingOverlay loading={computing || !strategy}>
@@ -25,7 +41,7 @@ export const StandThresholdPage: React.FC = () => {
             <StandThresholdControl
               disabled={computing}
               label={t('standThreshold.label')}
-              onChange={value => {
+              onChange={(value) => {
                 setThresholds({
                   regular: value,
                   softScores: sameThresholdForSoftScores ? value : thresholds.softScores,
@@ -63,7 +79,7 @@ export const StandThresholdPage: React.FC = () => {
             </span>
             <StandThresholdControl
               disabled={computing || sameThresholdForSoftScores}
-              onChange={value => {
+              onChange={(value) => {
                 setThresholds({
                   regular: thresholds.regular,
                   softScores: Number(value),

@@ -9,16 +9,19 @@ import { Strategy, StrategyByFirstCard } from './types/strategy.type';
 
 export type AppContextValue = {
   dealerCard: {
+    compute: () => Promise<void>;
     computing: boolean;
     onDecisionOverride: DecisionOverrideByFirstCardHandler;
     strategy: StrategyByFirstCard;
   };
   optimalActions: {
+    compute: () => Promise<void>;
     computing: boolean;
     onDecisionOverride: DecisionOverrideHandler;
     strategy: Strategy;
   };
   standThreshold: {
+    compute: () => Promise<void>;
     computing: boolean;
     onDecisionOverride: DecisionOverrideHandler;
     rules: Rules;

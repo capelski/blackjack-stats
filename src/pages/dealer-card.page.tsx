@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -20,7 +20,7 @@ export const DealerCardPage: React.FC = () => {
   const { t } = useTranslation();
   const params = useParams();
   const {
-    dealerCard: { computing, strategy, onDecisionOverride },
+    dealerCard: { compute, computing, strategy, onDecisionOverride },
     rules,
     setRules,
   } = useAppContext();
@@ -28,6 +28,14 @@ export const DealerCardPage: React.FC = () => {
   const dealerCard = params[dealerCardUrlParam];
   const rawPlayerLabel = params[playerLabelUrlParam];
   const playerLabel = rawPlayerLabel && urlParamToLabel(rawPlayerLabel);
+
+  useEffect(() => {
+    if (!strategy) {
+      // Compute the strategy the first time this page is rendered
+      compute();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <LoadingOverlay loading={computing || !strategy}>
