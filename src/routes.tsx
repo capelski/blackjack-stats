@@ -79,7 +79,7 @@ export const routes: RouteObject[] = [
   {
     element: <App />,
     children: [
-      ...supportedLanguages.map<RouteObject>(language => ({
+      ...supportedLanguages.map<RouteObject>((language) => ({
         path: language,
         element: <AnimatedOutlet />,
         children: [
@@ -98,7 +98,7 @@ export const routes: RouteObject[] = [
             element: <StandThresholdPage />,
             children: strategyPageNestedRoutes,
           },
-          { index: true, element: <SearchNavigate to={standThresholdRoute} /> },
+          { index: true, element: <SearchNavigate to={dealerCardRoute} /> },
         ],
       })),
       { index: true, element: <SearchNavigate to={defaultLanguage} /> },
