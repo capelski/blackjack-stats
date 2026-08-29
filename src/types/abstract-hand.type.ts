@@ -6,7 +6,6 @@ import {
   splittablePair,
   threeOrMoreCards,
 } from '../models/hand-category.model';
-import { Card } from './card.type';
 import { HandBase } from './hand-base.type';
 
 export type AbstractHandPartial = Pick<HandBase, 'category' | 'label' | 'scores'> & {
@@ -23,8 +22,9 @@ export type AbstractHandPartial = Pick<HandBase, 'category' | 'label' | 'scores'
         splitCard?: undefined;
       }
     | {
+        canSplit: boolean;
         category: typeof splittablePair;
-        splitCard: Card;
+        splitCard: string;
       }
   );
 

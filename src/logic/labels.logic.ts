@@ -1,4 +1,5 @@
 import { double, hit, split } from '../models/action.model';
+import { cardsMap } from '../models/cards.model';
 import {
   HandCategory,
   postASplitPair,
@@ -47,12 +48,12 @@ export const getHandLabel = (scores: number[], category: HandCategory, symbol?: 
     category === postASplitPair
       ? 'A'
       : category === postSplitPair
-      ? 'S'
-      : category === threeOrMoreCards
-      ? '3+'
-      : category === postDoubleHand
-      ? 'D'
-      : '';
+        ? 'S'
+        : category === threeOrMoreCards
+          ? '3+'
+          : category === postDoubleHand
+            ? 'D'
+            : '';
 
   return `${scoresString}${discriminator ? ` (${discriminator})` : ''}`;
 };
@@ -64,7 +65,7 @@ export const getNextHandLabel = (
   nextAction: typeof split | typeof double | typeof hit,
   nextCard: Card,
 ): string => {
-  const currentAbstractHand = absHands.find(x => x.label === currentLabel);
+  const currentAbstractHand = absHands.find((x) => x.label === currentLabel);
   if (!currentAbstractHand) {
     throw new Error(`Cannot find an abstract hand with label "${currentLabel}"`);
   }
@@ -74,11 +75,11 @@ export const getNextHandLabel = (
   }
 
   if (nextAction === split && currentAbstractHand.category === splittablePair) {
-    const isAcesSplit = currentAbstractHand.splitCard.symbol === 'A';
+    const isAcesSplit = currentAbstractHand.splitCard === 'A';
     const nextCategory = isAcesSplit ? postASplitPair : postSplitPair;
 
     const nextScores = getNextScores(
-      currentAbstractHand.splitCard.scores,
+      cardsMap[currentAbstractHand.splitCard].scores,
       nextCard.scores,
       nextCategory,
       rules,
@@ -124,8 +125,8 @@ export const scoresToLabel = (scores: number[]): string => {
   return score === bustScore
     ? bustLabel
     : score === blackjackScore
-    ? blackjackLabel
-    : getDisplayScores(scores);
+      ? blackjackLabel
+      : getDisplayScores(scores);
 };
 
 export const urlParamToLabel = (urlParam: string): string => {

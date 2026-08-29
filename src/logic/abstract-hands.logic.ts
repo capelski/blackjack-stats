@@ -1,5 +1,4 @@
 import { Action } from '../models/action.model';
-import { cardsMap } from '../models/cards.model';
 import {
   initialPair,
   postASplitPair,
@@ -9,6 +8,7 @@ import {
   threeOrMoreCards,
 } from '../models/hand-category.model';
 import { bust, end, HandStatus } from '../models/hand-status.model';
+import { splitScoresSeparator } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { AbstractHand, AbstractHandPartial } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
@@ -47,7 +47,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'A,A,3', label: '5/15 (3+)', scores: [5, 15] },
     { example: 'A,A,2', label: '4/14 (3+)', scores: [4, 14] },
     { example: 'A,A,A', label: '3/13 (3+)', scores: [3, 13] },
-  ].map<AbstractHandPartial>(x => {
+  ].map<AbstractHandPartial>((x) => {
     return {
       ...x,
       category: threeOrMoreCards,
@@ -83,7 +83,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'A,A,D,3', label: '5/15 (D)', scores: [5, 15] },
     { example: 'A,A,D,2', label: '4/14 (D)', scores: [4, 14] },
     { example: 'A,A,D,A', label: '3/13 (D)', scores: [3, 13] },
-  ].map<AbstractHandPartial>(x => {
+  ].map<AbstractHandPartial>((x) => {
     return {
       ...x,
       category: postDoubleHand,
@@ -120,7 +120,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'A,3', label: '4/14', scores: [4, 14] },
     { example: 'A,2', label: '3/13', scores: [3, 13] },
     { example: 'A,A', label: '2/12', scores: [2, 12] },
-  ].map<AbstractHandPartial>(x => {
+  ].map<AbstractHandPartial>((x) => {
     return {
       ...x,
       category: initialPair,
@@ -159,7 +159,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: '4,S,A', label: '5/15 (S)', scores: [5, 15] },
     { example: '3,S,A', label: '4/14 (S)', scores: [4, 14] },
     { example: '2,S,A', label: '3/13 (S)', scores: [3, 13] },
-  ].map<AbstractHandPartial>(x => {
+  ].map<AbstractHandPartial>((x) => {
     return {
       ...x,
       category: postSplitPair,
@@ -183,7 +183,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     { example: 'A,S,3', label: '4/14 (A)', scores: [4, 14] },
     { example: 'A,S,2', label: '3/13 (A)', scores: [3, 13] },
     { example: 'A,S,A', label: '2/12 (A)', scores: [2, 12] },
-  ].map<AbstractHandPartial>(x => {
+  ].map<AbstractHandPartial>((x) => {
     return {
       ...x,
       category: postASplitPair,
@@ -196,24 +196,29 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
    * - "3+ cards", when hitting or doubling
    **/
   const splittablePairs: AbstractHandPartial[] = [
-    { example: 'A,A', label: 'A,A', scores: [2, 12], splitCard: cardsMap['A'] },
-    { example: '2,2', label: '2,2', scores: [4], splitCard: cardsMap['2'] },
-    { example: '3,3', label: '3,3', scores: [6], splitCard: cardsMap['3'] },
-    { example: '4,4', label: '4,4', scores: [8], splitCard: cardsMap['4'] },
-    { example: '5,5', label: '5,5', scores: [10], splitCard: cardsMap['5'] },
-    { example: '6,6', label: '6,6', scores: [12], splitCard: cardsMap['6'] },
-    { example: '7,7', label: '7,7', scores: [14], splitCard: cardsMap['7'] },
-    { example: '8,8', label: '8,8', scores: [16], splitCard: cardsMap['8'] },
-    { example: '9,9', label: '9,9', scores: [18], splitCard: cardsMap['9'] },
-    { example: '10,10', label: '10,10', scores: [20], splitCard: cardsMap['10'] },
-    { example: 'J,J', label: 'J,J', scores: [20], isHidden: true, splitCard: cardsMap['J'] },
-    { example: 'Q,Q', label: 'Q,Q', scores: [20], isHidden: true, splitCard: cardsMap['Q'] },
-    { example: 'K,K', label: 'K,K', scores: [20], isHidden: true, splitCard: cardsMap['K'] },
-  ].map<AbstractHandPartial>(x => {
+    { example: 'A,A', label: 'A,A', scores: [2, 12] },
+    { example: '2,2', label: '2,2', scores: [4] },
+    { example: '3,3', label: '3,3', scores: [6] },
+    { example: '4,4', label: '4,4', scores: [8] },
+    { example: '5,5', label: '5,5', scores: [10] },
+    { example: '6,6', label: '6,6', scores: [12] },
+    { example: '7,7', label: '7,7', scores: [14] },
+    { example: '8,8', label: '8,8', scores: [16] },
+    { example: '9,9', label: '9,9', scores: [18] },
+    { example: '10,10', label: '10,10', scores: [20] },
+    { example: 'J,J', label: 'J,J', scores: [20], isHidden: true },
+    { example: 'Q,Q', label: 'Q,Q', scores: [20], isHidden: true },
+    { example: 'K,K', label: 'K,K', scores: [20], isHidden: true },
+  ].map<AbstractHandPartial>((x) => {
+    const splitCard = x.label.split(splitScoresSeparator)[0];
+    const isSplittable = canSplit(rules, [splitCard, splitCard], false);
+
     return {
       ...x,
+      canSplit: isSplittable,
       category: splittablePair,
-      isHidden: x.isHidden || !canSplit(rules, [x.splitCard.symbol, x.splitCard.symbol], false),
+      isHidden: x.isHidden || !isSplittable,
+      splitCard,
     };
   });
 
@@ -224,15 +229,13 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     ...postSplitPairs,
     ...postASplitPairs,
     ...splittablePairs,
-  ].map<AbstractHand>(x => {
+  ].map<AbstractHand>((x) => {
     const effectiveScore = getEffectiveScore(x.scores);
 
     return {
       ...x,
       canDouble: canDouble(rules, x),
-      canSplit: x.splitCard
-        ? canSplit(rules, [x.splitCard.symbol, x.splitCard.symbol], false)
-        : false,
+      canSplit: (x.category === splittablePair && x.canSplit) ?? false,
       canSurrender: canSurrender(rules, x),
       effectiveScore,
       isActionable: canAction(rules, { category: x.category, effectiveScore }),
@@ -242,11 +245,11 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
 
   // Validate that all example cards produce the right score and label
   for (const hand of abstractHands) {
-    const label = getHandLabel(hand.scores, hand.category, hand.splitCard?.symbol);
+    const label = getHandLabel(hand.scores, hand.category, hand.splitCard);
 
     if (label !== hand.label) {
       throw new Error(
-        `Incorrect label "${hand.label}" for hand with scores ${hand.scores}, category "${hand.category}" and split card "${hand.splitCard?.symbol}". Expected "${label}"`,
+        `Incorrect label "${hand.label}" for hand with scores ${hand.scores}, category "${hand.category}" and split card "${hand.splitCard}". Expected "${label}"`,
       );
     }
   }
@@ -257,7 +260,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
 export const getActionableHands = <T extends Pick<AbstractHand, 'isActionable' | 'isHidden'>>(
   resolvedHands: T[],
 ): T[] => {
-  return resolvedHands.filter(hand => hand.isActionable && !hand.isHidden);
+  return resolvedHands.filter((hand) => hand.isActionable && !hand.isHidden);
 };
 
 export const getHandStatus = (
