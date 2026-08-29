@@ -32,11 +32,11 @@ const downloadCsv = ({ hands, t }: DownloadCsvOptions): void => {
     t('materialHandsList.cards'),
     t('commons.score'),
     t('commons.probability'),
-    t('materialHandsList.betMultiplier'),
+    t('commons.betMultiplier'),
     t('commons.action'),
   ];
 
-  const rows = hands.map(hand => {
+  const rows = hands.map((hand) => {
     const row = [
       serializeCards(hand, ', '),
       scoresToLabel(hand.scores),
@@ -63,7 +63,7 @@ export type MaterialHandsListCoreProps = HandsListProps & {
   nonFinalHandsControl?: boolean;
 };
 
-export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props => {
+export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { getParameter, setParameter } = useSearchParamsUtils();
@@ -84,12 +84,9 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
   };
 
   const filteredHands = useMemo(() => {
-    const normalizedFilter = cardsFilter
-      .trim()
-      .toUpperCase()
-      .replaceAll(' ', '');
+    const normalizedFilter = cardsFilter.trim().toUpperCase().replaceAll(' ', '');
 
-    return props.hands.filter(hand => {
+    return props.hands.filter((hand) => {
       if (!showNonFinalHands && !hand.isFinal) {
         return false;
       }
@@ -117,7 +114,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
         <input
           type="text"
           value={cardsFilter}
-          onChange={event => updateCardsFilter(event.target.value)}
+          onChange={(event) => updateCardsFilter(event.target.value)}
           placeholder={t('materialHandsList.cardsFilterPlaceholder')}
           style={{ marginLeft: 8 }}
         />
@@ -126,7 +123,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
             <input
               type="checkbox"
               checked={showNonFinalHands}
-              onChange={event => updateShowNonFinalHands(event.target.checked)}
+              onChange={(event) => updateShowNonFinalHands(event.target.checked)}
               style={{ marginLeft: 16 }}
             />
             <span>{t('materialHandsList.nonFinalHands')}</span>
@@ -152,7 +149,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
         </button>
 
         <button
-          onClick={() => downloadCsv({ hands: props.hands, t: key => t(key) })}
+          onClick={() => downloadCsv({ hands: props.hands, t: (key) => t(key) })}
           style={{ marginLeft: 8 }}
         >
           💾 {t('materialHandsList.download')}
@@ -164,7 +161,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = props
           <HandsListItem
             {...props}
             action={t('commons.action')}
-            betMultiplier={t('materialHandsList.betMultiplier')}
+            betMultiplier={t('commons.betMultiplier')}
             cards={t('materialHandsList.cards')}
             isHeader={true}
             probability={t('commons.probability')}

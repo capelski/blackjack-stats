@@ -10,6 +10,8 @@ export const ca = {
   },
   commons: {
     action: 'Acció',
+    bet: 'Aposta',
+    betMultiplier: "Multiplicador d'aposta",
     win: 'Victòria',
     lose: 'Derrota',
     push: 'Empat',
@@ -24,7 +26,7 @@ export const ca = {
     result: 'Resultat',
     decimals: '{{count}} decimals',
     hand: 'Mà',
-    return: 'Retorn',
+    potVariation: 'Variació del pot',
   },
   actions: {
     double: 'Doblar',
@@ -99,7 +101,6 @@ export const ca = {
     page: 'Pàgina {{current}} de {{total}}',
     next: 'Següent',
     download: 'Descarregar',
-    betMultiplier: "Multiplicador d'aposta",
     cards: 'Cartes',
   },
   rules: {

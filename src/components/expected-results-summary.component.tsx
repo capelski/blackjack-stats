@@ -42,9 +42,9 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
       <thead>
         <tr>
           <th style={cellStyle}>{t('commons.result')}</th>
-          <th style={cellStyle}>{t('commons.return')}</th>
+          <th style={cellStyle}>{t('commons.betMultiplier')}</th>
           <th style={cellStyle}>{t('commons.probability')}</th>
-          <th style={cellStyle}>{t('commons.edge')}</th>
+          <th style={cellStyle}>{t('commons.potVariation')}</th>
         </tr>
       </thead>
 
@@ -99,7 +99,9 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
                 <td style={resultStyle}>{betMultiplierLabel}</td>
                 <td style={resultStyle}>{toPercentage(probability, decimals)}</td>
                 <td style={resultStyle}>
-                  {toPercentage(probability * signedBetMultiplier, decimals)}
+                  {signedBetMultiplier > 0 && '+'}
+                  {toPercentage(probability * signedBetMultiplier, decimals)}{' '}
+                  {t('commons.bet').toLowerCase()}
                 </td>
               </tr>
             );
@@ -113,12 +115,13 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
           <td style={cellStyle}></td>
           <td style={cellStyle}></td>
           <td style={{ ...cellStyle, fontWeight: 'bold' }}>
-            {toPercentage(expectedResults.edge, decimals)}{' '}
+            {toPercentage(expectedResults.edge, decimals)} {t('commons.bet').toLowerCase()}
+            <br />
             <i style={{ fontWeight: 'normal' }}>
               {t('expectedResults.xRounds', {
                 rounds: toDecimal(1 / -expectedResults.edge, decimals),
               })}
-            </i>{' '}
+            </i>
             <ExpectedResultsSummaryModal edge={expectedResults.edge} />
           </td>
         </tr>

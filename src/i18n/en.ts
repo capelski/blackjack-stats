@@ -10,6 +10,8 @@ export const en = {
   },
   commons: {
     action: 'Action',
+    bet: 'Bet',
+    betMultiplier: 'Bet multiplier',
     win: 'Win',
     lose: 'Lose',
     push: 'Push',
@@ -24,7 +26,7 @@ export const en = {
     result: 'Result',
     decimals: '{{count}} decimals',
     hand: 'Hand',
-    return: 'Return',
+    potVariation: 'Pot variation',
   },
   actions: {
     double: 'Double',
@@ -99,7 +101,6 @@ export const en = {
     page: 'Page {{current}} of {{total}}',
     next: 'Next',
     download: 'Download',
-    betMultiplier: 'Bet multiplier',
     cards: 'Cards',
   },
   rules: {
