@@ -20,11 +20,11 @@ import { HandBase } from '../types/hand-base.type';
 import { Rules } from '../types/rules.type';
 
 const actionRules: Record<Action, (rules: Rules) => boolean> = {
-  [double]: rules => isDoublingEnabled(rules),
+  [double]: (rules) => isDoublingEnabled(rules),
   [hit]: () => true,
-  [split]: rules => !!rules.splitting,
+  [split]: (rules) => !!rules.splitting,
   [stand]: () => true,
-  [surrender]: rules => !!rules.surrendering,
+  [surrender]: (rules) => !!rules.surrendering,
 };
 
 /** Hands are not actionable when:
@@ -43,19 +43,19 @@ export const canAction = (
 };
 
 export const canDouble = (rules: Rules, hand: Pick<HandBase, 'category' | 'scores'>): boolean => {
-  const isInitialHand = hand.category === initialPair || hand.category === splittablePair;
-  const isPostSplitPair = hand.category === postSplitPair || hand.category === postASplitPair;
-  const isDoublingCategory = isInitialHand || (!!rules.doublingAfterSplit && isPostSplitPair);
-
-  if (!isDoublingCategory || (hand.category === postASplitPair && !rules.hitSplitAces)) {
-    return false;
-  }
-
-  return (
+  const isValidDoublingScore =
     rules.doubling === doublingAll ||
     (rules.doubling === doublingNineToEleven &&
-      hand.scores.some(score => nineToElevenScores.includes(score)))
-  );
+      hand.scores.some((score) => nineToElevenScores.includes(score)));
+
+  const isValidCategory =
+    hand.category === initialPair ||
+    hand.category === splittablePair ||
+    (!!rules.doublingAfterSplit &&
+      (hand.category === postSplitPair ||
+        (hand.category === postASplitPair && !!rules.hitSplitAces)));
+
+  return isValidDoublingScore && isValidCategory;
 };
 
 export const canSplit = (rules: Rules, cardSymbols: string[], isPostSplit: boolean): boolean => {
@@ -72,7 +72,7 @@ export const canSurrender = (rules: Rules, { category }: Pick<HandBase, 'categor
 };
 
 export const getEnabledActions = (rules: Rules): Action[] => {
-  return sortedActions.filter(action => {
+  return sortedActions.filter((action) => {
     const isActionEnabled = actionRules[action];
     return isActionEnabled(rules);
   });
