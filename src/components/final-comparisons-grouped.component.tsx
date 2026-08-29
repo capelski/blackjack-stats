@@ -8,7 +8,7 @@ import { useStrategyContext } from '../strategy.context';
 import { ExpectedResult } from '../types/expected-result.type';
 import { BetMultipliersCell } from './bet-multipliers-cell.component';
 
-type ExpectedResultsGroupedRowProps = {
+type FinalComparisonsGroupedRowProps = {
   isSurrenderingEnabled: boolean;
 } & (
   | {
@@ -21,7 +21,7 @@ type ExpectedResultsGroupedRowProps = {
     }
 );
 
-const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = props => {
+const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (props) => {
   const { t } = useTranslation();
 
   const cellStyle: CSSProperties = {
@@ -88,7 +88,7 @@ const ExpectedResultsGroupedRow: React.FC<ExpectedResultsGroupedRowProps> = prop
   );
 };
 
-export const ExpectedResultsGrouped: React.FC = () => {
+export const FinalComparisonsGrouped: React.FC = () => {
   const { rules, strategy } = useStrategyContext();
 
   const surrenderingEnabled = !!rules.surrendering;
@@ -96,13 +96,13 @@ export const ExpectedResultsGrouped: React.FC = () => {
   return (
     <table style={{ width: '100%' }}>
       <thead>
-        <ExpectedResultsGroupedRow isHeader={true} isSurrenderingEnabled={surrenderingEnabled} />
+        <FinalComparisonsGroupedRow isHeader={true} isSurrenderingEnabled={surrenderingEnabled} />
       </thead>
 
       <tbody>
-        {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
+        {getSortedNumericKeys(strategy.expectedResults.breakdown).map((playerScore) => {
           return (
-            <ExpectedResultsGroupedRow
+            <FinalComparisonsGroupedRow
               key={playerScore}
               expectedResult={strategy.expectedResults.breakdown[playerScore]}
               isSurrenderingEnabled={surrenderingEnabled}

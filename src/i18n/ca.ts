@@ -46,6 +46,7 @@ export const ca = {
     hands: 'Mans',
     finalScores: 'Puntuacions finals',
     expectedResults: 'Resultats esperats',
+    finalComparisons: 'Comparacions finals',
     actionsAnalysis: "Anàlisi d'accions",
   },
   actionsBreakdown: {
@@ -68,8 +69,6 @@ export const ca = {
     },
   },
   expectedResults: {
-    matrix: 'Matriu',
-    grouped: 'Agrupats',
     bankruptcyTitle: 'Rondes fins a la bancarrota',
     bankruptcyBody: "= {{rounds}} vegades la quantitat inicial d'apostes al pot",
     bankruptcyExample: 'Un pot inicial de 5 apostes pot esperar durar {{rounds}} rondes',
@@ -80,6 +79,10 @@ export const ca = {
       simulate: 'Simular',
       finalPot: 'Pot final',
     },
+  },
+  finalComparisons: {
+    matrix: 'Matriu',
+    grouped: 'Agrupats',
   },
   finalScoresList: {
     numberOfFinalScores: 'Nombre de puntuacions finals',

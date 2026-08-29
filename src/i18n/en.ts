@@ -46,6 +46,7 @@ export const en = {
     hands: 'Hands',
     finalScores: 'Final scores',
     expectedResults: 'Expected results',
+    finalComparisons: 'Final comparisons',
     actionsAnalysis: 'Actions analysis',
   },
   actionsBreakdown: {
@@ -68,8 +69,6 @@ export const en = {
     },
   },
   expectedResults: {
-    matrix: 'Matrix',
-    grouped: 'Grouped',
     bankruptcyTitle: 'Rounds to bankruptcy',
     bankruptcyBody: '= {{rounds}} times the amount of bets in the initial pot',
     bankruptcyExample: 'An initial pot of 5 bets can expect to last {{rounds}} rounds',
@@ -80,6 +79,10 @@ export const en = {
       simulate: 'Simulate',
       finalPot: 'Final pot',
     },
+  },
+  finalComparisons: {
+    matrix: 'Matrix',
+    grouped: 'Grouped',
   },
   finalScoresList: {
     numberOfFinalScores: 'Number of final scores',

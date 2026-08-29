@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import {
   actionsAnalysisRoute,
   expectedResultsRoute,
+  finalComparisonsRoute,
   finalScoresRoute,
   materialHandsRoute,
   playerLabelUrlParam,
@@ -17,7 +18,7 @@ export type StrategyLayoutComponentProps = PropsWithChildren<{
   title?: string;
 }>;
 
-export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = props => {
+export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = (props) => {
   const { t } = useTranslation();
   const { strategy } = useStrategyContext();
   const params = useParams();
@@ -39,6 +40,9 @@ export const StrategyLayoutComponent: React.FC<StrategyLayoutComponentProps> = p
       <nav className="nested-navbar">
         <SearchNavLink to={materialHandsRoute}>{t('strategyLayout.hands')}</SearchNavLink>
         <SearchNavLink to={finalScoresRoute}>{t('strategyLayout.finalScores')}</SearchNavLink>
+        <SearchNavLink to={finalComparisonsRoute}>
+          {t('strategyLayout.finalComparisons')}
+        </SearchNavLink>
         <SearchNavLink to={expectedResultsRoute}>
           {t('strategyLayout.expectedResults')}
         </SearchNavLink>

@@ -28,18 +28,19 @@ const getColumnsNumber = (mode: MatrixMode, dealerScoresCount: number): number =
   return 1 + dealerScoresCount + (mode === probability ? 1 : 0);
 };
 
-type ExpectedResultsMatrixRowProps = {
+type FinalComparisonsMatrixRowProps = {
   dealerScores: FinalScoreBase[];
   firstCell: React.ReactNode;
-  dealerScoreToCell: (
-    dealerScore: FinalScoreBase,
-  ) => { node: React.ReactNode; style?: CSSProperties };
+  dealerScoreToCell: (dealerScore: FinalScoreBase) => {
+    node: React.ReactNode;
+    style?: CSSProperties;
+  };
   lastCell: React.ReactNode;
   mode: MatrixMode;
   isHeader?: boolean;
 };
 
-const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props => {
+const FinalComparisonsMatrixRow: React.FC<FinalComparisonsMatrixRowProps> = (props) => {
   const cellStyle: CSSProperties = getCellProps(!!props.isHeader);
 
   return (
@@ -53,7 +54,7 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
       }}
     >
       <td style={cellStyle}>{props.firstCell}</td>
-      {props.dealerScores.map(dealerScore => {
+      {props.dealerScores.map((dealerScore) => {
         const { node, style } = props.dealerScoreToCell(dealerScore);
         return (
           <td style={{ ...cellStyle, ...style }} key={dealerScore.score}>
@@ -66,7 +67,7 @@ const ExpectedResultsMatrixRow: React.FC<ExpectedResultsMatrixRowProps> = props 
   );
 };
 
-export const ExpectedResultsMatrix: React.FC = () => {
+export const FinalComparisonsMatrix: React.FC = () => {
   const { t } = useTranslation();
   const { useUrlState } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
@@ -81,18 +82,21 @@ export const ExpectedResultsMatrix: React.FC = () => {
           <tr
             style={{
               display: 'grid',
-              gridTemplateColumns: `1fr ${getColumnsNumber(mode, strategy.dealerScores.length) -
-                1}fr`,
+              gridTemplateColumns: `1fr ${
+                getColumnsNumber(mode, strategy.dealerScores.length) - 1
+              }fr`,
             }}
           >
             <td style={getCellProps(true)}>{t('commons.player')}</td>
             <td style={getCellProps(true)}>{t('commons.dealer')}</td>
           </tr>
 
-          <ExpectedResultsMatrixRow
+          <FinalComparisonsMatrixRow
             dealerScores={strategy.dealerScores}
             firstCell=""
-            dealerScoreToCell={dealerScore => ({ node: effectiveScoreToLabel(dealerScore.score) })}
+            dealerScoreToCell={(dealerScore) => ({
+              node: effectiveScoreToLabel(dealerScore.score),
+            })}
             lastCell={t('commons.total')}
             isHeader={true}
             mode={mode}
@@ -100,15 +104,15 @@ export const ExpectedResultsMatrix: React.FC = () => {
         </thead>
 
         <tbody>
-          {getSortedNumericKeys(strategy.expectedResults.breakdown).map(playerScore => {
+          {getSortedNumericKeys(strategy.expectedResults.breakdown).map((playerScore) => {
             const expectedResult = strategy.expectedResults.breakdown[playerScore];
 
             return (
-              <ExpectedResultsMatrixRow
+              <FinalComparisonsMatrixRow
                 dealerScores={strategy.dealerScores}
                 key={playerScore}
                 firstCell={effectiveScoreToLabel(playerScore)}
-                dealerScoreToCell={dealerScore => {
+                dealerScoreToCell={(dealerScore) => {
                   const finalComparison = expectedResult.finalComparisons[dealerScore.score];
 
                   return mode === probability
@@ -123,10 +127,10 @@ export const ExpectedResultsMatrix: React.FC = () => {
                           finalComparison.result === win
                             ? '🟢'
                             : finalComparison.result === push
-                            ? '🟡'
-                            : finalComparison.result === surrender
-                            ? '🏳️'
-                            : '🔴',
+                              ? '🟡'
+                              : finalComparison.result === surrender
+                                ? '🏳️'
+                                : '🔴',
                       };
                 }}
                 lastCell={<BetMultipliersCell map={expectedResult.probabilityByBetMultiplier} />}
@@ -136,10 +140,10 @@ export const ExpectedResultsMatrix: React.FC = () => {
           })}
 
           {mode === probability && (
-            <ExpectedResultsMatrixRow
+            <FinalComparisonsMatrixRow
               dealerScores={strategy.dealerScores}
               firstCell={t('commons.total')}
-              dealerScoreToCell={dealerScore => ({
+              dealerScoreToCell={(dealerScore) => ({
                 node: toPercentage(dealerScore.probability, decimals),
               })}
               lastCell={toPercentage(strategy.expectedResults.probability, decimals)}
@@ -149,7 +153,7 @@ export const ExpectedResultsMatrix: React.FC = () => {
         </tbody>
       </table>
 
-      <select value={mode} onChange={e => toggleMode(e.target.value as MatrixMode)}>
+      <select value={mode} onChange={(e) => toggleMode(e.target.value as MatrixMode)}>
         <option value={result}>{t(`commons.${result}`)}</option>
         <option value={probability}>{t(`commons.${probability}`)}</option>
       </select>
