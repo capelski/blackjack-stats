@@ -12,10 +12,7 @@ export const LanguageSelector: React.FC = () => {
 
   const handleLanguageChange = (language: Language) => {
     const nextLocation = translateLocalizedRoute(location.pathname, language);
-
-    // The language is not changed here, but by the effect below reacting to the new location, so
-    // that the translated texts are rendered as part of the view transition instead of before it
-    navigate(nextLocation, { viewTransition: true });
+    navigate(nextLocation);
   };
 
   useEffect(() => {
@@ -28,10 +25,10 @@ export const LanguageSelector: React.FC = () => {
   return (
     <select
       value={i18n.language}
-      onChange={e => handleLanguageChange(e.target.value as Language)}
+      onChange={(e) => handleLanguageChange(e.target.value as Language)}
       style={{ marginRight: 8 }}
     >
-      {supportedLanguages.map(language => (
+      {supportedLanguages.map((language) => (
         <option key={language} value={language}>
           {t(`language.${language}`)}
         </option>
