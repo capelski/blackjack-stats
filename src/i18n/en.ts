@@ -24,6 +24,7 @@ export const en = {
     result: 'Result',
     decimals: '{{count}} decimals',
     hand: 'Hand',
+    return: 'Return',
   },
   actions: {
     double: 'Double',

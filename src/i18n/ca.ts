@@ -24,6 +24,7 @@ export const ca = {
     result: 'Resultat',
     decimals: '{{count}} decimals',
     hand: 'Mà',
+    return: 'Retorn',
   },
   actions: {
     double: 'Doblar',

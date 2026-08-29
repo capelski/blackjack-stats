@@ -1,33 +1,25 @@
-import { PropsWithChildren } from 'react';
+import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toDecimal, toPercentage } from '../logic/numbers.logic';
+import { blackjackMultiplier } from '../logic/bet-multiplier.logic';
+import { getSortedNumericKeys, toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
+import { blackjackLabel } from '../models/labels.model';
 import { lose, push, Result, surrender, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
 import { ExpectedResults } from '../types/expected-result.type';
-import { BetMultipliersCell } from './bet-multipliers-cell.component';
 import { ExpectedResultsSummaryModal } from './expected-results-summary-modal.component';
 
-type ExpectedResultsSummaryCardProps = PropsWithChildren<{
-  discriminator: Result | 'edge';
-}>;
+/** Sign of the contribution of each result to the overall edge */
+const resultEdgeSign: Record<Result, number> = {
+  [win]: 1,
+  [push]: 0,
+  [lose]: -1,
+  [surrender]: -1,
+};
 
-const ExpectedResultsSummaryCard: React.FC<ExpectedResultsSummaryCardProps> = props => {
-  const { t } = useTranslation();
-
-  return (
-    <div
-      style={{
-        ...(resultToStyles(props.discriminator as Result) ?? { border: '1px solid #ccc' }),
-        textAlign: 'center',
-        margin: 8,
-        borderRadius: '0.5rem',
-      }}
-    >
-      <h3>{t(`commons.${props.discriminator}`)}</h3>
-      <div style={{ marginBottom: 8, marginTop: 8 }}>{props.children}</div>
-    </div>
-  );
+const cellStyle: CSSProperties = {
+  padding: 8,
+  textAlign: 'center',
 };
 
 type ExpectedResultsSummaryProps = {
@@ -35,43 +27,102 @@ type ExpectedResultsSummaryProps = {
   isSurrenderingEnabled: boolean;
 };
 
-export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = props => {
+export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { expectedResults, isSurrenderingEnabled } = props;
 
+  const results: Result[] = [win, push, lose];
+  if (isSurrenderingEnabled) {
+    results.push(surrender);
+  }
+
   return (
-    <div
-      className="expected-summary"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${4 + (isSurrenderingEnabled ? 1 : 0)}, 1fr)`,
-      }}
-    >
-      <ExpectedResultsSummaryCard discriminator={win}>
-        <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.win} />
-      </ExpectedResultsSummaryCard>
-      <ExpectedResultsSummaryCard discriminator={push}>
-        <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.push} />
-      </ExpectedResultsSummaryCard>
-      <ExpectedResultsSummaryCard discriminator={lose}>
-        <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.lose} />
-      </ExpectedResultsSummaryCard>
-      {isSurrenderingEnabled && (
-        <ExpectedResultsSummaryCard discriminator={surrender}>
-          <BetMultipliersCell map={expectedResults.outcomesByBetMultiplier.surrender} />
-        </ExpectedResultsSummaryCard>
-      )}
-      <ExpectedResultsSummaryCard discriminator="edge">
-        {toPercentage(expectedResults.edge, decimals)}
-        <br />
-        <i>
-          {t('expectedResults.xRounds', {
-            rounds: toDecimal(1 / -expectedResults.edge, decimals),
-          })}{' '}
-        </i>
-        <ExpectedResultsSummaryModal edge={expectedResults.edge} />
-      </ExpectedResultsSummaryCard>
-    </div>
+    <table className="expected-summary" style={{ width: '100%' }}>
+      <thead>
+        <tr>
+          <th style={cellStyle}>{t('commons.result')}</th>
+          <th style={cellStyle}>{t('commons.return')}</th>
+          <th style={cellStyle}>{t('commons.probability')}</th>
+          <th style={cellStyle}>{t('commons.edge')}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {results.map((result) => {
+          const map = expectedResults.outcomesByBetMultiplier[result];
+          const betMultipliers = getSortedNumericKeys(map).filter(
+            (betMultiplier) => map[betMultiplier] > 0,
+          );
+          const resultStyle = { ...cellStyle, ...resultToStyles(result) };
+
+          if (betMultipliers.length === 0) {
+            return (
+              <tr key={result}>
+                <td style={resultStyle}>{t(`commons.${result}`)}</td>
+                <td style={resultStyle}>-</td>
+                <td style={resultStyle}>-</td>
+                <td style={resultStyle}>-</td>
+              </tr>
+            );
+          }
+
+          // Pushes return no money, so their bet multipliers are grouped into a single row
+          const rows =
+            result === push
+              ? [
+                  {
+                    betMultiplier: 0,
+                    probability: betMultipliers.reduce(
+                      (acc, betMultiplier) => acc + map[betMultiplier],
+                      0,
+                    ),
+                  },
+                ]
+              : betMultipliers.map((betMultiplier) => ({
+                  betMultiplier,
+                  probability: map[betMultiplier],
+                }));
+
+          return rows.map(({ betMultiplier, probability }, index) => {
+            const signedBetMultiplier = betMultiplier * resultEdgeSign[result];
+            const betMultiplierLabel =
+              betMultiplier === blackjackMultiplier ? blackjackLabel : `${signedBetMultiplier}x`;
+
+            return (
+              <tr key={`${result}-${betMultiplier}`}>
+                {index === 0 && (
+                  <td style={resultStyle} rowSpan={rows.length}>
+                    {t(`commons.${result}`)}
+                  </td>
+                )}
+                <td style={resultStyle}>{betMultiplierLabel}</td>
+                <td style={resultStyle}>{toPercentage(probability, decimals)}</td>
+                <td style={resultStyle}>
+                  {toPercentage(probability * signedBetMultiplier, decimals)}
+                </td>
+              </tr>
+            );
+          });
+        })}
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td style={{ ...cellStyle, fontWeight: 'bold' }}>{t('commons.edge')}</td>
+          <td style={cellStyle}></td>
+          <td style={cellStyle}></td>
+          <td style={{ ...cellStyle, fontWeight: 'bold' }}>
+            {toPercentage(expectedResults.edge, decimals)}{' '}
+            <i style={{ fontWeight: 'normal' }}>
+              {t('expectedResults.xRounds', {
+                rounds: toDecimal(1 / -expectedResults.edge, decimals),
+              })}
+            </i>{' '}
+            <ExpectedResultsSummaryModal edge={expectedResults.edge} />
+          </td>
+        </tr>
+      </tfoot>
+    </table>
   );
 };
