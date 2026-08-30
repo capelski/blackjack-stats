@@ -35,7 +35,7 @@ export const DealerCardPage: React.FC = () => {
       compute();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [strategy]);
 
   return (
     <LoadingOverlay loading={computing || !strategy}>

@@ -148,8 +148,8 @@ function App() {
       [surrenderingParamName, newRules.surrendering ? '1' : '0', '0'],
     ]);
 
-    computeOptimalActionsStrategy(newRules, optimalActionsStrategy?.decisionOverrides ?? {});
-    computeDealerCardStrategy(newRules, dealerCardStrategy?.decisionOverrides ?? {});
+    setOptimalActionsStrategy(undefined);
+    setDealerCardStrategy(undefined);
   };
 
   const updateStandThresholds = (newValue: StandThresholds) => {
