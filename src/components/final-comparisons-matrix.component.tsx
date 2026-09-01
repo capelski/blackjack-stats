@@ -24,21 +24,16 @@ const getCellProps = (isHeader: boolean): CSSProperties => {
   return cellStyle;
 };
 
-/** Number of columns displayed before the dealer scores */
-const getPlayerColumnsNumber = (mode: MatrixMode, showBetMultiplier: boolean): number => {
-  return 1 + (mode === probability && showBetMultiplier ? 1 : 0);
-};
-
 const getColumnsNumber = (
   mode: MatrixMode,
   dealerScoresCount: number,
-  showBetMultiplier: boolean,
-): number => {
-  return (
-    getPlayerColumnsNumber(mode, showBetMultiplier) +
-    dealerScoresCount +
-    (mode === probability ? 1 : 0)
-  );
+  displayBetMultiplier: boolean,
+): { dealerColumns: number; playerColumns: number; totalColumns: number } => {
+  const playerColumns = 1 + +displayBetMultiplier;
+  const totalColumns = playerColumns + dealerScoresCount + (mode === probability ? 1 : 0);
+  const dealerColumns = totalColumns - playerColumns;
+
+  return { dealerColumns, playerColumns, totalColumns };
 };
 
 /** The result of a comparison doesn't depend on the bet multiplier;
@@ -54,6 +49,8 @@ const getApplicableScores = (mode: MatrixMode, finalScores: FinalScore[]): Final
 
 type FinalComparisonsMatrixRowProps = {
   betMultiplier: string;
+  columnsNumber: number;
+  displayBetMultiplier: boolean;
   dealerScores: FinalScoreBase[];
   dealerScoreToCell: (dealerScore: FinalScoreBase) => {
     node: React.ReactNode;
@@ -67,24 +64,18 @@ type FinalComparisonsMatrixRowProps = {
 };
 
 const FinalComparisonsMatrixRow: React.FC<FinalComparisonsMatrixRowProps> = (props) => {
-  const { showBetMultiplier } = useStrategyContext();
   const cellStyle: CSSProperties = getCellProps(!!props.isHeader);
-  const displayBetMultiplier = props.mode === probability && showBetMultiplier;
 
   return (
     <tr
       style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${getColumnsNumber(
-          props.mode,
-          props.dealerScores.length,
-          showBetMultiplier,
-        )}, 1fr)`,
+        gridTemplateColumns: `repeat(${props.columnsNumber}, 1fr)`,
       }}
     >
       <td style={cellStyle}>{!props.hideScore && props.score}</td>
 
-      {displayBetMultiplier && <td style={cellStyle}>{props.betMultiplier}</td>}
+      {props.displayBetMultiplier && <td style={cellStyle}>{props.betMultiplier}</td>}
 
       {props.dealerScores.map((dealerScore) => {
         const { node, style } = props.dealerScoreToCell(dealerScore);
@@ -108,9 +99,13 @@ export const FinalComparisonsMatrix: React.FC = () => {
 
   const [mode, toggleMode] = useUrlState(matrixModeParamName, probability, modes);
 
+  const displayBetMultiplier = mode === probability && showBetMultiplier;
   const playerScores = getApplicableScores(mode, strategy.finalScores);
-  const playerColumnsNumber = getPlayerColumnsNumber(mode, showBetMultiplier);
-  const columnsNumber = getColumnsNumber(mode, strategy.dealerScores.length, showBetMultiplier);
+  const { dealerColumns, playerColumns, totalColumns } = getColumnsNumber(
+    mode,
+    strategy.dealerScores.length,
+    displayBetMultiplier,
+  );
 
   return (
     <div>
@@ -119,9 +114,7 @@ export const FinalComparisonsMatrix: React.FC = () => {
           <tr
             style={{
               display: 'grid',
-              gridTemplateColumns: `${playerColumnsNumber}fr ${
-                columnsNumber - playerColumnsNumber
-              }fr`,
+              gridTemplateColumns: `${playerColumns}fr ${dealerColumns}fr`,
             }}
           >
             <td style={getCellProps(true)}>{t('commons.player')}</td>
@@ -130,10 +123,12 @@ export const FinalComparisonsMatrix: React.FC = () => {
 
           <FinalComparisonsMatrixRow
             betMultiplier={t('commons.betMultiplier')}
+            columnsNumber={totalColumns}
             dealerScores={strategy.dealerScores}
             dealerScoreToCell={(dealerScore) => ({
               node: effectiveScoreToLabel(dealerScore.score),
             })}
+            displayBetMultiplier={displayBetMultiplier}
             isHeader={true}
             mode={mode}
             score={t('commons.score')}
@@ -150,6 +145,7 @@ export const FinalComparisonsMatrix: React.FC = () => {
             return (
               <FinalComparisonsMatrixRow
                 betMultiplier={getBetMultiplierLabel(playerScore.betMultiplier)}
+                columnsNumber={totalColumns}
                 dealerScores={strategy.dealerScores}
                 dealerScoreToCell={(dealerScore) => {
                   const finalComparison = expectedResult.finalComparisons[dealerScore.id];
@@ -170,6 +166,7 @@ export const FinalComparisonsMatrix: React.FC = () => {
                                 : '🔴',
                       };
                 }}
+                displayBetMultiplier={displayBetMultiplier}
                 hideScore={isSameAsPrevious}
                 key={playerScore.id}
                 mode={mode}
@@ -182,10 +179,12 @@ export const FinalComparisonsMatrix: React.FC = () => {
           {mode === probability && (
             <FinalComparisonsMatrixRow
               betMultiplier=""
+              columnsNumber={totalColumns}
               dealerScores={strategy.dealerScores}
               dealerScoreToCell={(dealerScore) => ({
                 node: toPercentage(dealerScore.probability, decimals),
               })}
+              displayBetMultiplier={displayBetMultiplier}
               mode={mode}
               score={t('commons.total')}
               total={toPercentage(strategy.expectedResults.probability, decimals)}
