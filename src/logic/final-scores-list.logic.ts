@@ -8,26 +8,34 @@ import {
   FinalScoresMap,
 } from '../types/final-score.type';
 import { MaterialHand } from '../types/material-hand.type';
-import { getSortedNumericKeys } from './numbers.logic';
 
-const addHandToFinalScore = (finalScore: FinalScore, hand: MaterialHand): void => {
+/** Adds the hand to the final score of its score & bet multiplier, creating it when missing */
+const addHandToFinalScores = (finalScoresMap: FinalScoresMap, hand: MaterialHand): void => {
+  const score = getHandFinalScore(hand);
+  const id = getFinalScoreId(score, hand.betMultiplier);
+
+  if (!finalScoresMap[id]) {
+    finalScoresMap[id] = createFinalScore(score, hand.betMultiplier);
+  }
+  const finalScore = finalScoresMap[id];
+
   finalScore.hands.push(hand);
   finalScore.probability += hand.probability;
-  if (!finalScore.probabilityByBetMultiplier[hand.betMultiplier]) {
-    finalScore.probabilityByBetMultiplier[hand.betMultiplier] = 0;
-  }
-  finalScore.probabilityByBetMultiplier[hand.betMultiplier] += hand.probability;
 };
+
+export const getFinalScoreId = (score: number, betMultiplier: number): string =>
+  `${score}-${betMultiplier}`;
 
 /** Surrendered hands are grouped apart from the hands that stand on the same score */
 const getHandFinalScore = (hand: MaterialHand): number =>
   hand.action === surrender ? surrenderScore : hand.effectiveScore;
 
-const createFinalScore = (effectiveScore: number): FinalScore => ({
+const createFinalScore = (score: number, betMultiplier: number): FinalScore => ({
+  betMultiplier,
   hands: [],
+  id: getFinalScoreId(score, betMultiplier),
   probability: 0,
-  probabilityByBetMultiplier: {},
-  score: effectiveScore,
+  score,
 });
 
 const createFinalScoresGroup = (): FinalScoresGroup => {
@@ -45,14 +53,7 @@ export const getFinalScoresList = (hands: MaterialHand[]): FinalScore[] => {
       continue;
     }
 
-    const score = getHandFinalScore(hand);
-
-    if (!finalScoresMap[score]) {
-      finalScoresMap[score] = createFinalScore(score);
-    }
-    const finalScore = finalScoresMap[score];
-
-    addHandToFinalScore(finalScore, hand);
+    addHandToFinalScores(finalScoresMap, hand);
   }
 
   return getSortedFinalScores(finalScoresMap);
@@ -77,14 +78,7 @@ export const getFinalScoresByFirstCard = (hands: MaterialHand[]): FinalScoresByF
     const finalScoresGroup = finalScoresByFirstCard[applicableSymbol];
     finalScoresGroup.probability += hand.probability;
 
-    const score = getHandFinalScore(hand);
-
-    if (!finalScoresGroup.finalScores[score]) {
-      finalScoresGroup.finalScores[score] = createFinalScore(score);
-    }
-    const finalScoreEntry = finalScoresGroup.finalScores[score];
-
-    addHandToFinalScore(finalScoreEntry, hand);
+    addHandToFinalScores(finalScoresGroup.finalScores, hand);
   }
 
   for (const finalScoresGroup of Object.values(finalScoresByFirstCard)) {
@@ -110,6 +104,7 @@ export const getFinalScoresTotals = (
 };
 
 export const getSortedFinalScores = (finalScoresMap: FinalScoresMap): FinalScore[] => {
-  const sortedKeys = getSortedNumericKeys(finalScoresMap);
-  return sortedKeys.map(key => finalScoresMap[key]);
+  return Object.values(finalScoresMap).sort(
+    (a, b) => a.score - b.score || a.betMultiplier - b.betMultiplier,
+  );
 };

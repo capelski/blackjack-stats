@@ -1,7 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
-import { getSortedNumericKeys } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { lose, push, surrender, win } from '../models/result.model';
 import { useStrategyContext } from '../strategy.context';
@@ -100,11 +99,11 @@ export const FinalComparisonsGrouped: React.FC = () => {
       </thead>
 
       <tbody>
-        {getSortedNumericKeys(strategy.expectedResults.breakdown).map((playerScore) => {
+        {strategy.finalScores.map((playerScore) => {
           return (
             <FinalComparisonsGroupedRow
-              key={playerScore}
-              expectedResult={strategy.expectedResults.breakdown[playerScore]}
+              key={playerScore.id}
+              expectedResult={strategy.expectedResults.breakdown[playerScore.id]}
               isSurrenderingEnabled={surrenderingEnabled}
             />
           );

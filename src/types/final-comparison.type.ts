@@ -7,5 +7,5 @@ export type FinalComparison = {
 };
 
 export type FinalComparisonsMap = {
-  [dealerScore: number]: FinalComparison;
+  [dealerScoreId: string]: FinalComparison;
 };

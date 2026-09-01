@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { scoresToLabel } from '../logic/labels.logic';
 import { serializeCards } from '../logic/material-hands.logic';
-import { toDecimal, toPercentage } from '../logic/numbers.logic';
+import { toPercentage } from '../logic/numbers.logic';
 import { cardsFilterParamName, useSearchParamsUtils } from '../search-params-utils';
 import { useSettingsContext } from '../settings.context';
 import { MaterialHand } from '../types/material-hand.type';
@@ -175,7 +175,7 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = (prop
               {...props}
               key={`${currentPage}-${index}-${hand.label}`}
               action={hand.action}
-              betMultiplier={toDecimal(hand.betMultiplier, decimals)}
+              betMultiplier={hand.betMultiplier}
               cards={serializeCards(hand, ', ')}
               probability={toPercentage(hand.probability, decimals)}
               score={scoresToLabel(hand.scores)}

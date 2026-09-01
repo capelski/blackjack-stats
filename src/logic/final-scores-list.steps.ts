@@ -3,7 +3,11 @@ import assert from 'node:assert';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore, FinalScoresByFirstCard } from '../types/final-score.type';
 import { Rules } from '../types/rules.type';
-import { getFinalScoresByFirstCard, getFinalScoresList } from './final-scores-list.logic';
+import {
+  getFinalScoreId,
+  getFinalScoresByFirstCard,
+  getFinalScoresList,
+} from './final-scores-list.logic';
 import { effectiveScoreToLabel, labelToEffectiveScore } from './labels.logic';
 import {
   getMaterialHandsForOptimalActions,
@@ -15,7 +19,29 @@ type FinalScoresListWorld = RulesWorld & {
   list: FinalScore[];
   map: FinalScoresByFirstCard;
   currentFinalScore: FinalScore;
-  probabilityByBetMultiplier: BetMultiplierMap;
+};
+
+/** Finds a single final score by its score label, optionally narrowed by its bet multiplier */
+export const findFinalScore = (
+  finalScores: FinalScore[],
+  scoreLabel: string,
+  betMultiplier?: number,
+): FinalScore => {
+  const score = labelToEffectiveScore(scoreLabel);
+  const matches = finalScores.filter(
+    item =>
+      item.score === score && (betMultiplier === undefined || item.betMultiplier === betMultiplier),
+  );
+
+  if (matches.length !== 1) {
+    throw new Error(
+      `Expected a single final score for label "${scoreLabel}"${
+        betMultiplier === undefined ? '' : ` and bet multiplier ${betMultiplier}`
+      }, got ${matches.length}`,
+    );
+  }
+
+  return matches[0];
 };
 
 export const getFinalScoresListForStandThreshold = (rules: Rules, threshold: number) => {
@@ -42,35 +68,25 @@ export const formatProbabilityByBetMultiplier = (values: BetMultiplierMap): stri
 };
 
 When(
-  'getting the final score {string} of a hand resolver with a stand threshold of {int}',
-  function(this: FinalScoresListWorld, scoreLabel: string, threshold: number) {
-    const hands = getMaterialHandsForStandThreshold(this.rules, threshold);
-    this.list = getFinalScoresList(hands);
-    const score = labelToEffectiveScore(scoreLabel);
-    const finalScore = this.list.find(item => item.score === score);
-
-    if (!finalScore) {
-      throw new Error(`Could not find final score for label "${scoreLabel}"`);
-    }
-
-    this.currentFinalScore = finalScore;
+  'getting the final score {string} with bet multiplier {float} of a hand resolver with a stand threshold of {int}',
+  function(
+    this: FinalScoresListWorld,
+    scoreLabel: string,
+    betMultiplier: number,
+    threshold: number,
+  ) {
+    this.list = getFinalScoresListForStandThreshold(this.rules, threshold);
+    this.currentFinalScore = findFinalScore(this.list, scoreLabel, betMultiplier);
   },
 );
 
-When('getting the final score {string} of a hand resolver for optimal actions', function(
-  this: FinalScoresListWorld,
-  scoreLabel: string,
-) {
-  this.list = getFinalScoresListForOptimalActions(this.rules);
-  const score = labelToEffectiveScore(scoreLabel);
-  const finalScore = this.list.find(item => item.score === score);
-
-  if (!finalScore) {
-    throw new Error(`Could not find final score for label "${scoreLabel}"`);
-  }
-
-  this.currentFinalScore = finalScore;
-});
+When(
+  'getting the final score {string} with bet multiplier {float} of a hand resolver for optimal actions',
+  function(this: FinalScoresListWorld, scoreLabel: string, betMultiplier: number) {
+    this.list = getFinalScoresListForOptimalActions(this.rules);
+    this.currentFinalScore = findFinalScore(this.list, scoreLabel, betMultiplier);
+  },
+);
 
 When('getting the final scores list of a hand resolver with a stand threshold of {int}', function(
   this: FinalScoresListWorld,
@@ -106,33 +122,25 @@ Then('the returned final scores list contains {int} elements', function(
   assert.strictEqual(this.list.length, count);
 });
 
-Then('the final score {int} has score {string}, probability {string} and {string} hands', function(
-  this: FinalScoresListWorld,
-  index: number,
-  expectedScore: string,
-  expectedProbability: string,
-  expectedHands: string,
-) {
-  const item = this.list[index - 1];
+Then(
+  'the final score {int} has score {string}, bet multiplier {float}, probability {string} and {string} hands',
+  function(
+    this: FinalScoresListWorld,
+    index: number,
+    expectedScore: string,
+    expectedBetMultiplier: number,
+    expectedProbability: string,
+    expectedHands: string,
+  ) {
+    const item = this.list[index - 1];
 
-  assert.strictEqual(effectiveScoreToLabel(item.score), expectedScore);
-  assert.strictEqual(String(item.probability), expectedProbability);
-  assert.strictEqual(String(item.hands.length), expectedHands);
-});
-
-Then('the final score {int} has cards {string}, probability {string} and {string} hands', function(
-  this: FinalScoresListWorld,
-  index: number,
-  expectedScore: string,
-  expectedProbability: string,
-  expectedHands: string,
-) {
-  const item = this.list[index - 1];
-
-  assert.strictEqual(effectiveScoreToLabel(item.score), expectedScore);
-  assert.strictEqual(String(item.probability), expectedProbability);
-  assert.strictEqual(String(item.hands.length), expectedHands);
-});
+    assert.strictEqual(effectiveScoreToLabel(item.score), expectedScore);
+    assert.strictEqual(item.betMultiplier, expectedBetMultiplier);
+    assert.strictEqual(String(item.probability), expectedProbability);
+    assert.strictEqual(String(item.hands.length), expectedHands);
+    assert.strictEqual(item.id, getFinalScoreId(item.score, item.betMultiplier));
+  },
+);
 
 Then('the returned final scores map contains {int} elements', function(
   this: FinalScoresListWorld,
@@ -156,10 +164,11 @@ Then('the final scores group {string} has an accumulated probability of {string}
 });
 
 Then(
-  'the final score {string} of the final scores group {string} has probability {string} and {string} hands',
+  'the final score {string} with bet multiplier {float} of the final scores group {string} has probability {string} and {string} hands',
   function(
     this: FinalScoresListWorld,
     scoreLabel: string,
+    betMultiplier: number,
     cardSymbol: string,
     expectedProbability: string,
     expectedHands: string,
@@ -170,11 +179,12 @@ Then(
       throw new Error(`Could not find final scores group for card "${cardSymbol}"`);
     }
 
-    const finalScore = finalScoresGroup.finalScores[labelToEffectiveScore(scoreLabel)];
+    const finalScoreId = getFinalScoreId(labelToEffectiveScore(scoreLabel), betMultiplier);
+    const finalScore = finalScoresGroup.finalScores[finalScoreId];
 
     if (!finalScore) {
       throw new Error(
-        `Could not find final score for label "${scoreLabel}" in the final scores group "${cardSymbol}"`,
+        `Could not find final score "${finalScoreId}" in the final scores group "${cardSymbol}"`,
       );
     }
 
@@ -183,12 +193,9 @@ Then(
   },
 );
 
-Then('the final score probabilities by bet multiplier are {string}', function(
+Then('the final score probability is {string}', function(
   this: FinalScoresListWorld,
-  expected: string,
+  expectedProbability: string,
 ) {
-  assert.strictEqual(
-    formatProbabilityByBetMultiplier(this.currentFinalScore.probabilityByBetMultiplier),
-    expected,
-  );
+  assert.strictEqual(String(this.currentFinalScore.probability), expectedProbability);
 });

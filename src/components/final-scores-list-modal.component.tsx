@@ -2,19 +2,19 @@ import { useTranslation } from 'react-i18next';
 import { modalParamName, useSearchParamsUtils } from '../search-params-utils';
 import { MaterialHand } from '../types/material-hand.type';
 import { MaterialHandsListCore } from './material-hands-list-core.component';
-import { HandsListProps } from './material-hands-list-item.component';
 import { BaseModal } from './modal.component';
 
-type FinalScoresListModalProps = Pick<HandsListProps, 'showBetMultiplier'> & {
+type FinalScoresListModalProps = {
+  finalScoreId: string;
   hands: MaterialHand[];
   score: string;
 };
 
-export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props => {
+export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = (props) => {
   const { t } = useTranslation();
   const { setParameter } = useSearchParamsUtils();
 
-  const modalId = props.score;
+  const modalId = props.finalScoreId;
 
   const openModal = () => {
     setParameter(modalParamName, modalId);
@@ -26,12 +26,7 @@ export const FinalScoresListModal: React.FC<FinalScoresListModalProps> = props =
 
       <BaseModal id={modalId}>
         <h3>{props.score}</h3>
-        <MaterialHandsListCore
-          hands={props.hands}
-          hideAction={true}
-          hideScore={true}
-          showBetMultiplier={props.showBetMultiplier}
-        />
+        <MaterialHandsListCore hands={props.hands} hideAction={true} hideScore={true} />
       </BaseModal>
     </span>
   );

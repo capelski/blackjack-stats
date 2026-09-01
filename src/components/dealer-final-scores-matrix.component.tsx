@@ -44,7 +44,6 @@ export const DealerFinalScoresMatrix: React.FC = () => {
   const { t } = useTranslation();
   const { useUrlState } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
-  const sortedDealerFinalScores = dealerFinalScores.map(finalScore => finalScore.score);
 
   const [mode, toggleMode] = useUrlState(dealerCardModeParamName, relativeProbability, modes);
 
@@ -63,14 +62,12 @@ export const DealerFinalScoresMatrix: React.FC = () => {
         </thead>
 
         <tbody>
-          {sortedDealerFinalScores.map(dealerFinalScoreKey => (
-            <tr key={dealerFinalScoreKey} style={rowStyle}>
-              <td style={getCellStyle(true)}>
-                {effectiveScoreToLabel(Number(dealerFinalScoreKey))}
-              </td>
+          {dealerFinalScores.map(dealerFinalScore => (
+            <tr key={dealerFinalScore.id} style={rowStyle}>
+              <td style={getCellStyle(true)}>{effectiveScoreToLabel(dealerFinalScore.score)}</td>
               {sortedCardSymbols.map(cardSymbol => {
                 const finalScoresGroup = dealerFinalScoresByFirstCard[cardSymbol];
-                const finalScore = finalScoresGroup.finalScores[dealerFinalScoreKey];
+                const finalScore = finalScoresGroup.finalScores[dealerFinalScore.id];
 
                 return (
                   <td key={cardSymbol} style={getCellStyle(false)}>

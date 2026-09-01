@@ -90,7 +90,6 @@ export const ca = {
     numberOfFinalScores: 'Nombre de puntuacions finals',
     hands: 'Mans',
     viewAll: 'Veure totes',
-    combinations: 'Combinacions',
   },
   materialHandsList: {
     cardsFilter: 'Filtre de cartes',

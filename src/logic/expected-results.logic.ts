@@ -22,7 +22,8 @@ export const getExpectedResult = (
 
   const expectedResult: ExpectedResult = {
     finalComparisons,
-    probabilityByBetMultiplier: playerScore.probabilityByBetMultiplier,
+    id: playerScore.id,
+    probabilityByBetMultiplier: { [playerScore.betMultiplier]: playerScore.probability },
     outcomesByBetMultiplier,
     edge: getEdge(outcomesByBetMultiplier),
     score: playerScore.score,
@@ -43,7 +44,7 @@ export const getExpectedResults = (
     probability += playerScore.probability;
 
     const expectedResult = getExpectedResult(playerScore, dealerScores);
-    breakdown[playerScore.score] = expectedResult;
+    breakdown[playerScore.id] = expectedResult;
 
     increaseOutcomesByBetMultiplier(
       outcomesByBetMultiplier,

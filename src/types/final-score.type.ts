@@ -1,9 +1,10 @@
-import { BetMultiplierMap } from './bet-multiplier.type';
 import { MaterialHand } from './material-hand.type';
 
 export type FinalScoreBase = {
+  betMultiplier: number;
+  /** Identifies the score & bet multiplier combination of the final score */
+  id: string;
   probability: number;
-  probabilityByBetMultiplier: BetMultiplierMap;
   score: number;
 };
 
@@ -12,7 +13,7 @@ export type FinalScore = FinalScoreBase & {
 };
 
 export type FinalScoresMap = {
-  [score: number]: FinalScore;
+  [finalScoreId: string]: FinalScore;
 };
 
 export type FinalScoresGroup = {

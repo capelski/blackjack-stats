@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
-import { getSortedNumericKeys, toPercentage } from '../logic/numbers.logic';
+import { toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { push, surrender, win } from '../models/result.model';
 import { matrixModeParamName, useSearchParamsUtils } from '../search-params-utils';
@@ -57,7 +57,7 @@ const FinalComparisonsMatrixRow: React.FC<FinalComparisonsMatrixRowProps> = (pro
       {props.dealerScores.map((dealerScore) => {
         const { node, style } = props.dealerScoreToCell(dealerScore);
         return (
-          <td style={{ ...cellStyle, ...style }} key={dealerScore.score}>
+          <td style={{ ...cellStyle, ...style }} key={dealerScore.id}>
             {node}
           </td>
         );
@@ -104,16 +104,16 @@ export const FinalComparisonsMatrix: React.FC = () => {
         </thead>
 
         <tbody>
-          {getSortedNumericKeys(strategy.expectedResults.breakdown).map((playerScore) => {
-            const expectedResult = strategy.expectedResults.breakdown[playerScore];
+          {strategy.finalScores.map((playerScore) => {
+            const expectedResult = strategy.expectedResults.breakdown[playerScore.id];
 
             return (
               <FinalComparisonsMatrixRow
                 dealerScores={strategy.dealerScores}
-                key={playerScore}
-                firstCell={effectiveScoreToLabel(playerScore)}
+                key={playerScore.id}
+                firstCell={effectiveScoreToLabel(playerScore.score)}
                 dealerScoreToCell={(dealerScore) => {
-                  const finalComparison = expectedResult.finalComparisons[dealerScore.score];
+                  const finalComparison = expectedResult.finalComparisons[dealerScore.id];
 
                   return mode === probability
                     ? {

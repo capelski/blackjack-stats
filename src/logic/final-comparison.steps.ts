@@ -7,11 +7,11 @@ import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
 import {
+  findFinalScore,
   formatProbabilityByBetMultiplier,
   getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
-import { labelToEffectiveScore } from './labels.logic';
 import { RulesWorld } from './rules.steps';
 
 type FinalComparisonWorld = RulesWorld & {
@@ -23,17 +23,6 @@ const assertEqual = (actual: unknown, expected: unknown, message: string): void 
   if (actual !== expected) {
     throw new Error(`${message}: expected "${expected}", got "${actual}"`);
   }
-};
-
-const findFinalScore = (finalScores: FinalScore[], scoreLabel: string): FinalScore => {
-  const score = labelToEffectiveScore(scoreLabel);
-  const finalScore = finalScores.find(item => item.score === score);
-
-  if (!finalScore) {
-    throw new Error(`Could not find final score for label "${scoreLabel}"`);
-  }
-
-  return finalScore!;
 };
 
 const formattedOutcomeResults: (keyof OutcomesByBetMultiplierMap)[] = [win, push, lose, surrender];
@@ -91,9 +80,14 @@ Given('a player hand resolver for optimal actions that surrenders {string} hands
 });
 
 When(
-  'getting the final comparison of a player score of {string} and a dealer score of {string}',
-  function(this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
-    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel);
+  'getting the final comparison of a player score of {string} with bet multiplier {float} and a dealer score of {string}',
+  function(
+    this: FinalComparisonWorld,
+    playerScoreLabel: string,
+    betMultiplier: number,
+    dealerScoreLabel: string,
+  ) {
+    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, betMultiplier);
     const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
 
     this.comparison = getFinalComparison(playerScore, dealerScore);

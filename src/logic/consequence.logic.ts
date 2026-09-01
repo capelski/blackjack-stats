@@ -10,6 +10,7 @@ import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
+import { getFinalScoreId } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
 import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
 
@@ -74,11 +75,10 @@ export const getStandConsequence = (
   });
 
   const finalScore: FinalScoreBase = {
-    score: abstractHand.effectiveScore,
+    betMultiplier,
+    id: getFinalScoreId(abstractHand.effectiveScore, betMultiplier),
     probability: 1,
-    probabilityByBetMultiplier: {
-      [betMultiplier]: 1,
-    },
+    score: abstractHand.effectiveScore,
   };
 
   const expectedResult = getExpectedResult(finalScore, dealerScores);
