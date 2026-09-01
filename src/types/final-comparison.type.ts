@@ -1,8 +1,8 @@
 import { Result } from '../models/result.model';
-import { BetMultiplierMap } from './bet-multiplier.type';
 
 export type FinalComparison = {
-  probabilityByBetMultiplier: BetMultiplierMap;
+  betMultiplier: number;
+  probability: number;
   result: Result;
 };
 

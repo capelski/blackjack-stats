@@ -1,27 +1,38 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
+import { toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
-import { lose, push, surrender, win } from '../models/result.model';
+import { lose, push, Result, surrender, win } from '../models/result.model';
+import { useSettingsContext } from '../settings.context';
 import { useStrategyContext } from '../strategy.context';
 import { ExpectedResult } from '../types/expected-result.type';
-import { BetMultipliersCell } from './bet-multipliers-cell.component';
+
+/** Probabilities that can't occur are displayed as a dash */
+const toCellValue = (probability: number, decimals: number): string =>
+  probability > 0 ? toPercentage(probability, decimals) : '-';
 
 type FinalComparisonsGroupedRowProps = {
   isSurrenderingEnabled: boolean;
 } & (
   | {
+      betMultiplier?: undefined;
       expectedResult?: undefined;
       isHeader: true;
     }
   | {
+      betMultiplier: number;
       expectedResult: ExpectedResult;
+      hideScore?: boolean;
       isHeader?: false;
     }
 );
 
 const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (props) => {
   const { t } = useTranslation();
+  const { decimals } = useSettingsContext();
+  const { showBetMultiplier } = useStrategyContext();
 
   const cellStyle: CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : undefined,
@@ -29,59 +40,62 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
     textAlign: 'center',
   };
 
+  const getOutcomeCell = (outcomeResult: Result): React.ReactNode =>
+    props.expectedResult
+      ? toCellValue(
+          props.expectedResult.outcomesByBetMultiplier[outcomeResult][props.betMultiplier] ?? 0,
+          decimals,
+        )
+      : t(`commons.${outcomeResult}`);
+
   return (
     <tr
       style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${5 + (props.isSurrenderingEnabled ? 1 : 0)}, 1fr)`,
+        gridTemplateColumns: `repeat(${
+          (showBetMultiplier ? 6 : 5) + (props.isSurrenderingEnabled ? 1 : 0)
+        }, 1fr)`,
       }}
     >
       <td style={cellStyle}>
         {props.expectedResult
-          ? effectiveScoreToLabel(props.expectedResult.score)
+          ? !props.hideScore && effectiveScoreToLabel(props.expectedResult.score)
           : t('commons.score')}
       </td>
 
+      {showBetMultiplier && (
+        <td style={cellStyle}>
+          {props.expectedResult
+            ? getBetMultiplierLabel(props.betMultiplier)
+            : t('commons.betMultiplier')}
+        </td>
+      )}
+
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(win)) }}>
-        {props.expectedResult ? (
-          <BetMultipliersCell map={props.expectedResult.outcomesByBetMultiplier.win} />
-        ) : (
-          t('commons.win')
-        )}
+        {getOutcomeCell(win)}
       </td>
 
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(push)) }}>
-        {props.expectedResult ? (
-          <BetMultipliersCell map={props.expectedResult.outcomesByBetMultiplier.push} />
-        ) : (
-          t('commons.push')
-        )}
+        {getOutcomeCell(push)}
       </td>
 
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(lose)) }}>
-        {props.expectedResult ? (
-          <BetMultipliersCell map={props.expectedResult.outcomesByBetMultiplier.lose} />
-        ) : (
-          t('commons.lose')
-        )}
+        {getOutcomeCell(lose)}
       </td>
 
       {props.isSurrenderingEnabled && (
         <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(surrender)) }}>
-          {props.expectedResult ? (
-            <BetMultipliersCell map={props.expectedResult.outcomesByBetMultiplier.surrender} />
-          ) : (
-            t('commons.surrender')
-          )}
+          {getOutcomeCell(surrender)}
         </td>
       )}
 
       <td style={cellStyle}>
-        {props.expectedResult ? (
-          <BetMultipliersCell map={props.expectedResult.probabilityByBetMultiplier} />
-        ) : (
-          t('commons.total')
-        )}
+        {props.expectedResult
+          ? toCellValue(
+              props.expectedResult.probabilityByBetMultiplier[props.betMultiplier] ?? 0,
+              decimals,
+            )
+          : t('commons.total')}
       </td>
     </tr>
   );
@@ -99,12 +113,17 @@ export const FinalComparisonsGrouped: React.FC = () => {
       </thead>
 
       <tbody>
-        {strategy.finalScores.map((playerScore) => {
+        {strategy.finalScores.map((playerScore, index) => {
+          const isSameAsPrevious =
+            index > 0 && strategy.finalScores[index - 1].score === playerScore.score;
+
           return (
             <FinalComparisonsGroupedRow
-              key={playerScore.id}
+              betMultiplier={playerScore.betMultiplier}
               expectedResult={strategy.expectedResults.breakdown[playerScore.id]}
               isSurrenderingEnabled={surrenderingEnabled}
+              hideScore={isSameAsPrevious}
+              key={playerScore.id}
             />
           );
         })}

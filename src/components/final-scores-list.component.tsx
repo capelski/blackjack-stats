@@ -41,7 +41,7 @@ export const FinalScoresList: React.FC = () => {
               .join(' / ');
             const combinations =
               finalScore.hands.length > sliceLimit ? `${sampleHands}...` : sampleHands;
-            const isSameFinalScore =
+            const isSameAsPrevious =
               index > 0 && strategy.finalScores[index - 1].score === finalScore.score;
 
             return (
@@ -50,7 +50,7 @@ export const FinalScoresList: React.FC = () => {
                 combinations={combinations}
                 finalScoreId={finalScore.id}
                 hands={finalScore.hands}
-                hideScore={isSameFinalScore}
+                hideScore={isSameAsPrevious}
                 key={finalScore.id}
                 probability={toPercentage(finalScore.probability, decimals)}
                 score={effectiveScoreToLabel(finalScore.score)}

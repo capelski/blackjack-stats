@@ -9,9 +9,8 @@ export const getFinalComparison = (
   const result = getResult(playerScore.score, dealerScore.score);
 
   const finalComparison: FinalComparison = {
-    probabilityByBetMultiplier: {
-      [playerScore.betMultiplier]: playerScore.probability * dealerScore.probability,
-    },
+    betMultiplier: playerScore.betMultiplier,
+    probability: playerScore.probability * dealerScore.probability,
     result,
   };
 

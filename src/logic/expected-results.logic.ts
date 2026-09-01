@@ -14,7 +14,7 @@ export const getExpectedResult = (
 
   for (const finalComparison of Object.values(finalComparisons)) {
     const comparisonOutcomes = createOutcomesByBetMultiplier(
-      finalComparison.probabilityByBetMultiplier,
+      { [finalComparison.betMultiplier]: finalComparison.probability },
       finalComparison.result,
     );
     increaseOutcomesByBetMultiplier(outcomesByBetMultiplier, comparisonOutcomes);
