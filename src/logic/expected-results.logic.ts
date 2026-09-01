@@ -1,8 +1,13 @@
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
 import { FinalScore } from '../types/final-score.type';
-import { getEdge } from './edge.logic';
+import { getEdge, getOutcomesEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
-import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
+import {
+  createOutcomes,
+  createOutcomesByBetMultiplier,
+  increaseOutcomesByBetMultiplier,
+  toOutcomesByBetMultiplier,
+} from './outcomes.logic';
 
 export const getExpectedResult = (
   playerScore: FinalScore,
@@ -10,22 +15,18 @@ export const getExpectedResult = (
 ): ExpectedResult => {
   const finalComparisons = getFinalComparisons(playerScore, dealerScores);
 
-  const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});
+  const outcomes = createOutcomes();
 
   for (const finalComparison of Object.values(finalComparisons)) {
-    const comparisonOutcomes = createOutcomesByBetMultiplier(
-      { [finalComparison.betMultiplier]: finalComparison.probability },
-      finalComparison.result,
-    );
-    increaseOutcomesByBetMultiplier(outcomesByBetMultiplier, comparisonOutcomes);
+    outcomes[finalComparison.result] += finalComparison.probability;
   }
 
   const expectedResult: ExpectedResult = {
+    betMultiplier: playerScore.betMultiplier,
+    edge: getOutcomesEdge(outcomes, playerScore.betMultiplier),
     finalComparisons,
-    id: playerScore.id,
-    probabilityByBetMultiplier: { [playerScore.betMultiplier]: playerScore.probability },
-    outcomesByBetMultiplier,
-    edge: getEdge(outcomesByBetMultiplier),
+    outcomes,
+    probability: playerScore.probability,
     score: playerScore.score,
   };
 
@@ -48,7 +49,7 @@ export const getExpectedResults = (
 
     increaseOutcomesByBetMultiplier(
       outcomesByBetMultiplier,
-      expectedResult.outcomesByBetMultiplier,
+      toOutcomesByBetMultiplier(expectedResult.outcomes, expectedResult.betMultiplier),
     );
   }
 

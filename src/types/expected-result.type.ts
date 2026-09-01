@@ -1,15 +1,13 @@
-import { BetMultiplierMap } from './bet-multiplier.type';
 import { FinalComparisonsMap } from './final-comparison.type';
-import { OutcomesByBetMultiplierMap } from './outcomes.type';
+import { Outcomes, OutcomesByBetMultiplierMap } from './outcomes.type';
 
 export type ExpectedResult = {
-  /** Identifies the final score the expected result belongs to */
-  id: string;
-  score: number;
-  finalComparisons: FinalComparisonsMap;
-  probabilityByBetMultiplier: BetMultiplierMap;
-  outcomesByBetMultiplier: OutcomesByBetMultiplierMap;
+  betMultiplier: number;
   edge: number;
+  finalComparisons: FinalComparisonsMap;
+  outcomes: Outcomes;
+  probability: number;
+  score: number;
 };
 
 export type ExpectedResultsMap = {

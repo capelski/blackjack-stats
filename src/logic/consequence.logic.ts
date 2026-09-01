@@ -12,7 +12,11 @@ import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
-import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
+import {
+  createOutcomesByBetMultiplier,
+  increaseOutcomesByBetMultiplier,
+  toOutcomesByBetMultiplier,
+} from './outcomes.logic';
 
 export type FutureHandsConsequenceParameters = [
   AbstractHand,
@@ -82,7 +86,10 @@ export const getStandConsequence = (
   return {
     finalProbabilities: { [finalScore.score]: 1 },
     action: stand,
-    outcomesByBetMultiplier: expectedResult.outcomesByBetMultiplier,
+    outcomesByBetMultiplier: toOutcomesByBetMultiplier(
+      expectedResult.outcomes,
+      expectedResult.betMultiplier,
+    ),
     edge: expectedResult.edge,
   };
 };

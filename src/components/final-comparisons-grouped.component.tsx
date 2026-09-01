@@ -42,10 +42,7 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
 
   const getOutcomeCell = (outcomeResult: Result): React.ReactNode =>
     props.expectedResult
-      ? toCellValue(
-          props.expectedResult.outcomesByBetMultiplier[outcomeResult][props.betMultiplier] ?? 0,
-          decimals,
-        )
+      ? toCellValue(props.expectedResult.outcomes[outcomeResult], decimals)
       : t(`commons.${outcomeResult}`);
 
   return (
@@ -66,7 +63,7 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
       {showBetMultiplier && (
         <td style={cellStyle}>
           {props.expectedResult
-            ? getBetMultiplierLabel(props.betMultiplier)
+            ? getBetMultiplierLabel(props.expectedResult.betMultiplier)
             : t('commons.betMultiplier')}
         </td>
       )}
@@ -91,10 +88,7 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
 
       <td style={cellStyle}>
         {props.expectedResult
-          ? toCellValue(
-              props.expectedResult.probabilityByBetMultiplier[props.betMultiplier] ?? 0,
-              decimals,
-            )
+          ? toCellValue(props.expectedResult.probability, decimals)
           : t('commons.total')}
       </td>
     </tr>
