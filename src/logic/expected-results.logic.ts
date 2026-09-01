@@ -1,12 +1,12 @@
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
-import { FinalScore, FinalScoreBase } from '../types/final-score.type';
+import { FinalScore } from '../types/final-score.type';
 import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
 import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
 
 export const getExpectedResult = (
-  playerScore: FinalScoreBase,
-  dealerScores: FinalScoreBase[],
+  playerScore: FinalScore,
+  dealerScores: FinalScore[],
 ): ExpectedResult => {
   const finalComparisons = getFinalComparisons(playerScore, dealerScores);
 
@@ -34,7 +34,7 @@ export const getExpectedResult = (
 
 export const getExpectedResults = (
   playerScores: FinalScore[],
-  dealerScores: FinalScoreBase[],
+  dealerScores: FinalScore[],
 ): ExpectedResults => {
   const breakdown: ExpectedResultsMap = {};
   const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});

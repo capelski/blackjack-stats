@@ -1,15 +1,12 @@
 import { MaterialHand } from './material-hand.type';
 
-export type FinalScoreBase = {
+export type FinalScore = {
   betMultiplier: number;
+  hands: MaterialHand[];
   /** Identifies the score & bet multiplier combination of the final score */
   id: string;
   probability: number;
   score: number;
-};
-
-export type FinalScore = FinalScoreBase & {
-  hands: MaterialHand[];
 };
 
 export type FinalScoresMap = {

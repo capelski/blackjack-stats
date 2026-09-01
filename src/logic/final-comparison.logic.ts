@@ -1,10 +1,10 @@
 import { FinalComparison, FinalComparisonsMap } from '../types/final-comparison.type';
-import { FinalScoreBase } from '../types/final-score.type';
+import { FinalScore } from '../types/final-score.type';
 import { getResult } from './result.logic';
 
 export const getFinalComparison = (
-  playerScore: FinalScoreBase,
-  dealerScore: FinalScoreBase,
+  playerScore: FinalScore,
+  dealerScore: FinalScore,
 ): FinalComparison => {
   const result = getResult(playerScore.score, dealerScore.score);
 
@@ -18,8 +18,8 @@ export const getFinalComparison = (
 };
 
 export const getFinalComparisons = (
-  playerScore: FinalScoreBase,
-  dealerScores: FinalScoreBase[],
+  playerScore: FinalScore,
+  dealerScores: FinalScore[],
 ): FinalComparisonsMap => {
   const finalComparisonsMap: FinalComparisonsMap = {};
 

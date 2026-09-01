@@ -30,7 +30,7 @@ export const getFinalScoreId = (score: number, betMultiplier: number): string =>
 const getHandFinalScore = (hand: MaterialHand): number =>
   hand.action === surrender ? surrenderScore : hand.effectiveScore;
 
-const createFinalScore = (score: number, betMultiplier: number): FinalScore => ({
+export const createFinalScore = (score: number, betMultiplier: number): FinalScore => ({
   betMultiplier,
   hands: [],
   id: getFinalScoreId(score, betMultiplier),

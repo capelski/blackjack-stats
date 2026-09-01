@@ -8,7 +8,7 @@ import {
 } from '../models/hand-category.model';
 import { acesLabel, softScoresSeparator } from '../models/labels.model';
 import { ConsequencesMap } from '../types/consequence.type';
-import { FinalScoreBase } from '../types/final-score.type';
+import { FinalScore } from '../types/final-score.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
 import { AnalyzedHand, ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
@@ -30,7 +30,7 @@ type ResolvedHandsReturnType = Pick<Strategy, 'resolvedHandsList' | 'resolvedHan
 export const getResolvedHands = (
   rules: Rules,
   handResolver: HandResolver,
-  dealerScores: FinalScoreBase[],
+  dealerScores: FinalScore[],
 ): ResolvedHandsReturnType => {
   const abstractHands = getAbstractHands(rules);
   const resolvedHandsMap: ResolvedHandsMap = {};
@@ -99,7 +99,7 @@ export const getResolvedHands = (
   };
 };
 
-export const optimalActionsHandResolver: HandResolver = hand => hand.optimalConsequence.action;
+export const optimalActionsHandResolver: HandResolver = (hand) => hand.optimalConsequence.action;
 
 const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
   return [...resolvedHands].sort((a, b) => {

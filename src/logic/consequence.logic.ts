@@ -4,13 +4,13 @@ import { surrender as surrenderResult } from '../models/result.model';
 import { blackjackScore, surrenderScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
-import { FinalScoreBase } from '../types/final-score.type';
+import { FinalScore } from '../types/final-score.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
-import { getFinalScoreId } from './final-scores-list.logic';
+import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
 import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
 
@@ -45,7 +45,7 @@ export const getHitConsequence = (
     rules,
     abstractHands,
     futureResolvedHandsMap,
-    resolvedHand => resolvedHand.action,
+    (resolvedHand) => resolvedHand.action,
   );
 
   return mergeFutureConsequences(futureConsequences, hit);
@@ -60,7 +60,7 @@ export const getSplitConsequence = (
     rules,
     abstractHands,
     futureResolvedHandsMap,
-    resolvedHand => resolvedHand.action,
+    (resolvedHand) => resolvedHand.action,
   );
 
   return mergeFutureConsequences(futureConsequences, split, 2);
@@ -68,18 +68,14 @@ export const getSplitConsequence = (
 
 export const getStandConsequence = (
   abstractHand: AbstractHand,
-  dealerScores: FinalScoreBase[],
+  dealerScores: FinalScore[],
 ): Consequence => {
   const betMultiplier = getBetMultiplier(1, {
     isBlackjack: abstractHand.effectiveScore === blackjackScore,
   });
 
-  const finalScore: FinalScoreBase = {
-    betMultiplier,
-    id: getFinalScoreId(abstractHand.effectiveScore, betMultiplier),
-    probability: 1,
-    score: abstractHand.effectiveScore,
-  };
+  const finalScore = createFinalScore(abstractHand.effectiveScore, betMultiplier);
+  finalScore.probability = 1;
 
   const expectedResult = getExpectedResult(finalScore, dealerScores);
 
@@ -133,7 +129,7 @@ const getFutureConsequences = (
   futureResolvedHandsMap: ResolvedHandsMap,
   getFutureAction: (resolvedHand: ResolvedHand) => Action,
 ): Consequence[] => {
-  const futureConsequences = cards.map(card => {
+  const futureConsequences = cards.map((card) => {
     const futureLabel = getNextHandLabel(abstractHands, rules, label, action, card)!;
     const futureResolvedHand = futureResolvedHandsMap[futureLabel];
     const futureAction = getFutureAction(futureResolvedHand);

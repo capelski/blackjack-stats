@@ -5,7 +5,7 @@ import { toPercentage } from '../logic/numbers.logic';
 import { getResult, loseColor, resultToStyles, winColor } from '../logic/result.logic';
 import { lose, Result, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
-import { FinalScoreBase } from '../types/final-score.type';
+import { FinalScore } from '../types/final-score.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 
 type ActionsBreakdownStandRowProps = {
@@ -24,7 +24,7 @@ type ActionsBreakdownStandRowProps = {
     }
 );
 
-const ActionsBreakdownStandRow: React.FC<ActionsBreakdownStandRowProps> = props => {
+const ActionsBreakdownStandRow: React.FC<ActionsBreakdownStandRowProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
 
@@ -61,7 +61,7 @@ const getEdgeContribution = (result: Result, dealerProbability: number): number 
 };
 
 type ActionsBreakdownStandProps = {
-  dealerScores: FinalScoreBase[];
+  dealerScores: FinalScore[];
   resolvedHand: ResolvedHand;
 };
 
@@ -94,7 +94,7 @@ export const ActionsBreakdownStand: React.FC<ActionsBreakdownStandProps> = ({
       </thead>
 
       <tbody>
-        {dealerScores.map(dealerScore => {
+        {dealerScores.map((dealerScore) => {
           const result = getResult(resolvedHand.effectiveScore, dealerScore.score);
 
           return (

@@ -2,7 +2,7 @@ import {
   DecisionOverridesByFirstCard,
   DecisionOverridesMap,
 } from '../types/decision-overrides.type';
-import { FinalScoreBase, FinalScoresByFirstCard } from '../types/final-score.type';
+import { FinalScore, FinalScoresByFirstCard } from '../types/final-score.type';
 import { HandResolver } from '../types/hand-resolution.type';
 import { Rules } from '../types/rules.type';
 import { Strategy, StrategyByFirstCard, StrategyMap } from '../types/strategy.type';
@@ -17,10 +17,10 @@ import { getResolvedHands } from './resolved-hands.logic';
 export const getStrategy = async (
   rules: Rules,
   handResolver: HandResolver,
-  dealerScores: FinalScoreBase[],
+  dealerScores: FinalScore[],
   decisionOverrides: DecisionOverridesMap,
 ): Promise<Strategy> => {
-  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate async computation
+  await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate async computation
   return getStrategyCore(rules, handResolver, dealerScores, decisionOverrides);
 };
 
@@ -30,7 +30,7 @@ export const getStrategyByFirstCard = async (
   dealerScores: FinalScoresByFirstCard,
   decisionOverrides: DecisionOverridesByFirstCard,
 ): Promise<StrategyByFirstCard> => {
-  await new Promise(resolve => setTimeout(resolve, 10)); // Simulate async computation
+  await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate async computation
 
   const strategyMap: StrategyMap = {};
 
@@ -69,7 +69,7 @@ export const getStrategyByFirstCard = async (
 const getStrategyCore = (
   rules: Rules,
   handResolver: HandResolver,
-  dealerScores: FinalScoreBase[],
+  dealerScores: FinalScore[],
   decisionOverrides: DecisionOverridesMap,
 ): Strategy => {
   const { handResolutionMap, resolvedHandsList, resolvedHandsMap } = getResolvedHands(
