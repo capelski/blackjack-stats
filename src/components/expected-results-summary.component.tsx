@@ -1,9 +1,8 @@
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { blackjackMultiplier } from '../logic/bet-multiplier.logic';
+import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
 import { getSortedNumericKeys, toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
-import { blackjackLabel } from '../models/labels.model';
 import { lose, push, Result, surrender, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
 import { ExpectedResults } from '../types/expected-result.type';
@@ -86,8 +85,6 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
 
           return rows.map(({ betMultiplier, probability }, index) => {
             const signedBetMultiplier = betMultiplier * resultEdgeSign[result];
-            const betMultiplierLabel =
-              betMultiplier === blackjackMultiplier ? blackjackLabel : `${signedBetMultiplier}x`;
 
             return (
               <tr key={`${result}-${betMultiplier}`}>
@@ -96,7 +93,7 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
                     {t(`commons.${result}`)}
                   </td>
                 )}
-                <td style={resultStyle}>{betMultiplierLabel}</td>
+                <td style={resultStyle}>{getBetMultiplierLabel(signedBetMultiplier)}</td>
                 <td style={resultStyle}>{toPercentage(probability, decimals)}</td>
                 <td style={resultStyle}>
                   {signedBetMultiplier > 0 && '+'}
