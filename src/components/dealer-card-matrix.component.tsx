@@ -1,11 +1,17 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { actionsAnalysisRoute, dealerBreakdownRoute } from '../../constants';
 import { getActionableHands } from '../logic/abstract-hands.logic';
+import { labelToUrlParam } from '../logic/labels.logic';
 import { compactRows, getRowLabel, OptimalActionsRow } from '../logic/optimal-actions.logic';
 import { getEnabledActions } from '../logic/rules.logic';
 import { actionAbbreviations, actionColors } from '../models/action.model';
 import { sortedCardSymbols } from '../models/cards.model';
-import { dealerSummaryModeParamName, useSearchParamsUtils } from '../search-params-utils';
+import {
+  dealerSummaryModeParamName,
+  selectedActionParamName,
+  useSearchParamsUtils,
+} from '../search-params-utils';
 import { Rules } from '../types/rules.type';
 import { StrategyByFirstCard } from '../types/strategy.type';
 
@@ -15,6 +21,7 @@ type OptimalActionsView = typeof compactView | typeof fullView;
 const views: OptimalActionsView[] = [compactView, fullView];
 
 const getCellStyle = (isHeader: boolean): CSSProperties => ({
+  cursor: isHeader ? undefined : 'pointer',
   fontWeight: isHeader ? 'bold' : undefined,
   margin: 2,
   padding: 2,
@@ -44,7 +51,7 @@ export type DealerCardMatrixProps = {
 
 export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = (props) => {
   const { t } = useTranslation();
-  const { useUrlState } = useSearchParamsUtils();
+  const { navigateWithSearch, useUrlState } = useSearchParamsUtils();
 
   const [view, setView] = useUrlState(dealerSummaryModeParamName, fullView, views);
 
@@ -104,14 +111,23 @@ export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = (props) => {
             return (
               <tr key={label} style={rowStyle}>
                 <td style={getCellStyle(true)}>{label}</td>
-                {row.actions.map((action, index) => (
-                  <td
-                    key={sortedCardSymbols[index]}
-                    style={{ ...getCellStyle(false), ...(action ? actionColors[action] : {}) }}
-                  >
-                    {action ? actionAbbreviations[action] : '-'}
-                  </td>
-                ))}
+                {row.actions.map((action, index) => {
+                  const dealerCard = sortedCardSymbols[index];
+                  return (
+                    <td
+                      key={dealerCard}
+                      onClick={() => {
+                        navigateWithSearch(
+                          `../${dealerBreakdownRoute}/${dealerCard}/${actionsAnalysisRoute}/${labelToUrlParam(row.labels[0])}`,
+                          [[selectedActionParamName, action]],
+                        );
+                      }}
+                      style={{ ...getCellStyle(false), ...(action ? actionColors[action] : {}) }}
+                    >
+                      {action ? actionAbbreviations[action] : '-'}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}

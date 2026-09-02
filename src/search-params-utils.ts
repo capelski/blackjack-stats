@@ -22,7 +22,8 @@ export const hitSplitAcesParamName = 'hsa';
 export const blackjackAfterSplitParamName = 'bas';
 export const surrenderingParamName = 'r';
 
-export type ToggleParameterArguments = [string, string, string];
+type UrlParameterProps = [paramName: string, paramValue: string];
+type UrlParameterWithDefaultValueProps = [...UrlParameterProps, defaultValue: string];
 
 export const useSearchParamsUtils = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,7 +32,6 @@ export const useSearchParamsUtils = () => {
   const cleanSearchParams = new URLSearchParams(searchParams);
   cleanSearchParams.delete(cardsFilterParamName);
   cleanSearchParams.delete(selectedActionParamName);
-  const searchString = cleanSearchParams.toString();
 
   const deleteParameter = (paramName: string) => {
     const nextSearchParams = new URLSearchParams(searchParams);
@@ -54,11 +54,17 @@ export const useSearchParamsUtils = () => {
     return value && (!allowedValues || allowedValues.includes(value as T)) ? (value as T) : null;
   };
 
-  const navigateWithSearch = (pathname: string) => {
+  const navigateWithSearch = (pathname: string, parameters: UrlParameterProps[] = []) => {
+    const nextSearchParams = new URLSearchParams(cleanSearchParams);
+
+    for (const [paramName, paramValue] of parameters) {
+      nextSearchParams.set(paramName, paramValue);
+    }
+
     navigate(
       {
         pathname,
-        search: searchString,
+        search: nextSearchParams.toString(),
       },
       { viewTransition: true },
     );
@@ -70,20 +76,22 @@ export const useSearchParamsUtils = () => {
     setSearchParams(nextSearchParams);
   };
 
-  const toggleParameter = (...[paramName, paramValue, defaultValue]: ToggleParameterArguments) => {
+  const toggleParameter = (
+    ...[paramName, paramValue, defaultValue]: UrlParameterWithDefaultValueProps
+  ) => {
     toggleParameters([[paramName, paramValue, defaultValue]]);
   };
 
-  const toggleParameters = (parameters: ToggleParameterArguments[]) => {
+  const toggleParameters = (parameters: UrlParameterWithDefaultValueProps[]) => {
     const nextSearchParams = new URLSearchParams(searchParams);
 
-    parameters.forEach(([paramName, paramValue, defaultValue]) => {
+    for (const [paramName, paramValue, defaultValue] of parameters) {
       if (paramValue === defaultValue) {
         nextSearchParams.delete(paramName);
       } else {
         nextSearchParams.set(paramName, paramValue);
       }
-    });
+    }
 
     setSearchParams(nextSearchParams);
   };
@@ -108,7 +116,7 @@ export const useSearchParamsUtils = () => {
     getParameter,
     navigateWithSearch,
     searchParams,
-    searchString,
+    searchString: cleanSearchParams.toString(),
     setParameter,
     setSearchParams,
     toggleParameter,
