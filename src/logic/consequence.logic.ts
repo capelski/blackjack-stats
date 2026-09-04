@@ -7,6 +7,7 @@ import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScore } from '../types/final-score.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
+import { isDoubleBetAction } from './action.logic';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
@@ -15,6 +16,7 @@ import { getNextHandLabel } from './labels.logic';
 import {
   createOutcomesByBetMultiplier,
   increaseOutcomesByBetMultiplier,
+  rebaseOutcomes,
   toOutcomesByBetMultiplier,
 } from './outcomes.logic';
 
@@ -37,7 +39,7 @@ export const getDoubleConsequence = (
     () => stand,
   );
 
-  return mergeFutureConsequences(futureConsequences, double, 2);
+  return mergeFutureConsequences(futureConsequences, double);
 };
 
 export const getHitConsequence = (
@@ -67,7 +69,7 @@ export const getSplitConsequence = (
     (resolvedHand) => resolvedHand.action,
   );
 
-  return mergeFutureConsequences(futureConsequences, split, 2);
+  return mergeFutureConsequences(futureConsequences, split);
 };
 
 export const getStandConsequence = (
@@ -151,7 +153,6 @@ const getFutureConsequences = (
 export const mergeFutureConsequences = (
   futureConsequences: Consequence[],
   action: typeof double | typeof hit | typeof split,
-  multiplier = 1,
 ) => {
   const mergedConsequence: Consequence = {
     action,
@@ -171,7 +172,13 @@ export const mergeFutureConsequences = (
       mergedConsequence.outcomesByBetMultiplier,
       futureConsequence.outcomesByBetMultiplier,
       weight,
-      multiplier,
+    );
+  }
+
+  if (isDoubleBetAction(action)) {
+    mergedConsequence.outcomesByBetMultiplier = rebaseOutcomes(
+      mergedConsequence.outcomesByBetMultiplier,
+      2,
     );
   }
 

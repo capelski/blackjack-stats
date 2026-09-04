@@ -22,7 +22,7 @@ interface ConsequenceWorld {
 
 const parseFinalProbabilities = (value: string): FinalProbabilities => {
   return Object.fromEntries(
-    value.split(',').map(entry => {
+    value.split(',').map((entry) => {
       const [scoreLabel, probability] = entry.split('=');
       return [labelToEffectiveScore(scoreLabel.trim()), parseFloat(probability)];
     }),
@@ -33,68 +33,68 @@ const formatFinalProbabilities = (finalProbabilities: FinalProbabilities): strin
   return Object.keys(finalProbabilities)
     .map(parseFloat)
     .sort((a, b) => a - b)
-    .map(score => `${effectiveScoreToLabel(score)}=${finalProbabilities[score]}`)
+    .map((score) => `${effectiveScoreToLabel(score)}=${finalProbabilities[score]}`)
     .join(',');
 };
 
-Given('the following list of future consequences', function(
-  this: ConsequenceWorld,
-  table: DataTable,
-) {
-  this.futureConsequences = table.hashes().map<Consequence>(row => ({
-    action: stand,
-    finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
-    outcomesByBetMultiplier: parseOutcomesByBetMultiplier(row['Outcomes'].trim()),
-    edge: parseFloat(row['Edge'].trim()),
-  }));
-});
+Given(
+  'the following list of future consequences',
+  function (this: ConsequenceWorld, table: DataTable) {
+    this.futureConsequences = table.hashes().map<Consequence>((row) => ({
+      action: stand,
+      finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
+      outcomesByBetMultiplier: parseOutcomesByBetMultiplier(row['Outcomes'].trim()),
+      edge: parseFloat(row['Edge'].trim()),
+    }));
+  },
+);
 
-When('getting the consequences of standing with {string} hand', function(
-  this: ConsequenceWorld,
-  label: string,
-) {
-  const abstractHands = getAbstractHands({});
-  const abstractHand = abstractHands.find(x => x.label === label)!;
-  this.consequence = getStandConsequence(abstractHand, dealerFinalScores);
-});
+When(
+  'getting the consequences of standing with {string} hand',
+  function (this: ConsequenceWorld, label: string) {
+    const abstractHands = getAbstractHands({});
+    const abstractHand = abstractHands.find((x) => x.label === label)!;
+    this.consequence = getStandConsequence(abstractHand, dealerFinalScores);
+  },
+);
 
-When('getting the consequences of hitting', function(this: ConsequenceWorld) {
+When('getting the consequences of hitting', function (this: ConsequenceWorld) {
   this.consequence = mergeFutureConsequences(this.futureConsequences, hit);
 });
 
-When('getting the consequences of doubling or splitting', function(this: ConsequenceWorld) {
-  this.consequence = mergeFutureConsequences(this.futureConsequences, double, 2);
+When('getting the consequences of doubling or splitting', function (this: ConsequenceWorld) {
+  this.consequence = mergeFutureConsequences(this.futureConsequences, double);
 });
 
-When('getting the consequences of surrendering', function(this: ConsequenceWorld) {
+When('getting the consequences of surrendering', function (this: ConsequenceWorld) {
   this.consequence = getSurrenderConsequence();
 });
 
-Then('the consequence action equals {string}', function(
-  this: ConsequenceWorld,
-  expectedAction: string,
-) {
-  assert.strictEqual(this.consequence.action, expectedAction);
-});
+Then(
+  'the consequence action equals {string}',
+  function (this: ConsequenceWorld, expectedAction: string) {
+    assert.strictEqual(this.consequence.action, expectedAction);
+  },
+);
 
-Then('the consequence final probabilities equal {string}', function(
-  this: ConsequenceWorld,
-  expected: string,
-) {
-  assert.strictEqual(formatFinalProbabilities(this.consequence.finalProbabilities), expected);
-});
+Then(
+  'the consequence final probabilities equal {string}',
+  function (this: ConsequenceWorld, expected: string) {
+    assert.strictEqual(formatFinalProbabilities(this.consequence.finalProbabilities), expected);
+  },
+);
 
-Then('the consequence outcomes equals {string}', function(
-  this: ConsequenceWorld,
-  expected: string,
-) {
-  const actual = formatOutcomesByBetMultiplier(this.consequence.outcomesByBetMultiplier);
-  assert.strictEqual(actual, expected);
-});
+Then(
+  'the consequence outcomes equals {string}',
+  function (this: ConsequenceWorld, expected: string) {
+    const actual = formatOutcomesByBetMultiplier(this.consequence.outcomesByBetMultiplier);
+    assert.strictEqual(actual, expected);
+  },
+);
 
-Then('the consequence edge equals {string}', function(
-  this: ConsequenceWorld,
-  expectedEdge: string,
-) {
-  assert.strictEqual(String(this.consequence.edge), expectedEdge);
-});
+Then(
+  'the consequence edge equals {string}',
+  function (this: ConsequenceWorld, expectedEdge: string) {
+    assert.strictEqual(String(this.consequence.edge), expectedEdge);
+  },
+);

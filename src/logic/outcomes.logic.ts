@@ -51,12 +51,33 @@ export const increaseOutcomesByBetMultiplier = (
   outcomes: OutcomesByBetMultiplierMap,
   toAdd: OutcomesByBetMultiplierMap,
   weight = 1,
-  multiplier = 1,
 ): void => {
   outcomeResults.forEach((result) => {
     getSortedNumericKeys(toAdd[result]).forEach((key) => {
-      outcomes[result][key * multiplier] =
-        (outcomes[result][key * multiplier] || 0) + toAdd[result][key] * weight;
+      if (!outcomes[result][key]) {
+        outcomes[result][key] = 0;
+      }
+
+      outcomes[result][key] += toAdd[result][key] * weight;
     });
   });
+};
+
+export const rebaseOutcomes = (
+  outcomes: OutcomesByBetMultiplierMap,
+  multiplier: number,
+): OutcomesByBetMultiplierMap => {
+  const keys = Object.keys(outcomes) as Result[];
+  return keys.reduce((outcomesReduced, result) => {
+    const betMultipliers = getSortedNumericKeys(outcomes[result]);
+    return {
+      ...outcomesReduced,
+      [result]: betMultipliers.reduce<BetMultiplierMap>((resultsReduced, key) => {
+        return {
+          ...resultsReduced,
+          [key * multiplier]: outcomes[result][key],
+        };
+      }, {}),
+    };
+  }, {} as OutcomesByBetMultiplierMap);
 };

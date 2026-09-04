@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHandStatus } from '../logic/abstract-hands.logic';
+import { isDoubleBetAction } from '../logic/action.logic';
 import { getBetMultiplier } from '../logic/bet-multiplier.logic';
 import { getNextHandLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
@@ -38,7 +39,7 @@ type ActionsBreakdownNextCardRowProps = {
     }
 );
 
-const ActionsBreakdownNextCardRow: React.FC<ActionsBreakdownNextCardRowProps> = props => {
+const ActionsBreakdownNextCardRow: React.FC<ActionsBreakdownNextCardRowProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
 
@@ -96,7 +97,8 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
   const { rules, strategy } = useStrategyContext();
 
   const cardProbability = 1 / cardsNumber;
-  const betMultiplier = getBetMultiplier(1, { isDoubleBet: action === double || action === split });
+  const isDoubleBet = isDoubleBetAction(action);
+  const betMultiplier = getBetMultiplier(1, { isDoubleBet });
 
   /** Different next cards can lead to the same next hand (e.g. any ten-valued card),
    * in which case they are displayed as a single row with their probabilities merged */
@@ -109,7 +111,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
       card,
     );
     const nextHand = strategy.resolvedHandsMap[nextLabel];
-    const group = reduced.find(x => x.nextHand.label === nextHand.label);
+    const group = reduced.find((x) => x.nextHand.label === nextHand.label);
 
     if (group) {
       group.cards.push(card);
@@ -149,8 +151,8 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
         {nextHandGroups.map(({ cards: groupCards, edge, nextAction, nextHand, probability }) => (
           <ActionsBreakdownNextCardRow
             action={t(`actions.${nextAction}`)}
-            edge={`${toPercentage(edge, decimals)}${betMultiplier > 1 ? ` (x${betMultiplier})` : ''}`}
-            edgeContribution={edge * betMultiplier * probability}
+            edge={toPercentage(edge, decimals)}
+            edgeContribution={edge * probability}
             key={nextHand.label}
             nextCard={getNextCardsLabel(groupCards)}
             nextHand={nextHand.labelAsInitial}
@@ -160,7 +162,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
 
         <ActionsBreakdownNextCardRow
           action=""
-          edge=""
+          edge={isDoubleBet ? `${toPercentage(totalEdgeContribution, decimals)} x2 =` : ''}
           edgeContribution={totalEdgeContribution * betMultiplier}
           nextCard={t('commons.edge')}
           nextHand=""
