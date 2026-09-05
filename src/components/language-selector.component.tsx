@@ -13,7 +13,7 @@ export const LanguageSelector: React.FC = () => {
 
   const handleLanguageChange = (language: Language) => {
     const nextLocation = translateLocalizedRoute(location.pathname, language);
-    navigateWithSearch(nextLocation);
+    navigateWithSearch(nextLocation, { removeLocalParameters: false });
   };
 
   useEffect(() => {

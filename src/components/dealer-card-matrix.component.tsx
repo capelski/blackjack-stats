@@ -119,7 +119,7 @@ export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = (props) => {
                       onClick={() => {
                         navigateWithSearch(
                           `../${dealerBreakdownRoute}/${dealerCard}/${actionsAnalysisRoute}/${labelToUrlParam(row.labels[0])}`,
-                          [[selectedActionParamName, action]],
+                          { parameters: [[selectedActionParamName, action]] },
                         );
                       }}
                       style={{ ...getCellStyle(false), ...(action ? actionColors[action] : {}) }}

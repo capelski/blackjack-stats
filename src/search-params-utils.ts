@@ -22,16 +22,25 @@ export const hitSplitAcesParamName = 'hsa';
 export const blackjackAfterSplitParamName = 'bas';
 export const surrenderingParamName = 'r';
 
+const localParameters = [cardsFilterParamName, selectedActionParamName];
+
 type UrlParameterProps = [paramName: string, paramValue: string];
 type UrlParameterWithDefaultValueProps = [...UrlParameterProps, defaultValue: string];
+
+type NavigateWithSearchOptions = {
+  parameters?: UrlParameterProps[];
+  /** Removes parameters that apply to the current page only. Defaults to true */
+  removeLocalParameters?: boolean;
+};
 
 export const useSearchParamsUtils = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const cleanSearchParams = new URLSearchParams(searchParams);
-  cleanSearchParams.delete(cardsFilterParamName);
-  cleanSearchParams.delete(selectedActionParamName);
+  const globalSearchParams = new URLSearchParams(searchParams);
+  for (const paramName of localParameters) {
+    globalSearchParams.delete(paramName);
+  }
 
   const deleteParameter = (paramName: string) => {
     const nextSearchParams = new URLSearchParams(searchParams);
@@ -54,8 +63,13 @@ export const useSearchParamsUtils = () => {
     return value && (!allowedValues || allowedValues.includes(value as T)) ? (value as T) : null;
   };
 
-  const navigateWithSearch = (pathname: string, parameters: UrlParameterProps[] = []) => {
-    const nextSearchParams = new URLSearchParams(cleanSearchParams);
+  const navigateWithSearch = (pathname: string, options: NavigateWithSearchOptions = {}) => {
+    const parameters = options.parameters ?? [];
+    const removeLocalParameters = options.removeLocalParameters ?? true;
+
+    const nextSearchParams = new URLSearchParams(
+      removeLocalParameters ? globalSearchParams : searchParams,
+    );
 
     for (const [paramName, paramValue] of parameters) {
       nextSearchParams.set(paramName, paramValue);
@@ -116,7 +130,7 @@ export const useSearchParamsUtils = () => {
     getParameter,
     navigateWithSearch,
     searchParams,
-    searchString: cleanSearchParams.toString(),
+    searchString: globalSearchParams.toString(),
     setParameter,
     setSearchParams,
     toggleParameter,
