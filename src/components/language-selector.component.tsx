@@ -1,18 +1,19 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { supportedLanguages } from '../../constants';
 import { Language } from '../i18n';
 import { splitPathname, translateLocalizedRoute } from '../nav-utils';
+import { useSearchParamsUtils } from '../search-params-utils';
 
 export const LanguageSelector: React.FC = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
+  const { navigateWithSearch } = useSearchParamsUtils();
 
   const handleLanguageChange = (language: Language) => {
     const nextLocation = translateLocalizedRoute(location.pathname, language);
-    navigate(nextLocation);
+    navigateWithSearch(nextLocation);
   };
 
   useEffect(() => {
