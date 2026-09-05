@@ -17,6 +17,7 @@ export const en = {
     push: 'Push',
     surrender: 'Surrender',
     edge: 'Edge',
+    weightedEdge: 'Edge (weighted)',
     decision: 'Decision',
     score: 'Score',
     player: 'Player',
@@ -53,7 +54,6 @@ export const en = {
   },
   actionsBreakdown: {
     dealerScore: 'Dealer score',
-    edgeContribution: 'Edge contribution',
     nextCard: 'Next card',
     nextHand: 'Next hand',
     notFound: '"{{label}}" is not a valid hand',

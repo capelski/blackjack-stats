@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { getHandStatus } from '../logic/abstract-hands.logic';
 import { isDoubleBetAction } from '../logic/action.logic';
 import { getBetMultiplier } from '../logic/bet-multiplier.logic';
+import { getEdgeColor } from '../logic/edge.logic';
 import { getNextHandLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
-import { loseColor, winColor } from '../logic/result.logic';
 import { double, hit, split } from '../models/action.model';
 import { cards, cardsNumber } from '../models/cards.model';
 import { HandStatus } from '../models/hand-status.model';
@@ -28,29 +28,28 @@ type ActionsBreakdownNextCardRowProps = {
   nextCard: string;
   nextHand: string;
   probability: string;
+  weightedEdge: string;
 } & (
   | {
-      edgeContribution?: undefined;
+      edgeColor?: undefined;
       isHeader: true;
     }
   | {
-      edgeContribution: number;
+      edgeColor: string;
       isHeader?: undefined;
     }
 );
 
 const ActionsBreakdownNextCardRow: React.FC<ActionsBreakdownNextCardRowProps> = (props) => {
-  const { t } = useTranslation();
-  const { decimals } = useSettingsContext();
-
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
     padding: '8px',
   };
 
-  const numericEdge = props.edgeContribution ?? 0;
-  const edgeContributionColor =
-    numericEdge > 0 ? winColor : numericEdge < 0 ? loseColor : undefined;
+  const edgeColumnStyle = {
+    ...columnStyle,
+    color: props.edgeColor,
+  };
 
   return (
     <tr
@@ -63,12 +62,8 @@ const ActionsBreakdownNextCardRow: React.FC<ActionsBreakdownNextCardRowProps> = 
       <td style={columnStyle}>{props.probability}</td>
       <td style={columnStyle}>{props.nextHand}</td>
       <td style={columnStyle}>{props.action}</td>
-      <td style={columnStyle}>{props.edge} </td>
-      <td style={{ ...columnStyle, color: edgeContributionColor }}>
-        {props.isHeader
-          ? t('actionsBreakdown.edgeContribution')
-          : toPercentage(props.edgeContribution, decimals)}
-      </td>
+      <td style={edgeColumnStyle}>{props.edge} </td>
+      <td style={edgeColumnStyle}>{props.weightedEdge}</td>
     </tr>
   );
 };
@@ -129,7 +124,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
     return reduced;
   }, []);
 
-  const totalEdgeContribution = nextHandGroups.reduce(
+  const totalEdge = nextHandGroups.reduce(
     (reduced, { edge, probability }) => reduced + edge * probability,
     0,
   );
@@ -144,6 +139,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
           nextCard={t('actionsBreakdown.nextCard')}
           nextHand={t('actionsBreakdown.nextHand')}
           probability={t('commons.probability')}
+          weightedEdge={t('commons.weightedEdge')}
         />
       </thead>
 
@@ -152,21 +148,23 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
           <ActionsBreakdownNextCardRow
             action={t(`actions.${nextAction}`)}
             edge={toPercentage(edge, decimals)}
-            edgeContribution={edge * probability}
+            edgeColor={getEdgeColor(edge)}
             key={nextHand.label}
             nextCard={getNextCardsLabel(groupCards)}
             nextHand={nextHand.labelAsInitial}
             probability={`${groupCards.length} / ${cardsNumber}`}
+            weightedEdge={toPercentage(edge * probability, decimals)}
           />
         ))}
 
         <ActionsBreakdownNextCardRow
           action=""
-          edge={isDoubleBet ? `${toPercentage(totalEdgeContribution, decimals)} x2 =` : ''}
-          edgeContribution={totalEdgeContribution * betMultiplier}
+          edge=""
+          edgeColor={getEdgeColor(totalEdge)}
           nextCard={t('commons.edge')}
           nextHand=""
           probability=""
+          weightedEdge={`${toPercentage(totalEdge, decimals)}${isDoubleBet ? ` x2 = ${toPercentage(totalEdge * betMultiplier, decimals)}` : ''}`}
         />
       </tbody>
     </table>

@@ -17,6 +17,7 @@ export const ca = {
     push: 'Empat',
     surrender: 'Rendició',
     edge: 'Avantatge',
+    weightedEdge: 'Avantatge (ponderat)',
     decision: 'Decisió',
     score: 'Puntuació',
     player: 'Jugador',
@@ -53,7 +54,6 @@ export const ca = {
   },
   actionsBreakdown: {
     dealerScore: 'Puntuació del crupier',
-    edgeContribution: "Contribució a l'avantatge",
     nextCard: 'Carta següent',
     nextHand: 'Mà següent',
     notFound: '"{{label}}" no és una mà vàlida',
