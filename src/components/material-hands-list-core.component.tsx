@@ -66,7 +66,7 @@ export type MaterialHandsListCoreProps = HandsListProps & {
 export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { getParameter, setParameter } = useSearchParamsUtils();
+  const { deleteParameter, getParameter, setParameter } = useSearchParamsUtils();
 
   const [cardsFilter, setCardsFilter] = useState(() => getParameter(cardsFilterParamName) ?? '');
   const [showNonFinalHands, setShowNonFinalHands] = useState(false);
@@ -74,8 +74,13 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = (prop
 
   const updateCardsFilter = (value: string) => {
     setCardsFilter(value);
-    setParameter(cardsFilterParamName, value);
     setPage(1);
+
+    if (value) {
+      setParameter(cardsFilterParamName, value);
+    } else {
+      deleteParameter(cardsFilterParamName);
+    }
   };
 
   const updateShowNonFinalHands = (value: boolean) => {
