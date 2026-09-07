@@ -1,5 +1,5 @@
 import { FinalComparisonsMap } from './final-comparison.type';
-import { Outcomes, OutcomesByBetMultiplierMap } from './outcomes.type';
+import { Outcomes, OutcomesWithBetMultiplier } from './outcomes.type';
 
 export type ExpectedResult = {
   betMultiplier: number;
@@ -17,6 +17,6 @@ export type ExpectedResultsMap = {
 export type ExpectedResults = {
   breakdown: ExpectedResultsMap;
   probability: number;
-  outcomesByBetMultiplier: OutcomesByBetMultiplierMap;
+  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[];
   edge: number;
 };

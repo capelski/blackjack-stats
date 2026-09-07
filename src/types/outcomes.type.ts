@@ -1,5 +1,3 @@
-import { BetMultiplierMap } from './bet-multiplier.type';
-
 /** Player probability of losing/pushing/surrendering/winning the hand */
 export type Outcomes = {
   lose: number;
@@ -8,9 +6,8 @@ export type Outcomes = {
   win: number;
 };
 
-export type OutcomesByBetMultiplierMap = {
-  lose: BetMultiplierMap;
-  push: BetMultiplierMap;
-  surrender: BetMultiplierMap;
-  win: BetMultiplierMap;
+/** Outcomes of the hands that share the same bet multiplier */
+export type OutcomesWithBetMultiplier = {
+  betMultiplier: number;
+  outcomes: Outcomes;
 };

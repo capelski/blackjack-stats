@@ -1,6 +1,7 @@
 import { DataTable, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { hit, stand } from '../models/action.model';
+import { lose, push, win } from '../models/result.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
@@ -14,29 +15,30 @@ type ResolvedHandsWorld = RulesWorld & {
 };
 
 const getResolvedHandsForStandThreshold = (threshold: number): ResolvedHand[] => {
-  const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
+  const handResolver: HandResolver = (hand) => (hand.effectiveScore >= threshold ? stand : hit);
   return getResolvedHands({}, handResolver, dealerFinalScores).resolvedHandsList;
 };
 
 const getResolvedHandsForOptimalActions = (rules: Rules = {}): ResolvedHand[] => {
-  const handResolver: HandResolver = hand => hand.optimalConsequence.action;
+  const handResolver: HandResolver = (hand) => hand.optimalConsequence.action;
   return getResolvedHands(rules, handResolver, dealerFinalScores).resolvedHandsList;
 };
 
-When('getting the resolved hands of a hand resolver with a stand threshold of {int}', function(
-  this: ResolvedHandsWorld,
-  threshold: number,
-) {
-  this.list = getResolvedHandsForStandThreshold(threshold);
-});
+When(
+  'getting the resolved hands of a hand resolver with a stand threshold of {int}',
+  function (this: ResolvedHandsWorld, threshold: number) {
+    this.list = getResolvedHandsForStandThreshold(threshold);
+  },
+);
 
-When('getting the resolved hands of a hand resolver for optimal actions', function(
-  this: ResolvedHandsWorld,
-) {
-  this.list = getResolvedHandsForOptimalActions(this.rules);
-});
+When(
+  'getting the resolved hands of a hand resolver for optimal actions',
+  function (this: ResolvedHandsWorld) {
+    this.list = getResolvedHandsForOptimalActions(this.rules);
+  },
+);
 
-Then('{int} resolved hands are returned', function(this: ResolvedHandsWorld, count: number) {
+Then('{int} resolved hands are returned', function (this: ResolvedHandsWorld, count: number) {
   assert.strictEqual(this.list.length, count);
 });
 
@@ -58,15 +60,15 @@ const assertHandWithBreakdown = (
     }
 
     assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.outcomesByBetMultiplier.win),
+      formatProbabilityByBetMultiplier(consequence.outcomesWithBetMultiplier, win),
       row['Win'].trim(),
     );
     assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.outcomesByBetMultiplier.push),
+      formatProbabilityByBetMultiplier(consequence.outcomesWithBetMultiplier, push),
       row['Push'].trim(),
     );
     assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.outcomesByBetMultiplier.lose),
+      formatProbabilityByBetMultiplier(consequence.outcomesWithBetMultiplier, lose),
       row['Lose'].trim(),
     );
     assert.strictEqual(String(consequence.edge), row['Edge'].trim());
@@ -75,7 +77,7 @@ const assertHandWithBreakdown = (
 
 Then(
   'the resolved hand {int} has label {string}, action {string} and the following actions breakdown',
-  function(
+  function (
     this: ResolvedHandsWorld,
     index: number,
     label: string,
@@ -88,8 +90,8 @@ Then(
 
 Then(
   'the resolved hand with label {string} has action {string} and the following actions breakdown',
-  function(this: ResolvedHandsWorld, label: string, action: string, table: DataTable) {
-    const hand = this.list.find(h => h.label === label);
+  function (this: ResolvedHandsWorld, label: string, action: string, table: DataTable) {
+    const hand = this.list.find((h) => h.label === label);
     if (!hand) {
       throw new Error(`Could not find resolved hand with label "${label}"`);
     }

@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
-import { getSortedNumericKeys, toDecimal, toPercentage } from '../logic/numbers.logic';
+import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { lose, push, Result, surrender, win } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
@@ -22,7 +22,7 @@ const cellStyle: CSSProperties = {
 };
 
 type ExpectedResultsSummaryProps = {
-  expectedResults: Pick<ExpectedResults, 'edge' | 'outcomesByBetMultiplier'>;
+  expectedResults: Pick<ExpectedResults, 'edge' | 'outcomesWithBetMultiplier'>;
   isSurrenderingEnabled: boolean;
 };
 
@@ -49,13 +49,12 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
 
       <tbody>
         {results.map((result) => {
-          const map = expectedResults.outcomesByBetMultiplier[result];
-          const betMultipliers = getSortedNumericKeys(map).filter(
-            (betMultiplier) => map[betMultiplier] > 0,
+          const entries = expectedResults.outcomesWithBetMultiplier.filter(
+            (entry) => entry.outcomes[result] > 0,
           );
           const resultStyle = { ...cellStyle, ...resultToStyles(result) };
 
-          if (betMultipliers.length === 0) {
+          if (entries.length === 0) {
             return (
               <tr key={result}>
                 <td style={resultStyle}>{t(`commons.${result}`)}</td>
@@ -72,15 +71,12 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
               ? [
                   {
                     betMultiplier: 0,
-                    probability: betMultipliers.reduce(
-                      (acc, betMultiplier) => acc + map[betMultiplier],
-                      0,
-                    ),
+                    probability: entries.reduce((acc, entry) => acc + entry.outcomes[result], 0),
                   },
                 ]
-              : betMultipliers.map((betMultiplier) => ({
-                  betMultiplier,
-                  probability: map[betMultiplier],
+              : entries.map((entry) => ({
+                  betMultiplier: entry.betMultiplier,
+                  probability: entry.outcomes[result],
                 }));
 
           return rows.map(({ betMultiplier, probability }, index) => {

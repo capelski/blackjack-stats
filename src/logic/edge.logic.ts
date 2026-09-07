@@ -1,24 +1,23 @@
-import { BetMultiplierMap } from '../types/bet-multiplier.type';
-import { Outcomes, OutcomesByBetMultiplierMap } from '../types/outcomes.type';
-import { getSortedNumericKeys } from './numbers.logic';
+import { Outcomes, OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { loseColor, winColor } from './result.logic';
-
-const getWeightedProbability = (probabilityByBetMultiplier: BetMultiplierMap): number =>
-  getSortedNumericKeys(probabilityByBetMultiplier).reduce(
-    (acc, betMultiplier) => acc + probabilityByBetMultiplier[betMultiplier] * betMultiplier,
-    0,
-  );
 
 export const getOutcomesEdge = (outcomes: Outcomes, betMultiplier: number): number => {
   return (outcomes.win - outcomes.lose - outcomes.surrender) * betMultiplier;
 };
 
-export const getEdge = (outcomesByBetMultiplier: OutcomesByBetMultiplierMap): number => {
-  const wins = getWeightedProbability(outcomesByBetMultiplier.win);
-  const losses = getWeightedProbability(outcomesByBetMultiplier.lose);
-  const surrenders = getWeightedProbability(outcomesByBetMultiplier.surrender);
+export const getEdge = (outcomesWithBetMultiplier: OutcomesWithBetMultiplier[]): number => {
+  const { lose, surrender, win } = outcomesWithBetMultiplier.reduce<Omit<Outcomes, 'push'>>(
+    (reduced, entry) => {
+      return {
+        lose: reduced.lose + entry.outcomes.lose * entry.betMultiplier,
+        surrender: reduced.surrender + entry.outcomes.surrender * entry.betMultiplier,
+        win: reduced.win + entry.outcomes.win * entry.betMultiplier,
+      };
+    },
+    { lose: 0, surrender: 0, win: 0 },
+  );
 
-  const difference = wins - losses - surrenders;
+  const difference = win - lose - surrender;
   return difference;
 };
 

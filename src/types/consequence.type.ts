@@ -1,5 +1,5 @@
 import { Action, double, hit, split, stand, surrender } from '../models/action.model';
-import { OutcomesByBetMultiplierMap } from './outcomes.type';
+import { OutcomesWithBetMultiplier } from './outcomes.type';
 
 export type FinalProbabilities = {
   [score: number]: number;
@@ -8,7 +8,7 @@ export type FinalProbabilities = {
 export type Consequence = {
   action: Action;
   finalProbabilities: FinalProbabilities;
-  outcomesByBetMultiplier: OutcomesByBetMultiplierMap;
+  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[];
   edge: number;
 };
 

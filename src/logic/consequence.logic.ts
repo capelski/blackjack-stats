@@ -5,6 +5,7 @@ import { blackjackScore, surrenderScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScore } from '../types/final-score.type';
+import { Outcomes, OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { isDoubleBetAction } from './action.logic';
@@ -14,10 +15,10 @@ import { getExpectedResult } from './expected-results.logic';
 import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
 import {
-  createOutcomesByBetMultiplier,
-  increaseOutcomesByBetMultiplier,
+  createOutcomes,
+  createOutcomesWithBetMultiplier,
+  mergeOutcomesWithBetMultiplier,
   rebaseOutcomes,
-  toOutcomesByBetMultiplier,
 } from './outcomes.logic';
 
 export type FutureHandsConsequenceParameters = [
@@ -88,31 +89,23 @@ export const getStandConsequence = (
   return {
     finalProbabilities: { [finalScore.score]: 1 },
     action: stand,
-    outcomesByBetMultiplier: toOutcomesByBetMultiplier(
-      expectedResult.outcomes,
-      expectedResult.betMultiplier,
-    ),
+    outcomesWithBetMultiplier: [createOutcomesWithBetMultiplier(expectedResult)],
     edge: expectedResult.edge,
   };
 };
 
 export const getSurrenderConsequence = (): Consequence => {
   const betMultiplier = getBetMultiplier(1, { isSurrender: true });
+  const outcomes: Outcomes = createOutcomes();
+  outcomes[surrenderResult] = 1;
 
-  const probabilityByBetMultiplier = {
-    [betMultiplier]: 1,
-  };
-
-  const outcomesByBetMultiplier = createOutcomesByBetMultiplier(
-    probabilityByBetMultiplier,
-    surrenderResult,
-  );
+  const outcomesWithBetMultiplier: OutcomesWithBetMultiplier[] = [{ betMultiplier, outcomes }];
 
   return {
     finalProbabilities: { [surrenderScore]: 1 },
     action: surrender,
-    outcomesByBetMultiplier,
-    edge: getEdge(outcomesByBetMultiplier),
+    outcomesWithBetMultiplier,
+    edge: getEdge(outcomesWithBetMultiplier),
   };
 };
 
@@ -157,7 +150,7 @@ export const mergeFutureConsequences = (
   const mergedConsequence: Consequence = {
     action,
     finalProbabilities: {},
-    outcomesByBetMultiplier: createOutcomesByBetMultiplier({}),
+    outcomesWithBetMultiplier: [],
     edge: 0,
   };
   const weight = 1 / futureConsequences.length;
@@ -168,21 +161,21 @@ export const mergeFutureConsequences = (
       futureConsequence.finalProbabilities,
       weight,
     );
-    increaseOutcomesByBetMultiplier(
-      mergedConsequence.outcomesByBetMultiplier,
-      futureConsequence.outcomesByBetMultiplier,
+    mergeOutcomesWithBetMultiplier(
+      mergedConsequence.outcomesWithBetMultiplier,
+      futureConsequence.outcomesWithBetMultiplier,
       weight,
     );
   }
 
   if (isDoubleBetAction(action)) {
-    mergedConsequence.outcomesByBetMultiplier = rebaseOutcomes(
-      mergedConsequence.outcomesByBetMultiplier,
+    mergedConsequence.outcomesWithBetMultiplier = rebaseOutcomes(
+      mergedConsequence.outcomesWithBetMultiplier,
       2,
     );
   }
 
-  mergedConsequence.edge = getEdge(mergedConsequence.outcomesByBetMultiplier);
+  mergedConsequence.edge = getEdge(mergedConsequence.outcomesWithBetMultiplier);
 
   return mergedConsequence;
 };

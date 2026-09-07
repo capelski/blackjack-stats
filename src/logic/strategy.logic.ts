@@ -4,6 +4,7 @@ import {
 } from '../types/decision-overrides.type';
 import { FinalScore, FinalScoresByFirstCard } from '../types/final-score.type';
 import { HandResolver } from '../types/hand-resolution.type';
+import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
 import { Strategy, StrategyByFirstCard, StrategyMap } from '../types/strategy.type';
 import { getOverridesResolver } from './decision-overrides.logic';
@@ -11,7 +12,7 @@ import { getEdge } from './edge.logic';
 import { getExpectedResults } from './expected-results.logic';
 import { getFinalScoresList, getSortedFinalScores } from './final-scores-list.logic';
 import { getMaterialHands } from './material-hands.logic';
-import { createOutcomesByBetMultiplier, increaseOutcomesByBetMultiplier } from './outcomes.logic';
+import { mergeOutcomesWithBetMultiplier } from './outcomes.logic';
 import { getResolvedHands } from './resolved-hands.logic';
 
 export const getStrategy = async (
@@ -35,7 +36,7 @@ export const getStrategyByFirstCard = async (
   const strategyMap: StrategyMap = {};
 
   let probability = 0;
-  const outcomesByBetMultiplier = createOutcomesByBetMultiplier({});
+  const outcomesWithBetMultiplier: OutcomesWithBetMultiplier[] = [];
 
   for (const [firstCard, finalScoresGroup] of Object.entries(dealerScores)) {
     const finalScores = getSortedFinalScores(finalScoresGroup.finalScores);
@@ -48,9 +49,9 @@ export const getStrategyByFirstCard = async (
     strategyMap[firstCard] = strategy;
 
     probability += strategy.expectedResults.probability * finalScoresGroup.probability;
-    increaseOutcomesByBetMultiplier(
-      outcomesByBetMultiplier,
-      strategy.expectedResults.outcomesByBetMultiplier,
+    mergeOutcomesWithBetMultiplier(
+      outcomesWithBetMultiplier,
+      strategy.expectedResults.outcomesWithBetMultiplier,
       finalScoresGroup.probability,
     );
   }
@@ -60,8 +61,8 @@ export const getStrategyByFirstCard = async (
     decisionOverrides,
     expectedResults: {
       probability,
-      outcomesByBetMultiplier,
-      edge: getEdge(outcomesByBetMultiplier),
+      outcomesWithBetMultiplier,
+      edge: getEdge(outcomesWithBetMultiplier),
     },
   };
 };

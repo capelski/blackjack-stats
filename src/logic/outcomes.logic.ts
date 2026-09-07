@@ -1,7 +1,6 @@
 import { lose, push, Result, surrender, win } from '../models/result.model';
-import { BetMultiplierMap } from '../types/bet-multiplier.type';
-import { Outcomes, OutcomesByBetMultiplierMap } from '../types/outcomes.type';
-import { getSortedNumericKeys } from './numbers.logic';
+import { ExpectedResult } from '../types/expected-result.type';
+import { Outcomes, OutcomesWithBetMultiplier } from '../types/outcomes.type';
 
 export const outcomeResults: Result[] = [lose, push, surrender, win];
 
@@ -14,70 +13,54 @@ export const createOutcomes = (): Outcomes => {
   };
 };
 
-/** Spreads outcomes that all share the same bet multiplier into a bet multiplier map */
-export const toOutcomesByBetMultiplier = (
-  outcomes: Outcomes,
-  betMultiplier: number,
-): OutcomesByBetMultiplierMap => ({
-  lose: { [betMultiplier]: outcomes.lose },
-  push: { [betMultiplier]: outcomes.push },
-  surrender: { [betMultiplier]: outcomes.surrender },
-  win: { [betMultiplier]: outcomes.win },
-});
-
-export const createOutcomesByBetMultiplier = (
-  probabilityByBetMultiplier: BetMultiplierMap,
-  comparisonResult?: Result,
-): OutcomesByBetMultiplierMap => {
-  const getMap = (result: Result) =>
-    getSortedNumericKeys(probabilityByBetMultiplier).reduce<BetMultiplierMap>(
-      (acc, betMultiplier) => {
-        acc[betMultiplier] =
-          comparisonResult === result ? probabilityByBetMultiplier[betMultiplier] : 0;
-        return acc;
-      },
-      {},
-    );
-
+export const createOutcomesWithBetMultiplier = (
+  expectedResult: ExpectedResult,
+): OutcomesWithBetMultiplier => {
   return {
-    lose: getMap(lose),
-    push: getMap(push),
-    surrender: getMap(surrender),
-    win: getMap(win),
+    betMultiplier: expectedResult.betMultiplier,
+    outcomes: { ...expectedResult.outcomes },
   };
 };
 
-export const increaseOutcomesByBetMultiplier = (
-  outcomes: OutcomesByBetMultiplierMap,
-  toAdd: OutcomesByBetMultiplierMap,
+/** Returns the outcomes of the given bet multiplier, inserting empty ones in order when missing */
+export const getOutcomesForBetMultiplier = (
+  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
+  betMultiplier: number,
+): Outcomes => {
+  const index = outcomesWithBetMultiplier.findIndex(
+    (entry) => entry.betMultiplier >= betMultiplier,
+  );
+
+  if (index >= 0 && outcomesWithBetMultiplier[index].betMultiplier === betMultiplier) {
+    return outcomesWithBetMultiplier[index].outcomes;
+  }
+
+  const entry: OutcomesWithBetMultiplier = { betMultiplier, outcomes: createOutcomes() };
+  outcomesWithBetMultiplier.splice(index < 0 ? outcomesWithBetMultiplier.length : index, 0, entry);
+
+  return entry.outcomes;
+};
+
+export const mergeOutcomesWithBetMultiplier = (
+  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
+  toAdd: OutcomesWithBetMultiplier[],
   weight = 1,
 ): void => {
-  outcomeResults.forEach((result) => {
-    getSortedNumericKeys(toAdd[result]).forEach((key) => {
-      if (!outcomes[result][key]) {
-        outcomes[result][key] = 0;
-      }
+  toAdd.forEach((entry) => {
+    const outcomes = getOutcomesForBetMultiplier(outcomesWithBetMultiplier, entry.betMultiplier);
 
-      outcomes[result][key] += toAdd[result][key] * weight;
+    outcomeResults.forEach((result) => {
+      outcomes[result] += entry.outcomes[result] * weight;
     });
   });
 };
 
 export const rebaseOutcomes = (
-  outcomes: OutcomesByBetMultiplierMap,
+  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
   multiplier: number,
-): OutcomesByBetMultiplierMap => {
-  const keys = Object.keys(outcomes) as Result[];
-  return keys.reduce((outcomesReduced, result) => {
-    const betMultipliers = getSortedNumericKeys(outcomes[result]);
-    return {
-      ...outcomesReduced,
-      [result]: betMultipliers.reduce<BetMultiplierMap>((resultsReduced, key) => {
-        return {
-          ...resultsReduced,
-          [key * multiplier]: outcomes[result][key],
-        };
-      }, {}),
-    };
-  }, {} as OutcomesByBetMultiplierMap);
+): OutcomesWithBetMultiplier[] => {
+  return outcomesWithBetMultiplier.map((entry) => ({
+    betMultiplier: entry.betMultiplier * multiplier,
+    outcomes: entry.outcomes,
+  }));
 };

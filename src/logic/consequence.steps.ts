@@ -43,7 +43,7 @@ Given(
     this.futureConsequences = table.hashes().map<Consequence>((row) => ({
       action: stand,
       finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
-      outcomesByBetMultiplier: parseOutcomesByBetMultiplier(row['Outcomes'].trim()),
+      outcomesWithBetMultiplier: parseOutcomesByBetMultiplier(row['Outcomes'].trim()),
       edge: parseFloat(row['Edge'].trim()),
     }));
   },
@@ -87,7 +87,7 @@ Then(
 Then(
   'the consequence outcomes equals {string}',
   function (this: ConsequenceWorld, expected: string) {
-    const actual = formatOutcomesByBetMultiplier(this.consequence.outcomesByBetMultiplier);
+    const actual = formatOutcomesByBetMultiplier(this.consequence.outcomesWithBetMultiplier);
     assert.strictEqual(actual, expected);
   },
 );

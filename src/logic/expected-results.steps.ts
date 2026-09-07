@@ -1,4 +1,5 @@
 import { DataTable, Then } from '@cucumber/cucumber';
+import { lose, push, win } from '../models/result.model';
 import { FinalScore } from '../types/final-score.type';
 import { Rules } from '../types/rules.type';
 import { dealerFinalScores } from './dealer-data.logic';
@@ -29,50 +30,54 @@ const getFinalScoresFromResolver = (rules: Rules, resolver: string): FinalScore[
   throw new Error(`Unknown hand resolver: "${resolver}"`);
 };
 
-Then('the following individual expected result scenarios are considered', function(
-  table: DataTable,
-) {
-  for (const row of table.hashes()) {
-    const resolver = row['Hand resolver'].trim();
-    const rules: Rules = JSON.parse(row['Rules'].trim());
-    const finalScores = getFinalScoresFromResolver(rules, resolver);
-    const finalScore = findFinalScore(
-      finalScores,
-      row['Score'].trim(),
-      Number(row['Bet multiplier'].trim()),
-    );
-    const result = getExpectedResult(finalScore, dealerFinalScores);
+Then(
+  'the following individual expected result scenarios are considered',
+  function (table: DataTable) {
+    for (const row of table.hashes()) {
+      const resolver = row['Hand resolver'].trim();
+      const rules: Rules = JSON.parse(row['Rules'].trim());
+      const finalScores = getFinalScoresFromResolver(rules, resolver);
+      const finalScore = findFinalScore(
+        finalScores,
+        row['Score'].trim(),
+        Number(row['Bet multiplier'].trim()),
+      );
+      const result = getExpectedResult(finalScore, dealerFinalScores);
 
-    assertEqual(String(result.outcomes.win), row['Win'].trim(), 'Win mismatch');
-    assertEqual(String(result.outcomes.push), row['Push'].trim(), 'Push mismatch');
-    assertEqual(String(result.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
-    assertEqual(result.edge, Number(row['Edge'].trim()), 'Edge mismatch');
-  }
-});
+      assertEqual(String(result.outcomes.win), row['Win'].trim(), 'Win mismatch');
+      assertEqual(String(result.outcomes.push), row['Push'].trim(), 'Push mismatch');
+      assertEqual(String(result.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
+      assertEqual(result.edge, Number(row['Edge'].trim()), 'Edge mismatch');
+    }
+  },
+);
 
-Then('the following overall expected results scenarios are considered', function(table: DataTable) {
-  for (const row of table.hashes()) {
-    const resolver = row['Hand resolver'].trim();
-    const rules: Rules = JSON.parse(row['Rules'].trim());
-    const finalScores = getFinalScoresFromResolver(rules, resolver);
-    const results = getExpectedResults(finalScores, dealerFinalScores);
+Then(
+  'the following overall expected results scenarios are considered',
+  function (table: DataTable) {
+    for (const row of table.hashes()) {
+      const resolver = row['Hand resolver'].trim();
+      const rules: Rules = JSON.parse(row['Rules'].trim());
+      const finalScores = getFinalScoresFromResolver(rules, resolver);
+      const results = getExpectedResults(finalScores, dealerFinalScores);
 
-    assertEqual(results.probability, Number(row['Probability'].trim()), 'Probability mismatch');
-    assertEqual(
-      formatProbabilityByBetMultiplier(results.outcomesByBetMultiplier.win),
-      row['Win'].trim(),
-      'Win mismatch',
-    );
-    assertEqual(
-      formatProbabilityByBetMultiplier(results.outcomesByBetMultiplier.push),
-      row['Push'].trim(),
-      'Push mismatch',
-    );
-    assertEqual(
-      formatProbabilityByBetMultiplier(results.outcomesByBetMultiplier.lose),
-      row['Lose'].trim(),
-      'Lose mismatch',
-    );
-    assertEqual(results.edge, Number(row['Edge'].trim()), 'Edge mismatch');
-  }
-});
+      assertEqual(results.probability, Number(row['Probability'].trim()), 'Probability mismatch');
+      assertEqual(
+        formatProbabilityByBetMultiplier(results.outcomesWithBetMultiplier, win),
+        row['Win'].trim(),
+        'Win mismatch',
+      );
+      assertEqual(
+        formatProbabilityByBetMultiplier(results.outcomesWithBetMultiplier, push),
+        row['Push'].trim(),
+        'Push mismatch',
+      );
+      assertEqual(
+        formatProbabilityByBetMultiplier(results.outcomesWithBetMultiplier, lose),
+        row['Lose'].trim(),
+        'Lose mismatch',
+      );
+      assertEqual(results.edge, Number(row['Edge'].trim()), 'Edge mismatch');
+    }
+  },
+);

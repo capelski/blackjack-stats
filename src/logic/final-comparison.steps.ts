@@ -1,9 +1,9 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { surrenderLabel } from '../models/labels.model';
-import { lose, push, surrender, win } from '../models/result.model';
+import { lose, push, Result, surrender, win } from '../models/result.model';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
-import { OutcomesByBetMultiplierMap } from '../types/outcomes.type';
+import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
 import {
@@ -12,6 +12,7 @@ import {
   getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
+import { getOutcomesForBetMultiplier } from './outcomes.logic';
 import { RulesWorld } from './rules.steps';
 
 type FinalComparisonWorld = RulesWorld & {
@@ -25,63 +26,64 @@ const assertEqual = (actual: unknown, expected: unknown, message: string): void 
   }
 };
 
-const formattedOutcomeResults: (keyof OutcomesByBetMultiplierMap)[] = [win, push, lose, surrender];
+const formattedOutcomeResults: Result[] = [win, push, lose, surrender];
 
-export const formatOutcomesByBetMultiplier = (outcomes: OutcomesByBetMultiplierMap): string => {
+export const formatOutcomesByBetMultiplier = (
+  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
+): string => {
   return formattedOutcomeResults
-    .filter(result => Object.keys(outcomes[result]).length > 0)
-    .map(result => `${result}: ${formatProbabilityByBetMultiplier(outcomes[result])}`)
+    .map(
+      (result) =>
+        `${result}: ${formatProbabilityByBetMultiplier(outcomesWithBetMultiplier, result)}`,
+    )
     .join(' / ');
 };
 
 export const parseOutcomesByBetMultiplier = (
   outcomesString: string,
-): OutcomesByBetMultiplierMap => {
-  const outcomes: OutcomesByBetMultiplierMap = {
-    win: {},
-    push: {},
-    lose: {},
-    surrender: {},
-  };
+): OutcomesWithBetMultiplier[] => {
+  const outcomesWithBetMultiplier: OutcomesWithBetMultiplier[] = [];
 
-  const outcomeParts = outcomesString.split('/').map(part => part.trim());
+  const outcomeParts = outcomesString.split('/').map((part) => part.trim());
 
   for (const part of outcomeParts) {
-    const [outcomeType, multipliersString] = part.split(':').map(p => p.trim());
-    const multipliers = multipliersString.split(',').map(m => m.trim());
+    const [outcomeType, multipliersString] = part.split(':').map((p) => p.trim());
+    const multipliers = multipliersString.split(',').map((m) => m.trim());
 
     for (const multiplier of multipliers) {
-      const [betMultiplier, probability] = multiplier.split('=').map(p => p.trim());
-      outcomes[outcomeType as keyof OutcomesByBetMultiplierMap][
-        parseFloat(betMultiplier)
-      ] = parseFloat(probability);
+      const [betMultiplier, probability] = multiplier.split('=').map((p) => p.trim());
+      const outcomes = getOutcomesForBetMultiplier(
+        outcomesWithBetMultiplier,
+        parseFloat(betMultiplier),
+      );
+      outcomes[outcomeType as Result] = parseFloat(probability);
     }
   }
 
-  return outcomes;
+  return outcomesWithBetMultiplier;
 };
 
-Given('a player hand resolver with a stand threshold of {int}', function(
-  this: FinalComparisonWorld,
-  threshold: number,
-) {
-  this.playerFinalScores = getFinalScoresListForStandThreshold(this.rules, threshold);
-});
+Given(
+  'a player hand resolver with a stand threshold of {int}',
+  function (this: FinalComparisonWorld, threshold: number) {
+    this.playerFinalScores = getFinalScoresListForStandThreshold(this.rules, threshold);
+  },
+);
 
-Given('a player hand resolver for optimal actions', function(this: FinalComparisonWorld) {
+Given('a player hand resolver for optimal actions', function (this: FinalComparisonWorld) {
   this.playerFinalScores = getFinalScoresListForOptimalActions(this.rules);
 });
 
-Given('a player hand resolver for optimal actions that surrenders {string} hands', function(
-  this: FinalComparisonWorld,
-  surrenderedLabel: string,
-) {
-  this.playerFinalScores = getFinalScoresListForOptimalActions(this.rules, surrenderedLabel);
-});
+Given(
+  'a player hand resolver for optimal actions that surrenders {string} hands',
+  function (this: FinalComparisonWorld, surrenderedLabel: string) {
+    this.playerFinalScores = getFinalScoresListForOptimalActions(this.rules, surrenderedLabel);
+  },
+);
 
 When(
   'getting the final comparison of a player score of {string} with bet multiplier {float} and a dealer score of {string}',
-  function(
+  function (
     this: FinalComparisonWorld,
     playerScoreLabel: string,
     betMultiplier: number,
@@ -94,36 +96,39 @@ When(
   },
 );
 
-When('getting the final comparison of surrendered hands and a dealer score of {string}', function(
-  this: FinalComparisonWorld,
-  dealerScoreLabel: string,
-) {
-  const playerScore = findFinalScore(this.playerFinalScores, surrenderLabel);
-  const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
+When(
+  'getting the final comparison of surrendered hands and a dealer score of {string}',
+  function (this: FinalComparisonWorld, dealerScoreLabel: string) {
+    const playerScore = findFinalScore(this.playerFinalScores, surrenderLabel);
+    const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
 
-  this.comparison = getFinalComparison(playerScore, dealerScore);
-});
+    this.comparison = getFinalComparison(playerScore, dealerScore);
+  },
+);
 
-Then('the final comparison result equals {string}', function(
-  this: FinalComparisonWorld,
-  expectedResult: string,
-) {
-  assertEqual(this.comparison.result, expectedResult, 'Final comparison result mismatch');
-});
+Then(
+  'the final comparison result equals {string}',
+  function (this: FinalComparisonWorld, expectedResult: string) {
+    assertEqual(this.comparison.result, expectedResult, 'Final comparison result mismatch');
+  },
+);
 
-Then('the final comparison has bet multiplier {float} and probability {string}', function(
-  this: FinalComparisonWorld,
-  expectedBetMultiplier: number,
-  expectedProbability: string,
-) {
-  assertEqual(
-    this.comparison.betMultiplier,
-    expectedBetMultiplier,
-    'Final comparison bet multiplier mismatch',
-  );
-  assertEqual(
-    String(this.comparison.probability),
-    expectedProbability,
-    'Final comparison probability mismatch',
-  );
-});
+Then(
+  'the final comparison has bet multiplier {float} and probability {string}',
+  function (
+    this: FinalComparisonWorld,
+    expectedBetMultiplier: number,
+    expectedProbability: string,
+  ) {
+    assertEqual(
+      this.comparison.betMultiplier,
+      expectedBetMultiplier,
+      'Final comparison bet multiplier mismatch',
+    );
+    assertEqual(
+      String(this.comparison.probability),
+      expectedProbability,
+      'Final comparison probability mismatch',
+    );
+  },
+);
