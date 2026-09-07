@@ -4,7 +4,7 @@ import { useAppContext } from '../app.context';
 import { LoadingOverlay } from '../components/loading-overlay.component';
 import { RulesControls } from '../components/rules-controls.component';
 import { StrategyLayoutComponent } from '../components/strategy-layout.component';
-import { isDoublingEnabled } from '../logic/rules.logic';
+import { showBetMultiplier } from '../logic/bet-multiplier.logic';
 import { StrategyContext } from '../strategy.context';
 
 export const OptimalActionsPage: React.FC = () => {
@@ -29,7 +29,7 @@ export const OptimalActionsPage: React.FC = () => {
         value={{
           onDecisionOverride,
           rules,
-          showBetMultiplier: isDoublingEnabled(rules) || !!rules.splitting,
+          showBetMultiplier: showBetMultiplier(rules),
           strategy,
         }}
       >
