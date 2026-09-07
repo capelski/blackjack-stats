@@ -92,8 +92,11 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
   const { rules, strategy } = useStrategyContext();
 
   const cardProbability = 1 / cardsNumber;
-  const isDoubleBet = isDoubleBetAction(action);
-  const betMultiplier = getBetMultiplier(1, { isDoubleBet });
+  const displayEdgeMultiplier = isDoubleBetAction(action);
+  const betMultiplier = getBetMultiplier({
+    isDoubleBet: action === double,
+    isSplitHand: action === split,
+  });
 
   /** Different next cards can lead to the same next hand (e.g. any ten-valued card),
    * in which case they are displayed as a single row with their probabilities merged */
@@ -164,7 +167,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
           nextCard={t('commons.edge')}
           nextHand=""
           probability=""
-          weightedEdge={`${toPercentage(totalEdge, decimals)}${isDoubleBet ? ` x2 = ${toPercentage(totalEdge * betMultiplier, decimals)}` : ''}`}
+          weightedEdge={`${toPercentage(totalEdge, decimals)}${displayEdgeMultiplier ? ` x2 = ${toPercentage(totalEdge * betMultiplier, decimals)}` : ''}`}
         />
       </tbody>
     </table>

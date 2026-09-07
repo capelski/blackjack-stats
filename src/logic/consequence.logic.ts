@@ -77,7 +77,7 @@ export const getStandConsequence = (
   abstractHand: AbstractHand,
   dealerScores: FinalScore[],
 ): Consequence => {
-  const betMultiplier = getBetMultiplier(1, {
+  const betMultiplier = getBetMultiplier({
     isBlackjack: abstractHand.effectiveScore === blackjackScore,
   });
 
@@ -95,7 +95,7 @@ export const getStandConsequence = (
 };
 
 export const getSurrenderConsequence = (): Consequence => {
-  const betMultiplier = getBetMultiplier(1, { isSurrender: true });
+  const betMultiplier = getBetMultiplier({ isSurrender: true });
   const outcomes: Outcomes = createOutcomes();
   outcomes[surrenderResult] = 1;
 

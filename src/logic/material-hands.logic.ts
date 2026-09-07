@@ -88,7 +88,7 @@ const getNextMaterialHand = (
   const nextCards = [...previousCards, card];
   const nextCanSplit = canSplit(
     rules,
-    nextCards.map(c => c.symbol),
+    nextCards.map((c) => c.symbol),
     isPostSplit,
   );
   const nextCategory: HandCategory = previousSplit
@@ -96,12 +96,12 @@ const getNextMaterialHand = (
       ? postASplitPair
       : postSplitPair
     : nextCanSplit
-    ? splittablePair
-    : previousDouble
-    ? postDoubleHand
-    : nextCards.length === 2
-    ? initialPair
-    : threeOrMoreCards;
+      ? splittablePair
+      : previousDouble
+        ? postDoubleHand
+        : nextCards.length === 2
+          ? initialPair
+          : threeOrMoreCards;
 
   const nextScores = getNextScoresFromCards(previousCards, card.scores, nextCategory, rules);
   const nextLabel = getHandLabel(nextScores, nextCategory, previous.cards[0].symbol);
@@ -124,9 +124,10 @@ const getNextMaterialHand = (
 
   const nextHand: MaterialHand = {
     action: nextAction,
-    betMultiplier: getBetMultiplier(previous.betMultiplier, {
+    betMultiplier: getBetMultiplier({
       isBlackjack: nextEffectiveScore === blackjackScore,
-      isDoubleBet: previousDouble || previousSplit,
+      isDoubleBet: previousDouble,
+      isSplitHand: isPostSplit,
       isSurrender: nextAction === surrender,
     }),
     cards: nextCards,
@@ -150,7 +151,7 @@ const getNextMaterialHand = (
 };
 
 export const serializeCards = (hand: MaterialHand, separator: string = ','): string => {
-  const symbols = hand.cards.map(c => c.symbol);
+  const symbols = hand.cards.map((c) => c.symbol);
 
   if (hand.isPostSplit) {
     symbols.splice(1, 0, symbols[0], postSplitSymbol);

@@ -3,7 +3,8 @@ export type BetMultiplierMap = {
 };
 
 export type BetMultiplierOptions = {
-  isDoubleBet?: boolean;
   isBlackjack?: boolean;
+  isDoubleBet?: boolean;
+  isSplitHand?: boolean;
   isSurrender?: boolean;
 };
