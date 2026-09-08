@@ -28,6 +28,7 @@ export const ca = {
     decimals: '{{count}} decimals',
     hand: 'Mà',
     potVariation: 'Variació del pot',
+    modifiers: 'Modificadors',
   },
   actions: {
     double: 'Doblar',
@@ -122,5 +123,11 @@ export const ca = {
   },
   actionsAnalysisList: {
     viewBreakdown: 'Veure detalls',
+  },
+  modifiers: {
+    isBlackjack: 'Paga 3/2',
+    isDoubleBet: 'Aposta doble',
+    isSplit: 'Mà dividida',
+    isSurrender: 'Mà rendida',
   },
 };

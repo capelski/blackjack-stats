@@ -7,7 +7,7 @@ interface BetMultiplierWorld {
 }
 
 When('getting the bet multiplier', function (this: BetMultiplierWorld) {
-  this.result = getBetMultiplier();
+  this.result = getBetMultiplier({});
 });
 
 When('getting the bet multiplier for a blackjack hand', function (this: BetMultiplierWorld) {

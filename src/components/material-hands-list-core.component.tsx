@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getHandModifiersText } from '../logic/hand-modifiers.logic';
 import { scoresToLabel } from '../logic/labels.logic';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toPercentage } from '../logic/numbers.logic';
@@ -41,7 +42,7 @@ const downloadCsv = ({ hands, t }: DownloadCsvOptions): void => {
       serializeCards(hand, ', '),
       scoresToLabel(hand.scores),
       hand.probability,
-      hand.betMultiplier,
+      getHandModifiersText(hand.modifiers, t).join(', '),
       t(`actions.${hand.action}`),
     ];
 
@@ -166,9 +167,9 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = (prop
           <HandsListItem
             {...props}
             action={t('commons.action')}
-            betMultiplier={t('commons.betMultiplier')}
             cards={t('materialHandsList.cards')}
             isHeader={true}
+            modifiers={t('commons.modifiers')}
             probability={t('commons.probability')}
             score={t('commons.score')}
           />
@@ -180,8 +181,8 @@ export const MaterialHandsListCore: React.FC<MaterialHandsListCoreProps> = (prop
               {...props}
               key={`${currentPage}-${index}-${hand.label}`}
               action={hand.action}
-              betMultiplier={hand.betMultiplier}
               cards={serializeCards(hand, ', ')}
+              modifiers={getHandModifiersText(hand.modifiers, t)}
               probability={toPercentage(hand.probability, decimals)}
               score={scoresToLabel(hand.scores)}
             />

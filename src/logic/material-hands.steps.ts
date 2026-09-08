@@ -14,13 +14,13 @@ type MaterialHandsWorld = RulesWorld & {
 };
 
 export const getMaterialHandsForStandThreshold = (rules: Rules, threshold: number) => {
-  const handResolver: HandResolver = hand => (hand.effectiveScore >= threshold ? stand : hit);
+  const handResolver: HandResolver = (hand) => (hand.effectiveScore >= threshold ? stand : hit);
   const { handResolutionMap } = getResolvedHands(rules, handResolver, dealerFinalScores);
   return getMaterialHands(rules, handResolutionMap);
 };
 
 export const getMaterialHandsForOptimalActions = (rules: Rules, surrenderedLabel?: string) => {
-  const handResolver: HandResolver = hand =>
+  const handResolver: HandResolver = (hand) =>
     surrenderedLabel && hand.canSurrender && hand.label === surrenderedLabel
       ? surrender
       : hand.optimalConsequence.action;
@@ -28,26 +28,27 @@ export const getMaterialHandsForOptimalActions = (rules: Rules, surrenderedLabel
   return getMaterialHands(rules, handResolutionMap);
 };
 
-When('getting the material hands of a hand resolver with a stand threshold of {int}', function(
-  this: MaterialHandsWorld,
-  threshold: number,
-) {
-  this.list = getMaterialHandsForStandThreshold(this.rules, threshold);
-});
+When(
+  'getting the material hands of a hand resolver with a stand threshold of {int}',
+  function (this: MaterialHandsWorld, threshold: number) {
+    this.list = getMaterialHandsForStandThreshold(this.rules, threshold);
+  },
+);
 
-When('getting the material hands of a hand resolver for optimal actions', function(
-  this: MaterialHandsWorld,
-) {
-  this.list = getMaterialHandsForOptimalActions(this.rules);
-});
+When(
+  'getting the material hands of a hand resolver for optimal actions',
+  function (this: MaterialHandsWorld) {
+    this.list = getMaterialHandsForOptimalActions(this.rules);
+  },
+);
 
-Then('{int} material hands are returned', function(this: MaterialHandsWorld, count: number) {
+Then('{int} material hands are returned', function (this: MaterialHandsWorld, count: number) {
   assert.strictEqual(this.list.length, count);
 });
 
 Then(
   'the material hand {int} has cards {string}, score {string}, probability {string} and action {string}',
-  function(
+  function (
     this: MaterialHandsWorld,
     index: number,
     expectedCards: string,
@@ -57,7 +58,7 @@ Then(
   ) {
     const hand = this.list[index - 1];
 
-    assert.strictEqual(hand.cards.map(c => c.symbol).join(','), expectedCards);
+    assert.strictEqual(hand.cards.map((c) => c.symbol).join(','), expectedCards);
     assert.strictEqual(hand.label, expectedScore);
     assert.strictEqual(String(hand.probability), expectedProbability);
     assert.strictEqual(hand.action, expectedAction);
@@ -66,15 +67,15 @@ Then(
 
 Then(
   'there is a material hand with cards {string}, probability {string} and action {string}',
-  function(
+  function (
     this: MaterialHandsWorld,
     expectedCards: string,
     expectedProbability: string,
     expectedAction: string,
   ) {
     const hand = this.list.find(
-      h =>
-        h.cards.map(c => c.symbol).join(',') === expectedCards &&
+      (h) =>
+        h.cards.map((c) => c.symbol).join(',') === expectedCards &&
         String(h.probability) === expectedProbability &&
         h.action === expectedAction,
     );
@@ -86,48 +87,68 @@ Then(
 );
 
 Then(
-  'there is a material hand with cards {string}, probability {string}, action {string} and bet multiplier {string}',
-  function(
+  'there is a material hand with cards {string}, probability {string}, action {string} and double bet modifier',
+  function (
     this: MaterialHandsWorld,
     expectedCards: string,
     expectedProbability: string,
     expectedAction: string,
-    expectedBetMultiplier: string,
   ) {
     const hand = this.list.find(
-      h =>
-        h.cards.map(c => c.symbol).join(',') === expectedCards &&
+      (h) =>
+        h.cards.map((c) => c.symbol).join(',') === expectedCards &&
         String(h.probability) === expectedProbability &&
         h.action === expectedAction &&
-        String(h.betMultiplier) === expectedBetMultiplier,
+        h.modifiers.isDoubleBet,
     );
     assert.ok(
       hand,
-      `No material hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and bet multiplier "${expectedBetMultiplier}"`,
+      `No material hand found with cards "${expectedCards}", probability "${expectedProbability}" action "${expectedAction}" and double bet modifier`,
     );
   },
 );
 
 Then(
-  'there is a material post split hand with cards {string}, probability {string}, action {string} and bet multiplier {string}',
-  function(
+  'there is a material hand with cards {string}, probability {string}, action {string} and split modifier',
+  function (
     this: MaterialHandsWorld,
     expectedCards: string,
     expectedProbability: string,
     expectedAction: string,
-    expectedBetMultiplier: string,
   ) {
     const hand = this.list.find(
-      h =>
-        h.isPostSplit &&
-        h.cards.map(c => c.symbol).join(',') === expectedCards &&
+      (h) =>
+        h.cards.map((c) => c.symbol).join(',') === expectedCards &&
         String(h.probability) === expectedProbability &&
         h.action === expectedAction &&
-        String(h.betMultiplier) === expectedBetMultiplier,
+        h.modifiers.isSplit,
     );
     assert.ok(
       hand,
-      `No material post split hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and bet multiplier "${expectedBetMultiplier}"`,
+      `No material hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and split modifier`,
+    );
+  },
+);
+
+Then(
+  'there is a material hand with cards {string}, probability {string}, action {string}, double bet modifier and split modifier',
+  function (
+    this: MaterialHandsWorld,
+    expectedCards: string,
+    expectedProbability: string,
+    expectedAction: string,
+  ) {
+    const hand = this.list.find(
+      (h) =>
+        h.cards.map((c) => c.symbol).join(',') === expectedCards &&
+        String(h.probability) === expectedProbability &&
+        h.action === expectedAction &&
+        h.modifiers.isDoubleBet &&
+        h.modifiers.isSplit,
+    );
+    assert.ok(
+      hand,
+      `No material hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}", double bet modifier and split modifier`,
     );
   },
 );

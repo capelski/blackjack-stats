@@ -16,7 +16,6 @@ import { HandResolutionMap } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { Rules } from '../types/rules.type';
 import { getHandStatus } from './abstract-hands.logic';
-import { getBetMultiplier } from './bet-multiplier.logic';
 import { getHandLabel, scoresToLabel } from './labels.logic';
 import { canAction, canSplit } from './rules.logic';
 import { getEffectiveScore, getNextScoresFromCards } from './scores.logic';
@@ -43,10 +42,20 @@ export const getMaterialHands = (
     }
 
     for (const card of reversedCards) {
-      const nextHand = getNextMaterialHand(rules, handResolutionMap, hand, card);
-      pendingHands.unshift(nextHand);
+      const nextHands = getNextMaterialHand(rules, handResolutionMap, hand, card);
+      pendingHands.unshift(...nextHands);
     }
   }
+
+  // Hands are already sorted by the generation loop. Split hands however are queued
+  // at the same time (e.g. A,A,SL,A and A,A,SR,A). Sort them by their split side instead
+  allHands.sort((a, b) => {
+    if (a.modifiers.splitSide === b.modifiers.splitSide) {
+      return 0;
+    }
+
+    return a.modifiers.splitSide === 'Left' && b.modifiers.splitSide === 'Right' ? -1 : 1;
+  });
 
   return allHands;
 };
@@ -54,35 +63,34 @@ export const getMaterialHands = (
 const cardToMaterialHand = (card: Card): MaterialHand => {
   const { scores } = card;
 
-  const isPostSplit = false;
   const label = scoresToLabel(scores);
 
   return {
     action: hit,
-    betMultiplier: 1,
     cards: [card],
     category: initialPair, // Doesn't matter
     effectiveScore: getEffectiveScore(scores),
     isFinal: false,
-    isPostDouble: false,
-    isPostSplit,
     label,
     labelAsInitial: label,
+    modifiers: {},
     probability: 1 / cardsNumber,
     scores,
   };
 };
 
+/** Computes the next material hand based on the previous hand and the new card.
+ * It returns an array, since splitting can turn a hand into two */
 const getNextMaterialHand = (
   rules: Rules,
   handResolutionMap: HandResolutionMap,
   previous: MaterialHand,
   card: Card,
-): MaterialHand => {
+): MaterialHand[] => {
   const previousDouble = previous.action === double;
   const previousSplit = previous.action === split;
   const previousCards = previousSplit ? [previous.cards[0]] : previous.cards;
-  const isPostSplit = previousSplit || previous.isPostSplit;
+  const isPostSplit = previousSplit || !!previous.modifiers.isSplit;
   const isFirstCardAce = previousCards[0].symbol === 'A';
 
   const nextCards = [...previousCards, card];
@@ -122,42 +130,73 @@ const getNextMaterialHand = (
     throw new Error(`No action was defined for hand ${nextLabel}`);
   }
 
-  const nextHand: MaterialHand = {
+  const nextIsSurrender = nextAction === surrender;
+
+  const nextHandBase: MaterialHand = {
     action: nextAction,
-    betMultiplier: getBetMultiplier({
-      isBlackjack: nextEffectiveScore === blackjackScore,
-      isDoubleBet: previousDouble,
-      isSplitHand: isPostSplit,
-      isSurrender: nextAction === surrender,
-    }),
     cards: nextCards,
     category: nextCategory,
     effectiveScore: nextEffectiveScore,
-    isFinal: nextAction === stand || nextAction === surrender || !nextIsActionable,
-    isPostDouble: previousDouble,
-    isPostSplit,
+    isFinal: nextAction === stand || nextIsSurrender || !nextIsActionable,
     label: nextLabel,
     labelAsInitial: getHandLabel(
       nextScores,
       nextCanSplit ? splittablePair : initialPair,
       previous.cards[0].symbol,
     ),
+    modifiers: {
+      isBlackjack: nextEffectiveScore === blackjackScore,
+      isDoubleBet: previousDouble,
+      isSurrender: nextIsSurrender,
+    },
     // Computing based on previous probability to account for post split hands
     probability: previous.probability / cardsNumber,
     scores: nextScores,
   };
 
-  return nextHand;
+  const nextHands: MaterialHand[] = previousSplit
+    ? [
+        {
+          ...nextHandBase,
+          modifiers: {
+            ...nextHandBase.modifiers,
+            isSplit: true,
+            splitSide: 'Left',
+          },
+        },
+        {
+          ...nextHandBase,
+          modifiers: {
+            ...nextHandBase.modifiers,
+            isSplit: true,
+            splitSide: 'Right',
+          },
+        },
+      ]
+    : previous.modifiers.splitSide
+      ? [
+          {
+            ...nextHandBase,
+            modifiers: {
+              ...nextHandBase.modifiers,
+              isSplit: true,
+              splitSide: previous.modifiers.splitSide,
+            },
+          },
+        ]
+      : [nextHandBase];
+
+  return nextHands;
 };
 
 export const serializeCards = (hand: MaterialHand, separator: string = ','): string => {
   const symbols = hand.cards.map((c) => c.symbol);
 
-  if (hand.isPostSplit) {
-    symbols.splice(1, 0, symbols[0], postSplitSymbol);
+  if (hand.modifiers.isSplit) {
+    symbols.splice(1, 0, symbols[0], `${postSplitSymbol}${hand.modifiers.splitSide.slice(0, 1)}`);
   }
 
-  if (hand.isPostDouble) {
+  if (hand.modifiers.isDoubleBet) {
     symbols.splice(-1, 0, postDoubleSymbol);
   }
 

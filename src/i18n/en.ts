@@ -28,6 +28,7 @@ export const en = {
     decimals: '{{count}} decimals',
     hand: 'Hand',
     potVariation: 'Pot variation',
+    modifiers: 'Modifiers',
   },
   actions: {
     double: 'Double',
@@ -122,5 +123,11 @@ export const en = {
   },
   actionsAnalysisList: {
     viewBreakdown: 'View breakdown',
+  },
+  modifiers: {
+    isBlackjack: 'Pays 3/2',
+    isDoubleBet: 'Double bet',
+    isSplit: 'Split hand',
+    isSurrender: 'Surrendered',
   },
 };

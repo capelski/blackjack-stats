@@ -8,14 +8,16 @@ import {
   FinalScoresMap,
 } from '../types/final-score.type';
 import { MaterialHand } from '../types/material-hand.type';
+import { getBetMultiplier } from './bet-multiplier.logic';
 
 /** Adds the hand to the final score of its score & bet multiplier, creating it when missing */
 const addHandToFinalScores = (finalScoresMap: FinalScoresMap, hand: MaterialHand): void => {
   const score = getHandFinalScore(hand);
-  const id = getFinalScoreId(score, hand.betMultiplier);
+  const betMultiplier = getBetMultiplier(hand.modifiers);
+  const id = getFinalScoreId(score, betMultiplier);
 
   if (!finalScoresMap[id]) {
-    finalScoresMap[id] = createFinalScore(score, hand.betMultiplier);
+    finalScoresMap[id] = createFinalScore(score, betMultiplier);
   }
   const finalScore = finalScoresMap[id];
 

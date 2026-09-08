@@ -94,8 +94,7 @@ export const ActionsBreakdownNextCard: React.FC<ActionsBreakdownNextCardProps> =
   const cardProbability = 1 / cardsNumber;
   const displayEdgeMultiplier = isDoubleBetAction(action);
   const betMultiplier = getBetMultiplier({
-    isDoubleBet: action === double,
-    isSplitHand: action === split,
+    isDoubleBet: displayEdgeMultiplier,
   });
 
   /** Different next cards can lead to the same next hand (e.g. any ten-valued card),

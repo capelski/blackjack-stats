@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
 
 export type HandsListProps = {
   hideAction?: boolean;
@@ -14,12 +13,12 @@ export type HandsListItemProps = HandsListProps & {
   probability: string;
 } & (
     | {
-        betMultiplier: string;
         isHeader: true;
+        modifiers: string;
       }
     | {
-        betMultiplier: number;
         isHeader?: undefined;
+        modifiers: string[];
       }
   );
 
@@ -61,15 +60,15 @@ export const HandsListItem: React.FC<HandsListItemProps> = (props) => {
         {props.probability}
       </td>
 
-      {props.showBetMultiplier && (
-        <td style={columnStyle} className="bet-size">
-          {props.isHeader ? props.betMultiplier : getBetMultiplierLabel(props.betMultiplier)}
-        </td>
-      )}
-
       {!props.hideAction && (
         <td style={columnStyle} className="action">
           {props.isHeader ? props.action : t(`actions.${props.action}`)}
+        </td>
+      )}
+
+      {props.showBetMultiplier && (
+        <td style={columnStyle} className="modifiers">
+          {props.isHeader ? props.modifiers : props.modifiers.join(', ')}
         </td>
       )}
     </tr>
