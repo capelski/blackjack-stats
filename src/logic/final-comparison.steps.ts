@@ -136,17 +136,8 @@ Then(
 );
 
 Then(
-  'the final comparison has bet multiplier {float} and probability {string}',
-  function (
-    this: FinalComparisonWorld,
-    expectedBetMultiplier: number,
-    expectedProbability: string,
-  ) {
-    assertEqual(
-      this.comparison.betMultiplier,
-      expectedBetMultiplier,
-      'Final comparison bet multiplier mismatch',
-    );
+  'the final comparison has probability {string}',
+  function (this: FinalComparisonWorld, expectedProbability: string) {
     assertEqual(
       String(this.comparison.probability),
       expectedProbability,

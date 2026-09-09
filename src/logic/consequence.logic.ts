@@ -10,7 +10,7 @@ import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { isDoubleBetAction } from './action.logic';
 import { getBetMultiplier } from './bet-multiplier.logic';
-import { getEdge } from './edge.logic';
+import { getEdge, getOutcomesEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
@@ -83,12 +83,13 @@ export const getStandConsequence = (
   finalScore.probability = 1;
 
   const expectedResult = getExpectedResult(finalScore, dealerScores);
+  const betMultiplier = getBetMultiplier(finalScore.modifiers);
 
   return {
     finalProbabilities: { [finalScore.score]: 1 },
     action: stand,
     outcomesWithBetMultiplier: [createOutcomesWithBetMultiplier(expectedResult)],
-    edge: expectedResult.edge,
+    edge: getOutcomesEdge(expectedResult.outcomes, betMultiplier),
   };
 };
 

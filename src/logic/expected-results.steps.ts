@@ -47,7 +47,6 @@ Then(
       assertEqual(String(result.outcomes.win), row['Win'].trim(), 'Win mismatch');
       assertEqual(String(result.outcomes.push), row['Push'].trim(), 'Push mismatch');
       assertEqual(String(result.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
-      assertEqual(result.edge, Number(row['Edge'].trim()), 'Edge mismatch');
     }
   },
 );

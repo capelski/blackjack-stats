@@ -1,6 +1,7 @@
 import { lose, push, Result, surrender, win } from '../models/result.model';
 import { ExpectedResult } from '../types/expected-result.type';
 import { Outcomes, OutcomesWithBetMultiplier } from '../types/outcomes.type';
+import { getBetMultiplier } from './bet-multiplier.logic';
 
 export const outcomeResults: Result[] = [lose, push, surrender, win];
 
@@ -17,7 +18,7 @@ export const createOutcomesWithBetMultiplier = (
   expectedResult: ExpectedResult,
 ): OutcomesWithBetMultiplier => {
   return {
-    betMultiplier: expectedResult.betMultiplier,
+    betMultiplier: getBetMultiplier(expectedResult.modifiers),
     outcomes: { ...expectedResult.outcomes },
   };
 };

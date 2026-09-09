@@ -1,7 +1,6 @@
 import { Result } from '../models/result.model';
 
 export type FinalComparison = {
-  betMultiplier: number;
   probability: number;
   result: Result;
 };

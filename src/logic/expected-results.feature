@@ -7,19 +7,19 @@ Feature: Expected results
 
   Scenario: Individual expected result
     Then the following individual expected result scenarios are considered
-      | Hand resolver      | Rules                                                              | Score | Modifiers                                | Win                   | Push                   | Lose                   | Edge                  |
-      | 17 stand threshold | {}                                                                 | 17    | {}                                       | 0.04086641667628575   | 0.021061528158462465   | 0.08319795967048273    | -0.042331542994196975 |
-      | Optimal actions    | {}                                                                 | 15    | {}                                       | 0.03555751584572714   | 0                      | 0.09071527900062643    | -0.055157763154899286 |
-      | Optimal actions    | {"doubling": "all"}                                                | 20    | {}                                       | 0.10108526313939592   | 0.02604172368173089    | 0.017346652516897536   | 0.08373861062249838   |
-      | Optimal actions    | {"doubling": "all"}                                                | 20    | { "isDoubleBet": true }                  | 0.01146493711203572   | 0.0029536127723022733  | 0.0019674309986838986  | 0.018995012226703644  |
-      | Optimal actions    | {"splitting": true}                                                | 20    | {}                                       | 0.11311876079242225   | 0.029141809797871576   | 0.019411650874393997   | 0.09370710991802825   |
-      | Optimal actions    | {"splitting": true}                                                | 20    | { "isSplit": true }                      | 0.0010648985447070758 | 0.00027434061889018436 | 0.00018274102917761778 | 0.000882157515529458  |
-      | Optimal actions    | {"splitting": true, "hitSplitAces": true}                          | 20    | { "isSplit": true }                      | 0.0015377973963740283 | 0.0003961694675477397  | 0.0002638924433475974  | 0.001273904953026431  |
-      | Optimal actions    | {"doubling": "all", "splitting": true}                             | 20    | { "isDoubleBet": true }                  | 0.01146493711203572   | 0.0029536127723022733  | 0.0019674309986838986  | 0.018995012226703644  |
-      | Optimal actions    | {"doubling": "all", "splitting": true}                             | 20    | { "isSplit": true }                      | 0.0010648985447070758 | 0.00027434061889018436 | 0.00018274102917761778 | 0.000882157515529458  |
-      | Optimal actions    | {"doubling": "all", "splitting": true, "doublingAfterSplit": true} | 20    | { "isSplit": true, "isDoubleBet": true } | 0.0002449772887187121 | 0.00006311138402355288 | 0.00004203912390350213 | 0.0004058763296304199 |
-      | Optimal actions    | {"splitting": true, "blackjackAfterSplit": true}                   | BJ    | { "isBlackjack": true }                  | 0.04509646020797474   | 0.002240817898532966   | 0                      | 0.0676446903119621    |
-      | Optimal actions    | {"splitting": true, "blackjackAfterSplit": true}                   | BJ    | { "isSplit": true, "isBlackjack": true } | 0.0034689584775365184 | 0.0001723706075794589  | 0                      | 0.005203437716304778  |
+      | Hand resolver      | Rules                                                              | Score | Modifiers                                | Win                   | Push                   | Lose                   |
+      | 17 stand threshold | {}                                                                 | 17    | {}                                       | 0.04086641667628575   | 0.021061528158462465   | 0.08319795967048273    |
+      | Optimal actions    | {}                                                                 | 15    | {}                                       | 0.03555751584572714   | 0                      | 0.09071527900062643    |
+      | Optimal actions    | {"doubling": "all"}                                                | 20    | {}                                       | 0.10108526313939592   | 0.02604172368173089    | 0.017346652516897536   |
+      | Optimal actions    | {"doubling": "all"}                                                | 20    | { "isDoubleBet": true }                  | 0.01146493711203572   | 0.0029536127723022733  | 0.0019674309986838986  |
+      | Optimal actions    | {"splitting": true}                                                | 20    | {}                                       | 0.11311876079242225   | 0.029141809797871576   | 0.019411650874393997   |
+      | Optimal actions    | {"splitting": true}                                                | 20    | { "isSplit": true }                      | 0.0010648985447070758 | 0.00027434061889018436 | 0.00018274102917761778 |
+      | Optimal actions    | {"splitting": true, "hitSplitAces": true}                          | 20    | { "isSplit": true }                      | 0.0015377973963740283 | 0.0003961694675477397  | 0.0002638924433475974  |
+      | Optimal actions    | {"doubling": "all", "splitting": true}                             | 20    | { "isDoubleBet": true }                  | 0.01146493711203572   | 0.0029536127723022733  | 0.0019674309986838986  |
+      | Optimal actions    | {"doubling": "all", "splitting": true}                             | 20    | { "isSplit": true }                      | 0.0010648985447070758 | 0.00027434061889018436 | 0.00018274102917761778 |
+      | Optimal actions    | {"doubling": "all", "splitting": true, "doublingAfterSplit": true} | 20    | { "isSplit": true, "isDoubleBet": true } | 0.0002449772887187121 | 0.00006311138402355288 | 0.00004203912390350213 |
+      | Optimal actions    | {"splitting": true, "blackjackAfterSplit": true}                   | BJ    | { "isBlackjack": true }                  | 0.04509646020797474   | 0.002240817898532966   | 0                      |
+      | Optimal actions    | {"splitting": true, "blackjackAfterSplit": true}                   | BJ    | { "isSplit": true, "isBlackjack": true } | 0.0034689584775365184 | 0.0001723706075794589  | 0                      |
 
   Scenario: Overall expected results
     Then the following overall expected results scenarios are considered
