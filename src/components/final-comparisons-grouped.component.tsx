@@ -31,7 +31,7 @@ type FinalComparisonsGroupedRowProps = {
 const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { showBetMultiplier } = useStrategyContext();
+  const { showHandModifiers } = useStrategyContext();
 
   const cellStyle: CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : undefined,
@@ -49,7 +49,7 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${
-          (showBetMultiplier ? 6 : 5) + (props.isSurrenderingEnabled ? 1 : 0)
+          (showHandModifiers ? 6 : 5) + (props.isSurrenderingEnabled ? 1 : 0)
         }, 1fr)`,
       }}
     >
@@ -59,7 +59,7 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
           : t('commons.score')}
       </td>
 
-      {showBetMultiplier && <td style={cellStyle}>{props.modifiers}</td>}
+      {showHandModifiers && <td style={cellStyle}>{props.modifiers}</td>}
 
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(win)) }}>
         {getOutcomeCell(win)}

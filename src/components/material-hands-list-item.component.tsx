@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 export type HandsListProps = {
   hideAction?: boolean;
   hideScore?: boolean;
-  showBetMultiplier?: boolean;
+  showHandModifiers?: boolean;
 };
 
 export type HandsListItemProps = HandsListProps & {
@@ -28,7 +28,7 @@ export const HandsListItem: React.FC<HandsListItemProps> = (props) => {
     '3fr',
     ...(props.hideScore ? [] : ['1fr']),
     '1fr',
-    ...(props.showBetMultiplier ? ['1fr'] : []),
+    ...(props.showHandModifiers ? ['1fr'] : []),
     ...(props.hideAction ? [] : ['1fr']),
   ];
   const columnStyle: React.CSSProperties = {
@@ -65,7 +65,7 @@ export const HandsListItem: React.FC<HandsListItemProps> = (props) => {
         </td>
       )}
 
-      {props.showBetMultiplier && (
+      {props.showHandModifiers && (
         <td style={columnStyle} className="modifiers">
           {props.modifiers}
         </td>

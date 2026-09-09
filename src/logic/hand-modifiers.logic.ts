@@ -1,4 +1,6 @@
 import { HandModifiers } from '../types/hand-modifiers.type';
+import { Rules } from '../types/rules.type';
+import { isDoublingEnabled } from './rules.logic';
 
 export const getHandModifiersText = (
   handModifiers: HandModifiers,
@@ -23,4 +25,8 @@ export const getHandModifiersText = (
   }
 
   return modifiers.join(', ') || '-';
+};
+
+export const showHandModifiers = (rules: Rules): boolean => {
+  return isDoublingEnabled(rules) || !!rules.splitting || !!rules.surrendering;
 };

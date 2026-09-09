@@ -24,14 +24,14 @@ export type FinalScoresListItemProps = {
 );
 
 export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = (props) => {
-  const { showBetMultiplier } = useStrategyContext();
+  const { showHandModifiers } = useStrategyContext();
 
   const columnStyle: React.CSSProperties = {
     fontWeight: props.isHeader ? 'bold' : 'normal',
   };
   const gridTemplateColumns = [
     '1fr',
-    ...(showBetMultiplier ? ['1fr'] : []),
+    ...(showHandModifiers ? ['1fr'] : []),
     '1fr',
     '2fr',
     '1fr',
@@ -50,7 +50,7 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = (props) =
     >
       <td style={columnStyle}>{props.hideScore ? '' : props.score}</td>
 
-      {showBetMultiplier && <td style={columnStyle}>{props.modifiers}</td>}
+      {showHandModifiers && <td style={columnStyle}>{props.modifiers}</td>}
 
       <td style={columnStyle}>{props.isHeader ? props.hands : props.hands.length}</td>
 

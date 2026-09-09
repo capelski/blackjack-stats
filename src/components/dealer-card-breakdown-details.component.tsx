@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { dealerCardUrlParam } from '../../constants';
 import { useDealerCardContext } from '../dealer-card.context';
-import { showBetMultiplier } from '../logic/bet-multiplier.logic';
+import { showHandModifiers } from '../logic/hand-modifiers.logic';
 import { StrategyContext } from '../strategy.context';
 import { StrategyLayoutComponent } from './strategy-layout.component';
 
@@ -28,7 +28,7 @@ export const DealerCardBreakdownDetails: React.FC = () => {
       value={{
         onDecisionOverride: (label, action) => onDecisionOverride(cardSymbol, label, action),
         rules,
-        showBetMultiplier: showBetMultiplier(rules),
+        showHandModifiers: showHandModifiers(rules),
         strategy: cardStrategy,
       }}
     >

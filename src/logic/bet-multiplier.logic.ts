@@ -1,7 +1,5 @@
 import { blackjackLabel } from '../models/labels.model';
 import { HandModifiers } from '../types/hand-modifiers.type';
-import { Rules } from '../types/rules.type';
-import { isDoublingEnabled } from './rules.logic';
 
 export const blackjackMultiplier = 1.5;
 /** When surrendering, only half the bet is lost */
@@ -27,8 +25,4 @@ export const getBetMultiplier = (options: HandModifiers): number => {
 
 export const getBetMultiplierLabel = (betMultiplier: number): string => {
   return betMultiplier === blackjackMultiplier ? blackjackLabel : `${betMultiplier}x`;
-};
-
-export const showBetMultiplier = (rules: Rules): boolean => {
-  return isDoublingEnabled(rules) || !!rules.splitting || !!rules.surrendering;
 };

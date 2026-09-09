@@ -6,7 +6,7 @@ import { Strategy } from './types/strategy.type';
 export type StrategyContextValue = {
   onDecisionOverride: DecisionOverrideHandler;
   rules: Rules;
-  showBetMultiplier: boolean;
+  showHandModifiers: boolean;
   strategy: Strategy;
 };
 

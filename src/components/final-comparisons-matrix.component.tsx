@@ -85,11 +85,11 @@ export const FinalComparisonsMatrix: React.FC = () => {
   const { t } = useTranslation();
   const { useUrlState } = useSearchParamsUtils();
   const { decimals } = useSettingsContext();
-  const { showBetMultiplier, strategy } = useStrategyContext();
+  const { showHandModifiers, strategy } = useStrategyContext();
 
   const [mode, toggleMode] = useUrlState(matrixModeParamName, probability, modes);
 
-  const displayBetMultiplier = mode === probability && showBetMultiplier;
+  const displayBetMultiplier = mode === probability && showHandModifiers;
   const playerScores = getApplicableScores(mode, strategy.finalScores);
   const { dealerColumns, playerColumns, totalColumns } = getColumnsNumber(
     mode,

@@ -34,7 +34,7 @@ export const StandThresholdPage: React.FC = () => {
   return (
     <LoadingOverlay loading={computing || !strategy}>
       <StrategyContext.Provider
-        value={{ onDecisionOverride, rules, showBetMultiplier: false, strategy }}
+        value={{ onDecisionOverride, rules, showHandModifiers: false, strategy }}
       >
         <StrategyLayoutComponent title={t('titles.standThreshold')}>
           <p>
