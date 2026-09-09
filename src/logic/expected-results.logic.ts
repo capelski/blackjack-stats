@@ -1,6 +1,7 @@
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
 import { FinalScore } from '../types/final-score.type';
 import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
+import { getBetMultiplier } from './bet-multiplier.logic';
 import { getEdge, getOutcomesEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
 import {
@@ -21,9 +22,10 @@ export const getExpectedResult = (
     outcomes[finalComparison.result] += finalComparison.probability;
   }
 
+  const betMultiplier = getBetMultiplier(playerScore.modifiers);
   const expectedResult: ExpectedResult = {
-    betMultiplier: playerScore.betMultiplier,
-    edge: getOutcomesEdge(outcomes, playerScore.betMultiplier),
+    betMultiplier,
+    edge: getOutcomesEdge(outcomes, betMultiplier),
     finalComparisons,
     outcomes,
     probability: playerScore.probability,

@@ -7,17 +7,17 @@ import {
   FinalScoresGroup,
   FinalScoresMap,
 } from '../types/final-score.type';
+import { HandModifiers } from '../types/hand-modifiers.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 
-/** Adds the hand to the final score of its score & bet multiplier, creating it when missing */
+/** Adds the hand to the final score of its score & modifiers, creating it when missing */
 const addHandToFinalScores = (finalScoresMap: FinalScoresMap, hand: MaterialHand): void => {
   const score = getHandFinalScore(hand);
-  const betMultiplier = getBetMultiplier(hand.modifiers);
-  const id = getFinalScoreId(score, betMultiplier);
+  const id = getFinalScoreId(score, hand.modifiers);
 
   if (!finalScoresMap[id]) {
-    finalScoresMap[id] = createFinalScore(score, betMultiplier);
+    finalScoresMap[id] = createFinalScore(score, hand.modifiers);
   }
   const finalScore = finalScoresMap[id];
 
@@ -25,17 +25,17 @@ const addHandToFinalScores = (finalScoresMap: FinalScoresMap, hand: MaterialHand
   finalScore.probability += hand.probability;
 };
 
-export const getFinalScoreId = (score: number, betMultiplier: number): string =>
-  `${score}-${betMultiplier}`;
+export const getFinalScoreId = (score: number, modifiers: HandModifiers): string =>
+  `${score}${modifiers.isSplit ? '-split' : ''}${modifiers.isDoubleBet ? '-double' : ''}`;
 
 /** Surrendered hands are grouped apart from the hands that stand on the same score */
 const getHandFinalScore = (hand: MaterialHand): number =>
   hand.action === surrender ? surrenderScore : hand.effectiveScore;
 
-export const createFinalScore = (score: number, betMultiplier: number): FinalScore => ({
-  betMultiplier,
+export const createFinalScore = (score: number, modifiers: HandModifiers): FinalScore => ({
   hands: [],
-  id: getFinalScoreId(score, betMultiplier),
+  id: getFinalScoreId(score, modifiers),
+  modifiers,
   probability: 0,
   score,
 });
@@ -106,7 +106,9 @@ export const getFinalScoresTotals = (
 };
 
 export const getSortedFinalScores = (finalScoresMap: FinalScoresMap): FinalScore[] => {
-  return Object.values(finalScoresMap).sort(
-    (a, b) => a.score - b.score || a.betMultiplier - b.betMultiplier,
-  );
+  return Object.values(finalScoresMap).sort((a, b) => {
+    const aMultiplier = getBetMultiplier(a.modifiers);
+    const bMultiplier = getBetMultiplier(b.modifiers);
+    return a.score - b.score || aMultiplier - bMultiplier;
+  });
 };

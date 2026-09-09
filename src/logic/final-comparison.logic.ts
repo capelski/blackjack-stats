@@ -1,5 +1,6 @@
 import { FinalComparison, FinalComparisonsMap } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
+import { getBetMultiplier } from './bet-multiplier.logic';
 import { getResult } from './result.logic';
 
 export const getFinalComparison = (
@@ -9,7 +10,7 @@ export const getFinalComparison = (
   const result = getResult(playerScore.score, dealerScore.score);
 
   const finalComparison: FinalComparison = {
-    betMultiplier: playerScore.betMultiplier,
+    betMultiplier: getBetMultiplier(playerScore.modifiers),
     probability: playerScore.probability * dealerScore.probability,
     result,
   };

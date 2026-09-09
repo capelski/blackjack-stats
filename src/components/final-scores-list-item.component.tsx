@@ -1,23 +1,21 @@
 import { ReactNode } from 'react';
-import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
 import { useStrategyContext } from '../strategy.context';
 import { MaterialHand } from '../types/material-hand.type';
 import { FinalScoresListModal } from './final-scores-list-modal.component';
 
 export type FinalScoresListItemProps = {
   hideScore?: boolean;
+  modifiers: string;
   probability: ReactNode;
   score: string;
 } & (
   | {
-      betMultiplier: string;
       combinations?: undefined;
       finalScoreId?: undefined;
       hands: string;
       isHeader: true;
     }
   | {
-      betMultiplier: number;
       combinations: string;
       finalScoreId: string;
       hands: MaterialHand[];
@@ -52,11 +50,7 @@ export const FinalScoresListItem: React.FC<FinalScoresListItemProps> = (props) =
     >
       <td style={columnStyle}>{props.hideScore ? '' : props.score}</td>
 
-      {showBetMultiplier && (
-        <td style={columnStyle}>
-          {props.isHeader ? props.betMultiplier : getBetMultiplierLabel(props.betMultiplier)}
-        </td>
-      )}
+      {showBetMultiplier && <td style={columnStyle}>{props.modifiers}</td>}
 
       <td style={columnStyle}>{props.isHeader ? props.hands : props.hands.length}</td>
 

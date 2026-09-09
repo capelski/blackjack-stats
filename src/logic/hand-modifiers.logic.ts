@@ -22,5 +22,5 @@ export const getHandModifiersText = (
     modifiers.push(translate('modifiers.isDoubleBet'));
   }
 
-  return modifiers;
+  return modifiers.join(', ') || '-';
 };

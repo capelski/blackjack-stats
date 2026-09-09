@@ -154,36 +154,19 @@ const getNextMaterialHand = (
     scores: nextScores,
   };
 
+  const getSplitHand = (side: 'Left' | 'Right'): MaterialHand => ({
+    ...nextHandBase,
+    modifiers: {
+      ...nextHandBase.modifiers,
+      isSplit: true,
+      splitSide: side,
+    },
+  });
+
   const nextHands: MaterialHand[] = previousSplit
-    ? [
-        {
-          ...nextHandBase,
-          modifiers: {
-            ...nextHandBase.modifiers,
-            isSplit: true,
-            splitSide: 'Left',
-          },
-        },
-        {
-          ...nextHandBase,
-          modifiers: {
-            ...nextHandBase.modifiers,
-            isSplit: true,
-            splitSide: 'Right',
-          },
-        },
-      ]
+    ? [getSplitHand('Left'), getSplitHand('Right')]
     : previous.modifiers.splitSide
-      ? [
-          {
-            ...nextHandBase,
-            modifiers: {
-              ...nextHandBase.modifiers,
-              isSplit: true,
-              splitSide: previous.modifiers.splitSide,
-            },
-          },
-        ]
+      ? [getSplitHand(previous.modifiers.splitSide)]
       : [nextHandBase];
 
   return nextHands;

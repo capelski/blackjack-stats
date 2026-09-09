@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { getFinalScoresTotals } from '../logic/final-scores-list.logic';
+import { getHandModifiersText } from '../logic/hand-modifiers.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { serializeCards } from '../logic/material-hands.logic';
 import { toPercentage } from '../logic/numbers.logic';
@@ -22,9 +23,9 @@ export const FinalScoresList: React.FC = () => {
       <table style={{ width: '100%' }}>
         <thead>
           <FinalScoresListItem
-            betMultiplier={t('commons.betMultiplier')}
             hands={t('finalScoresList.hands')}
             isHeader={true}
+            modifiers={t('commons.modifiers')}
             probability={t('commons.probability')}
             score={t('commons.score')}
           />
@@ -46,12 +47,12 @@ export const FinalScoresList: React.FC = () => {
 
             return (
               <FinalScoresListItem
-                betMultiplier={finalScore.betMultiplier}
                 combinations={combinations}
                 finalScoreId={finalScore.id}
                 hands={finalScore.hands}
                 hideScore={isSameAsPrevious}
                 key={finalScore.id}
+                modifiers={getHandModifiersText(finalScore.modifiers, t)}
                 probability={toPercentage(finalScore.probability, decimals)}
                 score={effectiveScoreToLabel(finalScore.score)}
               />
@@ -59,9 +60,9 @@ export const FinalScoresList: React.FC = () => {
           })}
 
           <FinalScoresListItem
-            betMultiplier={''}
             hands={String(totalHands)}
             isHeader={true}
+            modifiers=""
             probability={toPercentage(totalProbability, decimals)}
             score={t('commons.total')}
           />

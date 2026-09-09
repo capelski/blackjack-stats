@@ -77,11 +77,9 @@ export const getStandConsequence = (
   abstractHand: AbstractHand,
   dealerScores: FinalScore[],
 ): Consequence => {
-  const betMultiplier = getBetMultiplier({
+  const finalScore = createFinalScore(abstractHand.effectiveScore, {
     isBlackjack: abstractHand.effectiveScore === blackjackScore,
   });
-
-  const finalScore = createFinalScore(abstractHand.effectiveScore, betMultiplier);
   finalScore.probability = 1;
 
   const expectedResult = getExpectedResult(finalScore, dealerScores);

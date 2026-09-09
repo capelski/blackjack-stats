@@ -40,7 +40,7 @@ Then(
       const finalScore = findFinalScore(
         finalScores,
         row['Score'].trim(),
-        Number(row['Bet multiplier'].trim()),
+        JSON.parse(row['Modifiers'].trim()),
       );
       const result = getExpectedResult(finalScore, dealerFinalScores);
 

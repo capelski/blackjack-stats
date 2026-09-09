@@ -82,15 +82,35 @@ Given(
 );
 
 When(
-  'getting the final comparison of a player score of {string} with bet multiplier {float} and a dealer score of {string}',
-  function (
-    this: FinalComparisonWorld,
-    playerScoreLabel: string,
-    betMultiplier: number,
-    dealerScoreLabel: string,
-  ) {
-    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, betMultiplier);
-    const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
+  'getting the final comparison of a player score of {string} and a dealer score of {string}',
+  function (this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
+    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, {});
+    const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel, {});
+
+    this.comparison = getFinalComparison(playerScore, dealerScore);
+  },
+);
+
+When(
+  'getting the final comparison of a player score of {string} with double bet modifier and a dealer score of {string}',
+  function (this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
+    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, {
+      isDoubleBet: true,
+    });
+    const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel, {});
+
+    this.comparison = getFinalComparison(playerScore, dealerScore);
+  },
+);
+
+When(
+  'getting the final comparison of a player score of {string} with split modifier and a dealer score of {string}',
+  function (this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
+    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, {
+      isSplit: true,
+      splitSide: 'Left',
+    });
+    const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel, {});
 
     this.comparison = getFinalComparison(playerScore, dealerScore);
   },
@@ -99,8 +119,10 @@ When(
 When(
   'getting the final comparison of surrendered hands and a dealer score of {string}',
   function (this: FinalComparisonWorld, dealerScoreLabel: string) {
-    const playerScore = findFinalScore(this.playerFinalScores, surrenderLabel);
-    const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel);
+    const playerScore = findFinalScore(this.playerFinalScores, surrenderLabel, {
+      isSurrender: true,
+    });
+    const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel, {});
 
     this.comparison = getFinalComparison(playerScore, dealerScore);
   },

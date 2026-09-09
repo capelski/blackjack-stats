@@ -42,7 +42,7 @@ const downloadCsv = ({ hands, t }: DownloadCsvOptions): void => {
       serializeCards(hand, ', '),
       scoresToLabel(hand.scores),
       hand.probability,
-      getHandModifiersText(hand.modifiers, t).join(', '),
+      getHandModifiersText(hand.modifiers, t),
       t(`actions.${hand.action}`),
     ];
 

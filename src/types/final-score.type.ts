@@ -1,10 +1,11 @@
+import { HandModifiers } from './hand-modifiers.type';
 import { MaterialHand } from './material-hand.type';
 
 export type FinalScore = {
-  betMultiplier: number;
   hands: MaterialHand[];
   /** Identifies the score & bet multiplier combination of the final score */
   id: string;
+  modifiers: HandModifiers;
   probability: number;
   score: number;
 };

@@ -9,16 +9,15 @@ export type HandsListProps = {
 export type HandsListItemProps = HandsListProps & {
   action: string;
   cards: string;
-  score: string;
+  modifiers: string;
   probability: string;
+  score: string;
 } & (
     | {
         isHeader: true;
-        modifiers: string;
       }
     | {
         isHeader?: undefined;
-        modifiers: string[];
       }
   );
 
@@ -68,7 +67,7 @@ export const HandsListItem: React.FC<HandsListItemProps> = (props) => {
 
       {props.showBetMultiplier && (
         <td style={columnStyle} className="modifiers">
-          {props.isHeader ? props.modifiers : props.modifiers.join(', ')}
+          {props.modifiers}
         </td>
       )}
     </tr>

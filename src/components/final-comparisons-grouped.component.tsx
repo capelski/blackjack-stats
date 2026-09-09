@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
+import { getHandModifiersText } from '../logic/hand-modifiers.logic';
 import { effectiveScoreToLabel } from '../logic/labels.logic';
 import { toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
@@ -15,14 +15,13 @@ const toCellValue = (probability: number, decimals: number): string =>
 
 type FinalComparisonsGroupedRowProps = {
   isSurrenderingEnabled: boolean;
+  modifiers: string;
 } & (
   | {
-      betMultiplier?: undefined;
       expectedResult?: undefined;
       isHeader: true;
     }
   | {
-      betMultiplier: number;
       expectedResult: ExpectedResult;
       hideScore?: boolean;
       isHeader?: false;
@@ -60,13 +59,7 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
           : t('commons.score')}
       </td>
 
-      {showBetMultiplier && (
-        <td style={cellStyle}>
-          {props.expectedResult
-            ? getBetMultiplierLabel(props.expectedResult.betMultiplier)
-            : t('commons.betMultiplier')}
-        </td>
-      )}
+      {showBetMultiplier && <td style={cellStyle}>{props.modifiers}</td>}
 
       <td style={{ ...cellStyle, ...(props.isHeader ? {} : resultToStyles(win)) }}>
         {getOutcomeCell(win)}
@@ -96,6 +89,7 @@ const FinalComparisonsGroupedRow: React.FC<FinalComparisonsGroupedRowProps> = (p
 };
 
 export const FinalComparisonsGrouped: React.FC = () => {
+  const { t } = useTranslation();
   const { rules, strategy } = useStrategyContext();
 
   const surrenderingEnabled = !!rules.surrendering;
@@ -103,7 +97,11 @@ export const FinalComparisonsGrouped: React.FC = () => {
   return (
     <table style={{ width: '100%' }}>
       <thead>
-        <FinalComparisonsGroupedRow isHeader={true} isSurrenderingEnabled={surrenderingEnabled} />
+        <FinalComparisonsGroupedRow
+          isHeader={true}
+          isSurrenderingEnabled={surrenderingEnabled}
+          modifiers={t('commons.modifiers')}
+        />
       </thead>
 
       <tbody>
@@ -113,11 +111,11 @@ export const FinalComparisonsGrouped: React.FC = () => {
 
           return (
             <FinalComparisonsGroupedRow
-              betMultiplier={playerScore.betMultiplier}
               expectedResult={strategy.expectedResults.breakdown[playerScore.id]}
               isSurrenderingEnabled={surrenderingEnabled}
               hideScore={isSameAsPrevious}
               key={playerScore.id}
+              modifiers={getHandModifiersText(playerScore.modifiers, t)}
             />
           );
         })}
