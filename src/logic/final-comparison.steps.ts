@@ -67,10 +67,7 @@ When(
 When(
   'getting the final comparison of a player score of {string} with split modifier and a dealer score of {string}',
   function (this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
-    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, {
-      isSplit: true,
-      splitSide: 'Left',
-    });
+    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, { isSplit: true });
     const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel, {});
 
     this.comparison = getFinalComparison(playerScore, dealerScore);

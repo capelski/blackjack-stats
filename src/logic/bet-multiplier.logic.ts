@@ -11,6 +11,10 @@ export const getBetMultiplier = (options: HandModifiers, result?: Result): numbe
   if (options.isSurrender) {
     factor *= surrenderBetMultiplier;
   } else {
+    if (options.isSplit) {
+      factor *= 2;
+    }
+
     if (options.isBlackjack) {
       factor *= blackjackMultiplier;
     }

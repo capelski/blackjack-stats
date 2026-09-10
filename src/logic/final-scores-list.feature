@@ -45,7 +45,7 @@ Feature: Final scores list
     And the final scores for an optimal actions hand resolver
     Then the final scores list contains 20 elements
     And the final score 19 has id "22", score "22+", probability "0.13648913871486373" and "8557" hands
-    And the final score 20 has id "22-split", score "22+", probability "0.0013205092958611243" and "228" hands
+    And the final score 20 has id "22-split", score "22+", probability "0.0006602546479305641" and "114" hands
 
   Scenario: Final scores list (optimal actions, hit split aces)
     Given splitting is allowed
@@ -53,15 +53,15 @@ Feature: Final scores list
     And the final scores for an optimal actions hand resolver
     Then the final scores list contains 17 elements
     And the final score 16 has id "22", score "22+", probability "0.13648913871486373" and "8557" hands
-    And the final score 17 has id "22-split", score "22+", probability "0.002151165809572886" and "5360" hands
+    And the final score 17 has id "22-split", score "22+", probability "0.0010755829047864502" and "2680" hands
 
   Scenario: Final scores list (optimal actions, blackjack after split)
     Given splitting is allowed
     And blackjack after split is allowed
     And the final scores for an optimal actions hand resolver
     Then the final scores list contains 21 elements
-    And the final score 17 has id "21-split", score "21", probability "0.0006116479214958979" and "52" hands
-    And the final score 18 has id "21.5-split", score "BJ", probability "0.0036413290851160683" and "8" hands
+    And the final score 17 has id "21-split", score "21", probability "0.0003058239607479489" and "26" hands
+    And the final score 19 has id "21.5-split", score "BJ", probability "0.001820664542558034" and "4" hands
 
   Scenario: Final scores list (optimal actions, doubling and splitting)
     Given doubling is allowed
@@ -69,7 +69,7 @@ Feature: Final scores list
     And the final scores for an optimal actions hand resolver
     Then the final scores list contains 30 elements
     And the final score 7 has id "15", score "15", probability "0.11726420780597892" and "1700" hands
-    And the final score 8 has id "15-split", score "15", probability "0.002222235786066467" and "50" hands
+    And the final score 8 has id "15-split", score "15", probability "0.0011111178930332327" and "25" hands
     And the final score 9 has id "15-double", score "15", probability "0.006827492034592626" and "15" hands
 
   Scenario: Final scores list (optimal actions, doubling after splitting)
@@ -79,9 +79,9 @@ Feature: Final scores list
     And the final scores for an optimal actions hand resolver
     Then the final scores list contains 40 elements
     And the final score 10 has id "15", score "15", probability "0.11726420780597892" and "1700" hands
-    And the final score 11 has id "15-split", score "15", probability "0.00204731531742814" and "18" hands
+    And the final score 11 has id "15-split", score "15", probability "0.0010236576587140697" and "9" hands
     And the final score 12 has id "15-double", score "15", probability "0.006827492034592626" and "15" hands
-    And the final score 13 has id "15-split-double", score "15", probability "0.00014005111865831031" and "4" hands
+    And the final score 13 has id "15-split-double", score "15", probability "0.00007002555932915516" and "2" hands
 
   Scenario: Final scores list (optimal actions, surrendering)
     Given surrendering is allowed

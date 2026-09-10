@@ -45,7 +45,7 @@ Feature: Final comparison
     And the final comparison has probability "0.016025930508361392"
     When getting the final comparison of a player score of "19" with split modifier and a dealer score of "18"
     Then the final comparison result equals "win"
-    And the final comparison has probability "0.0003099950628956286"
+    And the final comparison has probability "0.00015499753144781404"
 
   Scenario: Final comparison for surrender
     Given surrendering is allowed

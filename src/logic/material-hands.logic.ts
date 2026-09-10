@@ -42,20 +42,10 @@ export const getMaterialHands = (
     }
 
     for (const card of reversedCards) {
-      const nextHands = getNextMaterialHand(rules, handResolutionMap, hand, card);
-      pendingHands.unshift(...nextHands);
+      const nextHand = getNextMaterialHand(rules, handResolutionMap, hand, card);
+      pendingHands.unshift(nextHand);
     }
   }
-
-  // Hands are already sorted by the generation loop. Split hands however are queued
-  // at the same time (e.g. A,A,SL,A and A,A,SR,A). Sort them by their split side instead
-  allHands.sort((a, b) => {
-    if (a.modifiers.splitSide === b.modifiers.splitSide) {
-      return 0;
-    }
-
-    return a.modifiers.splitSide === 'Left' && b.modifiers.splitSide === 'Right' ? -1 : 1;
-  });
 
   return allHands;
 };
@@ -86,7 +76,7 @@ const getNextMaterialHand = (
   handResolutionMap: HandResolutionMap,
   previous: MaterialHand,
   card: Card,
-): MaterialHand[] => {
+): MaterialHand => {
   const previousDouble = previous.action === double;
   const previousSplit = previous.action === split;
   const previousCards = previousSplit ? [previous.cards[0]] : previous.cards;
@@ -132,7 +122,7 @@ const getNextMaterialHand = (
 
   const nextIsSurrender = nextAction === surrender;
 
-  const nextHandBase: MaterialHand = {
+  const nextHand: MaterialHand = {
     action: nextAction,
     cards: nextCards,
     category: nextCategory,
@@ -147,6 +137,7 @@ const getNextMaterialHand = (
     modifiers: {
       isBlackjack: nextEffectiveScore === blackjackScore,
       isDoubleBet: previousDouble,
+      isSplit: isPostSplit,
       isSurrender: nextIsSurrender,
     },
     // Computing based on previous probability to account for post split hands
@@ -154,29 +145,14 @@ const getNextMaterialHand = (
     scores: nextScores,
   };
 
-  const getSplitHand = (side: 'Left' | 'Right'): MaterialHand => ({
-    ...nextHandBase,
-    modifiers: {
-      ...nextHandBase.modifiers,
-      isSplit: true,
-      splitSide: side,
-    },
-  });
-
-  const nextHands: MaterialHand[] = previousSplit
-    ? [getSplitHand('Left'), getSplitHand('Right')]
-    : previous.modifiers.splitSide
-      ? [getSplitHand(previous.modifiers.splitSide)]
-      : [nextHandBase];
-
-  return nextHands;
+  return nextHand;
 };
 
 export const serializeCards = (hand: MaterialHand, separator: string = ','): string => {
   const symbols = hand.cards.map((c) => c.symbol);
 
   if (hand.modifiers.isSplit) {
-    symbols.splice(1, 0, symbols[0], `${postSplitSymbol}${hand.modifiers.splitSide.slice(0, 1)}`);
+    symbols.splice(1, 0, symbols[0], `${postSplitSymbol}`);
   }
 
   if (hand.modifiers.isDoubleBet) {

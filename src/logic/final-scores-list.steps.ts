@@ -103,10 +103,7 @@ When(
 When(
   'getting the final score {string} and split modifier',
   function (this: FinalScoresListWorld, scoreLabel: string) {
-    this.currentFinalScore = findFinalScore(this.list, scoreLabel, {
-      isSplit: true,
-      splitSide: 'Left',
-    });
+    this.currentFinalScore = findFinalScore(this.list, scoreLabel, { isSplit: true });
   },
 );
 
