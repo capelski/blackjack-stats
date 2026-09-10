@@ -2,6 +2,15 @@ import { HandModifiers } from '../types/hand-modifiers.type';
 import { Rules } from '../types/rules.type';
 import { isDoublingEnabled } from './rules.logic';
 
+export const areEqualModifiers = (a: HandModifiers, b: HandModifiers): boolean => {
+  return (
+    !!a.isBlackjack === !!b.isBlackjack &&
+    !!a.isDoubleBet === !!b.isDoubleBet &&
+    !!a.isSplit === !!b.isSplit &&
+    !!a.isSurrender === !!b.isSurrender
+  );
+};
+
 export const getHandModifiersText = (
   handModifiers: HandModifiers,
   translate: (key: string) => string,

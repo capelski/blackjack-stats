@@ -1,5 +1,5 @@
 import { Given, Then, When } from '@cucumber/cucumber';
-import { surrenderLabel } from '../models/labels.model';
+import { blackjackLabel, surrenderLabel } from '../models/labels.model';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
 import { dealerFinalScores } from './dealer-data.logic';
@@ -43,7 +43,9 @@ Given(
 When(
   'getting the final comparison of a player score of {string} and a dealer score of {string}',
   function (this: FinalComparisonWorld, playerScoreLabel: string, dealerScoreLabel: string) {
-    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, {});
+    const playerScore = findFinalScore(this.playerFinalScores, playerScoreLabel, {
+      isBlackjack: playerScoreLabel === blackjackLabel,
+    });
     const dealerScore = findFinalScore(dealerFinalScores, dealerScoreLabel, {});
 
     this.comparison = getFinalComparison(playerScore, dealerScore);

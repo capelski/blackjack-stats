@@ -1,5 +1,6 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
+import { blackjackLabel } from '../models/labels.model';
 import { FinalScore, FinalScoresByFirstCard } from '../types/final-score.type';
 import { HandModifiers } from '../types/hand-modifiers.type';
 import { Rules } from '../types/rules.type';
@@ -8,6 +9,7 @@ import {
   getFinalScoresByFirstCard,
   getFinalScoresList,
 } from './final-scores-list.logic';
+import { areEqualModifiers } from './hand-modifiers.logic';
 import { effectiveScoreToLabel, labelToEffectiveScore } from './labels.logic';
 import {
   getMaterialHandsForOptimalActions,
@@ -30,11 +32,7 @@ export const findFinalScore = (
   const score = labelToEffectiveScore(scoreLabel);
   const serializedModifiers = JSON.stringify(modifiers);
   const matches = finalScores.filter(
-    (item) =>
-      item.score === score &&
-      !!modifiers.isDoubleBet === !!item.modifiers.isDoubleBet &&
-      !!modifiers.isSplit === !!item.modifiers.isSplit &&
-      !!modifiers.isSurrender === !!item.modifiers.isSurrender,
+    (item) => item.score === score && areEqualModifiers(modifiers, item.modifiers),
   );
 
   if (matches.length !== 1) {
@@ -90,7 +88,9 @@ Given(
 );
 
 When('getting the final score {string}', function (this: FinalScoresListWorld, scoreLabel: string) {
-  this.currentFinalScore = findFinalScore(this.list, scoreLabel, {});
+  this.currentFinalScore = findFinalScore(this.list, scoreLabel, {
+    isBlackjack: scoreLabel === blackjackLabel,
+  });
 });
 
 When(
