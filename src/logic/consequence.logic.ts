@@ -10,7 +10,7 @@ import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { isDoubleBetAction } from './action.logic';
 import { getBetMultiplier } from './bet-multiplier.logic';
-import { getEdge, getOutcomesEdge } from './edge.logic';
+import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
@@ -83,18 +83,19 @@ export const getStandConsequence = (
   finalScore.probability = 1;
 
   const expectedResult = getExpectedResult(finalScore, dealerScores);
-  const betMultiplier = getBetMultiplier(finalScore.modifiers);
+  const outcomesWithBetMultiplier = [createOutcomesWithBetMultiplier(expectedResult)];
 
   return {
     finalProbabilities: { [finalScore.score]: 1 },
     action: stand,
-    outcomesWithBetMultiplier: [createOutcomesWithBetMultiplier(expectedResult)],
-    edge: getOutcomesEdge(expectedResult.outcomes, betMultiplier),
+    outcomesWithBetMultiplier,
+    edge: getEdge(outcomesWithBetMultiplier),
   };
 };
 
 export const getSurrenderConsequence = (): Consequence => {
-  const betMultiplier = getBetMultiplier({ isSurrender: true });
+  const modifiers = { isSurrender: true };
+  const betMultiplier = getBetMultiplier(modifiers);
   const outcomes: Outcomes = createOutcomes();
   outcomes[surrenderResult] = 1;
 

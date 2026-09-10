@@ -1,10 +1,6 @@
 import { Outcomes, OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { loseColor, winColor } from './result.logic';
 
-export const getOutcomesEdge = (outcomes: Outcomes, betMultiplier: number): number => {
-  return (outcomes.win - outcomes.lose - outcomes.surrender) * betMultiplier;
-};
-
 export const getEdge = (outcomesWithBetMultiplier: OutcomesWithBetMultiplier[]): number => {
   const { lose, surrender, win } = outcomesWithBetMultiplier.reduce<Omit<Outcomes, 'push'>>(
     (reduced, entry) => {
