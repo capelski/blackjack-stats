@@ -22,19 +22,18 @@ const cellStyle: CSSProperties = {
 };
 
 type ExpectedResultsSummaryProps = {
-  expectedResults: Pick<ExpectedResults, 'edge' | 'outcomesWithBetMultiplier'>;
+  expectedResults: Pick<ExpectedResults, 'edge' | 'edgeContributions'>;
   isSurrenderingEnabled: boolean;
 };
 
 export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
-  const { expectedResults, isSurrenderingEnabled } = props;
+  const { expectedResults } = props;
 
-  const results: Result[] = [win, push, lose];
-  if (isSurrenderingEnabled) {
-    results.push(surrender);
-  }
+  const edgeContributions = expectedResults.edgeContributions.filter(
+    (contribution) => contribution.probability > 0,
+  );
 
   return (
     <table className="expected-summary" style={{ width: '100%' }}>
@@ -48,57 +47,28 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
       </thead>
 
       <tbody>
-        {results.map((result) => {
-          const entries = expectedResults.outcomesWithBetMultiplier.filter(
-            (entry) => entry.outcomes[result] > 0,
+        {edgeContributions.map((contribution, index) => {
+          const resultStyle = { ...cellStyle, ...resultToStyles(contribution.result) };
+          const isSameAsPrevious =
+            index > 0 && contribution.result === edgeContributions[index - 1].result;
+
+          const signedBetMultiplier =
+            contribution.betMultiplier * resultEdgeSign[contribution.result];
+
+          return (
+            <tr key={index}>
+              <td style={resultStyle}>
+                {!isSameAsPrevious && t(`commons.${contribution.result}`)}
+              </td>
+              <td style={resultStyle}>{getBetMultiplierLabel(signedBetMultiplier)}</td>
+              <td style={resultStyle}>{toPercentage(contribution.probability, decimals)}</td>
+              <td style={resultStyle}>
+                {signedBetMultiplier > 0 && '+'}
+                {toPercentage(contribution.probability * signedBetMultiplier, decimals)}{' '}
+                {t('commons.bet').toLowerCase()}
+              </td>
+            </tr>
           );
-          const resultStyle = { ...cellStyle, ...resultToStyles(result) };
-
-          if (entries.length === 0) {
-            return (
-              <tr key={result}>
-                <td style={resultStyle}>{t(`commons.${result}`)}</td>
-                <td style={resultStyle}>-</td>
-                <td style={resultStyle}>-</td>
-                <td style={resultStyle}>-</td>
-              </tr>
-            );
-          }
-
-          // Pushes return no money, so their bet multipliers are grouped into a single row
-          const rows =
-            result === push
-              ? [
-                  {
-                    betMultiplier: 0,
-                    probability: entries.reduce((acc, entry) => acc + entry.outcomes[result], 0),
-                  },
-                ]
-              : entries.map((entry) => ({
-                  betMultiplier: entry.betMultiplier,
-                  probability: entry.outcomes[result],
-                }));
-
-          return rows.map(({ betMultiplier, probability }, index) => {
-            const signedBetMultiplier = betMultiplier * resultEdgeSign[result];
-
-            return (
-              <tr key={`${result}-${betMultiplier}`}>
-                {index === 0 && (
-                  <td style={resultStyle} rowSpan={rows.length}>
-                    {t(`commons.${result}`)}
-                  </td>
-                )}
-                <td style={resultStyle}>{getBetMultiplierLabel(signedBetMultiplier)}</td>
-                <td style={resultStyle}>{toPercentage(probability, decimals)}</td>
-                <td style={resultStyle}>
-                  {signedBetMultiplier > 0 && '+'}
-                  {toPercentage(probability * signedBetMultiplier, decimals)}{' '}
-                  {t('commons.bet').toLowerCase()}
-                </td>
-              </tr>
-            );
-          });
         })}
       </tbody>
 

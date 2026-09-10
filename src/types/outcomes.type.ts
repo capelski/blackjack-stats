@@ -1,3 +1,5 @@
+import { Result } from '../models/result.model';
+
 /** Player probability of losing/pushing/surrendering/winning the hand */
 export type Outcomes = {
   lose: number;
@@ -6,8 +8,9 @@ export type Outcomes = {
   win: number;
 };
 
-/** Outcomes of the hands that share the same bet multiplier */
-export type OutcomesWithBetMultiplier = {
+/** Probability of a result for the hands that share the same bet multiplier */
+export type EdgeContribution = {
   betMultiplier: number;
-  outcomes: Outcomes;
+  probability: number;
+  result: Result;
 };

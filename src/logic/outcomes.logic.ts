@@ -1,9 +1,7 @@
-import { lose, push, Result, surrender, win } from '../models/result.model';
+import { Result, sortedResults } from '../models/result.model';
 import { ExpectedResult } from '../types/expected-result.type';
-import { Outcomes, OutcomesWithBetMultiplier } from '../types/outcomes.type';
+import { EdgeContribution, Outcomes } from '../types/outcomes.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
-
-export const outcomeResults: Result[] = [lose, push, surrender, win];
 
 export const createOutcomes = (): Outcomes => {
   return {
@@ -14,54 +12,61 @@ export const createOutcomes = (): Outcomes => {
   };
 };
 
-export const createOutcomesWithBetMultiplier = (
-  expectedResult: ExpectedResult,
-): OutcomesWithBetMultiplier => {
-  return {
-    betMultiplier: getBetMultiplier(expectedResult.modifiers),
-    outcomes: { ...expectedResult.outcomes },
-  };
+export const createEdgeContributions = (expectedResult: ExpectedResult): EdgeContribution[] => {
+  const betMultiplier = getBetMultiplier(expectedResult.modifiers);
+
+  return sortedResults.map((result) => ({
+    betMultiplier,
+    probability: expectedResult.outcomes[result],
+    result,
+  }));
 };
 
-/** Returns the outcomes of the given bet multiplier, inserting empty ones in order when missing */
-export const getOutcomesForBetMultiplier = (
-  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
+/** Sorts by result order and then by ascending bet multiplier */
+const compareEdgeContributions = (a: EdgeContribution, b: EdgeContribution): number => {
+  return (
+    sortedResults.indexOf(a.result) - sortedResults.indexOf(b.result) ||
+    a.betMultiplier - b.betMultiplier
+  );
+};
+
+/** Returns the contribution of the given bet multiplier and result, inserting an empty one in order when missing */
+export const getEdgeContribution = (
+  edgeContributions: EdgeContribution[],
   betMultiplier: number,
-): Outcomes => {
-  const index = outcomesWithBetMultiplier.findIndex(
-    (entry) => entry.betMultiplier >= betMultiplier,
+  result: Result,
+): EdgeContribution => {
+  const contribution: EdgeContribution = { betMultiplier, probability: 0, result };
+  const index = edgeContributions.findIndex(
+    (entry) => compareEdgeContributions(entry, contribution) >= 0,
   );
 
-  if (index >= 0 && outcomesWithBetMultiplier[index].betMultiplier === betMultiplier) {
-    return outcomesWithBetMultiplier[index].outcomes;
+  if (index >= 0 && compareEdgeContributions(edgeContributions[index], contribution) === 0) {
+    return edgeContributions[index];
   }
 
-  const entry: OutcomesWithBetMultiplier = { betMultiplier, outcomes: createOutcomes() };
-  outcomesWithBetMultiplier.splice(index < 0 ? outcomesWithBetMultiplier.length : index, 0, entry);
+  edgeContributions.splice(index < 0 ? edgeContributions.length : index, 0, contribution);
 
-  return entry.outcomes;
+  return contribution;
 };
 
-export const mergeOutcomesWithBetMultiplier = (
-  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
-  toAdd: OutcomesWithBetMultiplier[],
+export const mergeEdgeContributions = (
+  edgeContributions: EdgeContribution[],
+  toAdd: EdgeContribution[],
   weight = 1,
 ): void => {
   toAdd.forEach((entry) => {
-    const outcomes = getOutcomesForBetMultiplier(outcomesWithBetMultiplier, entry.betMultiplier);
-
-    outcomeResults.forEach((result) => {
-      outcomes[result] += entry.outcomes[result] * weight;
-    });
+    const contribution = getEdgeContribution(edgeContributions, entry.betMultiplier, entry.result);
+    contribution.probability += entry.probability * weight;
   });
 };
 
-export const rebaseOutcomes = (
-  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
+export const rebaseEdgeContributions = (
+  edgeContributions: EdgeContribution[],
   multiplier: number,
-): OutcomesWithBetMultiplier[] => {
-  return outcomesWithBetMultiplier.map((entry) => ({
+): EdgeContribution[] => {
+  return edgeContributions.map((entry) => ({
+    ...entry,
     betMultiplier: entry.betMultiplier * multiplier,
-    outcomes: entry.outcomes,
   }));
 };

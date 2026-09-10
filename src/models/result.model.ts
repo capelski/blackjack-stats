@@ -4,3 +4,5 @@ export const surrender = 'surrender';
 export const win = 'win';
 
 export type Result = typeof lose | typeof push | typeof surrender | typeof win;
+
+export const sortedResults: Result[] = [win, push, lose, surrender];

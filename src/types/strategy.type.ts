@@ -17,7 +17,7 @@ export type Strategy = {
 export type StrategyByFirstCard = {
   breakdown: StrategyMap;
   decisionOverrides: DecisionOverridesByFirstCard;
-  expectedResults: Pick<ExpectedResults, 'edge' | 'outcomesWithBetMultiplier' | 'probability'>;
+  expectedResults: Pick<ExpectedResults, 'edge' | 'edgeContributions' | 'probability'>;
 };
 
 export type StrategyMap = Record<string, Strategy>;

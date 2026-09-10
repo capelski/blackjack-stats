@@ -5,7 +5,7 @@ import { blackjackScore, surrenderScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScore } from '../types/final-score.type';
-import { Outcomes, OutcomesWithBetMultiplier } from '../types/outcomes.type';
+import { EdgeContribution } from '../types/outcomes.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { isDoubleBetAction } from './action.logic';
@@ -15,10 +15,9 @@ import { getExpectedResult } from './expected-results.logic';
 import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
 import {
-  createOutcomes,
-  createOutcomesWithBetMultiplier,
-  mergeOutcomesWithBetMultiplier,
-  rebaseOutcomes,
+  createEdgeContributions,
+  mergeEdgeContributions,
+  rebaseEdgeContributions,
 } from './outcomes.logic';
 
 export type FutureHandsConsequenceParameters = [
@@ -83,29 +82,28 @@ export const getStandConsequence = (
   finalScore.probability = 1;
 
   const expectedResult = getExpectedResult(finalScore, dealerScores);
-  const outcomesWithBetMultiplier = [createOutcomesWithBetMultiplier(expectedResult)];
+  const edgeContributions = createEdgeContributions(expectedResult);
 
   return {
-    finalProbabilities: { [finalScore.score]: 1 },
     action: stand,
-    outcomesWithBetMultiplier,
-    edge: getEdge(outcomesWithBetMultiplier),
+    edge: getEdge(edgeContributions),
+    edgeContributions,
+    finalProbabilities: { [finalScore.score]: 1 },
   };
 };
 
 export const getSurrenderConsequence = (): Consequence => {
-  const modifiers = { isSurrender: true };
-  const betMultiplier = getBetMultiplier(modifiers);
-  const outcomes: Outcomes = createOutcomes();
-  outcomes[surrenderResult] = 1;
+  const betMultiplier = getBetMultiplier({ isSurrender: true });
 
-  const outcomesWithBetMultiplier: OutcomesWithBetMultiplier[] = [{ betMultiplier, outcomes }];
+  const edgeContributions: EdgeContribution[] = [
+    { betMultiplier, probability: 1, result: surrenderResult },
+  ];
 
   return {
-    finalProbabilities: { [surrenderScore]: 1 },
     action: surrender,
-    outcomesWithBetMultiplier,
-    edge: getEdge(outcomesWithBetMultiplier),
+    edge: getEdge(edgeContributions),
+    edgeContributions,
+    finalProbabilities: { [surrenderScore]: 1 },
   };
 };
 
@@ -149,9 +147,9 @@ export const mergeFutureConsequences = (
 ) => {
   const mergedConsequence: Consequence = {
     action,
-    finalProbabilities: {},
-    outcomesWithBetMultiplier: [],
     edge: 0,
+    edgeContributions: [],
+    finalProbabilities: {},
   };
   const weight = 1 / futureConsequences.length;
 
@@ -161,21 +159,21 @@ export const mergeFutureConsequences = (
       futureConsequence.finalProbabilities,
       weight,
     );
-    mergeOutcomesWithBetMultiplier(
-      mergedConsequence.outcomesWithBetMultiplier,
-      futureConsequence.outcomesWithBetMultiplier,
+    mergeEdgeContributions(
+      mergedConsequence.edgeContributions,
+      futureConsequence.edgeContributions,
       weight,
     );
   }
 
   if (isDoubleBetAction(action)) {
-    mergedConsequence.outcomesWithBetMultiplier = rebaseOutcomes(
-      mergedConsequence.outcomesWithBetMultiplier,
+    mergedConsequence.edgeContributions = rebaseEdgeContributions(
+      mergedConsequence.edgeContributions,
       2,
     );
   }
 
-  mergedConsequence.edge = getEdge(mergedConsequence.outcomesWithBetMultiplier);
+  mergedConsequence.edge = getEdge(mergedConsequence.edgeContributions);
 
   return mergedConsequence;
 };

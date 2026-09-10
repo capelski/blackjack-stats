@@ -2,7 +2,7 @@ import { DataTable, Then } from '@cucumber/cucumber';
 import { lose, push, Result, win } from '../models/result.model';
 import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore } from '../types/final-score.type';
-import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
+import { EdgeContribution } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
@@ -32,12 +32,15 @@ const getFinalScoresFromResolver = (rules: Rules, resolver: string): FinalScore[
 };
 
 export const formatProbabilityByBetMultiplier = (
-  outcomesWithBetMultipliers: OutcomesWithBetMultiplier[],
+  edgeContributions: EdgeContribution[],
   result: Result,
 ): string => {
-  const probabilitiesByBetMultiplier = outcomesWithBetMultipliers.reduce<BetMultiplierMap>(
-    (acc, entry) => {
-      acc[entry.betMultiplier] = entry.outcomes[result];
+  const probabilitiesByBetMultiplier = edgeContributions.reduce<BetMultiplierMap>(
+    (acc, contribution) => {
+      acc[contribution.betMultiplier] ??= 0;
+      if (contribution.result === result) {
+        acc[contribution.betMultiplier] = contribution.probability;
+      }
       return acc;
     },
     {},
@@ -82,17 +85,17 @@ Then(
 
       assertEqual(results.probability, Number(row['Probability'].trim()), 'Probability mismatch');
       assertEqual(
-        formatProbabilityByBetMultiplier(results.outcomesWithBetMultiplier, win),
+        formatProbabilityByBetMultiplier(results.edgeContributions, win),
         row['Win'].trim(),
         'Win mismatch',
       );
       assertEqual(
-        formatProbabilityByBetMultiplier(results.outcomesWithBetMultiplier, push),
+        formatProbabilityByBetMultiplier(results.edgeContributions, push),
         row['Push'].trim(),
         'Push mismatch',
       );
       assertEqual(
-        formatProbabilityByBetMultiplier(results.outcomesWithBetMultiplier, lose),
+        formatProbabilityByBetMultiplier(results.edgeContributions, lose),
         row['Lose'].trim(),
         'Lose mismatch',
       );

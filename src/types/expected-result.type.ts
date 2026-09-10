@@ -1,6 +1,6 @@
 import { FinalComparisonsMap } from './final-comparison.type';
 import { HandModifiers } from './hand-modifiers.type';
-import { Outcomes, OutcomesWithBetMultiplier } from './outcomes.type';
+import { EdgeContribution, Outcomes } from './outcomes.type';
 
 export type ExpectedResult = {
   finalComparisons: FinalComparisonsMap;
@@ -16,7 +16,7 @@ export type ExpectedResultsMap = {
 
 export type ExpectedResults = {
   breakdown: ExpectedResultsMap;
-  probability: number;
-  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[];
   edge: number;
+  edgeContributions: EdgeContribution[];
+  probability: number;
 };

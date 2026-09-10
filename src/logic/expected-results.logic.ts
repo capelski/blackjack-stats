@@ -1,13 +1,9 @@
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
 import { FinalScore } from '../types/final-score.type';
-import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
+import { EdgeContribution } from '../types/outcomes.type';
 import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
-import {
-  createOutcomes,
-  createOutcomesWithBetMultiplier,
-  mergeOutcomesWithBetMultiplier,
-} from './outcomes.logic';
+import { createEdgeContributions, createOutcomes, mergeEdgeContributions } from './outcomes.logic';
 
 export const getExpectedResult = (
   playerScore: FinalScore,
@@ -37,7 +33,7 @@ export const getExpectedResults = (
   dealerScores: FinalScore[],
 ): ExpectedResults => {
   const breakdown: ExpectedResultsMap = {};
-  const outcomesWithBetMultiplier: OutcomesWithBetMultiplier[] = [];
+  const edgeContributions: EdgeContribution[] = [];
 
   let probability = 0;
 
@@ -47,15 +43,14 @@ export const getExpectedResults = (
     const expectedResult = getExpectedResult(playerScore, dealerScores);
     breakdown[playerScore.id] = expectedResult;
 
-    const outcomesEntry = createOutcomesWithBetMultiplier(expectedResult);
-    mergeOutcomesWithBetMultiplier(outcomesWithBetMultiplier, [outcomesEntry]);
+    mergeEdgeContributions(edgeContributions, createEdgeContributions(expectedResult));
   }
 
   const expectedResults: ExpectedResults = {
     breakdown,
+    edge: getEdge(edgeContributions),
+    edgeContributions,
     probability,
-    outcomesWithBetMultiplier,
-    edge: getEdge(outcomesWithBetMultiplier),
   };
 
   return expectedResults;

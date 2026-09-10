@@ -60,15 +60,15 @@ const assertHandWithBreakdown = (
     }
 
     assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.outcomesWithBetMultiplier, win),
+      formatProbabilityByBetMultiplier(consequence.edgeContributions, win),
       row['Win'].trim(),
     );
     assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.outcomesWithBetMultiplier, push),
+      formatProbabilityByBetMultiplier(consequence.edgeContributions, push),
       row['Push'].trim(),
     );
     assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.outcomesWithBetMultiplier, lose),
+      formatProbabilityByBetMultiplier(consequence.edgeContributions, lose),
       row['Lose'].trim(),
     );
     assert.strictEqual(String(consequence.edge), row['Edge'].trim());
