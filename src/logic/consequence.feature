@@ -13,7 +13,7 @@ Feature: Consequences
     And the consequence edge equals "1.4289940828401995"
 
   Scenario: Future hands consequences (standing on 12+)
-    Given the following list of future consequences
+    When merging the following future consequences
       | NextCard | FinalProbabilities | Edge                   |
       | A        | 12=1               | -0.4368143052667273    |
       | 2        | 13=1               | -0.4368143052667273    |
@@ -28,12 +28,8 @@ Feature: Consequences
       | J        | 21=1               | 0.8325947801126738     |
       | Q        | 21=1               | 0.8325947801126738     |
       | K        | 21=1               | 0.8325947801126738     |
-    When getting the consequences of hitting
     Then the consequence final probabilities equal "12=0.07692307692307693,13=0.07692307692307693,14=0.07692307692307693,15=0.07692307692307693,16=0.07692307692307693,17=0.07692307692307693,18=0.07692307692307693,19=0.07692307692307693,20=0.07692307692307693,21=0.3076923076923077"
     And the consequence edge equals "0.13023543303941246"
-    When getting the consequences of doubling or splitting
-    Then the consequence final probabilities equal "12=0.07692307692307693,13=0.07692307692307693,14=0.07692307692307693,15=0.07692307692307693,16=0.07692307692307693,17=0.07692307692307693,18=0.07692307692307693,19=0.07692307692307693,20=0.07692307692307693,21=0.3076923076923077"
-    And the consequence edge equals "0.2604708660788249"
 
   Scenario: Surrender consequence
     When getting the consequences of surrendering

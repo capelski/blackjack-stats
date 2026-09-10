@@ -16,7 +16,6 @@ import { FinalScore } from '../types/final-score.type';
 import { HandModifiers } from '../types/hand-modifiers.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
-import { isDoubleBetAction } from './action.logic';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { createEdgeContributions } from './edge-contribution.logic';
 import { getEdge } from './edge.logic';
@@ -43,7 +42,13 @@ export const getDoubleConsequence = (
     () => stand,
   );
 
-  return mergeFutureConsequences(futureConsequences, double);
+  const { edge, finalProbabilities } = mergeFutureConsequences(futureConsequences);
+
+  return {
+    action: double,
+    edge: edge * 2,
+    finalProbabilities,
+  };
 };
 
 export const getHitConsequence = (
@@ -58,7 +63,13 @@ export const getHitConsequence = (
     (resolvedHand) => resolvedHand.action,
   );
 
-  return mergeFutureConsequences(futureConsequences, hit);
+  const { edge, finalProbabilities } = mergeFutureConsequences(futureConsequences);
+
+  return {
+    action: hit,
+    edge,
+    finalProbabilities,
+  };
 };
 
 export const getSplitConsequence = (
@@ -73,7 +84,13 @@ export const getSplitConsequence = (
     (resolvedHand) => resolvedHand.action,
   );
 
-  return mergeFutureConsequences(futureConsequences, split);
+  const { edge, finalProbabilities } = mergeFutureConsequences(futureConsequences);
+
+  return {
+    action: split,
+    edge: edge * 2, // This is not consistent with material hands
+    finalProbabilities,
+  };
 };
 
 export const getStandConsequence = (
@@ -146,27 +163,15 @@ const getFutureConsequences = (
 
 export const mergeFutureConsequences = (
   futureConsequences: Consequence[],
-  action: typeof double | typeof hit | typeof split,
-) => {
-  const mergedConsequence: Consequence = {
-    action,
-    edge: 0,
-    finalProbabilities: {},
-  };
+): Pick<Consequence, 'edge' | 'finalProbabilities'> => {
+  let edge = 0;
+  const finalProbabilities: FinalProbabilities = {};
   const weight = 1 / futureConsequences.length;
 
   for (const futureConsequence of futureConsequences) {
-    increaseFinalProbabilities(
-      mergedConsequence.finalProbabilities,
-      futureConsequence.finalProbabilities,
-      weight,
-    );
-    mergedConsequence.edge += futureConsequence.edge * weight;
+    increaseFinalProbabilities(finalProbabilities, futureConsequence.finalProbabilities, weight);
+    edge += futureConsequence.edge * weight;
   }
 
-  if (isDoubleBetAction(action)) {
-    mergedConsequence.edge *= 2;
-  }
-
-  return mergedConsequence;
+  return { edge, finalProbabilities };
 };

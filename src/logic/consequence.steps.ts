@@ -1,6 +1,6 @@
-import { DataTable, Given, Then, When } from '@cucumber/cucumber';
+import { DataTable, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
-import { double, hit, stand } from '../models/action.model';
+import { stand } from '../models/action.model';
 import { Result } from '../models/result.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { EdgeContribution } from '../types/edge-contribution.type';
@@ -45,14 +45,15 @@ export const formatProbabilityByBetMultiplier = (
     .join(',');
 };
 
-Given(
-  'the following list of future consequences',
+When(
+  'merging the following future consequences',
   function (this: ConsequenceWorld, table: DataTable) {
     this.futureConsequences = table.hashes().map<Consequence>((row) => ({
       action: stand,
       edge: parseFloat(row['Edge'].trim()),
       finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
     }));
+    this.consequence = mergeFutureConsequences(this.futureConsequences) as Consequence;
   },
 );
 
@@ -64,14 +65,6 @@ When(
     this.consequence = getStandConsequence(abstractHand, dealerFinalScores);
   },
 );
-
-When('getting the consequences of hitting', function (this: ConsequenceWorld) {
-  this.consequence = mergeFutureConsequences(this.futureConsequences, hit);
-});
-
-When('getting the consequences of doubling or splitting', function (this: ConsequenceWorld) {
-  this.consequence = mergeFutureConsequences(this.futureConsequences, double);
-});
 
 When('getting the consequences of surrendering', function (this: ConsequenceWorld) {
   this.consequence = getSurrenderConsequence();
