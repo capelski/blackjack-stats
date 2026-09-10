@@ -11,6 +11,23 @@ export const areEqualModifiers = (a: HandModifiers, b: HandModifiers): boolean =
   );
 };
 
+export const getHandModifiersOrder = (modifiers: HandModifiers): number => {
+  const isRegularHand = !modifiers.isDoubleBet && !modifiers.isBlackjack && !modifiers.isSurrender;
+
+  const splitCount = modifiers.isSplit ? 4 : 0;
+  const otherCount = isRegularHand
+    ? 1
+    : modifiers.isBlackjack
+      ? 2
+      : modifiers.isDoubleBet
+        ? 3
+        : modifiers.isSurrender
+          ? 4
+          : 0;
+
+  return splitCount + otherCount;
+};
+
 export const getHandModifiersText = (
   handModifiers: HandModifiers,
   translate: (key: string) => string,

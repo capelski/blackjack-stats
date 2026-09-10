@@ -12,6 +12,7 @@ import { blackjackScore, surrenderScore } from '../models/scores.model';
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { FinalScore } from '../types/final-score.type';
+import { HandModifiers } from '../types/hand-modifiers.type';
 import { EdgeContribution } from '../types/outcomes.type';
 import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
@@ -100,11 +101,12 @@ export const getStandConsequence = (
 };
 
 export const getSurrenderConsequence = (): Consequence => {
+  const modifiers: HandModifiers = { isSurrender: true };
   const result = surrenderResult;
-  const betMultiplier = getBetMultiplier({ isSurrender: true }, result);
+  const betMultiplier = getBetMultiplier(modifiers, result);
   const probability = 1;
 
-  const edgeContributions: EdgeContribution[] = [{ betMultiplier, probability, result }];
+  const edgeContributions: EdgeContribution[] = [{ betMultiplier, modifiers, probability, result }];
 
   return {
     action: surrenderAction,

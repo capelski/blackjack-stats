@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
+import { getHandModifiersText } from '../logic/hand-modifiers.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
 import { push } from '../models/result.model';
@@ -32,6 +33,7 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
       <thead>
         <tr>
           <th style={cellStyle}>{t('commons.result')}</th>
+          <th style={cellStyle}>{t('commons.modifiers')}</th>
           <th style={cellStyle}>{t('commons.betMultiplier')}</th>
           <th style={cellStyle}>{t('commons.probability')}</th>
           <th style={cellStyle}>{t('commons.potVariation')}</th>
@@ -49,6 +51,7 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
               <td style={resultStyle}>
                 {!isSameAsPrevious && t(`commons.${contribution.result}`)}
               </td>
+              <td style={resultStyle}>{getHandModifiersText(contribution.modifiers, t)}</td>
               <td style={resultStyle}>{getBetMultiplierLabel(contribution.betMultiplier)}</td>
               <td style={resultStyle}>{toPercentage(contribution.probability, decimals)}</td>
               <td style={resultStyle}>
@@ -73,6 +76,7 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
       <tfoot>
         <tr>
           <td style={{ ...cellStyle, fontWeight: 'bold' }}>{t('commons.edge')}</td>
+          <td style={cellStyle}></td>
           <td style={cellStyle}></td>
           <td style={cellStyle}></td>
           <td style={{ ...cellStyle, fontWeight: 'bold' }}>

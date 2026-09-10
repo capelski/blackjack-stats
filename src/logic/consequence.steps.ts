@@ -57,6 +57,7 @@ const parseOutcomesByBetMultiplier = (outcomesString: string): EdgeContribution[
       const [betMultiplier, probability] = multiplier.split('=').map((p) => p.trim());
       const contribution = getEdgeContribution(
         edgeContributions,
+        {},
         parseFloat(betMultiplier),
         outcomeType as Result,
       );
