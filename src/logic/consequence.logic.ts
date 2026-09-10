@@ -1,4 +1,11 @@
-import { Action, double, hit, split, stand, surrender } from '../models/action.model';
+import {
+  Action,
+  double,
+  hit,
+  split,
+  stand,
+  surrender as surrenderAction,
+} from '../models/action.model';
 import { cards } from '../models/cards.model';
 import { surrender as surrenderResult } from '../models/result.model';
 import { blackjackScore, surrenderScore } from '../models/scores.model';
@@ -93,17 +100,17 @@ export const getStandConsequence = (
 };
 
 export const getSurrenderConsequence = (): Consequence => {
-  const betMultiplier = getBetMultiplier({ isSurrender: true });
+  const result = surrenderResult;
+  const betMultiplier = getBetMultiplier({ isSurrender: true }, result);
+  const probability = 1;
 
-  const edgeContributions: EdgeContribution[] = [
-    { betMultiplier, probability: 1, result: surrenderResult },
-  ];
+  const edgeContributions: EdgeContribution[] = [{ betMultiplier, probability, result }];
 
   return {
-    action: surrender,
+    action: surrenderAction,
     edge: getEdge(edgeContributions),
     edgeContributions,
-    finalProbabilities: { [surrenderScore]: 1 },
+    finalProbabilities: { [surrenderScore]: probability },
   };
 };
 

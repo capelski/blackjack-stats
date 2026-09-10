@@ -8,7 +8,7 @@ export const getEdge = (edgeContributions: EdgeContribution[]): number => {
     return reduced;
   }, createOutcomes());
 
-  const difference = win - lose - surrender;
+  const difference = win + lose + surrender;
   return difference;
 };
 

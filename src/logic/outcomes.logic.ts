@@ -13,10 +13,8 @@ export const createOutcomes = (): Outcomes => {
 };
 
 export const createEdgeContributions = (expectedResult: ExpectedResult): EdgeContribution[] => {
-  const betMultiplier = getBetMultiplier(expectedResult.modifiers);
-
   return sortedResults.map((result) => ({
-    betMultiplier,
+    betMultiplier: getBetMultiplier(expectedResult.modifiers, result),
     probability: expectedResult.outcomes[result],
     result,
   }));
@@ -26,7 +24,7 @@ export const createEdgeContributions = (expectedResult: ExpectedResult): EdgeCon
 const compareEdgeContributions = (a: EdgeContribution, b: EdgeContribution): number => {
   return (
     sortedResults.indexOf(a.result) - sortedResults.indexOf(b.result) ||
-    a.betMultiplier - b.betMultiplier
+    Math.abs(a.betMultiplier) - Math.abs(b.betMultiplier)
   );
 };
 

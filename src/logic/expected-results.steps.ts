@@ -1,6 +1,5 @@
 import { DataTable, Then } from '@cucumber/cucumber';
 import { lose, push, Result, win } from '../models/result.model';
-import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore } from '../types/final-score.type';
 import { EdgeContribution } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
@@ -35,21 +34,9 @@ export const formatProbabilityByBetMultiplier = (
   edgeContributions: EdgeContribution[],
   result: Result,
 ): string => {
-  const probabilitiesByBetMultiplier = edgeContributions.reduce<BetMultiplierMap>(
-    (acc, contribution) => {
-      acc[contribution.betMultiplier] ??= 0;
-      if (contribution.result === result) {
-        acc[contribution.betMultiplier] = contribution.probability;
-      }
-      return acc;
-    },
-    {},
-  );
-
-  return Object.keys(probabilitiesByBetMultiplier)
-    .map(parseFloat)
-    .sort((a, b) => a - b)
-    .map((multiplier) => `${multiplier}=${probabilitiesByBetMultiplier[multiplier]}`)
+  return edgeContributions
+    .filter((contribution) => contribution.result === result)
+    .map((contribution) => `${contribution.betMultiplier}=${contribution.probability}`)
     .join(',');
 };
 

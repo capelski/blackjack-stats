@@ -39,6 +39,7 @@ const formatFinalProbabilities = (finalProbabilities: FinalProbabilities): strin
 
 const formatOutcomesByBetMultiplier = (edgeContributions: EdgeContribution[]): string => {
   return sortedResults
+    .filter((result) => edgeContributions.some((contribution) => contribution.result === result))
     .map((result) => `${result}: ${formatProbabilityByBetMultiplier(edgeContributions, result)}`)
     .join(' / ');
 };

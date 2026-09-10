@@ -1,14 +1,15 @@
+import { lose, Result, surrender } from '../models/result.model';
 import { HandModifiers } from '../types/hand-modifiers.type';
 
 export const blackjackMultiplier = 1.5;
 /** When surrendering, only half the bet is lost */
 export const surrenderBetMultiplier = 0.5;
 
-export const getBetMultiplier = (options: HandModifiers): number => {
-  let factor = 1;
+export const getBetMultiplier = (options: HandModifiers, result?: Result): number => {
+  let factor = result === lose || result === surrender ? -1 : 1;
 
   if (options.isSurrender) {
-    factor = surrenderBetMultiplier;
+    factor *= surrenderBetMultiplier;
   } else {
     if (options.isBlackjack) {
       factor *= blackjackMultiplier;

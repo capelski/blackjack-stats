@@ -1,20 +1,12 @@
-import { CSSProperties } from 'react';
+import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getBetMultiplierLabel } from '../logic/bet-multiplier.logic';
 import { toDecimal, toPercentage } from '../logic/numbers.logic';
 import { resultToStyles } from '../logic/result.logic';
-import { lose, push, Result, surrender, win } from '../models/result.model';
+import { push } from '../models/result.model';
 import { useSettingsContext } from '../settings.context';
 import { ExpectedResults } from '../types/expected-result.type';
 import { ExpectedResultsSummaryModal } from './expected-results-summary-modal.component';
-
-/** Sign of the contribution of each result to the overall edge */
-const resultEdgeSign: Record<Result, number> = {
-  [win]: 1,
-  [push]: 0,
-  [lose]: -1,
-  [surrender]: -1,
-};
 
 const cellStyle: CSSProperties = {
   padding: 8,
@@ -52,20 +44,26 @@ export const ExpectedResultsSummary: React.FC<ExpectedResultsSummaryProps> = (pr
           const isSameAsPrevious =
             index > 0 && contribution.result === edgeContributions[index - 1].result;
 
-          const signedBetMultiplier =
-            contribution.betMultiplier * resultEdgeSign[contribution.result];
-
           return (
             <tr key={index}>
               <td style={resultStyle}>
                 {!isSameAsPrevious && t(`commons.${contribution.result}`)}
               </td>
-              <td style={resultStyle}>{getBetMultiplierLabel(signedBetMultiplier)}</td>
+              <td style={resultStyle}>{getBetMultiplierLabel(contribution.betMultiplier)}</td>
               <td style={resultStyle}>{toPercentage(contribution.probability, decimals)}</td>
               <td style={resultStyle}>
-                {signedBetMultiplier > 0 && '+'}
-                {toPercentage(contribution.probability * signedBetMultiplier, decimals)}{' '}
-                {t('commons.bet').toLowerCase()}
+                {contribution.result === push ? (
+                  '-'
+                ) : (
+                  <React.Fragment>
+                    {contribution.betMultiplier > 0 && '+'}
+                    {toPercentage(
+                      contribution.probability * contribution.betMultiplier,
+                      decimals,
+                    )}{' '}
+                    {t('commons.bet').toLowerCase()}
+                  </React.Fragment>
+                )}
               </td>
             </tr>
           );
