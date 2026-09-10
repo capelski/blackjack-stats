@@ -33,8 +33,8 @@ const downloadCsv = ({ hands, t }: DownloadCsvOptions): void => {
     t('materialHandsList.cards'),
     t('commons.score'),
     t('commons.probability'),
-    t('commons.betMultiplier'),
     t('commons.action'),
+    t('commons.modifiers'),
   ];
 
   const rows = hands.map((hand) => {
@@ -42,8 +42,8 @@ const downloadCsv = ({ hands, t }: DownloadCsvOptions): void => {
       serializeCards(hand, ', '),
       scoresToLabel(hand.scores),
       hand.probability,
-      getHandModifiersText(hand.modifiers, t),
       t(`actions.${hand.action}`),
+      getHandModifiersText(hand.modifiers, t),
     ];
 
     return row.map(escapeCsvValue).join(',');
