@@ -22,11 +22,7 @@ import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
-import {
-  createEdgeContributions,
-  mergeEdgeContributions,
-  rebaseEdgeContributions,
-} from './outcomes.logic';
+import { createEdgeContributions } from './outcomes.logic';
 
 export type FutureHandsConsequenceParameters = [
   AbstractHand,
@@ -95,7 +91,6 @@ export const getStandConsequence = (
   return {
     action: stand,
     edge: getEdge(edgeContributions),
-    edgeContributions,
     finalProbabilities: { [finalScore.score]: 1 },
   };
 };
@@ -111,7 +106,6 @@ export const getSurrenderConsequence = (): Consequence => {
   return {
     action: surrenderAction,
     edge: getEdge(edgeContributions),
-    edgeContributions,
     finalProbabilities: { [surrenderScore]: probability },
   };
 };
@@ -157,7 +151,6 @@ export const mergeFutureConsequences = (
   const mergedConsequence: Consequence = {
     action,
     edge: 0,
-    edgeContributions: [],
     finalProbabilities: {},
   };
   const weight = 1 / futureConsequences.length;
@@ -168,21 +161,12 @@ export const mergeFutureConsequences = (
       futureConsequence.finalProbabilities,
       weight,
     );
-    mergeEdgeContributions(
-      mergedConsequence.edgeContributions,
-      futureConsequence.edgeContributions,
-      weight,
-    );
+    mergedConsequence.edge += futureConsequence.edge * weight;
   }
 
   if (isDoubleBetAction(action)) {
-    mergedConsequence.edgeContributions = rebaseEdgeContributions(
-      mergedConsequence.edgeContributions,
-      2,
-    );
+    mergedConsequence.edge *= 2;
   }
-
-  mergedConsequence.edge = getEdge(mergedConsequence.edgeContributions);
 
   return mergedConsequence;
 };

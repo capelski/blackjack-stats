@@ -1,7 +1,7 @@
 import { DataTable, Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { double, hit, stand } from '../models/action.model';
-import { Result, sortedResults } from '../models/result.model';
+import { Result } from '../models/result.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
 import { EdgeContribution } from '../types/outcomes.type';
 import { getAbstractHands } from './abstract-hands.logic';
@@ -12,7 +12,6 @@ import {
 } from './consequence.logic';
 import { dealerFinalScores } from './dealer-data.logic';
 import { effectiveScoreToLabel, labelToEffectiveScore } from './labels.logic';
-import { getEdgeContribution } from './outcomes.logic';
 
 interface ConsequenceWorld {
   consequence: Consequence;
@@ -46,45 +45,13 @@ export const formatProbabilityByBetMultiplier = (
     .join(',');
 };
 
-const formatOutcomesByBetMultiplier = (edgeContributions: EdgeContribution[]): string => {
-  return sortedResults
-    .filter((result) => edgeContributions.some((contribution) => contribution.result === result))
-    .map((result) => `${result}: ${formatProbabilityByBetMultiplier(edgeContributions, result)}`)
-    .join(' / ');
-};
-
-const parseOutcomesByBetMultiplier = (outcomesString: string): EdgeContribution[] => {
-  const edgeContributions: EdgeContribution[] = [];
-
-  const outcomeParts = outcomesString.split('/').map((part) => part.trim());
-
-  for (const part of outcomeParts) {
-    const [outcomeType, multipliersString] = part.split(':').map((p) => p.trim());
-    const multipliers = multipliersString.split(',').map((m) => m.trim());
-
-    for (const multiplier of multipliers) {
-      const [betMultiplier, probability] = multiplier.split('=').map((p) => p.trim());
-      const contribution = getEdgeContribution(
-        edgeContributions,
-        {},
-        parseFloat(betMultiplier),
-        outcomeType as Result,
-      );
-      contribution.probability = parseFloat(probability);
-    }
-  }
-
-  return edgeContributions;
-};
-
 Given(
   'the following list of future consequences',
   function (this: ConsequenceWorld, table: DataTable) {
     this.futureConsequences = table.hashes().map<Consequence>((row) => ({
       action: stand,
-      finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
-      edgeContributions: parseOutcomesByBetMultiplier(row['Outcomes'].trim()),
       edge: parseFloat(row['Edge'].trim()),
+      finalProbabilities: parseFinalProbabilities(row['FinalProbabilities'].trim()),
     }));
   },
 );
@@ -121,14 +88,6 @@ Then(
   'the consequence final probabilities equal {string}',
   function (this: ConsequenceWorld, expected: string) {
     assert.strictEqual(formatFinalProbabilities(this.consequence.finalProbabilities), expected);
-  },
-);
-
-Then(
-  'the consequence outcomes equals {string}',
-  function (this: ConsequenceWorld, expected: string) {
-    const actual = formatOutcomesByBetMultiplier(this.consequence.edgeContributions);
-    assert.strictEqual(actual, expected);
   },
 );
 

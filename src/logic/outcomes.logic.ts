@@ -67,13 +67,3 @@ export const mergeEdgeContributions = (
     contribution.probability += entry.probability * weight;
   });
 };
-
-export const rebaseEdgeContributions = (
-  edgeContributions: EdgeContribution[],
-  multiplier: number,
-): EdgeContribution[] => {
-  return edgeContributions.map((entry) => ({
-    ...entry,
-    betMultiplier: entry.betMultiplier * multiplier,
-  }));
-};

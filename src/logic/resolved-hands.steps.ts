@@ -1,11 +1,9 @@
 import { DataTable, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
 import { hit, stand } from '../models/action.model';
-import { lose, push, win } from '../models/result.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
-import { formatProbabilityByBetMultiplier } from './consequence.steps';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getResolvedHands } from './resolved-hands.logic';
 import { RulesWorld } from './rules.steps';
@@ -59,18 +57,6 @@ const assertHandWithBreakdown = (
       throw new Error(`No consequence found for action "${rowAction}" on hand "${hand.label}"`);
     }
 
-    assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.edgeContributions, win),
-      row['Win'].trim(),
-    );
-    assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.edgeContributions, push),
-      row['Push'].trim(),
-    );
-    assert.strictEqual(
-      formatProbabilityByBetMultiplier(consequence.edgeContributions, lose),
-      row['Lose'].trim(),
-    );
     assert.strictEqual(String(consequence.edge), row['Edge'].trim());
   }
 };
