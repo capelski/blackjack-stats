@@ -2,9 +2,9 @@ import {
   DecisionOverridesByFirstCard,
   DecisionOverridesMap,
 } from '../types/decision-overrides.type';
+import { EdgeContribution } from '../types/edge-contribution.type';
 import { FinalScore, FinalScoresByFirstCard } from '../types/final-score.type';
 import { HandResolver } from '../types/hand-resolution.type';
-import { EdgeContribution } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
 import { Strategy, StrategyByFirstCard, StrategyMap } from '../types/strategy.type';
 import { getOverridesResolver } from './decision-overrides.logic';

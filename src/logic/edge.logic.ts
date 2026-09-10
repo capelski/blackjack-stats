@@ -1,5 +1,5 @@
 import { push } from '../models/result.model';
-import { EdgeContribution } from '../types/outcomes.type';
+import { EdgeContribution } from '../types/edge-contribution.type';
 import { loseColor, winColor } from './result.logic';
 
 export const getEdge = (edgeContributions: EdgeContribution[]): number => {

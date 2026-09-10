@@ -1,7 +1,7 @@
 import { Result, sortedResults } from '../models/result.model';
+import { EdgeContribution } from '../types/edge-contribution.type';
 import { ExpectedResult } from '../types/expected-result.type';
 import { HandModifiers } from '../types/hand-modifiers.type';
-import { EdgeContribution } from '../types/outcomes.type';
 import { getBetMultiplier } from './bet-multiplier.logic';
 import { getHandModifiersOrder } from './hand-modifiers.logic';
 

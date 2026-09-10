@@ -1,6 +1,6 @@
+import { EdgeContribution } from '../types/edge-contribution.type';
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
 import { FinalScore } from '../types/final-score.type';
-import { EdgeContribution } from '../types/outcomes.type';
 import { createEdgeContributions, mergeEdgeContributions } from './edge-contribution.logic';
 import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';

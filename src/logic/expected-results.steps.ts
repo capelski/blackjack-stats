@@ -1,7 +1,7 @@
 import { DataTable, Then } from '@cucumber/cucumber';
 import { lose, push, Result, win } from '../models/result.model';
+import { EdgeContribution } from '../types/edge-contribution.type';
 import { FinalScore } from '../types/final-score.type';
-import { EdgeContribution } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';

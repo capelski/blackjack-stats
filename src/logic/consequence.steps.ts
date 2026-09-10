@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { double, hit, stand } from '../models/action.model';
 import { Result } from '../models/result.model';
 import { Consequence, FinalProbabilities } from '../types/consequence.type';
-import { EdgeContribution } from '../types/outcomes.type';
+import { EdgeContribution } from '../types/edge-contribution.type';
 import { getAbstractHands } from './abstract-hands.logic';
 import {
   getStandConsequence,

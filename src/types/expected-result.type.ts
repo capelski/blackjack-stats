@@ -1,6 +1,7 @@
+import { EdgeContribution } from './edge-contribution.type';
 import { FinalComparisonsMap } from './final-comparison.type';
 import { HandModifiers } from './hand-modifiers.type';
-import { EdgeContribution, Outcomes } from './outcomes.type';
+import { Outcomes } from './outcomes.type';
 
 export type ExpectedResult = {
   finalComparisons: FinalComparisonsMap;
