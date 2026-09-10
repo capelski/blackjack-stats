@@ -18,11 +18,11 @@ import { ResolvedHand, ResolvedHandsMap } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { isDoubleBetAction } from './action.logic';
 import { getBetMultiplier } from './bet-multiplier.logic';
+import { createEdgeContributions } from './edge-contribution.logic';
 import { getEdge } from './edge.logic';
 import { getExpectedResult } from './expected-results.logic';
 import { createFinalScore } from './final-scores-list.logic';
 import { getNextHandLabel } from './labels.logic';
-import { createEdgeContributions } from './outcomes.logic';
 
 export type FutureHandsConsequenceParameters = [
   AbstractHand,

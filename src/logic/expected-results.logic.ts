@@ -1,9 +1,10 @@
 import { ExpectedResult, ExpectedResults, ExpectedResultsMap } from '../types/expected-result.type';
 import { FinalScore } from '../types/final-score.type';
 import { EdgeContribution } from '../types/outcomes.type';
+import { createEdgeContributions, mergeEdgeContributions } from './edge-contribution.logic';
 import { getEdge } from './edge.logic';
 import { getFinalComparisons } from './final-comparison.logic';
-import { createEdgeContributions, createOutcomes, mergeEdgeContributions } from './outcomes.logic';
+import { createOutcomes } from './outcomes.logic';
 
 export const getExpectedResult = (
   playerScore: FinalScore,

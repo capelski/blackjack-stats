@@ -8,11 +8,11 @@ import { EdgeContribution } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
 import { Strategy, StrategyByFirstCard, StrategyMap } from '../types/strategy.type';
 import { getOverridesResolver } from './decision-overrides.logic';
+import { mergeEdgeContributions } from './edge-contribution.logic';
 import { getEdge } from './edge.logic';
 import { getExpectedResults } from './expected-results.logic';
 import { getFinalScoresList, getSortedFinalScores } from './final-scores-list.logic';
 import { getMaterialHands } from './material-hands.logic';
-import { mergeEdgeContributions } from './outcomes.logic';
 import { getResolvedHands } from './resolved-hands.logic';
 
 export const getStrategy = async (

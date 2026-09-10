@@ -1,15 +1,13 @@
-import { EdgeContribution, Outcomes } from '../types/outcomes.type';
-import { createOutcomes } from './outcomes.logic';
+import { push } from '../models/result.model';
+import { EdgeContribution } from '../types/outcomes.type';
 import { loseColor, winColor } from './result.logic';
 
 export const getEdge = (edgeContributions: EdgeContribution[]): number => {
-  const { lose, surrender, win } = edgeContributions.reduce<Outcomes>((reduced, contribution) => {
-    reduced[contribution.result] += contribution.probability * contribution.betMultiplier;
-    return reduced;
-  }, createOutcomes());
-
-  const difference = win + lose + surrender;
-  return difference;
+  return edgeContributions
+    .filter((contribution) => contribution.result !== push)
+    .reduce((reduced, contribution) => {
+      return reduced + contribution.probability * contribution.betMultiplier;
+    }, 0);
 };
 
 export const getEdgeColor = (edge: number) => {
