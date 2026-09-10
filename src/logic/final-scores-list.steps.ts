@@ -1,10 +1,7 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert';
-import { Result } from '../models/result.model';
-import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore, FinalScoresByFirstCard } from '../types/final-score.type';
 import { HandModifiers } from '../types/hand-modifiers.type';
-import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
 import {
   getFinalScoreId,
@@ -62,25 +59,6 @@ export const getFinalScoresByFirstCardForStandThreshold = (rules: Rules, thresho
 export const getFinalScoresListForOptimalActions = (rules: Rules, surrenderLabel?: string) => {
   const hands = getMaterialHandsForOptimalActions(rules, surrenderLabel);
   return getFinalScoresList(hands);
-};
-
-export const formatProbabilityByBetMultiplier = (
-  outcomesWithBetMultipliers: OutcomesWithBetMultiplier[],
-  result: Result,
-): string => {
-  const probabilitiesByBetMultiplier = outcomesWithBetMultipliers.reduce<BetMultiplierMap>(
-    (acc, entry) => {
-      acc[entry.betMultiplier] = entry.outcomes[result];
-      return acc;
-    },
-    {},
-  );
-
-  return Object.keys(probabilitiesByBetMultiplier)
-    .map(parseFloat)
-    .sort((a, b) => a - b)
-    .map((multiplier) => `${multiplier}=${probabilitiesByBetMultiplier[multiplier]}`)
-    .join(',');
 };
 
 Given(

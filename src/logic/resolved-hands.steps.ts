@@ -6,7 +6,7 @@ import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
 import { dealerFinalScores } from './dealer-data.logic';
-import { formatProbabilityByBetMultiplier } from './final-scores-list.steps';
+import { formatProbabilityByBetMultiplier } from './expected-results.steps';
 import { getResolvedHands } from './resolved-hands.logic';
 import { RulesWorld } from './rules.steps';
 

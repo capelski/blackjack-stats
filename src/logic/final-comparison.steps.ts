@@ -1,18 +1,14 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { surrenderLabel } from '../models/labels.model';
-import { lose, push, Result, surrender, win } from '../models/result.model';
 import { FinalComparison } from '../types/final-comparison.type';
 import { FinalScore } from '../types/final-score.type';
-import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getFinalComparison } from './final-comparison.logic';
 import {
   findFinalScore,
-  formatProbabilityByBetMultiplier,
   getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
-import { getOutcomesForBetMultiplier } from './outcomes.logic';
 import { RulesWorld } from './rules.steps';
 
 type FinalComparisonWorld = RulesWorld & {
@@ -24,43 +20,6 @@ const assertEqual = (actual: unknown, expected: unknown, message: string): void 
   if (actual !== expected) {
     throw new Error(`${message}: expected "${expected}", got "${actual}"`);
   }
-};
-
-const formattedOutcomeResults: Result[] = [win, push, lose, surrender];
-
-export const formatOutcomesByBetMultiplier = (
-  outcomesWithBetMultiplier: OutcomesWithBetMultiplier[],
-): string => {
-  return formattedOutcomeResults
-    .map(
-      (result) =>
-        `${result}: ${formatProbabilityByBetMultiplier(outcomesWithBetMultiplier, result)}`,
-    )
-    .join(' / ');
-};
-
-export const parseOutcomesByBetMultiplier = (
-  outcomesString: string,
-): OutcomesWithBetMultiplier[] => {
-  const outcomesWithBetMultiplier: OutcomesWithBetMultiplier[] = [];
-
-  const outcomeParts = outcomesString.split('/').map((part) => part.trim());
-
-  for (const part of outcomeParts) {
-    const [outcomeType, multipliersString] = part.split(':').map((p) => p.trim());
-    const multipliers = multipliersString.split(',').map((m) => m.trim());
-
-    for (const multiplier of multipliers) {
-      const [betMultiplier, probability] = multiplier.split('=').map((p) => p.trim());
-      const outcomes = getOutcomesForBetMultiplier(
-        outcomesWithBetMultiplier,
-        parseFloat(betMultiplier),
-      );
-      outcomes[outcomeType as Result] = parseFloat(probability);
-    }
-  }
-
-  return outcomesWithBetMultiplier;
 };
 
 Given(

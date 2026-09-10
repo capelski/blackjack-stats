@@ -1,12 +1,13 @@
 import { DataTable, Then } from '@cucumber/cucumber';
-import { lose, push, win } from '../models/result.model';
+import { lose, push, Result, win } from '../models/result.model';
+import { BetMultiplierMap } from '../types/bet-multiplier.type';
 import { FinalScore } from '../types/final-score.type';
+import { OutcomesWithBetMultiplier } from '../types/outcomes.type';
 import { Rules } from '../types/rules.type';
 import { dealerFinalScores } from './dealer-data.logic';
 import { getExpectedResult, getExpectedResults } from './expected-results.logic';
 import {
   findFinalScore,
-  formatProbabilityByBetMultiplier,
   getFinalScoresListForOptimalActions,
   getFinalScoresListForStandThreshold,
 } from './final-scores-list.steps';
@@ -28,6 +29,25 @@ const getFinalScoresFromResolver = (rules: Rules, resolver: string): FinalScore[
   }
 
   throw new Error(`Unknown hand resolver: "${resolver}"`);
+};
+
+export const formatProbabilityByBetMultiplier = (
+  outcomesWithBetMultipliers: OutcomesWithBetMultiplier[],
+  result: Result,
+): string => {
+  const probabilitiesByBetMultiplier = outcomesWithBetMultipliers.reduce<BetMultiplierMap>(
+    (acc, entry) => {
+      acc[entry.betMultiplier] = entry.outcomes[result];
+      return acc;
+    },
+    {},
+  );
+
+  return Object.keys(probabilitiesByBetMultiplier)
+    .map(parseFloat)
+    .sort((a, b) => a - b)
+    .map((multiplier) => `${multiplier}=${probabilitiesByBetMultiplier[multiplier]}`)
+    .join(',');
 };
 
 Then(
