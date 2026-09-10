@@ -1,4 +1,3 @@
-import { blackjackLabel } from '../models/labels.model';
 import { HandModifiers } from '../types/hand-modifiers.type';
 
 export const blackjackMultiplier = 1.5;
@@ -24,5 +23,5 @@ export const getBetMultiplier = (options: HandModifiers): number => {
 };
 
 export const getBetMultiplierLabel = (betMultiplier: number): string => {
-  return betMultiplier === blackjackMultiplier ? blackjackLabel : `${betMultiplier}x`;
+  return betMultiplier === blackjackMultiplier ? '3/2x' : `${betMultiplier}x`;
 };

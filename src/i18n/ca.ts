@@ -125,7 +125,7 @@ export const ca = {
     viewBreakdown: 'Veure detalls',
   },
   modifiers: {
-    isBlackjack: 'Paga 3/2',
+    isBlackjack: 'Blackjack',
     isDoubleBet: 'Aposta doble',
     isSplit: 'Mà dividida',
     isSurrender: 'Mà rendida',

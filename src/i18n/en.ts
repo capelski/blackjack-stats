@@ -125,7 +125,7 @@ export const en = {
     viewBreakdown: 'View breakdown',
   },
   modifiers: {
-    isBlackjack: 'Pays 3/2',
+    isBlackjack: 'Blackjack',
     isDoubleBet: 'Double bet',
     isSplit: 'Split hand',
     isSurrender: 'Surrendered',
