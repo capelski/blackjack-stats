@@ -30,14 +30,48 @@ const getFinalScoresFromResolver = (rules: Rules, resolver: string): FinalScore[
   throw new Error(`Unknown hand resolver: "${resolver}"`);
 };
 
-export const formatProbabilityByBetMultiplier = (
+const getEdgeContributionLabel = (modifiers: EdgeContribution['modifiers']): string => {
+  if (modifiers.isSplit) {
+    if (modifiers.isBlackjack) {
+      return 'SBJ';
+    }
+
+    if (modifiers.isDoubleBet) {
+      return 'SD';
+    }
+
+    return 'S';
+  }
+
+  if (modifiers.isBlackjack) {
+    return 'BJ';
+  }
+
+  if (modifiers.isDoubleBet) {
+    return 'D';
+  }
+
+  return 'n';
+};
+
+const formatProbabilityByEdgeContribution = (
   edgeContributions: EdgeContribution[],
   result: Result,
 ): string => {
   return edgeContributions
     .filter((contribution) => contribution.result === result)
-    .map((contribution) => `${contribution.betMultiplier}=${contribution.probability}`)
+    .map(
+      (contribution) =>
+        `${getEdgeContributionLabel(contribution.modifiers)}=${contribution.probability}`,
+    )
     .join(',');
+};
+
+const formatProbabilityByModifiers = (
+  modifiers: EdgeContribution['modifiers'],
+  probability: number,
+) => {
+  return `${getEdgeContributionLabel(modifiers)}=${probability}`;
 };
 
 Then(
@@ -54,9 +88,21 @@ Then(
       );
       const result = getExpectedResult(finalScore, dealerFinalScores);
 
-      assertEqual(String(result.outcomes.win), row['Win'].trim(), 'Win mismatch');
-      assertEqual(String(result.outcomes.push), row['Push'].trim(), 'Push mismatch');
-      assertEqual(String(result.outcomes.lose), row['Lose'].trim(), 'Lose mismatch');
+      assertEqual(
+        formatProbabilityByModifiers(result.modifiers, result.outcomes.win),
+        row['Win'].trim(),
+        'Win mismatch',
+      );
+      assertEqual(
+        formatProbabilityByModifiers(result.modifiers, result.outcomes.push),
+        row['Push'].trim(),
+        'Push mismatch',
+      );
+      assertEqual(
+        formatProbabilityByModifiers(result.modifiers, result.outcomes.lose),
+        row['Lose'].trim(),
+        'Lose mismatch',
+      );
     }
   },
 );
@@ -72,17 +118,17 @@ Then(
 
       assertEqual(results.probability, Number(row['Probability'].trim()), 'Probability mismatch');
       assertEqual(
-        formatProbabilityByBetMultiplier(results.edgeContributions, win),
+        formatProbabilityByEdgeContribution(results.edgeContributions, win),
         row['Win'].trim(),
         'Win mismatch',
       );
       assertEqual(
-        formatProbabilityByBetMultiplier(results.edgeContributions, push),
+        formatProbabilityByEdgeContribution(results.edgeContributions, push),
         row['Push'].trim(),
         'Push mismatch',
       );
       assertEqual(
-        formatProbabilityByBetMultiplier(results.edgeContributions, lose),
+        formatProbabilityByEdgeContribution(results.edgeContributions, lose),
         row['Lose'].trim(),
         'Lose mismatch',
       );

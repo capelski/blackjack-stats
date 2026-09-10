@@ -5,8 +5,8 @@ import { lose, push, win } from '../models/result.model';
 import { HandResolver } from '../types/hand-resolution.type';
 import { ResolvedHand } from '../types/resolved-hand.type';
 import { Rules } from '../types/rules.type';
+import { formatProbabilityByBetMultiplier } from './consequence.steps';
 import { dealerFinalScores } from './dealer-data.logic';
-import { formatProbabilityByBetMultiplier } from './expected-results.steps';
 import { getResolvedHands } from './resolved-hands.logic';
 import { RulesWorld } from './rules.steps';
 

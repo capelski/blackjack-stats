@@ -11,7 +11,6 @@ import {
   mergeFutureConsequences,
 } from './consequence.logic';
 import { dealerFinalScores } from './dealer-data.logic';
-import { formatProbabilityByBetMultiplier } from './expected-results.steps';
 import { effectiveScoreToLabel, labelToEffectiveScore } from './labels.logic';
 import { getEdgeContribution } from './outcomes.logic';
 
@@ -34,6 +33,16 @@ const formatFinalProbabilities = (finalProbabilities: FinalProbabilities): strin
     .map(parseFloat)
     .sort((a, b) => a - b)
     .map((score) => `${effectiveScoreToLabel(score)}=${finalProbabilities[score]}`)
+    .join(',');
+};
+
+export const formatProbabilityByBetMultiplier = (
+  edgeContributions: EdgeContribution[],
+  result: Result,
+): string => {
+  return edgeContributions
+    .filter((contribution) => contribution.result === result)
+    .map((contribution) => `${contribution.betMultiplier}=${contribution.probability}`)
     .join(',');
 };
 
