@@ -111,6 +111,12 @@ export const ca = {
       all: 'Tots',
     },
     splitting: 'Dividir',
+    splittingOptions: {
+      disabled: 'Desactivat',
+      '1': '1',
+      '2': '2',
+      '3': '3',
+    },
     doublingAfterSplit: 'Doblar després de dividir',
     hitSplitAces: 'Demanar carta després de dividir asos',
     blackjackAfterSplit: 'Blackjack després de dividir',

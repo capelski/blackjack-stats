@@ -2,15 +2,20 @@ import { double, hit, split } from '../models/action.model';
 import { cardsMap } from '../models/cards.model';
 import {
   HandCategory,
-  postASplitPair,
+  initialPair,
+  oneSplitPair,
+  oneSplitPairAfterAces,
   postDoubleHand,
-  postSplitPair,
   splittablePair,
   threeOrMoreCards,
+  threeSplitsPair,
+  twoSplitsPair,
 } from '../models/hand-category.model';
 import {
   blackjackLabel,
   bustLabel,
+  postDoubleSymbol,
+  postSplitSymbol,
   softScoresSeparator,
   softScoresSeparatorUrl,
   splitScoresSeparator,
@@ -20,7 +25,22 @@ import { blackjackScore, bustScore, surrenderScore } from '../models/scores.mode
 import { AbstractHand } from '../types/abstract-hand.type';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
+import { getPostSplitCategory, getSplitCount } from './hand-category.logic';
+import { canSplit } from './rules.logic';
 import { getDisplayScores, getEffectiveScore, getNextScores } from './scores.logic';
+
+/** Suffix appended to the hand labels, to tell apart hands with the same scores that belong to
+ * different categories (e.g. "16" and "16 (S1)") */
+const discriminatorByCategory: Record<HandCategory, string> = {
+  [initialPair]: '',
+  [oneSplitPair]: `${postSplitSymbol}1`,
+  [oneSplitPairAfterAces]: 'A',
+  [postDoubleHand]: postDoubleSymbol,
+  [splittablePair]: '',
+  [threeOrMoreCards]: '3+',
+  [threeSplitsPair]: `${postSplitSymbol}3`,
+  [twoSplitsPair]: `${postSplitSymbol}2`,
+};
 
 export const effectiveScoreToLabel = (effectiveScore: number): string => {
   if (effectiveScore === surrenderScore) {
@@ -38,24 +58,21 @@ export const effectiveScoreToLabel = (effectiveScore: number): string => {
   return String(effectiveScore);
 };
 
-export const getHandLabel = (scores: number[], category: HandCategory, symbol?: string) => {
-  if (category === splittablePair && symbol) {
-    return `${symbol}${splitScoresSeparator}${symbol}`;
-  }
+/** Appends the discriminator of the category to a scores label (e.g. "16" => "16 (S1)") */
+export const getDiscriminatedLabel = (scoresLabel: string, category: HandCategory): string => {
+  const discriminator = discriminatorByCategory[category];
 
-  const scoresString = scoresToLabel(scores);
-  const discriminator =
-    category === postASplitPair
-      ? 'A'
-      : category === postSplitPair
-        ? 'S'
-        : category === threeOrMoreCards
-          ? '3+'
-          : category === postDoubleHand
-            ? 'D'
-            : '';
+  return `${scoresLabel}${discriminator ? ` (${discriminator})` : ''}`;
+};
 
-  return `${scoresString}${discriminator ? ` (${discriminator})` : ''}`;
+/** Splittable pairs are labelled after the cards they are made of (e.g. "8,8"), because the card
+ * they are split into determines the hands they can transform into */
+export const getHandLabel = (scores: number[], category: HandCategory, splitCard?: string) => {
+  const scoresLabel = splitCard
+    ? `${splitCard}${splitScoresSeparator}${splitCard}`
+    : scoresToLabel(scores);
+
+  return getDiscriminatedLabel(scoresLabel, category);
 };
 
 export const getNextHandLabel = (
@@ -70,22 +87,25 @@ export const getNextHandLabel = (
     throw new Error(`Cannot find an abstract hand with label "${currentLabel}"`);
   }
 
-  if (nextAction === split && currentAbstractHand.category !== splittablePair) {
-    throw new Error(`Cannot split a "${currentAbstractHand.category}" hand`);
-  }
+  if (nextAction === split) {
+    const { splitCard } = currentAbstractHand;
 
-  if (nextAction === split && currentAbstractHand.category === splittablePair) {
-    const isAcesSplit = currentAbstractHand.splitCard === 'A';
-    const nextCategory = isAcesSplit ? postASplitPair : postSplitPair;
+    if (!splitCard) {
+      throw new Error(`Cannot split a "${currentAbstractHand.category}" hand`);
+    }
+
+    const nextSplitCount = getSplitCount(currentAbstractHand.category) + 1;
+    const nextCanSplit = canSplit(rules, [splitCard, nextCard.symbol], nextSplitCount);
+    const nextCategory = getPostSplitCategory(splitCard, nextSplitCount);
 
     const nextScores = getNextScores(
-      cardsMap[currentAbstractHand.splitCard].scores,
+      cardsMap[splitCard].scores,
       nextCard.scores,
       nextCategory,
       rules,
     );
 
-    return getHandLabel(nextScores, nextCategory);
+    return getHandLabel(nextScores, nextCategory, nextCanSplit ? splitCard : undefined);
   }
 
   const nextCategory = nextAction === double ? postDoubleHand : threeOrMoreCards;

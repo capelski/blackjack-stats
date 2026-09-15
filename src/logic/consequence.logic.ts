@@ -88,7 +88,7 @@ export const getSplitConsequence = (
 
   return {
     action: split,
-    edge: edge * 2, // This is not consistent with material hands
+    edge: edge * 2,
     finalProbabilities,
   };
 };

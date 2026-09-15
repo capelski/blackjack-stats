@@ -1,12 +1,12 @@
 import { HandModifiers } from '../types/hand-modifiers.type';
 import { Rules } from '../types/rules.type';
-import { isDoublingEnabled } from './rules.logic';
+import { isDoublingEnabled, isSplittingEnabled } from './rules.logic';
 
 export const areEqualModifiers = (a: HandModifiers, b: HandModifiers): boolean => {
   return (
     !!a.isBlackjack === !!b.isBlackjack &&
     !!a.isDoubleBet === !!b.isDoubleBet &&
-    !!a.isSplit === !!b.isSplit &&
+    (a.splitCount ?? 0) === (b.splitCount ?? 0) &&
     !!a.isSurrender === !!b.isSurrender
   );
 };
@@ -14,7 +14,9 @@ export const areEqualModifiers = (a: HandModifiers, b: HandModifiers): boolean =
 export const getHandModifiersOrder = (modifiers: HandModifiers): number => {
   const isRegularHand = !modifiers.isDoubleBet && !modifiers.isBlackjack && !modifiers.isSurrender;
 
-  const splitCount = modifiers.isSplit ? 4 : 0;
+  // Every split count gets its own band, as hands split a different number of times have a
+  // different bet and must not be merged together
+  const splitOrder = (modifiers.splitCount ?? 0) * 4;
   const otherCount = isRegularHand
     ? 1
     : modifiers.isBlackjack
@@ -25,7 +27,14 @@ export const getHandModifiersOrder = (modifiers: HandModifiers): number => {
           ? 4
           : 0;
 
-  return splitCount + otherCount;
+  return splitOrder + otherCount;
+};
+
+/** Re-split hands tell how many splits they went through (e.g. "Split hand (x2)") */
+const getSplitModifierText = (splitCount: number, translate: (key: string) => string): string => {
+  const text = translate('modifiers.isSplit');
+
+  return splitCount > 1 ? `${text} (x${splitCount})` : text;
 };
 
 export const getHandModifiersText = (
@@ -38,8 +47,8 @@ export const getHandModifiersText = (
     modifiers.push(translate('modifiers.isSurrender'));
   }
 
-  if (handModifiers.isSplit) {
-    modifiers.push(translate('modifiers.isSplit'));
+  if (handModifiers.splitCount) {
+    modifiers.push(getSplitModifierText(handModifiers.splitCount, translate));
   }
 
   if (handModifiers.isBlackjack) {
@@ -54,5 +63,5 @@ export const getHandModifiersText = (
 };
 
 export const showHandModifiers = (rules: Rules): boolean => {
-  return isDoublingEnabled(rules) || !!rules.splitting || !!rules.surrendering;
+  return isDoublingEnabled(rules) || isSplittingEnabled(rules) || !!rules.surrendering;
 };

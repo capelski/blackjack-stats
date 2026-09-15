@@ -109,9 +109,10 @@ Then(
 );
 
 Then(
-  'there is a material hand with cards {string}, probability {string}, action {string} and split modifier',
+  'there is a material hand split {int} time(s) with cards {string}, probability {string} and action {string}',
   function (
     this: MaterialHandsWorld,
+    expectedSplitCount: number,
     expectedCards: string,
     expectedProbability: string,
     expectedAction: string,
@@ -119,21 +120,22 @@ Then(
     const hand = this.list.find(
       (h) =>
         h.cards.map((c) => c.symbol).join(',') === expectedCards &&
+        (h.modifiers.splitCount ?? 0) === expectedSplitCount &&
         String(h.probability) === expectedProbability &&
-        h.action === expectedAction &&
-        h.modifiers.isSplit,
+        h.action === expectedAction,
     );
     assert.ok(
       hand,
-      `No material hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and split modifier`,
+      `No material hand split ${expectedSplitCount} times found with cards "${expectedCards}", probability "${expectedProbability}" and action "${expectedAction}"`,
     );
   },
 );
 
 Then(
-  'there is a material hand with cards {string}, probability {string}, action {string}, double bet modifier and split modifier',
+  'there is a material hand split {int} time(s) with cards {string}, probability {string}, action {string} and double bet modifier',
   function (
     this: MaterialHandsWorld,
+    expectedSplitCount: number,
     expectedCards: string,
     expectedProbability: string,
     expectedAction: string,
@@ -141,14 +143,14 @@ Then(
     const hand = this.list.find(
       (h) =>
         h.cards.map((c) => c.symbol).join(',') === expectedCards &&
+        (h.modifiers.splitCount ?? 0) === expectedSplitCount &&
         String(h.probability) === expectedProbability &&
         h.action === expectedAction &&
-        h.modifiers.isDoubleBet &&
-        h.modifiers.isSplit,
+        h.modifiers.isDoubleBet,
     );
     assert.ok(
       hand,
-      `No material hand found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}", double bet modifier and split modifier`,
+      `No material hand split ${expectedSplitCount} times found with cards "${expectedCards}", probability "${expectedProbability}", action "${expectedAction}" and double bet modifier`,
     );
   },
 );

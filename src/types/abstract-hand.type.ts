@@ -1,32 +1,13 @@
-import {
-  initialPair,
-  postASplitPair,
-  postDoubleHand,
-  postSplitPair,
-  splittablePair,
-  threeOrMoreCards,
-} from '../models/hand-category.model';
 import { HandBase } from './hand-base.type';
 
 export type AbstractHandPartial = Pick<HandBase, 'category' | 'label' | 'scores'> & {
-  example: string;
+  example?: string;
   isHidden?: boolean;
-} & (
-    | {
-        category:
-          | typeof threeOrMoreCards
-          | typeof postDoubleHand
-          | typeof initialPair
-          | typeof postSplitPair
-          | typeof postASplitPair;
-        splitCard?: undefined;
-      }
-    | {
-        canSplit: boolean;
-        category: typeof splittablePair;
-        splitCard: string;
-      }
-  );
+  /** Symbol of the two cards forming the hand, when the hand is a pair that can be split.
+   * Splittable pairs are identified by their card symbol, instead of their scores, because the
+   * card they are split into determines the hands they can transform into */
+  splitCard?: string;
+};
 
 /** Properties of a hand that are relevant to determine the evolution of the hand.
  * These properties are shared by different combinations of cards that lead to the same results.

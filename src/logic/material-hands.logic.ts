@@ -3,9 +3,7 @@ import { cards, cardsNumber } from '../models/cards.model';
 import {
   HandCategory,
   initialPair,
-  postASplitPair,
   postDoubleHand,
-  postSplitPair,
   splittablePair,
   threeOrMoreCards,
 } from '../models/hand-category.model';
@@ -16,6 +14,7 @@ import { HandResolutionMap } from '../types/hand-resolution.type';
 import { MaterialHand } from '../types/material-hand.type';
 import { Rules } from '../types/rules.type';
 import { getHandStatus } from './abstract-hands.logic';
+import { getPostSplitCategory } from './hand-category.logic';
 import { getHandLabel, scoresToLabel } from './labels.logic';
 import { canAction, canSplit } from './rules.logic';
 import { getEffectiveScore, getNextScoresFromCards } from './scores.logic';
@@ -69,8 +68,6 @@ const cardToMaterialHand = (card: Card): MaterialHand => {
   };
 };
 
-/** Computes the next material hand based on the previous hand and the new card.
- * It returns an array, since splitting can turn a hand into two */
 const getNextMaterialHand = (
   rules: Rules,
   handResolutionMap: HandResolutionMap,
@@ -80,19 +77,16 @@ const getNextMaterialHand = (
   const previousDouble = previous.action === double;
   const previousSplit = previous.action === split;
   const previousCards = previousSplit ? [previous.cards[0]] : previous.cards;
-  const isPostSplit = previousSplit || !!previous.modifiers.isSplit;
-  const isFirstCardAce = previousCards[0].symbol === 'A';
+  const splitCount = (previous.modifiers.splitCount ?? 0) + (previousSplit ? 1 : 0);
 
   const nextCards = [...previousCards, card];
   const nextCanSplit = canSplit(
     rules,
     nextCards.map((c) => c.symbol),
-    isPostSplit,
+    splitCount,
   );
   const nextCategory: HandCategory = previousSplit
-    ? isFirstCardAce
-      ? postASplitPair
-      : postSplitPair
+    ? getPostSplitCategory(previousCards[0].symbol, splitCount)
     : nextCanSplit
       ? splittablePair
       : previousDouble
@@ -101,8 +95,9 @@ const getNextMaterialHand = (
           ? initialPair
           : threeOrMoreCards;
 
+  const nextSplitCard = nextCanSplit ? previousCards[0].symbol : undefined;
   const nextScores = getNextScoresFromCards(previousCards, card.scores, nextCategory, rules);
-  const nextLabel = getHandLabel(nextScores, nextCategory, previous.cards[0].symbol);
+  const nextLabel = getHandLabel(nextScores, nextCategory, nextSplitCard);
 
   const nextEffectiveScore = getEffectiveScore(nextScores);
   const nextIsActionable = canAction(rules, {
@@ -132,13 +127,13 @@ const getNextMaterialHand = (
     labelAsInitial: getHandLabel(
       nextScores,
       nextCanSplit ? splittablePair : initialPair,
-      previous.cards[0].symbol,
+      nextSplitCard,
     ),
     modifiers: {
       isBlackjack: nextEffectiveScore === blackjackScore,
       isDoubleBet: previousDouble,
-      isSplit: isPostSplit,
       isSurrender: nextIsSurrender,
+      splitCount,
     },
     // Computing based on previous probability to account for post split hands
     probability: previous.probability / cardsNumber,
@@ -151,9 +146,12 @@ const getNextMaterialHand = (
 export const serializeCards = (hand: MaterialHand, separator: string = ','): string => {
   const symbols = hand.cards.map((c) => c.symbol);
 
-  if (hand.modifiers.isSplit) {
-    symbols.splice(1, 0, symbols[0], `${postSplitSymbol}`);
-  }
+  // Every split is displayed as the card the hand was split from, followed by the split mark
+  const splitMarks = Array.from({ length: hand.modifiers.splitCount ?? 0 }, () => [
+    symbols[0],
+    postSplitSymbol,
+  ]).flat();
+  symbols.splice(1, 0, ...splitMarks);
 
   if (hand.modifiers.isDoubleBet) {
     symbols.splice(-1, 0, postDoubleSymbol);

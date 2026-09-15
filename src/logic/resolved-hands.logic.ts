@@ -1,12 +1,16 @@
 import { double, hit, split, stand, surrender } from '../models/action.model';
 import {
+  HandCategory,
   initialPair,
-  postASplitPair,
+  oneSplitPair,
+  oneSplitPairAfterAces,
   postDoubleHand,
-  postSplitPair,
   splittablePair,
+  threeOrMoreCards,
+  threeSplitsPair,
+  twoSplitsPair,
 } from '../models/hand-category.model';
-import { acesLabel, softScoresSeparator } from '../models/labels.model';
+import { acesLabel, softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
 import { ConsequencesMap } from '../types/consequence.type';
 import { FinalScore } from '../types/final-score.type';
 import { HandResolutionMap, HandResolver } from '../types/hand-resolution.type';
@@ -101,41 +105,25 @@ export const getResolvedHands = (
 
 export const optimalActionsHandResolver: HandResolver = (hand) => hand.optimalConsequence.action;
 
+/** Hands are grouped by category, so the hands the user can act upon are listed first */
+const sortedCategories: HandCategory[] = [
+  splittablePair,
+  initialPair,
+  postDoubleHand,
+  oneSplitPairAfterAces,
+  oneSplitPair,
+  twoSplitsPair,
+  threeSplitsPair,
+  threeOrMoreCards,
+];
+
 const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
   return [...resolvedHands].sort((a, b) => {
-    const isASplittable = a.category === splittablePair;
-    const isBSplittable = b.category === splittablePair;
+    const categoryDifference =
+      sortedCategories.indexOf(a.category) - sortedCategories.indexOf(b.category);
 
-    if (isASplittable !== isBSplittable) {
-      return isASplittable ? -1 : 1;
-    }
-
-    const isAInitialPair = a.category === initialPair;
-    const isBInitialPair = b.category === initialPair;
-
-    if (isAInitialPair !== isBInitialPair) {
-      return isAInitialPair ? -1 : 1;
-    }
-
-    const isAPostDouble = a.category === postDoubleHand;
-    const isBPostDouble = b.category === postDoubleHand;
-
-    if (isAPostDouble !== isBPostDouble) {
-      return isAPostDouble ? -1 : 1;
-    }
-
-    const isAPostASplit = a.category === postASplitPair;
-    const isBPostASplit = b.category === postASplitPair;
-
-    if (isAPostASplit !== isBPostASplit) {
-      return isAPostASplit ? -1 : 1;
-    }
-
-    const isAPostSplit = a.category === postSplitPair;
-    const isBPostSplit = b.category === postSplitPair;
-
-    if (isAPostSplit !== isBPostSplit) {
-      return isAPostSplit ? -1 : 1;
+    if (categoryDifference !== 0) {
+      return categoryDifference;
     }
 
     const isAAces = a.label === acesLabel;
@@ -143,6 +131,13 @@ const sortResolvedHands = (resolvedHands: ResolvedHand[]): ResolvedHand[] => {
 
     if (isAAces !== isBAces) {
       return isAAces ? -1 : 1;
+    }
+
+    const isASplittable = a.label.includes(splitScoresSeparator);
+    const isBSplittable = b.label.includes(splitScoresSeparator);
+
+    if (isASplittable !== isBSplittable) {
+      return isASplittable ? -1 : 1;
     }
 
     const isASoft = a.label.includes(softScoresSeparator);

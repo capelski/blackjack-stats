@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { doublingAll } from '../models/doubling.model';
 import { HandCategory, threeOrMoreCards } from '../models/hand-category.model';
 import { softScoresSeparator, splitScoresSeparator } from '../models/labels.model';
+import { Splitting, splittingOnce } from '../models/splitting.model';
 import { Rules } from '../types/rules.type';
 import { canAction, canDouble, canSplit } from './rules.logic';
 
@@ -10,7 +11,7 @@ export type RulesWorld = {
   rules: Rules;
 };
 
-Before(function(this: RulesWorld) {
+Before(function (this: RulesWorld) {
   this.rules = {};
 });
 
@@ -34,31 +35,35 @@ const parseScores = (value: string): number[] => {
   return trimmed === emptyCell ? [] : trimmed.split(softScoresSeparator).map(Number);
 };
 
-Given('doubling is allowed', function(this: RulesWorld) {
+Given('doubling is allowed', function (this: RulesWorld) {
   this.rules.doubling = doublingAll;
 });
 
-Given('splitting is allowed', function(this: RulesWorld) {
-  this.rules.splitting = true;
+Given('splitting is allowed', function (this: RulesWorld) {
+  this.rules.splitting = splittingOnce;
 });
 
-Given('surrendering is allowed', function(this: RulesWorld) {
+Given('splitting is allowed {int} times', function (this: RulesWorld, maxSplits: number) {
+  this.rules.splitting = String(maxSplits) as Splitting;
+});
+
+Given('surrendering is allowed', function (this: RulesWorld) {
   this.rules.surrendering = true;
 });
 
-Given('hitting split aces is allowed', function(this: RulesWorld) {
+Given('hitting split aces is allowed', function (this: RulesWorld) {
   this.rules.hitSplitAces = true;
 });
 
-Given('blackjack after split is allowed', function(this: RulesWorld) {
+Given('blackjack after split is allowed', function (this: RulesWorld) {
   this.rules.blackjackAfterSplit = true;
 });
 
-Given('doubling after splitting is allowed', function(this: RulesWorld) {
+Given('doubling after splitting is allowed', function (this: RulesWorld) {
   this.rules.doublingAfterSplit = true;
 });
 
-Then('the following actionable scenarios are considered', function(table: DataTable) {
+Then('the following actionable scenarios are considered', function (table: DataTable) {
   for (const row of table.hashes()) {
     const category = parseCategory(row['Category']);
     const effectiveScore = parseFloat(row['Score'].trim());
@@ -74,7 +79,7 @@ Then('the following actionable scenarios are considered', function(table: DataTa
   }
 });
 
-Then('the following doubling scenarios are considered', function(table: DataTable) {
+Then('the following doubling scenarios are considered', function (table: DataTable) {
   for (const row of table.hashes()) {
     const category = parseCategory(row['Category']);
     const scores = parseScores(row['Score']);
@@ -90,18 +95,18 @@ Then('the following doubling scenarios are considered', function(table: DataTabl
   }
 });
 
-Then('the following splitting scenarios are considered', function(table: DataTable) {
+Then('the following splitting scenarios are considered', function (table: DataTable) {
   for (const row of table.hashes()) {
     const cardSymbols = parseCards(row['Cards']);
-    const isPostSplit = parseBoolean(row['Is post split']);
+    const splitCount = parseInt(row['Split count'].trim(), 10);
     const rules: Rules = JSON.parse(row['Rules'].trim());
     const expected = parseBoolean(row['Result']);
 
-    const actual = canSplit(rules, cardSymbols, isPostSplit);
+    const actual = canSplit(rules, cardSymbols, splitCount);
     assert.strictEqual(
       actual,
       expected,
-      `canSplit failed for cards=${row['Cards'].trim()}, isPostSplit=${isPostSplit}, rules=${row['Rules'].trim()}`,
+      `canSplit failed for cards=${row['Cards'].trim()}, splitCount=${splitCount}, rules=${row['Rules'].trim()}`,
     );
   }
 });

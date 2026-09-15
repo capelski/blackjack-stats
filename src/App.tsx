@@ -12,6 +12,7 @@ import { optimalActionsHandResolver } from './logic/resolved-hands.logic';
 import { getStrategy, getStrategyByFirstCard } from './logic/strategy.logic';
 import { hit, stand } from './models/action.model';
 import { doublingDisabled, sortedDoublingOptions } from './models/doubling.model';
+import { sortedSplittingOptions, splittingDisabled } from './models/splitting.model';
 import { getLocalizedRoute } from './nav-utils';
 import { SearchNavLink } from './search-nav-link';
 import {
@@ -58,7 +59,7 @@ function App() {
 
   const [rules, setRules] = useState<Rules>(() => {
     const doubling = getParameter(doublingParamName, sortedDoublingOptions) ?? doublingDisabled;
-    const splitting = getParameter(splittingParamName) === '1';
+    const splitting = getParameter(splittingParamName, sortedSplittingOptions) ?? splittingDisabled;
     const doublingAfterSplit = getParameter(doublingAfterSplitParamName) === '1';
     const hitSplitAces = getParameter(hitSplitAcesParamName) === '1';
     const blackjackAfterSplit = getParameter(blackjackAfterSplitParamName) === '1';
@@ -141,7 +142,7 @@ function App() {
 
     toggleParameters([
       [doublingParamName, newRules.doubling ?? doublingDisabled, doublingDisabled],
-      [splittingParamName, newRules.splitting ? '1' : '0', '0'],
+      [splittingParamName, newRules.splitting ?? splittingDisabled, splittingDisabled],
       [doublingAfterSplitParamName, newRules.doublingAfterSplit ? '1' : '0', '0'],
       [hitSplitAcesParamName, newRules.hitSplitAces ? '1' : '0', '0'],
       [blackjackAfterSplitParamName, newRules.blackjackAfterSplit ? '1' : '0', '0'],

@@ -25,8 +25,13 @@ const addHandToFinalScores = (finalScoresMap: FinalScoresMap, hand: MaterialHand
   finalScore.probability += hand.probability;
 };
 
-export const getFinalScoreId = (score: number, modifiers: HandModifiers): string =>
-  `${score}${modifiers.isSplit ? '-split' : ''}${modifiers.isDoubleBet ? '-double' : ''}`;
+export const getFinalScoreId = (score: number, modifiers: HandModifiers): string => {
+  const splitCount = modifiers.splitCount ?? 0;
+  const splitModifier = splitCount > 1 ? `-split${splitCount}` : splitCount > 0 ? '-split' : '';
+  const doubleModifier = modifiers.isDoubleBet ? '-double' : '';
+
+  return `${score}${splitModifier}${doubleModifier}`;
+};
 
 /** Surrendered hands are grouped apart from the hands that stand on the same score */
 const getHandFinalScore = (hand: MaterialHand): number =>

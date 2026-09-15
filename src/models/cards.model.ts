@@ -1,7 +1,9 @@
 import { Card } from '../types/card.type';
 
+export const aceSymbol = 'A';
+
 export const cards: Card[] = [
-  { symbol: 'A', scores: [1, 11] },
+  { symbol: aceSymbol, scores: [1, 11] },
   { symbol: '2', scores: [2] },
   { symbol: '3', scores: [3] },
   { symbol: '4', scores: [4] },

@@ -28,16 +28,32 @@ Feature: Material hands
     When getting the material hands of a hand resolver for optimal actions
     Then 23660 material hands are returned
     And there is a material hand with cards "A,A", probability "0.00591715976331361" and action "split"
-    And there is a material hand with cards "A,A", probability "0.0004551661356395085", action "end" and split modifier
+    And there is a material hand split 1 times with cards "A,A", probability "0.0004551661356395085" and action "end"
     And there is a material hand with cards "8,8", probability "0.00591715976331361" and action "split"
-    And there is a material hand with cards "8,2", probability "0.0004551661356395085", action "hit" and split modifier
+    And there is a material hand split 1 times with cards "8,2", probability "0.0004551661356395085" and action "hit"
 
   Scenario: Material hands for optimal actions with hit split aces
     Given splitting is allowed
     And hitting split aces is allowed
     When getting the material hands of a hand resolver for optimal actions
     Then 30615 material hands are returned
-    And there is a material hand with cards "A,A", probability "0.0004551661356395085", action "hit" and split modifier
+    And there is a material hand split 1 times with cards "A,A", probability "0.0004551661356395085" and action "hit"
+
+  Scenario: Material hands for optimal actions with re-splitting
+    Given splitting is allowed 3 times
+    When getting the material hands of a hand resolver for optimal actions
+    Then 24284 material hands are returned
+    And there is a material hand split 1 time with cards "8,8", probability "0.0004551661356395085" and action "split"
+    And there is a material hand split 2 times with cards "8,8", probability "0.00003501277966457758" and action "split"
+    And there is a material hand split 3 times with cards "8,8", probability "0.0000026932907434290443" and action "stand"
+
+  Scenario: Material hands for optimal actions with re-splitting aces
+    Given splitting is allowed 3 times
+    And hitting split aces is allowed
+    When getting the material hands of a hand resolver for optimal actions
+    Then 37999 material hands are returned
+    And there is a material hand split 1 time with cards "A,A", probability "0.0004551661356395085" and action "split"
+    And there is a material hand split 2 times with cards "A,A", probability "0.00003501277966457758" and action "split"
 
   Scenario: Material hands for optimal actions with doubling and splitting
     Given doubling is allowed
@@ -51,12 +67,12 @@ Feature: Material hands
     And doubling after splitting is allowed
     When getting the material hands of a hand resolver for optimal actions
     Then 22113 material hands are returned
-    And there is a material hand with cards "8,2", probability "0.0004551661356395085", action "double" and split modifier
-    And there is a material hand with cards "8,2,6", probability "0.00003501277966457758", action "end", double bet modifier and split modifier
+    And there is a material hand split 1 times with cards "8,2", probability "0.0004551661356395085" and action "double"
+    And there is a material hand split 1 times with cards "8,2,6", probability "0.00003501277966457758", action "end" and double bet modifier
 
   Scenario: Material hands for optimal actions with blackjack after split
     Given splitting is allowed
     And blackjack after split is allowed
     When getting the material hands of a hand resolver for optimal actions
     Then 23660 material hands are returned
-    And there is a material hand with cards "A,J", probability "0.0004551661356395085", action "end" and split modifier
+    And there is a material hand split 1 times with cards "A,J", probability "0.0004551661356395085" and action "end"

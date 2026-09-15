@@ -4,12 +4,12 @@ Feature: Resolved hands
 
   Scenario: Resolved hands for stand threshold
     When getting the resolved hands of a hand resolver with a stand threshold of 17
-    Then 128 resolved hands are returned
+    Then 208 resolved hands are returned
     And the resolved hand 1 has label "A,A", action "hit" and the following actions breakdown
       | Action | Edge                  |
       | stand  | -0.4368143052667273   |
       | hit    | -0.036664927049104734 |
-    And the resolved hand 128 has label "22+ (3+)", action "stand" and the following actions breakdown
+    And the resolved hand 208 has label "22+ (3+)", action "stand" and the following actions breakdown
       | Action | Edge                 |
       | stand  | -0.9999999999999751  |
     And the resolved hand with label "15" has action "hit" and the following actions breakdown
@@ -23,7 +23,7 @@ Feature: Resolved hands
       | Action | Edge                  |
       | stand  | -0.4368143052667273   |
       | hit    | -0.011159494642067662 |
-    And the resolved hand 128 has label "22+ (3+)", action "stand" and the following actions breakdown
+    And the resolved hand 208 has label "22+ (3+)", action "stand" and the following actions breakdown
       | Action | Edge                  |
       | stand  | -0.9999999999999751   |
     And the resolved hand with label "15" has action "stand" and the following actions breakdown
@@ -57,6 +57,33 @@ Feature: Resolved hands
       | Action | Edge                  |
       | stand  | -0.4368143052667273   |
       | hit    | -0.011159494642067662 |
+      | split  | 0.5635590212402795    |
+
+  Scenario: Resolved hands for optimal actions with re-splitting
+    Given splitting is allowed 3 times
+    When getting the resolved hands of a hand resolver for optimal actions
+    Then the resolved hand with label "8,8" has action "split" and the following actions breakdown
+      | Action | Edge                 |
+      | stand  | -0.4368143052667273  |
+      | hit    | -0.5092809372686018  |
+      | split  | -0.25384494749115655 |
+    And the resolved hand with label "8,8 (S1)" has action "split" and the following actions breakdown
+      | Action | Edge                 |
+      | split  | -0.2575227235268464  |
+    And the resolved hand with label "8,8 (S2)" has action "split" and the following actions breakdown
+      | Action | Edge                 |
+      | split  | -0.2814282677588305  |
+
+  Scenario: Resolved hands for optimal actions with re-splitting aces
+    Given splitting is allowed 3 times
+    And hitting split aces is allowed
+    When getting the resolved hands of a hand resolver for optimal actions
+    Then the resolved hand with label "A,A (A)" has action "split" and the following actions breakdown
+      | Action | Edge                  |
+      | hit    | -0.011159494642067662 |
+      | split  | 0.6519772544529483    |
+    And the resolved hand with label "A,A (S2)" has action "split" and the following actions breakdown
+      | Action | Edge                  |
       | split  | 0.5635590212402795    |
 
   Scenario: Resolved hands for optimal actions with doubling and splitting

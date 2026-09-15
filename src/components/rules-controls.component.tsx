@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { isDoublingEnabled } from '../logic/rules.logic';
+import { isDoublingEnabled, isSplittingEnabled } from '../logic/rules.logic';
 import { Doubling, doublingDisabled, sortedDoublingOptions } from '../models/doubling.model';
+import { sortedSplittingOptions, Splitting, splittingDisabled } from '../models/splitting.model';
 import { Rules } from '../types/rules.type';
 import { CheckboxComponent } from './checkbox.component';
 
@@ -14,7 +15,7 @@ export const RulesControls: React.FC<RulesControlsProps> = props => {
   const { t } = useTranslation();
 
   const doublingEnabled = isDoublingEnabled(props.rules);
-  const splittingEnabled = !!props.rules.splitting;
+  const splittingEnabled = isSplittingEnabled(props.rules);
 
   return (
     <>
@@ -32,12 +33,20 @@ export const RulesControls: React.FC<RulesControlsProps> = props => {
           ))}
         </select>
       </label>
-      <CheckboxComponent
-        checked={splittingEnabled}
-        disabled={props.disabled}
-        label={t('rules.splitting')}
-        onChange={checked => props.setRules({ ...props.rules, splitting: checked })}
-      />
+      <label>
+        {t('rules.splitting')}:{' '}
+        <select
+          disabled={props.disabled}
+          onChange={e => props.setRules({ ...props.rules, splitting: e.target.value as Splitting })}
+          value={props.rules.splitting ?? splittingDisabled}
+        >
+          {sortedSplittingOptions.map(option => (
+            <option key={option} value={option}>
+              {t(`rules.splittingOptions.${option}`)}
+            </option>
+          ))}
+        </select>
+      </label>
       <CheckboxComponent
         checked={!!props.rules.surrendering}
         disabled={props.disabled}

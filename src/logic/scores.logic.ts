@@ -1,14 +1,14 @@
 import {
   HandCategory,
   initialPair,
-  postASplitPair,
-  postSplitPair,
+  oneSplitPairAfterAces,
   splittablePair,
 } from '../models/hand-category.model';
 import { softScoresSeparator } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
 import { Card } from '../types/card.type';
 import { Rules } from '../types/rules.type';
+import { isSplitCategory } from './hand-category.logic';
 
 export const getDisplayScores = (scores: number[], separator = softScoresSeparator) => {
   return scores.join(separator);
@@ -26,7 +26,7 @@ export const getNextScores = (
 ) => {
   const scores = getValidScores(currentScores, nextCardScores);
 
-  const isPostSplit = nextCategory === postSplitPair || nextCategory === postASplitPair;
+  const isPostSplit = isSplitCategory(nextCategory) || nextCategory === oneSplitPairAfterAces;
   const hasTwoCards =
     nextCategory === initialPair || nextCategory === splittablePair || isPostSplit;
 
@@ -43,7 +43,7 @@ export const getNextScoresFromCards = (
   nextCategory: HandCategory,
   rules: Rules,
 ) => {
-  const cardScores = cards.map(card => card.scores);
+  const cardScores = cards.map((card) => card.scores);
   const [first, ...rest] = cardScores;
   let scores = first;
 
@@ -56,7 +56,7 @@ export const getNextScoresFromCards = (
 
 const getUniqueScores = (values1: number[], values2: number[]) => {
   const allValues = values1.reduce<number[]>(
-    (reduced, value1) => [...reduced, ...values2.map(value2 => value1 + value2)],
+    (reduced, value1) => [...reduced, ...values2.map((value2) => value1 + value2)],
     [],
   );
   return [...new Set(allValues)].sort((a, b) => a - b);
@@ -65,7 +65,7 @@ const getUniqueScores = (values1: number[], values2: number[]) => {
 const getValidScores = (currentScores: number[], nextCardScores: number[]) => {
   const scores = getUniqueScores(currentScores, nextCardScores);
 
-  const validScores = scores.filter(x => x < bustScore);
+  const validScores = scores.filter((x) => x < bustScore);
   if (validScores.length === 0) {
     return [bustScore];
   }

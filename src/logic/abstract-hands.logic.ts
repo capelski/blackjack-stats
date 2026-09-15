@@ -1,20 +1,117 @@
 import { Action } from '../models/action.model';
 import {
   initialPair,
-  postASplitPair,
+  oneSplitPairAfterAces,
   postDoubleHand,
-  postSplitPair,
   splittablePair,
   threeOrMoreCards,
 } from '../models/hand-category.model';
 import { bust, end, HandStatus } from '../models/hand-status.model';
-import { splitScoresSeparator } from '../models/labels.model';
+import { blackjackLabel } from '../models/labels.model';
 import { blackjackScore, bustScore } from '../models/scores.model';
+import {
+  maxSplitsByOption,
+  splittingOnce,
+  splittingThreeTimes,
+  splittingTwice,
+} from '../models/splitting.model';
 import { AbstractHand, AbstractHandPartial } from '../types/abstract-hand.type';
 import { Rules } from '../types/rules.type';
-import { getHandLabel } from './labels.logic';
+import { getPostSplitCategory, getSplitCategory, getSplitCount } from './hand-category.logic';
+import { getDiscriminatedLabel, getHandLabel } from './labels.logic';
 import { canAction, canDouble, canSplit, canSurrender } from './rules.logic';
 import { getEffectiveScore } from './scores.logic';
+
+/** Hands resulting of splitting a pair the given number of times, excluding re-splittable pairs.
+ * They can transform into
+ * - "3+ cards", when hitting
+ * - "Post double hand", when doubling
+ */
+const getPostSplitHands = (rules: Rules, splitCount: number): AbstractHandPartial[] => {
+  const category = getSplitCategory(splitCount);
+
+  return [
+    ...[
+      rules.blackjackAfterSplit
+        ? { label: blackjackLabel, scores: [blackjackScore] }
+        : { label: '11/21', scores: [11, 21] },
+    ],
+    { label: '20', scores: [20] },
+    { label: '19', scores: [19] },
+    { label: '18', scores: [18] },
+    { label: '17', scores: [17] },
+    { label: '16', scores: [16] },
+    { label: '15', scores: [15] },
+    { label: '14', scores: [14] },
+    { label: '13', scores: [13] },
+    { label: '12', scores: [12] },
+    { label: '11', scores: [11] },
+    { label: '10', scores: [10] },
+    { label: '9', scores: [9] },
+    { label: '8', scores: [8] },
+    { label: '7', scores: [7] },
+    { label: '6', scores: [6] },
+    { label: '5', scores: [5] },
+    { label: '4', scores: [4] },
+    { label: '10/20', scores: [10, 20] },
+    { label: '9/19', scores: [9, 19] },
+    { label: '8/18', scores: [8, 18] },
+    { label: '7/17', scores: [7, 17] },
+    { label: '6/16', scores: [6, 16] },
+    { label: '5/15', scores: [5, 15] },
+    { label: '4/14', scores: [4, 14] },
+    { label: '3/13', scores: [3, 13] },
+    ...(splitCount > 1
+      ? [{ label: '2/12', scores: [2, 12] }]
+      : [
+          /* Created in postASplitHands */
+        ]),
+  ].map<AbstractHandPartial>((x) => {
+    return {
+      category,
+      isHidden: true,
+      label: getDiscriminatedLabel(x.label, category),
+      scores: x.scores,
+    };
+  });
+};
+
+/** Pairs that can be split. They can transform into:
+ * - "One/Two/Three split pair", when splitting
+ * - "Post double hand", when doubling
+ * - "3+ cards", when hitting
+ */
+const getSplittablePairs = (rules: Rules, splitCount: number): AbstractHandPartial[] => {
+  const isInitial = splitCount === 0;
+
+  return [
+    { scores: [2, 12], splitCard: 'A' },
+    { scores: [4], splitCard: '2' },
+    { scores: [6], splitCard: '3' },
+    { scores: [8], splitCard: '4' },
+    { scores: [10], splitCard: '5' },
+    { scores: [12], splitCard: '6' },
+    { scores: [14], splitCard: '7' },
+    { scores: [16], splitCard: '8' },
+    { scores: [18], splitCard: '9' },
+    { scores: [20], splitCard: '10' },
+    { scores: [20], splitCard: 'J', isHidden: true },
+    { scores: [20], splitCard: 'Q', isHidden: true },
+    { scores: [20], splitCard: 'K', isHidden: true },
+  ]
+    .map((x) => ({ ...x, isSplittable: canSplit(rules, [x.splitCard, x.splitCard], splitCount) }))
+    .map<AbstractHandPartial>((x) => {
+      const category = isInitial ? splittablePair : getPostSplitCategory(x.splitCard, splitCount);
+
+      return {
+        category,
+        isHidden: !isInitial || x.isHidden || !x.isSplittable,
+        label: getHandLabel(x.scores, category, x.splitCard),
+        scores: x.scores,
+        splitCard: x.splitCard,
+      };
+    });
+};
 
 /** The returned abstract hands are sorted so dependencies to other abstract hands are resolved first.
  * Example: Computing the expected results for "12" requires the expected results for "16 (3+)" */
@@ -91,7 +188,9 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     };
   });
 
-  /** "Initial pair" can only transform into "3+ cards", when hitting or doubling */
+  /** "Initial pair" can transform into:
+   * - "3+ cards", when hitting
+   * - "Post double hands", when doubling */
   const initialPairs: AbstractHandPartial[] = [
     { example: 'J,A', label: 'BJ', scores: [blackjackScore] },
     { example: 'J,J', label: '20', scores: [20] },
@@ -127,48 +226,16 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     };
   });
 
-  /** "Post split pair" can only transform into "3+ cards", when hitting or doubling */
-  const postSplitPairs: AbstractHandPartial[] = [
-    ...[
-      rules.blackjackAfterSplit
-        ? { example: 'J,S,A', label: 'BJ (S)', scores: [blackjackScore] }
-        : { example: 'J,S,A', label: '11/21 (S)', scores: [11, 21] },
-    ],
-    { example: 'J,S,J', label: '20 (S)', scores: [20] },
-    { example: 'J,S,9', label: '19 (S)', scores: [19] },
-    { example: 'J,S,8', label: '18 (S)', scores: [18] },
-    { example: 'J,S,7', label: '17 (S)', scores: [17] },
-    { example: 'J,S,6', label: '16 (S)', scores: [16] },
-    { example: 'J,S,5', label: '15 (S)', scores: [15] },
-    { example: 'J,S,4', label: '14 (S)', scores: [14] },
-    { example: 'J,S,3', label: '13 (S)', scores: [13] },
-    { example: '2,S,J', label: '12 (S)', scores: [12] },
-    { example: '2,S,9', label: '11 (S)', scores: [11] },
-    { example: '2,S,8', label: '10 (S)', scores: [10] },
-    { example: '2,S,7', label: '9 (S)', scores: [9] },
-    { example: '2,S,6', label: '8 (S)', scores: [8] },
-    { example: '2,S,5', label: '7 (S)', scores: [7] },
-    { example: '2,S,4', label: '6 (S)', scores: [6] },
-    { example: '2,S,3', label: '5 (S)', scores: [5] },
-    { example: '2,S,2', label: '4 (S)', scores: [4] },
-    { example: '9,S,A', label: '10/20 (S)', scores: [10, 20] },
-    { example: '8,S,A', label: '9/19 (S)', scores: [9, 19] },
-    { example: '7,S,A', label: '8/18 (S)', scores: [8, 18] },
-    { example: '6,S,A', label: '7/17 (S)', scores: [7, 17] },
-    { example: '5,S,A', label: '6/16 (S)', scores: [6, 16] },
-    { example: '4,S,A', label: '5/15 (S)', scores: [5, 15] },
-    { example: '3,S,A', label: '4/14 (S)', scores: [4, 14] },
-    { example: '2,S,A', label: '3/13 (S)', scores: [3, 13] },
-  ].map<AbstractHandPartial>((x) => {
-    return {
-      ...x,
-      category: postSplitPair,
-      isHidden: true,
-    };
-  });
+  const postSplitHands = [
+    ...getPostSplitHands(rules, maxSplitsByOption[splittingThreeTimes]), // J,S,J,S,J,S,3
+    ...getPostSplitHands(rules, maxSplitsByOption[splittingTwice]), // J,S,J,S,3
+    ...getPostSplitHands(rules, maxSplitsByOption[splittingOnce]), // J,S,3
+  ];
 
-  /** "Post A-split pair" can only transform into "3+ cards", when hitting or doubling */
-  const postASplitPairs: AbstractHandPartial[] = [
+  /** "One split pair (A)" can only transform into:
+   * - "3+ cards", when hitting
+   * - "Post double hands", when doubling */
+  const postASplitHands: AbstractHandPartial[] = [
     ...[
       rules.blackjackAfterSplit
         ? { example: 'A,S,J', label: 'BJ (A)', scores: [blackjackScore] }
@@ -186,48 +253,23 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
   ].map<AbstractHandPartial>((x) => {
     return {
       ...x,
-      category: postASplitPair,
+      category: oneSplitPairAfterAces,
       isHidden: true,
     };
   });
 
-  /** "Split pair" can transform into:
-   * - "Post split card", when splitting
-   * - "3+ cards", when hitting or doubling
-   **/
-  const splittablePairs: AbstractHandPartial[] = [
-    { example: 'A,A', label: 'A,A', scores: [2, 12] },
-    { example: '2,2', label: '2,2', scores: [4] },
-    { example: '3,3', label: '3,3', scores: [6] },
-    { example: '4,4', label: '4,4', scores: [8] },
-    { example: '5,5', label: '5,5', scores: [10] },
-    { example: '6,6', label: '6,6', scores: [12] },
-    { example: '7,7', label: '7,7', scores: [14] },
-    { example: '8,8', label: '8,8', scores: [16] },
-    { example: '9,9', label: '9,9', scores: [18] },
-    { example: '10,10', label: '10,10', scores: [20] },
-    { example: 'J,J', label: 'J,J', scores: [20], isHidden: true },
-    { example: 'Q,Q', label: 'Q,Q', scores: [20], isHidden: true },
-    { example: 'K,K', label: 'K,K', scores: [20], isHidden: true },
-  ].map<AbstractHandPartial>((x) => {
-    const splitCard = x.label.split(splitScoresSeparator)[0];
-    const isSplittable = canSplit(rules, [splitCard, splitCard], false);
-
-    return {
-      ...x,
-      canSplit: isSplittable,
-      category: splittablePair,
-      isHidden: x.isHidden || !isSplittable,
-      splitCard,
-    };
-  });
+  const splittablePairs = [
+    ...getSplittablePairs(rules, maxSplitsByOption[splittingTwice]), // 8,8,S,8,S,8
+    ...getSplittablePairs(rules, maxSplitsByOption[splittingOnce]), // 8,8,S,8
+    ...getSplittablePairs(rules, 0), // 8,8
+  ];
 
   const abstractHands = [
     ...threeOrMoreCardsHands,
     ...postDoubleHands,
     ...initialPairs,
-    ...postSplitPairs,
-    ...postASplitPairs,
+    ...postSplitHands,
+    ...postASplitHands,
     ...splittablePairs,
   ].map<AbstractHand>((x) => {
     const effectiveScore = getEffectiveScore(x.scores);
@@ -235,7 +277,8 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
     return {
       ...x,
       canDouble: canDouble(rules, x),
-      canSplit: (x.category === splittablePair && x.canSplit) ?? false,
+      canSplit:
+        !!x.splitCard && canSplit(rules, [x.splitCard, x.splitCard], getSplitCount(x.category)),
       canSurrender: canSurrender(rules, x),
       effectiveScore,
       isActionable: canAction(rules, { category: x.category, effectiveScore }),

@@ -31,16 +31,19 @@ const getFinalScoresFromResolver = (rules: Rules, resolver: string): FinalScore[
 };
 
 const getEdgeContributionLabel = (modifiers: EdgeContribution['modifiers']): string => {
-  if (modifiers.isSplit) {
+  if (modifiers.splitCount) {
+    // Re-split hands are told apart by their split count (e.g. "S2")
+    const split = modifiers.splitCount > 1 ? `S${modifiers.splitCount}` : 'S';
+
     if (modifiers.isBlackjack) {
-      return 'SBJ';
+      return `${split}BJ`;
     }
 
     if (modifiers.isDoubleBet) {
-      return 'SD';
+      return `${split}D`;
     }
 
-    return 'S';
+    return split;
   }
 
   if (modifiers.isBlackjack) {

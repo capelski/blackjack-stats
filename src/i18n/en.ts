@@ -111,6 +111,12 @@ export const en = {
       all: 'All',
     },
     splitting: 'Splitting',
+    splittingOptions: {
+      disabled: 'Disabled',
+      '1': '1',
+      '2': '2',
+      '3': '3',
+    },
     doublingAfterSplit: 'Doubling After Split',
     hitSplitAces: 'Hit Split Aces',
     blackjackAfterSplit: 'Blackjack After Split',
