@@ -11,7 +11,7 @@ export type RulesControlsProps = {
   setRules: (rules: Rules) => void;
 };
 
-export const RulesControls: React.FC<RulesControlsProps> = props => {
+export const RulesControls: React.FC<RulesControlsProps> = (props) => {
   const { t } = useTranslation();
 
   const doublingEnabled = isDoublingEnabled(props.rules);
@@ -23,10 +23,10 @@ export const RulesControls: React.FC<RulesControlsProps> = props => {
         {t('rules.doubling')}:{' '}
         <select
           disabled={props.disabled}
-          onChange={e => props.setRules({ ...props.rules, doubling: e.target.value as Doubling })}
+          onChange={(e) => props.setRules({ ...props.rules, doubling: e.target.value as Doubling })}
           value={props.rules.doubling ?? doublingDisabled}
         >
-          {sortedDoublingOptions.map(option => (
+          {sortedDoublingOptions.map((option) => (
             <option key={option} value={option}>
               {t(`rules.doublingOptions.${option}`)}
             </option>
@@ -37,39 +37,41 @@ export const RulesControls: React.FC<RulesControlsProps> = props => {
         {t('rules.splitting')}:{' '}
         <select
           disabled={props.disabled}
-          onChange={e => props.setRules({ ...props.rules, splitting: e.target.value as Splitting })}
+          onChange={(e) =>
+            props.setRules({ ...props.rules, splitting: e.target.value as Splitting })
+          }
           value={props.rules.splitting ?? splittingDisabled}
         >
-          {sortedSplittingOptions.map(option => (
+          {sortedSplittingOptions.map((option) => (
             <option key={option} value={option}>
               {t(`rules.splittingOptions.${option}`)}
             </option>
           ))}
         </select>
       </label>
-      <CheckboxComponent
+      {/* <CheckboxComponent
         checked={!!props.rules.surrendering}
         disabled={props.disabled}
         label={t('rules.surrendering')}
         onChange={checked => props.setRules({ ...props.rules, surrendering: checked })}
-      />
+      /> */}
       <CheckboxComponent
         checked={doublingEnabled && splittingEnabled && !!props.rules.doublingAfterSplit}
         disabled={props.disabled || !doublingEnabled || !splittingEnabled}
         label={t('rules.doublingAfterSplit')}
-        onChange={checked => props.setRules({ ...props.rules, doublingAfterSplit: checked })}
+        onChange={(checked) => props.setRules({ ...props.rules, doublingAfterSplit: checked })}
       />
       <CheckboxComponent
         checked={splittingEnabled && !!props.rules.hitSplitAces}
         disabled={props.disabled || !splittingEnabled}
         label={t('rules.hitSplitAces')}
-        onChange={checked => props.setRules({ ...props.rules, hitSplitAces: checked })}
+        onChange={(checked) => props.setRules({ ...props.rules, hitSplitAces: checked })}
       />
       <CheckboxComponent
         checked={splittingEnabled && !!props.rules.blackjackAfterSplit}
         disabled={props.disabled || !splittingEnabled}
         label={t('rules.blackjackAfterSplit')}
-        onChange={checked => props.setRules({ ...props.rules, blackjackAfterSplit: checked })}
+        onChange={(checked) => props.setRules({ ...props.rules, blackjackAfterSplit: checked })}
       />
     </>
   );
