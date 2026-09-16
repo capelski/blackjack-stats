@@ -31,7 +31,7 @@ export type ActionsAnalysisListItemProps = {
     }
 );
 
-export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = props => {
+export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = (props) => {
   const { t } = useTranslation();
   const { navigateWithSearch } = useSearchParamsUtils();
 
@@ -53,7 +53,7 @@ export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = p
     >
       <td style={columnStyle}>{props.label}</td>
 
-      {props.actions.map(action => (
+      {props.actions.map((action) => (
         <td
           key={action}
           style={{
@@ -61,7 +61,7 @@ export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = p
             fontWeight: props.isHeader || action === props.optimalDecision ? 'bold' : 'normal',
           }}
         >
-          {props.isHeader ? t(`actions.${action}`) : props.edgeByAction[action] ?? '-'}
+          {props.isHeader ? t(`actions.${action}`) : (props.edgeByAction[action] ?? '-')}
         </td>
       ))}
 
@@ -71,14 +71,14 @@ export const ActionsAnalysisListItem: React.FC<ActionsAnalysisListItemProps> = p
         ) : (
           <div style={{ alignItems: 'center', display: 'flex', gap: '8px' }}>
             <select
-              onChange={event => {
+              onChange={(event) => {
                 props.onDecisionOverride(props.label, event.target.value as Action);
               }}
               value={props.action}
             >
               {props.actions
-                .filter(action => props.edgeByAction[action])
-                .map(action => (
+                .filter((action) => props.edgeByAction[action])
+                .map((action) => (
                   <option key={action} value={action}>
                     {t(`actions.${action}`)}
                   </option>

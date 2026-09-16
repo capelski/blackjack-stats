@@ -53,7 +53,7 @@ export const DealerFinalScoresMatrix: React.FC = () => {
         <thead>
           <tr style={rowStyle}>
             <td style={getCellStyle(true)}>{t('commons.score')}</td>
-            {sortedCardSymbols.map(cardSymbol => (
+            {sortedCardSymbols.map((cardSymbol) => (
               <td key={cardSymbol} style={getCellStyle(true)}>
                 {cardSymbol}
               </td>
@@ -62,10 +62,10 @@ export const DealerFinalScoresMatrix: React.FC = () => {
         </thead>
 
         <tbody>
-          {dealerFinalScores.map(dealerFinalScore => (
+          {dealerFinalScores.map((dealerFinalScore) => (
             <tr key={dealerFinalScore.id} style={rowStyle}>
               <td style={getCellStyle(true)}>{effectiveScoreToLabel(dealerFinalScore.score)}</td>
-              {sortedCardSymbols.map(cardSymbol => {
+              {sortedCardSymbols.map((cardSymbol) => {
                 const finalScoresGroup = dealerFinalScoresByFirstCard[cardSymbol];
                 const finalScore = finalScoresGroup.finalScores[dealerFinalScore.id];
 
@@ -80,8 +80,8 @@ export const DealerFinalScoresMatrix: React.FC = () => {
         </tbody>
       </table>
 
-      <select value={mode} onChange={e => toggleMode(e.target.value as DealerCardTableMode)}>
-        {modes.map(modeOption => (
+      <select value={mode} onChange={(e) => toggleMode(e.target.value as DealerCardTableMode)}>
+        {modes.map((modeOption) => (
           <option key={modeOption} value={modeOption}>
             {t(`dealerCard.modes.${modeOption}`)}
           </option>

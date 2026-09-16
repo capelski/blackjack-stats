@@ -13,8 +13,8 @@ export const ActionsAnalysisList: React.FC = () => {
   const actionableResolvedHands = getActionableHands(strategy.resolvedHandsList);
 
   /** Actions that no hand allows (e.g. splitting, when the rule is disabled) don't get a column */
-  const actions = sortedActions.filter(action =>
-    actionableResolvedHands.some(resolvedHand => resolvedHand.consequences[action]),
+  const actions = sortedActions.filter((action) =>
+    actionableResolvedHands.some((resolvedHand) => resolvedHand.consequences[action]),
   );
 
   return (
@@ -30,7 +30,7 @@ export const ActionsAnalysisList: React.FC = () => {
         </thead>
 
         <tbody>
-          {actionableResolvedHands.map(resolvedHand => {
+          {actionableResolvedHands.map((resolvedHand) => {
             const consequences = Object.values(resolvedHand.consequences);
             const selectedDecision =
               strategy.decisionOverrides[resolvedHand.label] ?? resolvedHand.action;

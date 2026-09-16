@@ -5,7 +5,7 @@ type SearchNavigateProps = Omit<NavigateProps, 'to'> & {
   to: string;
 };
 
-export const SearchNavigate: React.FC<SearchNavigateProps> = props => {
+export const SearchNavigate: React.FC<SearchNavigateProps> = (props) => {
   const { searchString } = useSearchParamsUtils();
 
   return <Navigate replace {...props} to={{ pathname: props.to, search: searchString }} />;

@@ -6,7 +6,7 @@ export type BaseModalProps = PropsWithChildren<{
   id: string;
 }>;
 
-export const BaseModal: React.FC<BaseModalProps> = props => {
+export const BaseModal: React.FC<BaseModalProps> = (props) => {
   const { deleteParameter, getParameter } = useSearchParamsUtils();
   const isModalOpen = getParameter(modalParamName) === props.id;
 

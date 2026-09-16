@@ -5,7 +5,7 @@ import { ca } from './ca';
 import { en } from './en';
 
 export const defaultLanguage = 'en';
-export type Language = typeof supportedLanguages[number];
+export type Language = (typeof supportedLanguages)[number];
 
 i18n.use(initReactI18next).init({
   resources: {

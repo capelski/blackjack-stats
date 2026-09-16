@@ -9,7 +9,7 @@ export const CheckboxComponent: React.FC<{
       <input
         checked={checked}
         disabled={disabled}
-        onChange={e => onChange(e.target.checked)}
+        onChange={(e) => onChange(e.target.checked)}
         type="checkbox"
       />
       {label}

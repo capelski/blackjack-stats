@@ -73,7 +73,7 @@ export const ActionsBreakdown: React.FC = () => {
   const playerLabel = rawPlayerLabel && urlParamToLabel(rawPlayerLabel);
 
   const resolvedHand = getActionableHands(strategy.resolvedHandsList).find(
-    resolvedHand => resolvedHand.label === playerLabel,
+    (resolvedHand) => resolvedHand.label === playerLabel,
   );
 
   if (!resolvedHand) {
@@ -85,8 +85,8 @@ export const ActionsBreakdown: React.FC = () => {
   }
 
   const consequences = sortedActions
-    .map(action => resolvedHand.consequences[action])
-    .filter(consequence => !!consequence);
+    .map((action) => resolvedHand.consequences[action])
+    .filter((consequence) => !!consequence);
 
   return (
     <div className="actions-breakdown">

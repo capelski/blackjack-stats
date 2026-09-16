@@ -27,7 +27,7 @@ type ExpectedResultsSummaryModalProps = {
   edge: number;
 };
 
-export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalProps> = props => {
+export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalProps> = (props) => {
   const { t } = useTranslation();
   const { decimals } = useSettingsContext();
   const { setParameter } = useSearchParamsUtils();
@@ -78,11 +78,17 @@ export const ExpectedResultsSummaryModal: React.FC<ExpectedResultsSummaryModalPr
           <p>
             <span>
               {t('expectedResults.simulation.startingPot')}:{' '}
-              <input value={startingPot} onChange={e => setStartingPot(Number(e.target.value))} />{' '}
+              <input
+                value={startingPot}
+                onChange={(e) => setStartingPot(Number(e.target.value))}
+              />{' '}
             </span>
             <span>
               {t('expectedResults.simulation.rounds')}:{' '}
-              <input value={roundsNumber} onChange={e => setRoundsNumber(Number(e.target.value))} />{' '}
+              <input
+                value={roundsNumber}
+                onChange={(e) => setRoundsNumber(Number(e.target.value))}
+              />{' '}
             </span>
             <button
               onClick={() =>

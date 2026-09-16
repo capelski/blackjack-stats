@@ -11,24 +11,24 @@ export const getResult = (playerScore: number, dealerScore: number): Result => {
   return playerScore === surrenderScore
     ? surrender
     : playerScore === bustScore
-    ? lose
-    : dealerScore === bustScore
-    ? win
-    : playerScore > dealerScore
-    ? win
-    : playerScore < dealerScore
-    ? lose
-    : push;
+      ? lose
+      : dealerScore === bustScore
+        ? win
+        : playerScore > dealerScore
+          ? win
+          : playerScore < dealerScore
+            ? lose
+            : push;
 };
 
 export const resultToStyles = (result: Result): CSSProperties | undefined => {
   return result === lose
     ? { backgroundColor: '#f7e2db', color: loseColor }
     : result === push
-    ? { backgroundColor: '#f3ebd3', color: pushColor }
-    : result === surrender
-    ? { backgroundColor: '#e2e6eb', color: surrenderColor }
-    : result === win
-    ? { backgroundColor: '#d9e7e1', color: winColor }
-    : undefined;
+      ? { backgroundColor: '#f3ebd3', color: pushColor }
+      : result === surrender
+        ? { backgroundColor: '#e2e6eb', color: surrenderColor }
+        : result === win
+          ? { backgroundColor: '#d9e7e1', color: winColor }
+          : undefined;
 };

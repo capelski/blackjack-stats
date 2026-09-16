@@ -13,35 +13,35 @@ type LabelsWorld = RulesWorld & {
   nextLabel?: string;
 };
 
-Given('the hand label {string}', function(this: LabelsWorld, currentLabel: string) {
+Given('the hand label {string}', function (this: LabelsWorld, currentLabel: string) {
   this.list = getAbstractHands(this.rules);
   this.currentLabel = currentLabel;
 });
 
-When('hitting with next card {string}', function(this: LabelsWorld, cardSymbol: string) {
-  const nextCard = cards.find(c => c.symbol === cardSymbol);
+When('hitting with next card {string}', function (this: LabelsWorld, cardSymbol: string) {
+  const nextCard = cards.find((c) => c.symbol === cardSymbol);
   assert.ok(nextCard, `Unknown card symbol "${cardSymbol}"`);
   assert.ok(this.currentLabel, 'Current abstract hand label has not been set');
 
   this.nextLabel = getNextHandLabel(this.list, this.rules, this.currentLabel!, hit, nextCard!);
 });
 
-When('doubling with next card {string}', function(this: LabelsWorld, cardSymbol: string) {
-  const nextCard = cards.find(c => c.symbol === cardSymbol);
+When('doubling with next card {string}', function (this: LabelsWorld, cardSymbol: string) {
+  const nextCard = cards.find((c) => c.symbol === cardSymbol);
   assert.ok(nextCard, `Unknown card symbol "${cardSymbol}"`);
   assert.ok(this.currentLabel, 'Current abstract hand label has not been set');
 
   this.nextLabel = getNextHandLabel(this.list, this.rules, this.currentLabel!, double, nextCard!);
 });
 
-When('splitting with next card {string}', function(this: LabelsWorld, cardSymbol: string) {
-  const nextCard = cards.find(c => c.symbol === cardSymbol);
+When('splitting with next card {string}', function (this: LabelsWorld, cardSymbol: string) {
+  const nextCard = cards.find((c) => c.symbol === cardSymbol);
   assert.ok(nextCard, `Unknown card symbol "${cardSymbol}"`);
   assert.ok(this.currentLabel, 'Current abstract hand label has not been set');
 
   this.nextLabel = getNextHandLabel(this.list, this.rules, this.currentLabel!, split, nextCard!);
 });
 
-Then('the next hand label is {string}', function(this: LabelsWorld, expectedLabel: string) {
+Then('the next hand label is {string}', function (this: LabelsWorld, expectedLabel: string) {
   assert.strictEqual(this.nextLabel, expectedLabel);
 });

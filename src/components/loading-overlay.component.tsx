@@ -16,7 +16,7 @@ export type LoadingOverlayProps = PropsWithChildren<{
   loading: boolean;
 }>;
 
-export const LoadingOverlay: React.FC<LoadingOverlayProps> = props => {
+export const LoadingOverlay: React.FC<LoadingOverlayProps> = (props) => {
   return (
     <div style={{ position: 'relative' }}>
       {props.loading && (

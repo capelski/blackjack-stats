@@ -6,13 +6,13 @@ export type DecimalsSelectorProps = {
   onDecimalsChange: (decimals: number) => void;
 };
 
-export const DecimalsSelector: React.FC<DecimalsSelectorProps> = props => {
+export const DecimalsSelector: React.FC<DecimalsSelectorProps> = (props) => {
   const { t } = useTranslation();
 
   return (
     <select
       value={props.decimals}
-      onChange={e => props.onDecimalsChange(Number(e.target.value))}
+      onChange={(e) => props.onDecimalsChange(Number(e.target.value))}
       style={{ marginRight: 8 }}
     >
       <option value={2}>{t('commons.decimals', { count: 2 })}</option>

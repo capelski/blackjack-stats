@@ -12,7 +12,7 @@ type SearchNavLinkProps = Omit<NavLinkProps, 'style' | 'to'> & {
   to: string;
 };
 
-export const SearchNavLink: React.FC<SearchNavLinkProps> = props => {
+export const SearchNavLink: React.FC<SearchNavLinkProps> = (props) => {
   const { children, ...rest } = props;
 
   const { searchString } = useSearchParamsUtils();
