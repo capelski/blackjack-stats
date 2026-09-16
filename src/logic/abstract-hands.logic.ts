@@ -95,8 +95,12 @@ const getPostSplitHands = (
     { example: 'A,S,4', label: '5/15', scores: [5, 15], category: oneSplitPairAfterAces },
     { example: 'A,S,3', label: '4/14', scores: [4, 14], category: oneSplitPairAfterAces },
     { example: 'A,S,2', label: '3/13', scores: [3, 13], category: oneSplitPairAfterAces },
-    { example: 'A,S,A', label: '2/12', scores: [2, 12], category: oneSplitPairAfterAces },
   ];
+
+  const postAcesSplit: AbstractHandRoot =
+    splitCount === 1
+      ? { example: 'A,S,A', label: '2/12', scores: [2, 12], category: oneSplitPairAfterAces }
+      : { example: 'A,A', label: '2/12', scores: [2, 12] };
 
   const postSplitHandsRoot: AbstractHandRoot[] = [
     ...[
@@ -105,9 +109,8 @@ const getPostSplitHands = (
         : { label: '11/21', scores: [11, 21] },
     ],
     ...coreHands,
-    ...(splitCount === 1
-      ? postAcesOneSplitHands
-      : [{ example: 'A,A', label: '2/12', scores: [2, 12] }]),
+    ...(splitCount === 1 ? postAcesOneSplitHands : []),
+    postAcesSplit,
   ];
 
   return postSplitHandsRoot.map<AbstractHandPartial>((x) => {
