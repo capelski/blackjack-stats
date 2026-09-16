@@ -261,7 +261,7 @@ export const getAbstractHands = (rules: Rules): AbstractHand[] => {
 
   const splittablePairs = [
     ...getSplittablePairs(rules, twoSplitsPair, maxSplitsByOption[splittingTwice]), // A,A (S2) - 8,8 (S2)
-    ...getSplittablePairs(rules, oneSplitPair, maxSplitsByOption[splittingOnce]), // A,A (A) - 8,8 (S1)
+    ...getSplittablePairs(rules, oneSplitPair, maxSplitsByOption[splittingOnce]), // A,A (S1A) - 8,8 (S1)
     ...getSplittablePairs(rules, splittablePair, 0, false), // A,A - 8,8
   ];
 

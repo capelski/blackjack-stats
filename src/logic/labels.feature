@@ -27,7 +27,7 @@ Feature: Labels
     Given splitting is allowed
     And the hand label "A,A"
     When splitting with next card "3"
-    Then the next hand label is "4/14 (A)"
+    Then the next hand label is "4/14 (S1A)"
 
   Scenario: Splitting a splittable pair into a pair that can no longer be split
     Given splitting is allowed
@@ -58,25 +58,25 @@ Feature: Labels
     And hitting split aces is allowed
     And the hand label "A,A"
     When splitting with next card "A"
-    Then the next hand label is "A,A (A)"
+    Then the next hand label is "A,A (S1A)"
 
   Scenario: Splitting aces into a pair of aces that can no longer be split
     Given splitting is allowed 2 times
     And the hand label "A,A"
     When splitting with next card "A"
-    Then the next hand label is "2/12 (A)"
+    Then the next hand label is "2/12 (S1A)"
 
   Scenario: Re-splitting aces
     Given splitting is allowed 3 times
     And hitting split aces is allowed
-    And the hand label "A,A (A)"
+    And the hand label "A,A (S1A)"
     When splitting with next card "A"
     Then the next hand label is "A,A (S2)"
 
   Scenario: Re-splitting aces into a hand that is not a pair
     Given splitting is allowed 3 times
     And hitting split aces is allowed
-    And the hand label "A,A (A)"
+    And the hand label "A,A (S1A)"
     When splitting with next card "3"
     Then the next hand label is "4/14 (S2)"
 
@@ -93,6 +93,6 @@ Feature: Labels
     Then the next hand label is "15 (3+)"
 
   Scenario: Hitting a post split pair after aces
-    Given the hand label "2/12 (A)"
+    Given the hand label "2/12 (S1A)"
     When hitting with next card "3"
     Then the next hand label is "5/15 (3+)"

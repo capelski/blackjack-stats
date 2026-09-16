@@ -78,7 +78,7 @@ Feature: Resolved hands
     Given splitting is allowed 3 times
     And hitting split aces is allowed
     When getting the resolved hands of a hand resolver for optimal actions
-    Then the resolved hand with label "A,A (A)" has action "split" and the following actions breakdown
+    Then the resolved hand with label "A,A (S1A)" has action "split" and the following actions breakdown
       | Action | Edge                  |
       | hit    | -0.011159494642067662 |
       | split  | 0.6519772544529483    |

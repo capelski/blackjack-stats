@@ -9,7 +9,7 @@ Feature: Abstract hands
     And there are 26 abstract hands with category "Post double hand"
     And there are 27 abstract hands with category "Initial pair"
     And there are 38 abstract hands with category "One split pair"
-    And there are 11 abstract hands with category "One split pair (A)"
+    And there are 11 abstract hands with category "One split pair (S1A)"
     And there are 40 abstract hands with category "Two splits pair"
     And there are 27 abstract hands with category "Three splits pair"
     And there are 13 abstract hands with category "Splittable pair"
@@ -18,13 +18,13 @@ Feature: Abstract hands
     Given blackjack after split is allowed
     When getting the abstract hands
     Then there is an abstract hand with label "BJ (S1)"
-    And there is an abstract hand with label "BJ (A)"
+    And there is an abstract hand with label "BJ (S1A)"
     And there is no abstract hand with label "11/21 (S1)"
-    And there is no abstract hand with label "11/21 (A)"
+    And there is no abstract hand with label "11/21 (S1A)"
 
   Scenario: Abstract hands (NO blackjack after split)
     When getting the abstract hands
     Then there is an abstract hand with label "11/21 (S1)"
-    And there is an abstract hand with label "11/21 (A)"
+    And there is an abstract hand with label "11/21 (S1A)"
     And there is no abstract hand with label "BJ (S1)"
-    And there is no abstract hand with label "BJ (A)"
+    And there is no abstract hand with label "BJ (S1A)"

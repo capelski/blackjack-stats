@@ -3,7 +3,7 @@ export const postDoubleHand = 'Post double hand';
 export const initialPair = 'Initial pair';
 export const splittablePair = 'Splittable pair';
 export const oneSplitPair = 'One split pair';
-export const oneSplitPairAfterAces = 'One split pair (A)';
+export const oneSplitPairAfterAces = 'One split pair (S1A)';
 export const twoSplitsPair = 'Two splits pair';
 export const threeSplitsPair = 'Three splits pair';
 
@@ -15,7 +15,7 @@ export const threeSplitsPair = 'Three splits pair';
  * - One/Two/Three splits pair. Two card hands reachable only after splitting one, two or three
  *   times. Doubling might be possible, splitting is possible while the splitting rule allows for further
  *   re-splits. Bet size is doubled on every split
- * - One split pair (A). Not actionable, unless "Hitting split aces" is enabled. Reachable only after
+ * - One split pair (S1A). Not actionable, unless "Hitting split aces" is enabled. Reachable only after
  *   splitting Aces. If aces are re-split, they become two splits pairs. Double bet size
  */
 export type HandCategory =

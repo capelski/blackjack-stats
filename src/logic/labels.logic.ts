@@ -34,7 +34,7 @@ import { getDisplayScores, getEffectiveScore, getNextScores } from './scores.log
 const discriminatorByCategory: Record<HandCategory, string> = {
   [initialPair]: '',
   [oneSplitPair]: `${postSplitSymbol}1`,
-  [oneSplitPairAfterAces]: aceSymbol,
+  [oneSplitPairAfterAces]: `${postSplitSymbol}1${aceSymbol}`,
   [postDoubleHand]: postDoubleSymbol,
   [splittablePair]: '',
   [threeOrMoreCards]: '3+',
