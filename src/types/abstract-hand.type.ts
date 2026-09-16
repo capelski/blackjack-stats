@@ -1,5 +1,9 @@
 import { HandBase } from './hand-base.type';
 
+export type AbstractHandRoot = Pick<AbstractHandPartial, 'example' | 'label' | 'scores'> & {
+  category?: AbstractHandPartial['category'];
+};
+
 export type AbstractHandPartial = Pick<HandBase, 'category' | 'label' | 'scores'> & {
   example?: string;
   isHidden?: boolean;

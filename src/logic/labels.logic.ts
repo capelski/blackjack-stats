@@ -96,7 +96,7 @@ export const getNextHandLabel = (
 
     const nextSplitCount = getSplitCount(currentAbstractHand.category) + 1;
     const nextCanSplit = canSplit(rules, [splitCard, nextCard.symbol], nextSplitCount);
-    const nextCategory = getPostSplitCategory(splitCard, nextSplitCount);
+    const nextCategory = getPostSplitCategory(splitCard === aceSymbol, nextSplitCount);
 
     const nextScores = getNextScores(
       cardsMap[splitCard].scores,

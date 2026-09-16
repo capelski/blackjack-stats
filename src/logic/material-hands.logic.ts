@@ -1,5 +1,5 @@
 import { double, hit, split, stand, surrender } from '../models/action.model';
-import { cards, cardsNumber } from '../models/cards.model';
+import { aceSymbol, cards, cardsNumber } from '../models/cards.model';
 import {
   HandCategory,
   initialPair,
@@ -86,7 +86,7 @@ const getNextMaterialHand = (
     splitCount,
   );
   const nextCategory: HandCategory = previousSplit
-    ? getPostSplitCategory(previousCards[0].symbol, splitCount)
+    ? getPostSplitCategory(previousCards[0].symbol === aceSymbol, splitCount)
     : nextCanSplit
       ? splittablePair
       : previousDouble
