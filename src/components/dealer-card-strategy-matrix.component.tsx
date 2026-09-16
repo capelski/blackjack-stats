@@ -1,9 +1,10 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { actionsAnalysisRoute, dealerBreakdownRoute } from '../../constants';
+import { useDealerCardContext } from '../dealer-card.context';
 import { getActionableHands } from '../logic/abstract-hands.logic';
 import { labelToUrlParam } from '../logic/labels.logic';
-import { compactRows, getRowLabel, OptimalActionsRow } from '../logic/optimal-actions.logic';
+import { OptimalActionsRow, compactRows, getRowLabel } from '../logic/optimal-actions.logic';
 import { getEnabledActions } from '../logic/rules.logic';
 import { actionAbbreviations, actionColors } from '../models/action.model';
 import { sortedCardSymbols } from '../models/cards.model';
@@ -12,8 +13,6 @@ import {
   selectedActionParamName,
   useSearchParamsUtils,
 } from '../search-params-utils';
-import { Rules } from '../types/rules.type';
-import { StrategyByFirstCard } from '../types/strategy.type';
 
 const compactView = 'compact';
 const fullView = 'full';
@@ -44,27 +43,27 @@ const legendStyle: CSSProperties = {
   textAlign: 'center',
 };
 
-export type DealerCardMatrixProps = {
-  rules: Rules;
-  strategy: StrategyByFirstCard;
-};
+export const DealerCardStrategyMatrix: React.FC = () => {
+  const { rules, strategy } = useDealerCardContext();
 
-export const DealerCardMatrix: React.FC<DealerCardMatrixProps> = (props) => {
   const { t } = useTranslation();
   const { navigateWithSearch, useUrlState } = useSearchParamsUtils();
 
   const [view, setView] = useUrlState(dealerSummaryModeParamName, fullView, views);
 
-  const enabledActions = getEnabledActions(props.rules);
+  if (!strategy) {
+    return null;
+  }
+
+  const enabledActions = getEnabledActions(rules);
 
   /** The player hands do not depend on the dealer card, so any breakdown entry can define the rows */
-  const [firstBreakdown] = Object.values(props.strategy.breakdown);
+  const [firstBreakdown] = Object.values(strategy.breakdown);
   const playerHands = firstBreakdown ? getActionableHands(firstBreakdown.resolvedHandsList) : [];
 
   const rows = playerHands.map<OptimalActionsRow>((playerHand) => ({
     actions: sortedCardSymbols.map(
-      (cardSymbol) =>
-        props.strategy.breakdown[cardSymbol]?.resolvedHandsMap[playerHand.label]?.action,
+      (cardSymbol) => strategy.breakdown[cardSymbol]?.resolvedHandsMap[playerHand.label]?.action,
     ),
     labels: [playerHand.label],
   }));

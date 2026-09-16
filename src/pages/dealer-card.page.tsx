@@ -4,9 +4,10 @@ import { useParams } from 'react-router-dom';
 import {
   dealerBreakdownRoute,
   dealerCardUrlParam,
+  expectedResultsRoute,
   finalScoresRoute,
   playerLabelUrlParam,
-  summaryRoute,
+  strategyRoute,
 } from '../../constants';
 import { AnimatedOutlet } from '../animated-outlet';
 import { useAppContext } from '../app.context';
@@ -49,7 +50,10 @@ export const DealerCardPage: React.FC = () => {
 
         <nav className="nested-navbar">
           <SearchNavLink to={finalScoresRoute}>{t('dealerCard.dealerScores')}</SearchNavLink>
-          <SearchNavLink to={summaryRoute}>{t('dealerCard.summary')}</SearchNavLink>
+          <SearchNavLink to={strategyRoute}>{t('dealerCard.strategy')}</SearchNavLink>
+          <SearchNavLink to={expectedResultsRoute}>
+            {t('strategyLayout.expectedResults')}
+          </SearchNavLink>
           <SearchNavLink to={dealerBreakdownRoute}>{t('dealerCard.breakdown')}</SearchNavLink>
         </nav>
 

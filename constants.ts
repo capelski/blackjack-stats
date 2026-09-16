@@ -13,7 +13,7 @@ export const finalScoresRoute = 'scores';
 export const materialHandsRoute = 'hands';
 export const optimalActionsRoute = 'optimal';
 export const standThresholdRoute = 'threshold';
-export const summaryRoute = 'summary';
+export const strategyRoute = 'strategy';
 
 export const dealerCardUrlParam = 'dealerCard';
 export const playerLabelUrlParam = 'playerLabel';

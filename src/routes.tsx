@@ -13,7 +13,7 @@ import {
   optimalActionsRoute,
   playerLabelUrlParam,
   standThresholdRoute,
-  summaryRoute,
+  strategyRoute,
   supportedLanguages,
 } from '../constants';
 import { AnimatedOutlet } from './animated-outlet';
@@ -22,7 +22,8 @@ import { ActionsAnalysisList } from './components/actions-analysis-list.componen
 import { ActionsBreakdown } from './components/actions-breakdown.component';
 import { DealerCardBreakdownDetails } from './components/dealer-card-breakdown-details.component';
 import { DealerCardBreakdownList } from './components/dealer-card-breakdown-list.component';
-import { DealerCardSummary } from './components/dealer-card-summary.component';
+import { DealerCardExpectedResults } from './components/dealer-card-expected-results.component';
+import { DealerCardStrategyMatrix } from './components/dealer-card-strategy-matrix.component';
 import { DealerFinalScoresMatrix } from './components/dealer-final-scores-matrix.component';
 import { ExpectedResults } from './components/expected-results.component';
 import { FinalComparisonsGrouped } from './components/final-comparisons-grouped.component';
@@ -61,9 +62,10 @@ const strategyPageNestedRoutes: RouteObject[] = [
 ];
 
 const dealerCardPageNestedRoutes: RouteObject[] = [
-  { index: true, element: <SearchNavigate to={summaryRoute} /> },
+  { index: true, element: <SearchNavigate to={strategyRoute} /> },
   { path: finalScoresRoute, element: <DealerFinalScoresMatrix /> },
-  { path: summaryRoute, element: <DealerCardSummary /> },
+  { path: strategyRoute, element: <DealerCardStrategyMatrix /> },
+  { path: expectedResultsRoute, element: <DealerCardExpectedResults /> },
   {
     path: dealerBreakdownRoute,
     element: <AnimatedOutlet />,

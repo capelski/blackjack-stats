@@ -64,7 +64,7 @@ export const ca = {
     dealerScores: 'Puntuacions del crupier',
     details: 'Detalls',
     notFound: '"{{cardSymbol}}" no és una carta del crupier vàlida',
-    summary: 'Resum',
+    strategy: 'Estratègia',
     modes: {
       hands: 'Mans',
       absolute: 'Probabilitat (absoluta)',

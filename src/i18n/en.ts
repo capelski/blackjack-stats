@@ -64,7 +64,7 @@ export const en = {
     dealerScores: 'Dealer scores',
     details: 'Details',
     notFound: '"{{cardSymbol}}" is not a valid dealer card',
-    summary: 'Summary',
+    strategy: 'Strategy',
     modes: {
       hands: 'Hands',
       absolute: 'Probability (absolute)',
