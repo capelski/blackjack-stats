@@ -1,5 +1,5 @@
 import { double, hit, split } from '../models/action.model';
-import { cardsMap } from '../models/cards.model';
+import { aceSymbol, cardsMap } from '../models/cards.model';
 import {
   HandCategory,
   initialPair,
@@ -34,7 +34,7 @@ import { getDisplayScores, getEffectiveScore, getNextScores } from './scores.log
 const discriminatorByCategory: Record<HandCategory, string> = {
   [initialPair]: '',
   [oneSplitPair]: `${postSplitSymbol}1`,
-  [oneSplitPairAfterAces]: 'A',
+  [oneSplitPairAfterAces]: aceSymbol,
   [postDoubleHand]: postDoubleSymbol,
   [splittablePair]: '',
   [threeOrMoreCards]: '3+',
